@@ -1,4 +1,5 @@
-﻿[System.Serializable]
+﻿using UnityEngine;
+[System.Serializable]
 public class CharacterAttribute
 {
     public int HP;

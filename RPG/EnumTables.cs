@@ -79,4 +79,37 @@ public static class EnumTables
         }
         return l;
     }
+    /// <summary>
+    /// 如果位为0则代表存在这个位上的int值
+    /// </summary>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    public static bool MaskFieldIdentify(int mask, int bitPosition)
+    {
+        int bitInt = (1 << ((int)bitPosition));
+        return (~mask & bitInt) != bitInt;
+    }
+    /// <summary>
+    /// 将某一位设为0
+    /// </summary>
+    /// <param name="mask"></param>
+    /// <param name="bitPosition"></param>
+    /// <returns></returns>
+    public static int MaskFieldSetTrue(int mask,int bitPosition)
+    {
+        int bitInt = ~(1 << ((int)bitPosition));
+        return mask & bitInt;
+    }
+    /// <summary>
+    /// 将某一位设为1
+    /// </summary>
+    /// <param name="mask"></param>
+    /// <param name="bitPosition"></param>
+    /// <returns></returns>
+    public static int MaskFieldSetFalse(int mask, int bitPosition)
+    {
+        int bitInt = (1 << ((int)bitPosition));
+        return mask | bitInt;
+    }
+   
 }

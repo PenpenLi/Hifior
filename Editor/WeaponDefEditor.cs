@@ -3,6 +3,10 @@ using UnityEditor;
 [CustomEditor(typeof(WeaponDef))]
 public class WeaponDefEditor : Editor
 {
+    private const int MaxAddAtt = 20;
+    private const int MaxAddGrow = 100;
+    private const int MaxAttackSelect = 10;
+    private const int MaxAttackEffect = 10;
     private static bool foldout_Range = true;
     private static bool foldout_AdditionalAttribute = true;
     private static bool foldout_AdditionalAttiburteGrow = true;
@@ -52,10 +56,10 @@ public class WeaponDefEditor : Editor
             EditorGUILayout.BeginVertical();
 
             wea.RangeType.RangeType = (EnumWeaponRangeType)EditorGUILayout.EnumPopup("攻击范围类型", wea.RangeType.RangeType);
-            wea.RangeType.MinSelectRange = EditorGUILayout.IntField("最小选择距离", wea.RangeType.MinSelectRange);
-            wea.RangeType.MaxSelectRange = EditorGUILayout.IntField("最大选择距离", wea.RangeType.MaxSelectRange);
-            wea.RangeType.MinEffectRange = EditorGUILayout.IntField("最小生效距离", wea.RangeType.MinEffectRange);
-            wea.RangeType.MaxEffectRange = EditorGUILayout.IntField("最大生效距离", wea.RangeType.MaxEffectRange);
+            wea.RangeType.MinSelectRange = EditorGUILayout.IntSlider("最小选择距离", wea.RangeType.MinSelectRange, 1, MaxAttackSelect);
+            wea.RangeType.MaxSelectRange = EditorGUILayout.IntSlider("最大选择距离", wea.RangeType.MaxSelectRange, 1, MaxAttackSelect);
+            wea.RangeType.MinEffectRange = EditorGUILayout.IntSlider("最小生效距离", wea.RangeType.MinEffectRange, 1, MaxAttackEffect);
+            wea.RangeType.MaxEffectRange = EditorGUILayout.IntSlider("最大生效距离", wea.RangeType.MaxEffectRange, 1, MaxAttackEffect);
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
@@ -67,31 +71,35 @@ public class WeaponDefEditor : Editor
         wea.Crit = EditorGUILayout.IntField("必杀率", wea.Crit); wea.DedicatedCharacter = EditorGUILayout.IntField(guiContent_DedicatedCharacter, wea.DedicatedCharacter);
 
         EditorGUILayout.BeginHorizontal();
-        wea.CareerEffect = EditorGUILayout.IntField(guiContent_CareerEffect, wea.CareerEffect);
+        wea.CareerEffect = EditorGUILayout.MaskField(guiContent_CareerEffect, wea.CareerEffect, new string[] { "剑士", "骑士", "圣骑士", "海盗" });
+        //Log.Write(wea.CareerEffect);
+        
+        //Log.Write(EnumTables.MaskFieldIdentify(wea.CareerEffect, 0), EnumTables.MaskFieldIdentify(wea.CareerEffect, 1), EnumTables.MaskFieldIdentify(wea.CareerEffect, 2), EnumTables.MaskFieldIdentify(wea.CareerEffect, 3));
+        //Log.Write(EnumTables.MaskFieldSetTrue(2, 1));
+        //Log.Write(EnumTables.MaskFieldSetFalse(2, 0));
 
         EditorGUILayout.EndHorizontal();
-        wea.SuperEffect = EditorGUILayout.IntField(guiContent_SuperEffect, wea.SuperEffect);
+        wea.SuperEffect = EditorGUILayout.MaskField(guiContent_SuperEffect, wea.SuperEffect,new string[] { "必杀", "不可反击", "狂乱", "吸血" });
         wea.AttackEffect = (EnumWeaponAttackEffectType)EditorGUILayout.EnumPopup("特殊攻击效果", wea.AttackEffect);
         wea.ImportantWeapon = EditorGUILayout.Toggle(guiContent_ImportantWeapon, wea.ImportantWeapon);
         wea.NoExchange = EditorGUILayout.Toggle(guiContent_NoExchange, wea.NoExchange);
-
-        //人物额外属性修正foldout = EditorGUILayout.Foldout(foldout, "武器类型");
-        foldout_AdditionalAttribute = EditorGUILayout.Foldout(foldout_AdditionalAttribute, "属性修正");
+        
+        foldout_AdditionalAttribute = EditorGUILayout.Foldout(foldout_AdditionalAttribute, "人物属性修正");
         if (foldout_AdditionalAttribute)
         {
             EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
 
-            wea.AdditionalAttribute.HP = EditorGUILayout.IntField("HP", wea.AdditionalAttribute.HP);
-            wea.AdditionalAttribute.PhysicalPower = EditorGUILayout.IntField("物理攻击", wea.AdditionalAttribute.PhysicalPower);
-            wea.AdditionalAttribute.MagicalPower = EditorGUILayout.IntField("魔法攻击", wea.AdditionalAttribute.MagicalPower);
-            wea.AdditionalAttribute.Skill = EditorGUILayout.IntField("技术", wea.AdditionalAttribute.Skill);
-            wea.AdditionalAttribute.Speed = EditorGUILayout.IntField("速度", wea.AdditionalAttribute.Speed);
-            wea.AdditionalAttribute.Lucky = EditorGUILayout.IntField("幸运", wea.AdditionalAttribute.Lucky);
-            wea.AdditionalAttribute.PhysicalDefense = EditorGUILayout.IntField("物理防御", wea.AdditionalAttribute.PhysicalDefense);
-            wea.AdditionalAttribute.MagicalDefense = EditorGUILayout.IntField("魔法防御", wea.AdditionalAttribute.MagicalDefense);
-            wea.AdditionalAttribute.Movement = EditorGUILayout.IntField("移动", wea.AdditionalAttribute.Movement);
+            wea.AdditionalAttribute.HP = EditorGUILayout.IntSlider("HP", wea.AdditionalAttribute.HP, 0, MaxAddAtt);
+            wea.AdditionalAttribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", wea.AdditionalAttribute.PhysicalPower, 0, MaxAddAtt);
+            wea.AdditionalAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", wea.AdditionalAttribute.MagicalPower, 0, MaxAddAtt);
+            wea.AdditionalAttribute.Skill = EditorGUILayout.IntSlider("技术", wea.AdditionalAttribute.Skill, 0, MaxAddAtt);
+            wea.AdditionalAttribute.Speed = EditorGUILayout.IntSlider("速度", wea.AdditionalAttribute.Speed, 0, MaxAddAtt);
+            wea.AdditionalAttribute.Lucky = EditorGUILayout.IntSlider("幸运", wea.AdditionalAttribute.Lucky, 0, MaxAddAtt);
+            wea.AdditionalAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", wea.AdditionalAttribute.PhysicalDefense, 0, MaxAddAtt);
+            wea.AdditionalAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", wea.AdditionalAttribute.MagicalDefense, 0, MaxAddAtt);
+            wea.AdditionalAttribute.Movement = EditorGUILayout.IntSlider("移动", wea.AdditionalAttribute.Movement, 0, MaxAddAtt);
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
@@ -104,15 +112,15 @@ public class WeaponDefEditor : Editor
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
 
-            wea.AdditionalAttributeGrow.HP = EditorGUILayout.IntField("HP成长率", wea.AdditionalAttributeGrow.HP);
-            wea.AdditionalAttributeGrow.PhysicalPower = EditorGUILayout.IntField("物理攻击成长率", wea.AdditionalAttributeGrow.PhysicalPower);
-            wea.AdditionalAttributeGrow.MagicalPower = EditorGUILayout.IntField("魔法攻击成长率", wea.AdditionalAttributeGrow.MagicalPower);
-            wea.AdditionalAttributeGrow.Skill = EditorGUILayout.IntField("技术成长率", wea.AdditionalAttributeGrow.Skill);
-            wea.AdditionalAttributeGrow.Speed = EditorGUILayout.IntField("速度成长率", wea.AdditionalAttributeGrow.Speed);
-            wea.AdditionalAttributeGrow.Lucky = EditorGUILayout.IntField("幸运成长率", wea.AdditionalAttributeGrow.Lucky);
-            wea.AdditionalAttributeGrow.PhysicalDefense = EditorGUILayout.IntField("物理防御成长率", wea.AdditionalAttributeGrow.PhysicalDefense);
-            wea.AdditionalAttributeGrow.MagicalDefense = EditorGUILayout.IntField("魔法防御成长率", wea.AdditionalAttributeGrow.MagicalDefense);
-            wea.AdditionalAttributeGrow.Movement = EditorGUILayout.IntField("移动成长率", wea.AdditionalAttributeGrow.Movement);
+            wea.AdditionalAttributeGrow.HP = EditorGUILayout.IntSlider("HP成长率", wea.AdditionalAttributeGrow.HP, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.PhysicalPower = EditorGUILayout.IntSlider("物理攻击成长率", wea.AdditionalAttributeGrow.PhysicalPower, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.MagicalPower = EditorGUILayout.IntSlider("魔法攻击成长率", wea.AdditionalAttributeGrow.MagicalPower, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.Skill = EditorGUILayout.IntSlider("技术成长率", wea.AdditionalAttributeGrow.Skill, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.Speed = EditorGUILayout.IntSlider("速度成长率", wea.AdditionalAttributeGrow.Speed, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.Lucky = EditorGUILayout.IntSlider("幸运成长率", wea.AdditionalAttributeGrow.Lucky, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.PhysicalDefense = EditorGUILayout.IntSlider("物理防御成长率", wea.AdditionalAttributeGrow.PhysicalDefense, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.MagicalDefense = EditorGUILayout.IntSlider("魔法防御成长率", wea.AdditionalAttributeGrow.MagicalDefense, 0, MaxAddGrow);
+            wea.AdditionalAttributeGrow.Movement = EditorGUILayout.IntSlider("移动成长率", wea.AdditionalAttributeGrow.Movement, 0, MaxAddGrow);
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
@@ -122,11 +130,8 @@ public class WeaponDefEditor : Editor
             EditorUtility.SetDirty(target);
         }
     }
-    CareerMultiSelectionPopWindow careerPopWindow;
     public virtual void OnEnable()
     {
         wea = target as WeaponDef;
-        if (careerPopWindow == null)
-            careerPopWindow = new CareerMultiSelectionPopWindow();
     }
 }
