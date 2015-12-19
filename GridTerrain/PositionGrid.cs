@@ -19,6 +19,7 @@ public class PositionGrid : MonoBehaviour
         y = Y;
         CreateChild();
         UpdateCells();
+        UpdateMesh(x,y);
     }
     void CreateChild()
     {
@@ -29,14 +30,11 @@ public class PositionGrid : MonoBehaviour
     void UpdateCells()
     {
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-   
-        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
 
-        meshRenderer.material = IsCellValid(x, y) ? cellMaterialValid : cellMaterialInvalid;
+        meshRenderer.sharedMaterial = IsCellValid(x, y) ? cellMaterialValid : cellMaterialInvalid;
         meshRenderer.useLightProbes = false;
         meshRenderer.receiveShadows = false;
         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        UpdateMesh(meshFilter.sharedMesh, x, y);
     }
     /// <summary>
     /// 通过检测Layer判断是否属于Building，如果是，则返回false，否则返回true
@@ -65,8 +63,9 @@ public class PositionGrid : MonoBehaviour
         return mesh;
     }
 
-    void UpdateMesh(Mesh mesh, int x, int z)
+    void UpdateMesh( int x, int z)
     {
+        Mesh mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
         mesh.vertices = new Vector3[] {
             new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] ,0),
             new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z+1] ,cellSize),

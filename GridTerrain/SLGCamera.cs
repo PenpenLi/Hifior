@@ -4,10 +4,6 @@ public class SLGCamera : MonoBehaviour
 {
     private const float DEFAULT_CAMERA_HEIGHT = 17.0f;
     public float smoothTime;				// how smooth the camera movement is
-
-    private Vector3 targetPosition;		// the position the camera is trying to be in
-    private Quaternion targetQuaternion;
-    private Vector3 targetOffset;
    
     public float moveSpeed = 7.0f;
 
