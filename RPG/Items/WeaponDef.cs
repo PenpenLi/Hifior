@@ -16,11 +16,20 @@ public class WeaponDef : ExtendScriptableObject
     public int Power;
     public int Hit;
     public int Crit;
-    public int DedicatedCharacter;
+    /// <summary>
+    /// 人物专用
+    /// </summary>
+    public List<int> DedicatedCharacter;
+
+    /// <summary>
+    /// 职业专用
+    /// </summary>
+    public List<int> DedicatedJob;
+
     /// <summary>
     /// 对那些系的职业有特效
     /// </summary>
-    public int CareerEffect;
+    public List<int> CareerEffect;
     public int SuperEffect;
     public EnumWeaponAttackEffectType AttackEffect;
     public bool ImportantWeapon;

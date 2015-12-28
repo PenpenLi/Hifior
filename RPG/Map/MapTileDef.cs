@@ -21,6 +21,10 @@ public class TileAttribute
     public int Recover;
     public int BattleBackgroundID;
     public int[] MovementConsume;
+    public bool PassUp = true;
+    public bool PassLeft = true;
+    public bool PassRight = true;
+    public bool PassDown = true;
     public TileAttribute()
     {
         MovementConsume = new int[10] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };

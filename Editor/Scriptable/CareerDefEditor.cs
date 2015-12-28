@@ -10,15 +10,15 @@ namespace RPGEditor
         private static string[] weaponLevelNames;
         private static int weaponLevelCount = 0;
         private static bool[] WeaponEnableTable;
-        public const string PROPS_FILEPATH = "Assets/RPG Data/Career";
-        [MenuItem("RPGEditor/Create Career", false)]
+        public const string DIRECTORY_PATH = "Assets/RPG Data/Career";
+        [MenuItem("RPGEditor/Create Career", false,1)]
         public static CareerDef CreateProps()
         {
-            int count = ScriptableObjectUtility.GetFoldFileCount(PROPS_FILEPATH);
+            int count = ScriptableObjectUtility.GetFoldFileCount(DIRECTORY_PATH);
 
             CareerDef career = ScriptableObjectUtility.CreateAsset<CareerDef>(
                 count.ToString(),
-                PROPS_FILEPATH,
+                DIRECTORY_PATH,
                 true
             );
             career.CommonProperty.ID = count;
@@ -32,10 +32,9 @@ namespace RPGEditor
         CareerDef career;
         public override void OnInspectorGUI()
         {
-
             //在最开始写Label会显示在最上面
-            Rect blockLabelRect = new Rect(45, 5, 120, 16);
-            EditorGUI.LabelField(blockLabelRect, new GUIContent("职业"), RPGEditorGUI.CenterLabelStyle);
+            Rect blockLabelRect = new Rect(45, 5, 120, 55);
+            EditorGUI.LabelField(blockLabelRect, new GUIContent("职业"), RPGEditorGUI.Head1Style);
             //EditorGUI.InspectorTitlebar(new Rect(5, 5, 128, 128),true , new Object[] { Resources.Load("CharIcon/0_0") },true );
             if (career.Icon != null)
                 EditorGUI.DrawPreviewTexture(new Rect(5, 5, 37, 37), career.Icon.texture);

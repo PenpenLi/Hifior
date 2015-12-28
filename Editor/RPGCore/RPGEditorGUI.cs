@@ -97,6 +97,7 @@ namespace RPGEditor
         public static Texture2D Icon_Arrow2_Up;
         public static Texture2D Icon_Arrow2_Down;
         public static Texture2D Icon_Arrow3_Left;
+        public static Texture2D Icon_Arrow3_Right;
         public static Texture2D Icon_Pencil;
         public static Texture2D Icon_Page;
         public static Texture2D Icon_Copy;
@@ -548,6 +549,7 @@ namespace RPGEditor
             Icon_Arrow2_Up = LoadEditorTexture(EditorResourcePath + "Icons/arrow2_up.png");
             Icon_Arrow2_Down = LoadEditorTexture(EditorResourcePath + "Icons/arrow2_down.png");
             Icon_Arrow3_Left = LoadEditorTexture(EditorResourcePath + "Icons/arrow3_left.png");
+            Icon_Arrow3_Right = LoadEditorTexture(EditorResourcePath + "Icons/arrow3_right.png");
             Icon_Pencil = LoadEditorTexture(EditorResourcePath + "Icons/pencil.png");
             Icon_Page = LoadEditorTexture(EditorResourcePath + "Icons/page.png");
             Icon_Copy = LoadEditorTexture(EditorResourcePath + "Icons/copy.png");
@@ -837,6 +839,59 @@ namespace RPGEditor
             EditorGUIUtility.labelWidth = 0;
             EditorGUIUtility.fieldWidth = 0;
         }
-
+        #region 自定义面板
+        public static void DynamicArrayView(ref int size,ref List<int> IDlist,string caption,string child)
+        {
+            size = EditorGUILayout.IntSlider(caption,size, 0, 20);
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical();
+            if (size == 0)
+            {
+                IDlist.Clear();
+            }
+            int dif = IDlist.Count - size;
+            if (dif > 0)
+            {
+                IDlist.RemoveRange(size, dif);
+            }
+            if (dif < 0)
+            {
+                IDlist.AddRange(new int[-dif]);
+            }
+            for (int i = 0; i < size; i++)
+            {
+                IDlist[i] = EditorGUILayout.IntField(child, IDlist[i]);
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+        }
+        public static void DynamicArrayView(ref int size, ref List<int> IDlist, string caption, string child,string[] displayOptions,int []optionValues)
+        {
+            size = EditorGUILayout.IntSlider(caption, size, 0, 20);
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical();
+            if (size == 0)
+            {
+                IDlist.Clear();
+            }
+            int dif = IDlist.Count - size;
+            if (dif > 0)
+            {
+                IDlist.RemoveRange(size, dif);
+            }
+            if (dif < 0)
+            {
+                IDlist.AddRange(new int[-dif]);
+            }
+            for (int i = 0; i < size; i++)
+            {
+                IDlist[i] = EditorGUILayout.IntPopup(child, IDlist[i], displayOptions, optionValues);
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+        }
+        #endregion
     }
 }

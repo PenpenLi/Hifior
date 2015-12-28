@@ -54,6 +54,12 @@ namespace RPGEditor
         }
         public static int GetFoldFileCount(string path)
         {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                AssetDatabase.Refresh();
+                return 0;
+            }
             return Directory.GetFiles(path).GetLength(0) / 2;
         }
         public static string[] GetFiles(string path,string postfix)

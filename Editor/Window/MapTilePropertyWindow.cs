@@ -8,6 +8,18 @@ namespace RPGEditor
     /// </summary>
     public class MapTilePropertyWindow : EditorWindow
     {
+        public static int SelectedTileIndex
+        {
+            get
+            {
+                return CurrentX + CurrentY * MapTilePropertyWindow.TILESET_W;
+            }
+        }
+        public static bool IsShowing
+        {
+             get;
+            private set;
+        }
         /// <summary>
         /// Path后面必须要加个 /
         /// </summary>
@@ -15,8 +27,14 @@ namespace RPGEditor
         public const string MAP_DATANAME = "TileProperty";
         public const string TILESET_FILEPATH = "Assets/Editor/Res/TileSet/";
         public const int TILESIZE = 32;
-        private const int TILESET_W = 10;
-        private static List<Texture2D> TileTextures = new List<Texture2D>();
+        public const int TILESET_W = 10;
+        public static int CurrentSelectedTileID;
+        public static  Texture2D CurrentTexture
+        {
+            get{ return TileTextures[CurrentSelectedTileID]; }
+        }
+
+        public readonly static List<Texture2D> TileTextures = new List<Texture2D>();
         private static MapTileDef TileDef;
         private static Vector2 scrollVector = Vector2.zero;
         private static string[] tileSeriesNames;
@@ -24,13 +42,22 @@ namespace RPGEditor
         private static bool[] tileEnableTable;
         private static int CurrentX;
         private static int CurrentY;
-
+        public static List<TileAttribute> TileDataDef
+        {
+            get
+            { 
+                if (TileDef != null)
+                    return TileDef.TileProperty;
+                return CreateTileData().TileProperty;
+            }
+        }
         [MenuItem("RPGEditor/Map Editor", false)]
         public static void OpenDatabaseEditor()
         {
             TileDef = CreateTileData();
             MapTilePropertyWindow mapEditor = EditorWindow.GetWindow<MapTilePropertyWindow>();
             mapEditor.Show();
+            IsShowing = true;
         }
         /// <summary>
         /// 判定是否有地图属性文件存在
@@ -56,6 +83,17 @@ namespace RPGEditor
             tileSeriesCount = tileSeriesNames.Length;
             tileEnableTable = EnumTables.GetTrueArray(tileSeriesCount);
 
+            int count = LoadTileTexture();
+            int CountDif = count - TileDef.TileProperty.Count;
+            if (TileDef.TileProperty.Count < count)
+            {
+                for (int i = 0; i < CountDif; i++)
+                    TileDef.TileProperty.Add(new TileAttribute());
+            }
+            AssetDatabase.SaveAssets();
+        }
+        public static int LoadTileTexture()
+        {
             string[] textFileNames = ScriptableObjectUtility.GetFiles(TILESET_FILEPATH, "png");
             int count = textFileNames.Length;
             if (count != TileTextures.Count)
@@ -66,13 +104,7 @@ namespace RPGEditor
                     TileTextures.Add(AssetDatabase.LoadAssetAtPath<Texture2D>(textFileNames[i]));
                 }
             }
-            int CountDif = count - TileDef.TileProperty.Count;
-            if (TileDef.TileProperty.Count < count)
-            {
-                for (int i = 0; i < CountDif; i++)
-                    TileDef.TileProperty.Add(new TileAttribute());
-            }
-            AssetDatabase.SaveAssets();
+            return count;
         }
         void OnGUI()
         {
@@ -111,13 +143,12 @@ namespace RPGEditor
             //选择贴图
             //           texture = EditorGUILayout.ObjectField("添加贴图", texture, typeof(Texture), true) as Texture;
             RefreshTilePropertyEditor(CurrentX, CurrentY);
-            // if (GUILayout.Button("关闭窗口", GUILayout.Width(200)))
-            //    this.Close();
 
         }
         void RefreshTilePropertyEditor(int x, int y)
         {
             int id = y * TILESET_W + x;
+            CurrentSelectedTileID = id;
             TileAttribute tile = TileDef.TileProperty[id];
             if (tile == null)
             {
@@ -140,12 +171,13 @@ namespace RPGEditor
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Box("移动消耗");
-            if (GUILayout.Button("全部不可通行"))
+            GUILayout.Space(20);
+            if (GUILayout.Button("全部不可通行", GUILayout.Width(80)))
             {
                 for (int i = 0; i < tileEnableTable.Length; i++)
                     tileEnableTable[i] = false;
             }
-            if (GUILayout.Button("全部可以通行"))
+            if (GUILayout.Button("全部可以通行", GUILayout.Width(80)))
             {
                 for (int i = 0; i < tileEnableTable.Length; i++)
                 {
@@ -176,6 +208,39 @@ namespace RPGEditor
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
+
+            EditorGUILayout.HelpBox("通行方向，蓝底背景表示可以从这个方向通过这个块", MessageType.None);
+
+            EditorGUILayout.BeginVertical(RPGEditorGUI.BoxStyle, GUILayout.Width(100));
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button(RPGEditorGUI.Icon_Arrow2_Up, tile.PassUp ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                    tile.PassUp = !tile.PassUp;
+                GUILayout.FlexibleSpace();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button(RPGEditorGUI.Icon_Arrow3_Left, tile.PassLeft ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                tile.PassLeft = !tile.PassLeft;
+            EditorGUILayout.Space();
+            if (GUILayout.Button(RPGEditorGUI.Icon_Arrow3_Right, tile.PassRight ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                tile.PassRight = !tile.PassRight;
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button(RPGEditorGUI.Icon_Arrow2_Down, tile.PassDown ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                    tile.PassDown = !tile.PassDown;
+                GUILayout.FlexibleSpace();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.EndVertical();
+
             GUILayout.EndArea();
         }
 
@@ -187,10 +252,13 @@ namespace RPGEditor
         {
             if (TileDef == null)
                 TileDef = CreateTileData();
+
+            IsShowing = true;
         }
         void OnDestroy()
         {
             AssetDatabase.SaveAssets();
+            IsShowing = false;
         }
 
     }

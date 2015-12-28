@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-
+public enum EnumCharacterImportance
+{
+    Worker,
+    Leader,
+    SecondLeader
+}
 public enum EnumCareerLevel
 {
     Low,

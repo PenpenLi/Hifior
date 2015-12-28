@@ -5,17 +5,19 @@ namespace RPGEditor
     [CustomEditor(typeof(PropsDef))]
     public class PropsDefEditor : Editor
     {
+        private static int dedicatedJobCount;
+        private static int dedicatedCharacterCount;
         private static bool foldout_AdditionalAttribute = true;
         private static bool foldout_AdditionalAttiburteGrow = true;
-        public const string PROPS_FILEPATH = "Assets/RPG Data/Items/Props";
-        [MenuItem("RPGEditor/Create Items/Props", false, 0)]
+        public const string DIRECTORY_PATH = "Assets/RPG Data/Items/Props";
+        [MenuItem("RPGEditor/Create Items/Props", false, 2)]
         public static PropsDef CreateProps()
         {
-            int count = ScriptableObjectUtility.GetFoldFileCount(PROPS_FILEPATH);
+            int count = ScriptableObjectUtility.GetFoldFileCount(DIRECTORY_PATH);
 
             PropsDef props = ScriptableObjectUtility.CreateAsset<PropsDef>(
                 count.ToString(),
-                PROPS_FILEPATH,
+                DIRECTORY_PATH,
                 true
             );
             props.CommonProperty.ID = count;
@@ -25,7 +27,6 @@ namespace RPGEditor
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "武器的唯一标识符");
         private readonly GUIContent guiContent_Name = new GUIContent("武器名", "武器的名称");
         private readonly GUIContent guiContent_Desc = new GUIContent("武器描述", "武器的详细描述介绍");
-        private readonly GUIContent guiContent_DedicatedCharacter = new GUIContent("人物专用", "该武器只有哪个角色可以使用,其他人均不可使用");
         private readonly GUIContent guiContent_ImportantWeapon = new GUIContent("神器", "是否是很强大的特殊武器");
         private readonly GUIContent guiContent_NoExchange = new GUIContent("不可交换", "该武器不可以和其他人进行交换操作");
         PropsDef props;
@@ -33,7 +34,7 @@ namespace RPGEditor
         {
             //在最开始写Label会显示在最上面
             Rect blockLabelRect = new Rect(45, 5, 120, 16);
-            EditorGUI.LabelField(blockLabelRect, new GUIContent("道具"),RPGEditorGUI.CenterLabelStyle);
+            EditorGUI.LabelField(blockLabelRect, new GUIContent("道具"), RPGEditorGUI.CenterLabelStyle);
             //EditorGUI.InspectorTitlebar(new Rect(5, 5, 128, 128),true , new Object[] { Resources.Load("CharIcon/0_0") },true );
             if (props.Icon != null)
                 EditorGUI.DrawPreviewTexture(new Rect(5, 5, 37, 37), props.Icon.texture);
@@ -48,7 +49,10 @@ namespace RPGEditor
             props.PropsEffect = (EnumPropsEffectType)EditorGUILayout.EnumPopup("道具效果", props.PropsEffect);
             props.Power = EditorGUILayout.IntField("值", props.Power);
 
-            props.DedicatedCharacter = EditorGUILayout.IntField(guiContent_DedicatedCharacter, props.DedicatedCharacter);
+            string[] display = RefreshDataBaseEditor.CareerNameList.ToArray();
+            int[] value = EnumTables.GetSequentialArray(RefreshDataBaseEditor.CareerNameList.Count);
+            RPGEditorGUI.DynamicArrayView(ref dedicatedCharacterCount, ref props.DedicatedCharacter, "专用人物", "人物", display, value);
+            RPGEditorGUI.DynamicArrayView(ref dedicatedJobCount, ref props.DedicatedJob, "专用职业", "职业", display, value);
 
             props.ImportantProps = EditorGUILayout.Toggle(guiContent_ImportantWeapon, props.ImportantProps);
             props.NoExchange = EditorGUILayout.Toggle(guiContent_NoExchange, props.NoExchange);
@@ -60,7 +64,7 @@ namespace RPGEditor
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginVertical();
 
-                props.AdditionalAttribute.HP = EditorGUILayout.IntSlider("HP", props.AdditionalAttribute.HP, 0,RPGEditorGlobal. MAX_ADDATTIBUTE);
+                props.AdditionalAttribute.HP = EditorGUILayout.IntSlider("HP", props.AdditionalAttribute.HP, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", props.AdditionalAttribute.PhysicalPower, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", props.AdditionalAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.Skill = EditorGUILayout.IntSlider("技术", props.AdditionalAttribute.Skill, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
@@ -95,13 +99,14 @@ namespace RPGEditor
                 EditorGUILayout.EndHorizontal();
             }
             if (GUI.changed)
-            {
                 EditorUtility.SetDirty(target);
-            }
+
         }
         public void OnEnable()
         {
             props = target as PropsDef;
+            dedicatedCharacterCount = props.DedicatedCharacter.Count;
+            dedicatedJobCount = props.DedicatedJob.Count;
         }
     }
 }

@@ -13,18 +13,19 @@ public class PositionGrid : MonoBehaviour
     {
         //Init(x, y);
     }
-    public void Init(int X, int Y)
+    public void Init(float CellSize,int X, int Y)
     {
+        this.cellSize = CellSize;
         x = X;
         y = Y;
         CreateChild();
         UpdateCells();
-        UpdateMesh(x,y);
+        //UpdateMesh(x,y);
     }
     void CreateChild()
     {
         gameObject.AddComponent<MeshRenderer>();
-        gameObject.AddComponent<MeshFilter>().mesh = CreateMesh();
+        gameObject.AddComponent<MeshFilter>().mesh = CreateMesh(x,y);
     }
 
     void UpdateCells()
@@ -50,12 +51,16 @@ public class PositionGrid : MonoBehaviour
 
         return hitInfo.collider == null;
     }
-    Mesh CreateMesh()
+    Mesh CreateMesh(int x,int z)
     {
         Mesh mesh = new Mesh();
-
+        
         mesh.name = "Grid Cell:" + x + "," + y;
-        mesh.vertices = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+        mesh.vertices = new Vector3[] {
+            new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z+1] ,cellSize),
+            new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z] ,0),
+            new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z+1] ,cellSize),
+            new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] ,0) };
         mesh.triangles = new int[] { 0, 1, 2, 2, 1, 3 };
         mesh.normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
         mesh.uv = new Vector2[] { new Vector2(1, 1), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, 0) };
@@ -63,20 +68,16 @@ public class PositionGrid : MonoBehaviour
         return mesh;
     }
 
-    void UpdateMesh( int x, int z)
-    {
-        Mesh mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
-        mesh.vertices = new Vector3[] {
-            new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] ,0),
-            new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z+1] ,cellSize),
-            new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z] ,0),
-            new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z+1] ,cellSize),
-           // MeshVertex(x, z),
-           // MeshVertex(x, z + 1),
-           // MeshVertex(x + 1, z),
-           // MeshVertex(x + 1, z + 1),
-        };
-    }
+    //void UpdateMesh( int x, int z)
+    //{
+    //    Mesh mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+    //    mesh.vertices = new Vector3[] {
+    //        new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] ,0),
+    //        new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z+1] ,cellSize),
+    //        new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z] ,0),
+    //        new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z+1] ,cellSize)
+    //    };
+    //}
 
     /*Vector3 MeshVertex(int x, int z)
     {

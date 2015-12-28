@@ -5,18 +5,21 @@ namespace RPGEditor
     [CustomEditor(typeof(WeaponDef))]
     public class WeaponDefEditor : Editor
     {
+        private static int dedicatedJobCount;
+        private static int dedicatedCharacterCount;
+        private static int careerEffectCount;
         private static bool foldout_Range = true;
         private static bool foldout_AdditionalAttribute = true;
         private static bool foldout_AdditionalAttiburteGrow = true;
-        public const string weaponFilePath = "Assets/RPG Data/Items/Weapon";
-        [MenuItem("RPGEditor/Create Items/Weapon", false, 0)]
+        public const string DIRECTORY_PATH = "Assets/RPG Data/Items/Weapon";
+        [MenuItem("RPGEditor/Create Items/Weapon", false)]
         public static WeaponDef CreateWeapon()
         {
-            int count = ScriptableObjectUtility.GetFoldFileCount(weaponFilePath);
+            int count = ScriptableObjectUtility.GetFoldFileCount(DIRECTORY_PATH);
 
             WeaponDef wea = ScriptableObjectUtility.CreateAsset<WeaponDef>(
                 count.ToString(),
-                weaponFilePath,
+                DIRECTORY_PATH,
                 true
             );
             wea.CommonProperty.ID = count;
@@ -26,15 +29,12 @@ namespace RPGEditor
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "武器的唯一标识符");
         private readonly GUIContent guiContent_Name = new GUIContent("武器名", "武器的名称");
         private readonly GUIContent guiContent_Desc = new GUIContent("武器描述", "武器的详细描述介绍");
-        private readonly GUIContent guiContent_CareerEffect = new GUIContent("职业特效", "对哪些职业造成更多的伤害");
         private readonly GUIContent guiContent_SuperEffect = new GUIContent("超级特效", "具备哪些特殊的效果");
-        private readonly GUIContent guiContent_DedicatedCharacter = new GUIContent("人物专用", "该武器只有哪个角色可以使用,其他人均不可使用");
         private readonly GUIContent guiContent_ImportantWeapon = new GUIContent("神器", "是否是很强大的特殊武器");
         private readonly GUIContent guiContent_NoExchange = new GUIContent("不可交换", "该武器不可以和其他人进行交换操作");
         WeaponDef wea;
         public override void OnInspectorGUI()
         {
-            //在最开始写Label会显示在最上面
             Rect blockLabelRect = new Rect(45, 5, 120, 16);
             EditorGUI.LabelField(blockLabelRect, new GUIContent("武器"), RPGEditorGUI.CenterLabelStyle);
             //EditorGUI.InspectorTitlebar(new Rect(5, 5, 128, 128),true , new Object[] { Resources.Load("CharIcon/0_0") },true );
@@ -72,17 +72,17 @@ namespace RPGEditor
             wea.Power = EditorGUILayout.IntField("威力", wea.Power);
             wea.Hit = EditorGUILayout.IntField("命中率", wea.Hit);
             wea.Crit = EditorGUILayout.IntField("必杀率", wea.Crit);
-            wea.DedicatedCharacter = EditorGUILayout.IntField(guiContent_DedicatedCharacter, wea.DedicatedCharacter);
 
-            EditorGUILayout.BeginHorizontal();
-            wea.CareerEffect = EditorGUILayout.MaskField(guiContent_CareerEffect, wea.CareerEffect, new string[] { "剑士", "骑士", "圣骑士", "海盗" });
-            //Log.Write(wea.CareerEffect);
+            RPGEditorGUI.DynamicArrayView(ref dedicatedCharacterCount, ref wea.DedicatedCharacter, "专用人物", "人物");
+            string[] display = RefreshDataBaseEditor.CareerNameList.ToArray();
+            int[] value = EnumTables.GetSequentialArray(RefreshDataBaseEditor.CareerNameList.Count);
+            RPGEditorGUI.DynamicArrayView(ref dedicatedJobCount, ref wea.DedicatedJob, "专用职业", "职业", display, value);
+            RPGEditorGUI.DynamicArrayView(ref careerEffectCount, ref wea.CareerEffect, "克制职业", "职业", display, value);
 
             //Log.Write(EnumTables.MaskFieldIdentify(wea.CareerEffect, 0), EnumTables.MaskFieldIdentify(wea.CareerEffect, 1), EnumTables.MaskFieldIdentify(wea.CareerEffect, 2), EnumTables.MaskFieldIdentify(wea.CareerEffect, 3));
             //Log.Write(EnumTables.MaskFieldSetTrue(2, 1));
             //Log.Write(EnumTables.MaskFieldSetFalse(2, 0));
 
-            EditorGUILayout.EndHorizontal();
             wea.SuperEffect = EditorGUILayout.MaskField(guiContent_SuperEffect, wea.SuperEffect, new string[] { "必杀", "不可反击", "狂乱", "吸血" });
             wea.AttackEffect = (EnumWeaponAttackEffectType)EditorGUILayout.EnumPopup("特殊攻击效果", wea.AttackEffect);
             wea.ImportantWeapon = EditorGUILayout.Toggle(guiContent_ImportantWeapon, wea.ImportantWeapon);
@@ -130,13 +130,14 @@ namespace RPGEditor
                 EditorGUILayout.EndHorizontal();
             }
             if (GUI.changed)
-            {
                 EditorUtility.SetDirty(target);
-            }
         }
         public void OnEnable()
         {
             wea = target as WeaponDef;
+            dedicatedCharacterCount = wea.DedicatedCharacter.Count;
+            dedicatedJobCount = wea.DedicatedJob.Count;
+            careerEffectCount = wea.CareerEffect.Count;
         }
     }
 }
