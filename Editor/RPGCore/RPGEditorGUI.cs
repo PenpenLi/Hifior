@@ -777,7 +777,7 @@ namespace RPGEditor
                         continue;
                     }
 
-                    if (GUILayout.Toggle((i == selected), menuItems[i], RPGEditorGUI.MenuItemStyle)) selected = i;
+                    if (GUILayout.Toggle((i == selected), menuItems[i], RPGEditorGUI.ButtonStyle)) selected = i;
                 }
 
                 GUILayout.FlexibleSpace();

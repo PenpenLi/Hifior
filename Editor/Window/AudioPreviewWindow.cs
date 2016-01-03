@@ -36,7 +36,9 @@ namespace RPGEditor
                     }
                     GUILayout.FlexibleSpace();
                 }
+                EditorGUILayout.EndScrollView();//0
             }
+            EditorGUILayout.EndHorizontal();
         }
         public void ShowBGM() { }
         public void ShowBGS() { }
