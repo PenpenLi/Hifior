@@ -43,7 +43,7 @@ namespace RPGEditor
             character.Portrait = (Sprite)EditorGUILayout.ObjectField("图标", character.Portrait, typeof(Sprite), false);
             character.BattleModel = EditorGUILayout.ObjectField("人物模型", character.BattleModel, typeof(GameObject), true) as GameObject;
             character.CharacterImportance = (EnumCharacterImportance)EditorGUILayout.EnumPopup("重要性", character.CharacterImportance);
-            character.Career = EditorGUILayout.IntPopup("职业", character.Career, RefreshDataBaseEditor.CareerNameList.ToArray(), EnumTables.GetSequentialArray(RefreshDataBaseEditor.CareerNameList.Count));
+            character.Career = EditorGUILayout.IntPopup("职业", character.Career, DataDef.CareerNameList.ToArray(), EnumTables.GetSequentialArray(DataDef.CareerNameList.Count));
             character.DefaultLevel = EditorGUILayout.IntSlider("初始等级", character.DefaultLevel, 1, 40);
 
             foldout_Attribute = EditorGUILayout.Foldout(foldout_Attribute, "初始属性");
@@ -87,7 +87,7 @@ namespace RPGEditor
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
             }
-            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref character.DefaultWeapons, "初始武器", "武器", RefreshDataBaseEditor.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RefreshDataBaseEditor.WeaponNameList.Count));
+            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref character.DefaultWeapons, "初始武器", "武器", DataDef.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(DataDef.WeaponNameList.Count));
 
             character.DeadSpeech = EditorGUILayout.TextField("战败话语", character.DeadSpeech);
             character.LeaveSpeech = EditorGUILayout.TextField("战败话语", character.LeaveSpeech);

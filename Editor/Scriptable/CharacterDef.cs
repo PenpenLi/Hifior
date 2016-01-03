@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-[AddComponentMenu("RPGEditor/Character")]
 public class CharacterDef : ExtendScriptableObject
 {
     [ContextMenu("Json")]

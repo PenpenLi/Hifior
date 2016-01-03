@@ -753,7 +753,38 @@ namespace RPGEditor
             EditorGUILayout.EndVertical();
             return selected;
         }
+        public static int MenuHorizontal(int selected, string[] menuItems, params GUILayoutOption[] options)
+        {
+            if (selected >= menuItems.Length || selected < 0) selected = 0;
+            EditorGUILayout.BeginHorizontal(MenuBoxStyle, options);
+            {
+                GUILayout.Space(20);
 
+                for (int i = 0; i < menuItems.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(menuItems[i])) { GUILayout.Space(15); continue; }
+
+                    if (menuItems[i][0] == '-')
+                    {
+                        if (menuItems[i].Length > 1)
+                        {
+                            GUILayout.Label(menuItems[i].Substring(1), RPGEditorGUI.MenuHeadStyle);
+                        }
+                        else
+                        {
+                            RPGEditorGUI.DrawVerticalLine(1, RPGEditorGUI.DividerColor, 5, 5);
+                        }
+                        continue;
+                    }
+
+                    if (GUILayout.Toggle((i == selected), menuItems[i], RPGEditorGUI.MenuItemStyle)) selected = i;
+                }
+
+                GUILayout.FlexibleSpace();
+            }
+            EditorGUILayout.EndHorizontal();
+            return selected;
+        }
         #endregion
         // ================================================================================================================
         #region Layout

@@ -74,8 +74,8 @@ namespace RPGEditor
             wea.Crit = EditorGUILayout.IntField("必杀率", wea.Crit);
 
             RPGEditorGUI.DynamicArrayView(ref dedicatedCharacterCount, ref wea.DedicatedCharacter, "专用人物", "人物");
-            string[] display = RefreshDataBaseEditor.CareerNameList.ToArray();
-            int[] value = EnumTables.GetSequentialArray(RefreshDataBaseEditor.CareerNameList.Count);
+            string[] display = DataDef.CareerNameList.ToArray();
+            int[] value = EnumTables.GetSequentialArray(DataDef.CareerNameList.Count);
             RPGEditorGUI.DynamicArrayView(ref dedicatedJobCount, ref wea.DedicatedJob, "专用职业", "职业", display, value);
             RPGEditorGUI.DynamicArrayView(ref careerEffectCount, ref wea.CareerEffect, "克制职业", "职业", display, value);
 

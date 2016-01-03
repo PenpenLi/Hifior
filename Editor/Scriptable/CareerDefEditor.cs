@@ -16,11 +16,7 @@ namespace RPGEditor
         {
             int count = ScriptableObjectUtility.GetFoldFileCount(DIRECTORY_PATH);
 
-            CareerDef career = ScriptableObjectUtility.CreateAsset<CareerDef>(
-                count.ToString(),
-                DIRECTORY_PATH,
-                true
-            );
+            CareerDef career = ScriptableObjectUtility.CreateAsset<CareerDef>(count.ToString(), DIRECTORY_PATH,true);
             career.CommonProperty.ID = count;
             career.CommonProperty.Name = "剑士";
             return career;

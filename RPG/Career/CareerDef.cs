@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-[AddComponentMenu("RPGEditor/Career")]
 public class CareerDef : ExtendScriptableObject
 {
     [ContextMenu("Json")]
@@ -10,7 +8,9 @@ public class CareerDef : ExtendScriptableObject
         Debug.Log(JsonUtility.ToJson(this));
     }
     public PropertyIDNameDesc CommonProperty;
-
+    /// <summary>
+    /// 职业图标
+    /// </summary>
     public Sprite Icon;
     public EnumCareerLevel Level;
     /// <summary>
@@ -25,6 +25,12 @@ public class CareerDef : ExtendScriptableObject
     /// 职业特技
     /// </summary>
     public int Skill;
+    /// <summary>
+    /// 职业模型大小
+    /// </summary>
     public EnumCareerModelSize ModelSize;
+    /// <summary>
+    /// 最大属性限制
+    /// </summary>
     public CharacterAttribute MaxAttribute;
 }

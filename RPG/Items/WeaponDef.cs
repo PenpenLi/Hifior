@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-[AddComponentMenu("RPGEditor/Item/Weapon")]
+
 public class WeaponDef : ExtendScriptableObject
 {
     public PropertyIDNameDesc CommonProperty;
