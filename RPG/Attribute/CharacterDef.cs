@@ -18,14 +18,4 @@ public class CharacterDef : ExtendScriptableObject
     public int Career;
     public int DefaultLevel;
     public CharacterAttribute DefaultAttribute;
-    public CharacterAttributeGrow DefaultAttributeGrow;
-    public List<int> DefaultWeapons;
-    /// <summary>
-    /// 死亡时说的一行话
-    /// </summary>
-    public string DeadSpeech;
-    /// <summary>
-    /// 离开战场时说的话
-    /// </summary>
-    public string LeaveSpeech;
 }

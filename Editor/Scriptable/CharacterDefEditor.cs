@@ -2,28 +2,11 @@
 using UnityEditor;
 namespace RPGEditor
 {
-    [CustomEditor(typeof(CharacterDef))]
+    [CustomEditor(typeof(CharacterDef),true)]
     public class CharacterDefEditor : Editor
     {
-        private static int weaponCount;
-        private static bool foldout_AttributeGrow = true;
         private static bool foldout_Attribute = true;
 
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Character";
-        [MenuItem("RPGEditor/Create Character", false, 0)]
-        public static CharacterDef CreateProps()
-        {
-            int count = ScriptableObjectUtility.GetFoldFileCount(DIRECTORY_PATH);
-
-            CharacterDef character = ScriptableObjectUtility.CreateAsset<CharacterDef>(
-                count.ToString(),
-                DIRECTORY_PATH,
-                true
-            );
-            character.CommonProperty.ID = count;
-            character.CommonProperty.Name = "";
-            return character;
-        }
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "人物的唯一标识符");
         private readonly GUIContent guiContent_Name = new GUIContent("人物名称", "人物的名称");
         private readonly GUIContent guiContent_Desc = new GUIContent("人物描述", "人物的详细描述介绍");
@@ -66,41 +49,15 @@ namespace RPGEditor
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
             }
-
-            foldout_AttributeGrow = EditorGUILayout.Foldout(foldout_AttributeGrow, "成长率");
-            if (foldout_Attribute)
-            {
-                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
-                EditorGUILayout.Space();
-                EditorGUILayout.BeginVertical();
-
-                character.DefaultAttributeGrow.HP = EditorGUILayout.IntSlider("HP", character.DefaultAttributeGrow.HP, 0, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
-                character.DefaultAttributeGrow.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", character.DefaultAttributeGrow.PhysicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", character.DefaultAttributeGrow.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.Skill = EditorGUILayout.IntSlider("技术", character.DefaultAttributeGrow.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.Speed = EditorGUILayout.IntSlider("速度", character.DefaultAttributeGrow.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.Lucky = EditorGUILayout.IntSlider("幸运", character.DefaultAttributeGrow.Lucky, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", character.DefaultAttributeGrow.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", character.DefaultAttributeGrow.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttributeGrow.Movement = EditorGUILayout.IntSlider("移动", character.DefaultAttributeGrow.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
-
-                EditorGUILayout.EndVertical();
-                EditorGUILayout.EndHorizontal();
-            }
-            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref character.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count));
-
-            character.DeadSpeech = EditorGUILayout.TextField("战败话语", character.DeadSpeech);
-            character.LeaveSpeech = EditorGUILayout.TextField("战败话语", character.LeaveSpeech);
-
+            
             if (GUI.changed)
             {
                 EditorUtility.SetDirty(target);
             }
         }
-        public void OnEnable()
+        public void InitTarget(CharacterDef def)
         {
-            character = target as CharacterDef;
-            weaponCount = character.DefaultWeapons.Count;
+            character = def;
         }
     }
 }

@@ -1,5 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+public enum EnumEnemyActionAI
+{
+    /// <summary>
+    /// 持有武器则进行攻击，持有治疗杖责进行治疗
+    /// </summary>
+    行动型,
+    待机型,
+    移动型,
+    破坏村庄型,
+    盗取宝箱型
+}
+public enum EnumEventTriggerCondition
+{
+    章节开始,
+    章节结束,
+    /// <summary>
+    /// 每回合之间触发
+    /// </summary>
+    回合事件,
+    /// <summary>
+    /// 到达特定的地点进行触发,比如村庄宝箱
+    /// </summary>
+    地点事件,
+    /// <summary>
+    /// 到达指定坐标进行待机后触发
+    /// </summary>
+    坐标事件,
+    /// <summary>
+    /// 某个人物死亡后触发,通常设在Boss和NPC身上
+    /// </summary>
+    死亡事件
+}
+public enum EnumEnemyCureSelfCondition
+{
+    不进行治疗,
+    HP低于一半,
+    HP低于四分之一,
+    HP低于一半随机
+}
 /// <summary>
 /// 胜利条件
 /// </summary>

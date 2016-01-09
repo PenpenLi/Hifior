@@ -32,12 +32,9 @@ namespace RPGEditor
         public void OnEnable()
         {
             chapter = target as ChapterSettingDef;
-            if (chapter.ForceInvolve == null)
-                chapter.ForceInvolve = new List<int>();
             forceInvolveCount = chapter.ForceInvolve.Count;
             weaponRoomCount = chapter.WeaponRoom.Count;
             propRoomCount = chapter.PropRoom.Count;
-
             if (chapter.BGMSetting.Count != bgmType.Length)
             {
                 chapter.BGMSetting.Clear();
@@ -78,7 +75,7 @@ namespace RPGEditor
             {
                 for (int i = 0; i < bgmType.Length; i++)
                 {
-                    chapter.BGMSetting[i] = EditorGUILayout.IntPopup(bgmType[i], chapter.BGMSetting[i], AudioPreviewWindow.bgmNameList.ToArray(), EnumTables.GetSequentialArray(AudioPreviewWindow.bgmNameList.Count));
+                    chapter.BGMSetting[i] = EditorGUILayout.IntPopup(bgmType[i], chapter.BGMSetting[i], AudioPreviewWindow.BGMList, EnumTables.GetSequentialArray(AudioPreviewWindow.BGMList.Length));
                 }
             }
             RPGEditorGUI.DynamicArrayView(ref weaponRoomCount, ref chapter.WeaponRoom, "武器屋", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count));
