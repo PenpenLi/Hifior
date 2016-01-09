@@ -7,10 +7,54 @@ namespace RPGEditor
     public class AudioPreviewWindow : EditorWindow
     {
         private Vector2[] scroll = { Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero };
-        public static List<string> bgmNameList = new List<string>();
-        public static List<string> bgsNameList = new List<string>();
-        public static List<string> meNameList = new List<string>();
-        public static List<string> seNameList = new List<string>();
+        private static List<string> bgmNameList = new List<string>();
+        private static List<string> bgsNameList = new List<string>();
+        private static List<string> meNameList = new List<string>();
+        private static List<string> seNameList = new List<string>();
+        public static string[] BGMList
+        {
+            get
+            {
+                if (bgmNameList == null || bgmNameList.Count == 0)
+                {
+                    InitAudioClipList(bgmNameList, BGM_FILEPATH);
+                }
+                return bgmNameList.ToArray();
+            }
+        }
+        public static string[] BGSList
+        {
+            get
+            {
+                if (bgsNameList == null || bgsNameList.Count == 0)
+                {
+                    InitAudioClipList(bgsNameList, BGS_FILEPATH);
+                }
+                return bgsNameList.ToArray();
+            }
+        }
+        public static string[] MEList
+        {
+            get
+            {
+                if (meNameList == null || meNameList.Count == 0)
+                {
+                    InitAudioClipList(meNameList, ME_FILEPATH);
+                }
+                return meNameList.ToArray();
+            }
+        }
+        public static string[] SEList
+        {
+            get
+            {
+                if (seNameList == null || seNameList.Count == 0)
+                {
+                    InitAudioClipList(seNameList, SE_FILEPATH);
+                }
+                return seNameList.ToArray();
+            }
+        }
         public static string curSong;
         public const string BGM_FILEPATH = "Assets/Audio/BGM/";
         public const string BGS_FILEPATH = "Assets/Audio/BGS/";

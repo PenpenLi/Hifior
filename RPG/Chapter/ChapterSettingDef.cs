@@ -23,6 +23,13 @@ public class ChapterSettingDef : ExtendScriptableObject
     /// 准备画面的道具店道具列表
     /// </summary>
     public List<int> PropRoom;
+    public ChapterSettingDef()
+    {
+        ForceInvolve = new List<int>();
+        BGMSetting = new List<int>();
+        WeaponRoom = new List<int>();
+        PropRoom = new List<int>();
+    }
 }
 [System.Serializable]
 public class WinCondition

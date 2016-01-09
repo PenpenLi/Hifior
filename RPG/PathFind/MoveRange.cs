@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
+[System.Serializable]
 public struct Point2D
 {
     public int x;
@@ -13,6 +14,22 @@ public struct Point2D
     public override string ToString()
     {
         return "x:" + x + " y:" + y;
+    }
+    public static bool operator ==(Point2D p1, Point2D p2)
+    {
+        return p1.x == p2.x && p1.y == p2.y;
+    }
+    public static bool operator !=(Point2D p1, Point2D p2)
+    {
+        return p1.x != p2.x || p1.y != p2.y;
+    }
+    public override bool Equals(object obj)
+    {
+        return this==(Point2D)obj;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }
 public static class MoveRange

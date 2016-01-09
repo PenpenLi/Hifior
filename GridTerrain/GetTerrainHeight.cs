@@ -4,18 +4,6 @@ using System.Collections;
 public class GetTerrainHeight : MonoBehaviour
 {
 #if UNITY_EDITOR
-    public void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.black;
-        for (int x = 0; x < gridWidth; x++)
-        {
-            Gizmos.DrawLine(new Vector3(x * cellSize, 0, 0), new Vector3(x * cellSize, 0, gridHeight));
-        }
-        for (int z = 0; z < gridHeight; z++)
-        {
-            Gizmos.DrawLine(new Vector3(0, 0, z * cellSize), new Vector3(gridWidth, 0, z * cellSize));
-        }
-    }
 
     void ComputeHeight()
     {

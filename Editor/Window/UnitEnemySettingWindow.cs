@@ -1,26 +1,203 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 namespace RPGEditor
-{ 
+{
     public class UnitEnemySettingWindow : EditorWindow
     {
-        public static int x, y;
+        /// <summary>
+        /// 修改还是添加
+        /// </summary>
+        private static bool m_bMedify = false;
+        private Vector2[] scroll = { Vector2.zero, Vector2.zero };
+        /// <summary>
+        /// 保存敌方人物的属性列表
+        /// </summary>
+        private static List<EnemyDef> EnemyDefList;
+        /// <summary>
+        /// 当前选定的人物属性
+        /// </summary>
+        private static EnemyDef ActiveEnemyDef;
+        /// <summary>
+        /// 选定的Index
+        /// </summary>
+        public static int ActiveIndex
+        {
+            private set;
+            get;
+        }
         public static bool IsShowing
         {
             get;
             private set;
         }
-        public static void OpenWindow(int x,int y)
+        private static int previousX;
+        private static int previousY;
+        /// <summary>
+        /// 单个敌方单位
+        /// </summary>
+        private static EnemyUnitSetting.EnemyUnit unit;
+        /// <summary>
+        /// 实际的地方设定文件
+        /// </summary>
+        private static EnemyUnitSetting UnitSetting;
+        /// <summary>
+        /// 打开添加敌人的窗口
+        /// </summary>
+        /// <param name="setting"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public static void OpenAddEnemyWindow(int x, int y, EnemyUnitSetting setting)
         {
-            RefreshPoint(x, y);
+            OpenWindow();
+            m_bMedify = false;
+            UnitSetting = setting;
+            unit = new EnemyUnitSetting.EnemyUnit(x, y);
+        }
+        public static void OpenSetEnemyWindow(int x, int y, EnemyUnitSetting setting, EnemyDef enemy, int index)
+        {
+            OpenWindow();
+            m_bMedify = true;
+            previousX = x;
+            previousY = y;
+
+            UnitSetting = setting;
+            unit = new EnemyUnitSetting.EnemyUnit(x, y);
+
+            unit.Enemy = enemy;
+            ActiveIndex = index;
+        }
+        static void OpenWindow()
+        {
+            IsShowing = true;
             UnitEnemySettingWindow mapEditor = EditorWindow.GetWindow<UnitEnemySettingWindow>();
             mapEditor.ShowPopup();
-            IsShowing = true;
+            if (EnemyDefList.Count == 0)
+            {
+                Debug.LogError("没有EnemyDef文件");
+            }
+            else
+                unit.Enemy = EnemyDefList[0];
+        }
+        /// <summary>
+        /// 窗口打开需要初始化EnemyDef数据库
+        /// </summary>
+        void Awake()
+        {
+            if (EnemyDefList == null)
+                RPGData.LoadDefAssetAtPath<EnemyDef>(ref EnemyDefList, EnemyDefEditor.DIRECTORY_PATH, "asset");
+        }
+        void OnFocus()
+        {
+            if (EnemyDefList.Count > 0)
+            {
+                ActiveIndex = 0;
+                ActiveEnemyDef = EnemyDefList[0];
+            }
         }
         void OnGUI()
         {
-            EditorGUILayout.LabelField("坐标" + new Point2D(x, y));
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("刷新数据", GUILayout.Width(120)))
+            {
+                RPGData.LoadDefAssetAtPath<EnemyDef>(ref EnemyDefList, EnemyDefEditor.DIRECTORY_PATH, "asset");
+            }
+            EditorGUILayout.Space();
+            if (GUILayout.Button("确定", GUILayout.Width(120)))
+            {
+                if (!IsValidUnit())
+                {
+                    EditorUtility.DisplayDialog("无效坐标", "插入的坐标已经存在或格式不正确", "OK");
+                    return;
+                }
+                if (!m_bMedify)
+                    UnitSetting.Units.Add(unit);
+                else
+                {
+                    EnemyUnitSetting.EnemyUnit previousUnit = UnitSetting.GetUnit(previousX, previousY);
+                    int i = UnitSetting.Units.IndexOf(previousUnit);
+                    if (!UnitSetting.IsEmpty(previousUnit))
+                    {
+                        UnitSetting.Units.RemoveAt(i);
+                        UnitSetting.Units.Insert(i, new EnemyUnitSetting.EnemyUnit(unit.Coord, unit.Enemy));
+                    }
+                }
+                Close();
+            }
+            EditorGUILayout.Space();
+            if (GUILayout.Button("取消", GUILayout.Width(120)))
+            {
+                Close();
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginHorizontal();
+            ShowEnemyDefList();
+            RPGEditorGUI.DrawVerticalLine(2, Color.black);
+            ShowEnemyDefContent();
+            EditorGUILayout.EndHorizontal();
+        }
+        void ShowEnemyDefList()
+        {
+            scroll[0] = EditorGUILayout.BeginScrollView(scroll[0], GUILayout.MinWidth(120));
+            {
+                if (EnemyDefList == null)
+                    return;
+                for (int i = 0; i < EnemyDefList.Count; i++)
+                {
+                    string enemyName = EnemyDefList[i].CommonProperty.Name;
+                    if (enemyName == null || enemyName.Equals(""))
+                        enemyName = "无名敌人";
+                    if (GUILayout.Button(enemyName, i == ActiveIndex ? RPGEditorGUI.ListItemSelectedStyle : RPGEditorGUI.ListItemBackLightStyle, GUILayout.MaxWidth(150)))
+                    {
+                        ActiveIndex = i;
+                        ActiveEnemyDef = EnemyDefList[i];
+                    }
+                }
+                EditorGUILayout.Space();
+            }
+            EditorGUILayout.EndScrollView();
+        }
+        void ShowEnemyDefContent()
+        {
+            if (ActiveEnemyDef == null)
+                return;
+
+            unit.Enemy = ActiveEnemyDef;
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(300));
+            {
+                EditorGUILayout.LabelField("坐标", GUILayout.Width(50));
+                unit.Coord.x = EditorGUILayout.IntField("x", unit.Coord.x, GUILayout.MaxWidth(200));
+                unit.Coord.y = EditorGUILayout.IntField("y", unit.Coord.y, GUILayout.MaxWidth(200));
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUI.BeginDisabledGroup(true);
+            unit.Enemy.CommonProperty.ID = EditorGUILayout.IntField("人物ID", unit.Enemy.CommonProperty.ID);
+            unit.Enemy.CommonProperty.Name = EditorGUILayout.TextField("人物名称", unit.Enemy.CommonProperty.Name);
+            unit.Enemy.CommonProperty.Description = EditorGUILayout.TextField("人物描述", unit.Enemy.CommonProperty.Description);
+
+            unit.Enemy.Portrait = (Sprite)EditorGUILayout.ObjectField("图标", unit.Enemy.Portrait, typeof(Sprite), false);
+            unit.Enemy.BattleModel = EditorGUILayout.ObjectField("人物模型", unit.Enemy.BattleModel, typeof(GameObject), true) as GameObject;
+            unit.Enemy.CharacterImportance = (EnumCharacterImportance)EditorGUILayout.EnumPopup("重要性", unit.Enemy.CharacterImportance);
+            unit.Enemy.Career = EditorGUILayout.IntPopup("职业", unit.Enemy.Career, RPGData.CareerNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.CareerNameList.Count));
+            unit.Enemy.DefaultLevel = EditorGUILayout.IntSlider("初始等级", unit.Enemy.DefaultLevel, 1, 40);
+
+            unit.Enemy.DefaultAttribute.HP = EditorGUILayout.IntSlider("HP", unit.Enemy.DefaultAttribute.HP, 0, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
+            unit.Enemy.DefaultAttribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", unit.Enemy.DefaultAttribute.PhysicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", unit.Enemy.DefaultAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", unit.Enemy.DefaultAttribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", unit.Enemy.DefaultAttribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.Lucky = EditorGUILayout.IntSlider("幸运", unit.Enemy.DefaultAttribute.Lucky, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", unit.Enemy.DefaultAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", unit.Enemy.DefaultAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", unit.Enemy.DefaultAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
+            unit.Enemy.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", unit.Enemy.ActionAI);
+            unit.Enemy.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", unit.Enemy.AttackInRange);
+            unit.Enemy.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", unit.Enemy.CureSelf);
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.EndVertical();
         }
         void OnInspectorUpdate()
         {
@@ -31,14 +208,23 @@ namespace RPGEditor
             AssetDatabase.SaveAssets();
             IsShowing = false;
         }
-        void Awake()
+        private bool IsValidUnit()
         {
-
-        }
-        public static void RefreshPoint(int x, int y)
-        {
-            UnitEnemySettingWindow.x = x;
-            UnitEnemySettingWindow.y = y;
+            if (unit.Coord.x < 0 || unit.Coord.y < 0) return false;
+            if (!m_bMedify)
+            {
+                if (UnitSetting.Contains(unit.Coord))
+                    return false;
+            }
+            else
+            {
+                if(unit.Coord!=new Point2D(previousX, previousY))
+                {
+                    if (UnitSetting.Contains(unit.Coord))
+                        return false;
+                }
+            }
+            return true;
         }
     }
 }
