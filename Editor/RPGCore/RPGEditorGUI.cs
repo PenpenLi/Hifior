@@ -871,7 +871,14 @@ namespace RPGEditor
             EditorGUIUtility.fieldWidth = 0;
         }
         #region 自定义面板
-        public static void DynamicArrayView(ref int size,ref List<int> IDlist,string caption,string child)
+        /// <summary>
+        /// 将List<int>自定义显示,需要在OnEnable里初始化size
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="IDlist"></param>
+        /// <param name="caption"></param>
+        /// <param name="label"></param>
+        public static void DynamicArrayView(ref int size,ref List<int> IDlist,string caption,string label)
         {
             size = EditorGUILayout.IntSlider(caption,size, 0, 20);
             EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
@@ -892,11 +899,20 @@ namespace RPGEditor
             }
             for (int i = 0; i < size; i++)
             {
-                IDlist[i] = EditorGUILayout.IntField(child, IDlist[i]);
+                IDlist[i] = EditorGUILayout.IntField(label, IDlist[i]);
             }
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
         }
+        /// <summary>
+        /// 将List<int> 自定义显示,并可以通过下拉选择,需要在OnEnable里初始化size
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="IDlist"></param>
+        /// <param name="caption"></param>
+        /// <param name="child"></param>
+        /// <param name="displayOptions"></param>
+        /// <param name="optionValues"></param>
         public static void DynamicArrayView(ref int size, ref List<int> IDlist, string caption, string child,string[] displayOptions,int []optionValues)
         {
             size = EditorGUILayout.IntSlider(caption, size, 0, 20);
@@ -922,6 +938,16 @@ namespace RPGEditor
             }
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
+        }
+        public static int IntFieldClamp(string label, ref int i, int left, int right)
+        {
+            int ret = EditorGUILayout.IntField(label, i);
+            if (ret < left)
+                ret = left;
+            if (ret > right)
+                ret = right;
+            i = ret;
+            return ret;
         }
         #endregion
     }

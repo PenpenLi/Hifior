@@ -62,9 +62,17 @@ namespace RPGEditor
             }
             return Directory.GetFiles(path).GetLength(0) / 2;
         }
-        public static string[] GetFiles(string path,string postfix)
+        public static string[] GetFiles(string path, params string[] postfix)
         {
-            return Directory.GetFiles(path).Where(x => x.EndsWith("."+postfix, StringComparison.OrdinalIgnoreCase)).ToArray(); ;
+            return Directory.GetFiles(path).Where(x =>
+           {
+               foreach (string s in postfix)
+               {
+                   if (x.EndsWith("." + s, StringComparison.OrdinalIgnoreCase))
+                       return true;
+               }
+               return false;
+           }).ToArray(); ;
         }
         public static bool FileExists(string path)
         {

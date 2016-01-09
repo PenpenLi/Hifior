@@ -49,8 +49,8 @@ namespace RPGEditor
             props.PropsEffect = (EnumPropsEffectType)EditorGUILayout.EnumPopup("道具效果", props.PropsEffect);
             props.Power = EditorGUILayout.IntField("值", props.Power);
 
-            string[] display = DataDef.CareerNameList.ToArray();
-            int[] value = EnumTables.GetSequentialArray(DataDef.CareerNameList.Count);
+            string[] display = RPGData.CareerNameList.ToArray();
+            int[] value = EnumTables.GetSequentialArray(RPGData.CareerNameList.Count);
             RPGEditorGUI.DynamicArrayView(ref dedicatedCharacterCount, ref props.DedicatedCharacter, "专用人物", "人物", display, value);
             RPGEditorGUI.DynamicArrayView(ref dedicatedJobCount, ref props.DedicatedJob, "专用职业", "职业", display, value);
 

@@ -17,7 +17,7 @@ namespace RPGEditor
         }
         public static bool IsShowing
         {
-             get;
+            get;
             private set;
         }
         /// <summary>
@@ -29,9 +29,9 @@ namespace RPGEditor
         public const int TILESIZE = 32;
         public const int TILESET_W = 10;
         public static int CurrentSelectedTileID;
-        public static  Texture2D CurrentTexture
+        public static Texture2D CurrentTexture
         {
-            get{ return TileTextures[CurrentSelectedTileID]; }
+            get { return TileTextures[CurrentSelectedTileID]; }
         }
 
         public readonly static List<Texture2D> TileTextures = new List<Texture2D>();
@@ -45,7 +45,7 @@ namespace RPGEditor
         public static List<TileAttribute> TileDataDef
         {
             get
-            { 
+            {
                 if (TileDef != null)
                     return TileDef.TileProperty;
                 return CreateTileData().TileProperty;
