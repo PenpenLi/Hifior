@@ -64,8 +64,9 @@ namespace RPGEditor
 
             UnitSetting = setting;
             unit = new EnemyUnitSetting.EnemyUnit(x, y);
-
             unit.Enemy = enemy;
+            if (enemy == null)
+                unit.Enemy = EnemyDefList[0];
             ActiveIndex = index;
         }
         static void OpenWindow()
@@ -117,7 +118,7 @@ namespace RPGEditor
                 {
                     EnemyUnitSetting.EnemyUnit previousUnit = UnitSetting.GetUnit(previousX, previousY);
                     int i = UnitSetting.Units.IndexOf(previousUnit);
-                    if (!UnitSetting.IsEmpty(previousUnit))
+                    if (i>=0)
                     {
                         UnitSetting.Units.RemoveAt(i);
                         UnitSetting.Units.Insert(i, new EnemyUnitSetting.EnemyUnit(unit.Coord, unit.Enemy));

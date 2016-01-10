@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class EnemyUnitSetting : MonoBehaviour
 {
-    public readonly EnemyUnit EmptyUnit= new  EnemyUnit(-1,-1);
+    public static readonly EnemyUnit EmptyUnit = new EnemyUnit(-1, -1);
 
     [System.Serializable]
     public struct EnemyUnit
@@ -50,13 +50,6 @@ public class EnemyUnitSetting : MonoBehaviour
     {
         return Contains(new Point2D(x, y));
     }
-    public EnemyDef GetDef(Point2D p)
-    {
-        foreach (EnemyUnit u in Units)
-            if (u.Coord == p)
-                return u.Enemy;
-        return null;
-    }
     public EnemyUnit GetUnit(Point2D p)
     {
         foreach (EnemyUnit u in Units)
@@ -64,15 +57,22 @@ public class EnemyUnitSetting : MonoBehaviour
                 return u;
         return EmptyUnit;
     }
-    public EnemyUnit GetUnit(int x,int y)
+    public EnemyUnit GetUnit(int x, int y)
     {
         return GetUnit(new Point2D(x, y));
     }
     public bool IsEmpty(EnemyUnit unit)
     {
-        if (unit.Enemy == null|| unit.Coord.x<0 |unit.Coord.y<0)
+        if (unit.Enemy == null || unit.Coord.x < 0 | unit.Coord.y < 0)
             return true;
         return false;
+    }
+    public EnemyDef GetDef(Point2D p)
+    {
+        foreach (EnemyUnit u in Units)
+            if (u.Coord == p)
+                return u.Enemy;
+        return null;
     }
     public EnemyDef GetDef(int x, int y)
     {
@@ -82,7 +82,10 @@ public class EnemyUnitSetting : MonoBehaviour
     {
         foreach (EnemyUnit u in Units)
         {
-            GizmosUtil.GizmosDrawRect(5 + u.Coord.x * 10, 5 + u.Coord.y * 10, 10f, 10, 10, Color.cyan);
+            if (u.Enemy == null)
+                GizmosUtil.GizmosDrawRect(5 + u.Coord.x * 10, 5 + u.Coord.y * 10, 10f, 10, 10, Color.red);
+            else
+                GizmosUtil.GizmosDrawRect(5 + u.Coord.x * 10, 5 + u.Coord.y * 10, 10f, 10, 10, Color.cyan);
         }
     }
 }
