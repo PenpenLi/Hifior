@@ -60,9 +60,9 @@ namespace RPGEditor
             chapter.Icon = (Sprite)EditorGUILayout.ObjectField("图标", chapter.Icon, typeof(Sprite), false);
 
             chapter.MaxPlayerCount = EditorGUILayout.IntSlider("最大出场人数", chapter.MaxPlayerCount, 1, 20);
-            string[] displayCharacterNames = RPGData.CharacterNameList.ToArray();
-            int[] valueCharacterNames = EnumTables.GetSequentialArray(RPGData.CharacterNameList.Count);
-            RPGEditorGUI.DynamicArrayView(ref forceInvolveCount, ref chapter.ForceInvolve, "强制出场人数", "强制出场人物", displayCharacterNames, valueCharacterNames);
+            string[] displayPlayerNames = RPGData.PlayerNameList.ToArray();
+            int[] valuePlayerNames = EnumTables.GetSequentialArray(RPGData.PlayerNameList.Count);
+            RPGEditorGUI.DynamicArrayView(ref forceInvolveCount, ref chapter.ForceInvolve, "强制出场人数", "强制出场人物", displayPlayerNames, valuePlayerNames, chapter.MaxPlayerCount);
 
             chapter.Weather = (EnumWeather)EditorGUILayout.EnumPopup("默认天气", chapter.Weather);
             chapter.Preparation = EditorGUILayout.Toggle("是否有准备画面", chapter.Preparation);

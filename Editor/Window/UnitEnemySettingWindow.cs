@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 namespace RPGEditor
 {
-    public class UnitEnemySettingWindow : EditorWindow
+    public class EnemyUnitSettingWindow : EditorWindow
     {
         /// <summary>
         /// 修改还是添加
@@ -72,7 +72,7 @@ namespace RPGEditor
         static void OpenWindow()
         {
             IsShowing = true;
-            UnitEnemySettingWindow mapEditor = EditorWindow.GetWindow<UnitEnemySettingWindow>();
+            EnemyUnitSettingWindow mapEditor = EditorWindow.GetWindow<EnemyUnitSettingWindow>();
             mapEditor.ShowPopup();
             if (EnemyDefList.Count == 0)
             {
@@ -118,7 +118,7 @@ namespace RPGEditor
                 {
                     EnemyUnitSetting.EnemyUnit previousUnit = UnitSetting.GetUnit(previousX, previousY);
                     int i = UnitSetting.Units.IndexOf(previousUnit);
-                    if (i>=0)
+                    if (i >= 0)
                     {
                         UnitSetting.Units.RemoveAt(i);
                         UnitSetting.Units.Insert(i, new EnemyUnitSetting.EnemyUnit(unit.Coord, unit.Enemy));
@@ -138,6 +138,7 @@ namespace RPGEditor
             RPGEditorGUI.DrawVerticalLine(2, Color.black);
             ShowEnemyDefContent();
             EditorGUILayout.EndHorizontal();
+            Undo.RecordObject(UnitSetting, "EnemyUnitSetting");
         }
         void ShowEnemyDefList()
         {
@@ -219,7 +220,7 @@ namespace RPGEditor
             }
             else
             {
-                if(unit.Coord!=new Point2D(previousX, previousY))
+                if (unit.Coord != new Point2D(previousX, previousY))
                 {
                     if (UnitSetting.Contains(unit.Coord))
                         return false;

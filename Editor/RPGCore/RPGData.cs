@@ -6,7 +6,7 @@ namespace RPGEditor
 {
     public class RPGData : Editor
     {
-        public static List<string> CharacterNameList = new List<string>();
+        public static List<string> PlayerNameList = new List<string>();
         public static List<string> CareerNameList = new List<string>();
         public static List<string> WeaponNameList = new List<string>();
         public static List<string> PropNameList = new List<string>();
@@ -19,12 +19,12 @@ namespace RPGEditor
         [MenuItem("RPGEditor/RefreshDataBase", false, 100)]
         public static void RefreshDataBase()
         {
-            CharacterNameList.Clear();
+            PlayerNameList.Clear();
             CareerNameList.Clear();
             WeaponNameList.Clear();
             PropNameList.Clear();
 
-            RefreshData(PlayerDefEditor.DIRECTORY_PATH, CharacterNameList, (string s) => { return AssetDatabase.LoadAssetAtPath<CharacterDef>(s).CommonProperty.Name; });
+            RefreshData(PlayerDefEditor.DIRECTORY_PATH, PlayerNameList, (string s) => { return AssetDatabase.LoadAssetAtPath<CharacterDef>(s).CommonProperty.Name; });
             RefreshData(CareerDefEditor.DIRECTORY_PATH, CareerNameList, (string s) => { return AssetDatabase.LoadAssetAtPath<CareerDef>(s).CommonProperty.Name; });
             RefreshData(WeaponDefEditor.DIRECTORY_PATH, WeaponNameList, (string s) => { return AssetDatabase.LoadAssetAtPath<WeaponDef>(s).CommonProperty.Name; });
             RefreshData(PropsDefEditor.DIRECTORY_PATH, PropNameList, (string s) => { return AssetDatabase.LoadAssetAtPath<PropsDef>(s).CommonProperty.Name; });

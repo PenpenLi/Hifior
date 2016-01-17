@@ -86,6 +86,7 @@ namespace RPGEditor
                     }
                 }
             }
+            Undo.RecordObject(unitSetting, "EnemyUnitSetting");
             GUILayout.EndArea();
             Handles.EndGUI();
         }
@@ -93,16 +94,16 @@ namespace RPGEditor
         {
             if ((int)userData == 0)
             {
-                UnitEnemySettingWindow.OpenAddEnemyWindow(x, y, unitSetting);
+                EnemyUnitSettingWindow.OpenAddEnemyWindow(x, y, unitSetting);
             }
         }
         void OnSetUnit()
         {
             EnemyDef def = unitSetting.GetDef(x, y);
             if (def == null)
-                UnitEnemySettingWindow.OpenSetEnemyWindow(x, y, unitSetting, def, 0);
+                EnemyUnitSettingWindow.OpenSetEnemyWindow(x, y, unitSetting, def, 0);
             else
-                UnitEnemySettingWindow.OpenSetEnemyWindow(x, y, unitSetting, def, def.CommonProperty.ID);
+                EnemyUnitSettingWindow.OpenSetEnemyWindow(x, y, unitSetting, def, def.CommonProperty.ID);
         }
         void OnCopy()
         {

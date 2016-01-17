@@ -913,9 +913,9 @@ namespace RPGEditor
         /// <param name="child"></param>
         /// <param name="displayOptions"></param>
         /// <param name="optionValues"></param>
-        public static void DynamicArrayView(ref int size, ref List<int> IDlist, string caption, string child,string[] displayOptions,int []optionValues)
+        public static void DynamicArrayView(ref int size, ref List<int> IDlist, string caption, string child,string[] displayOptions,int []optionValues,int maxSize=20)
         {
-            size = EditorGUILayout.IntSlider(caption, size, 0, 20);
+            size = EditorGUILayout.IntSlider(caption, size, 0, maxSize);
             EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();

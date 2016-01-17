@@ -85,7 +85,7 @@ public class EnemyUnitSetting : MonoBehaviour
             if (u.Enemy == null)
                 GizmosUtil.GizmosDrawRect(5 + u.Coord.x * 10, 5 + u.Coord.y * 10, 10f, 10, 10, Color.red);
             else
-                GizmosUtil.GizmosDrawRect(5 + u.Coord.x * 10, 5 + u.Coord.y * 10, 10f, 10, 10, Color.cyan);
+                GizmosUtil.GizmosDrawRect(5 + u.Coord.x * 10, 5 + u.Coord.y * 10, 10f, 10, 10, Color.gray);
         }
     }
 }
