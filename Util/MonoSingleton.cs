@@ -4,7 +4,7 @@ using System.Collections.Generic;
 /// 继承该类的脚本只应当在一个场景中出现一个实例,该物体也不会随着场景的载入而销毁
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class MonoSingleton<T> : MonoBehaviour where T : class
+public class MonoSingleton<T> : UActor where T : class
 {
     public static T Instance
     {
