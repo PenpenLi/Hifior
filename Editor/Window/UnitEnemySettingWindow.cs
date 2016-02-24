@@ -191,7 +191,7 @@ namespace RPGEditor
             unit.Enemy.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", unit.Enemy.DefaultAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", unit.Enemy.DefaultAttribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", unit.Enemy.DefaultAttribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.Lucky = EditorGUILayout.IntSlider("幸运", unit.Enemy.DefaultAttribute.Lucky, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", unit.Enemy.DefaultAttribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", unit.Enemy.DefaultAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", unit.Enemy.DefaultAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", unit.Enemy.DefaultAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);

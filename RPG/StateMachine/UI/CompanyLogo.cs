@@ -12,12 +12,12 @@ namespace FSM
         {
             stateID = StateID.CompanyLogo;
         }
-        public override void Act(FSMManage Manager)
+        public override void Act(UGameState Manager)
         {
             time += Time.deltaTime;
         }
 
-        public override void Reason(FSMManage Manager)
+        public override void Reason(UGameState Manager)
         {
             if (time > TRANSITION_TIME)
             {
@@ -26,14 +26,13 @@ namespace FSM
             }
         }
         
-        public override void DoBeforeLeaving(FSMManage Manager)
+        public override void DoBeforeLeaving(UGameState Manager)
         {
-            base.DoBeforeLeaving(Manager);
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         }
-        public override void DoBeforeEntering(FSMManage Manager)
+
+        public override void DoBeforeEntering(UGameState Manager)
         {
-            base.DoBeforeEntering(Manager);
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
     }

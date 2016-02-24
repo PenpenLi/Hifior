@@ -9,7 +9,7 @@ public class pawn1 : UPawn {
     }
     public override void SetupPlayerInputComponent(UInputComponent InInputComponent)
     {
-        InInputComponent.BindAction("Jump", InputActionType.IE_Released, OnJump);
+        InInputComponent.BindAction("Jump", EInputActionType.IE_Released, OnJump);
     }
     void OnJump()
     {

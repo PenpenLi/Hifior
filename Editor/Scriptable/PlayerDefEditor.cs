@@ -79,7 +79,7 @@ namespace RPGEditor
                 player.DefaultAttributeGrow.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", player.DefaultAttributeGrow.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 player.DefaultAttributeGrow.Skill = EditorGUILayout.IntSlider("技术", player.DefaultAttributeGrow.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 player.DefaultAttributeGrow.Speed = EditorGUILayout.IntSlider("速度", player.DefaultAttributeGrow.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                player.DefaultAttributeGrow.Lucky = EditorGUILayout.IntSlider("幸运", player.DefaultAttributeGrow.Lucky, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                player.DefaultAttributeGrow.Luck = EditorGUILayout.IntSlider("幸运", player.DefaultAttributeGrow.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 player.DefaultAttributeGrow.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", player.DefaultAttributeGrow.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 player.DefaultAttributeGrow.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", player.DefaultAttributeGrow.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 player.DefaultAttributeGrow.Movement = EditorGUILayout.IntSlider("移动", player.DefaultAttributeGrow.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);

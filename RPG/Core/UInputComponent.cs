@@ -2,12 +2,6 @@
 using UnityEngine.Events;
 using System.Collections.Generic;
 
-public enum InputActionType
-{
-    IE_Clicked,
-    IE_Pressed,
-    IE_Released
-}
 public class UInputComponent
 {
     public string Name
@@ -15,13 +9,18 @@ public class UInputComponent
         get;
         private set;
     }
+    public int Priority;
+    public bool bBlockInput;
+    UActor Actor;
     private Dictionary<string, UnityAction> InputClickedAction;
     private Dictionary<string, UnityAction> InputPressedAction;
     private Dictionary<string, UnityAction> InputReleasedAction;
     private Dictionary<string, UnityAction<float>> InputAxis;
-    public UInputComponent(string InputName)
+    public UInputComponent(UActor InActor, string InputName)
     {
+        Actor = InActor;
         Name = InputName;
+        bBlockInput = false;
         InputClickedAction = new Dictionary<string, UnityAction>();
         InputPressedAction = new Dictionary<string, UnityAction>();
         InputReleasedAction = new Dictionary<string, UnityAction>();
@@ -29,26 +28,37 @@ public class UInputComponent
     }
     ~UInputComponent()
     {
-        Clear();
+        ClearBindingValues();
     }
-    public void Clear()
+    public void ClearBindingValues()
     {
         InputClickedAction.Clear();
         InputPressedAction.Clear();
         InputReleasedAction.Clear();
         InputAxis.Clear();
     }
-    public void BindAction(string KeyName, InputActionType ActionType, UnityAction ActionDelegate)
+    public bool HasBindings()
+    {
+        return (InputClickedAction.Count > 0
+            || InputPressedAction.Count > 0
+            || InputReleasedAction.Count > 0
+            || InputAxis.Count > 0);
+    }
+    public float GetAxisValue(string AxisName)
+    {
+        return Input.GetAxis(AxisName);
+    }
+    public void BindAction(string KeyName, EInputActionType ActionType, UnityAction ActionDelegate)
     {
         switch (ActionType)
         {
-            case InputActionType.IE_Clicked:
+            case EInputActionType.IE_Clicked:
                 InputClickedAction.Add(KeyName, ActionDelegate);
                 break;
-            case InputActionType.IE_Pressed:
+            case EInputActionType.IE_Pressed:
                 InputPressedAction.Add(KeyName, ActionDelegate);
                 break;
-            case InputActionType.IE_Released:
+            case EInputActionType.IE_Released:
                 InputReleasedAction.Add(KeyName, ActionDelegate);
                 break;
         }
@@ -57,8 +67,10 @@ public class UInputComponent
     {
         InputAxis.Add(KeyName, ActionDelegate);
     }
-    public void TickInput()
+    public void TickPlayerInput()
     {
+        if (bBlockInput)
+            return;
         foreach (string KeyAction in InputClickedAction.Keys)
         {
             if (Input.GetButton(KeyAction))
@@ -79,5 +91,24 @@ public class UInputComponent
             float axis = Input.GetAxis(KeyAxis);
             InputAxis[KeyAxis](axis);
         }
+    }
+    UnityAction GetActionBinding(EInputActionType ActionType, string ActionName)
+    {
+        switch (ActionType)
+        {
+            case EInputActionType.IE_Clicked:
+                if (InputClickedAction.ContainsKey(ActionName))
+                    return InputClickedAction[ActionName];
+                break;
+            case EInputActionType.IE_Pressed:
+                if (InputPressedAction.ContainsKey(ActionName))
+                    return InputPressedAction[ActionName];
+                break;
+            case EInputActionType.IE_Released:
+                if (InputReleasedAction.ContainsKey(ActionName))
+                    return InputReleasedAction[ActionName];
+                break;
+        }
+        return null;
     }
 }

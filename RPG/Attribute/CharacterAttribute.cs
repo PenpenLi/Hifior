@@ -7,7 +7,7 @@ public class CharacterAttribute
     public int MagicalPower;
     public int Skill;
     public int Speed;
-    public int Lucky;
+    public int Luck;
     public int PhysicalDefense;
     public int MagicalDefense;
     public int Movement;
@@ -18,7 +18,7 @@ public class CharacterAttribute
         MagicalPower = 60;
         Skill = 60;
         Speed = 60;
-        Lucky = 60;
+        Luck = 60;
         PhysicalDefense = 60;
         MagicalDefense = 60;
         Movement = 12;

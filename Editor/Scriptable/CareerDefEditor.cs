@@ -86,7 +86,7 @@ namespace RPGEditor
                 career.MaxAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", career.MaxAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 career.MaxAttribute.Skill = EditorGUILayout.IntSlider("技术", career.MaxAttribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 career.MaxAttribute.Speed = EditorGUILayout.IntSlider("速度", career.MaxAttribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                career.MaxAttribute.Lucky = EditorGUILayout.IntSlider("幸运", career.MaxAttribute.Lucky, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                career.MaxAttribute.Luck = EditorGUILayout.IntSlider("幸运", career.MaxAttribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 career.MaxAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", career.MaxAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 career.MaxAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", career.MaxAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 career.MaxAttribute.Movement = EditorGUILayout.IntSlider("移动", career.MaxAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 /// <summary>
 /// 自游戏开始到游戏结束一直存在的一个对象，用于数据的交换，可以被所有的对象获取到
 /// 在一个空物体中创建该物体
@@ -7,6 +8,9 @@ using System.Collections.Generic;
 public class UGameInstance : MonoSingleton<UGameInstance>
 {
     private UGameMode ActiveGameMode;
+    private List<UPawn> LocalPlayers = new List<UPawn>();
+    private List<UPawn> LocalEnemies = new List<UPawn>();
+    private List<UPawn> LocalPlayerAllys = new List<UPawn>();
 
     public new T GetGameMode<T>() where T : UGameMode
     {
@@ -30,10 +34,7 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     }
 
     /** virtual function to allow custom GameInstances an opportunity to set up what it needs */
-    public virtual void Init()
-    {
-
-    }
+    public virtual void Init() { }
 
     /** virtual function to allow custom GameInstances an opportunity to do cleanup when shutting down */
     public virtual void Shutdown() { }
@@ -77,17 +78,42 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         return true;
     }
 
-    public int GetNumLocalPlayers() { return 0; }
-    public UPawn GetLocalPlayerByIndex(int Index) { return null; }
-    public UPlayerController GetFirstLocalPlayerController() { return null; }
-    public UPawn FindLocalPlayerFromControllerId(int ControllerId) { return null; }
-    public UPawn GetFirstGamePlayer() { return null; }
-    List<UPawn>.Enumerator GetLocalPlayerIterator() { return new List<UPawn>.Enumerator(); }
-    List<UPawn> GetLocalPlayers() { return null; }
+    public int GetNumLocalPlayers()
+    {
+        return LocalPlayers.Count;
+    }
+    public UPawn GetFirstGamePlayer()
+    {
+        if (LocalPlayers.Count > 0)
+            return LocalPlayers[0];
+        Debug.LogError("No Player exists");
+        return null;
+    }
+    public UPawn GetLocalPlayerByIndex(int Index)
+    {
+        if (LocalPlayers.Count <= Index)
+        {
+            Debug.LogError("The Index Player don't exists");
+            return null;
+        }
+        if (LocalPlayers[Index] == null)
+        {
+            Debug.LogError("Null Pawn");
+        }
+        return LocalPlayers[Index];
+    }
+    public UPlayerController GetFirstLocalPlayerController()
+    {
+        return GetFirstGamePlayer().GetPlayerController<UPlayerController>();
+    }
+    List<UPawn> GetLocalPlayers()
+    {
+        return LocalPlayers;
+    }
 
     public void SetGameMode(UGameMode GameMode)
     {
-        UnityEngine.Assertions.Assert.IsNotNull<UGameMode>(GameMode,"The GameMode you assign is null");
+        UnityEngine.Assertions.Assert.IsNotNull<UGameMode>(GameMode, "The GameMode you assign is null");
         ActiveGameMode = GameMode;
     }
     protected override void Awake()

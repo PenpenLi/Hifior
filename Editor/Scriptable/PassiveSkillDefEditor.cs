@@ -46,7 +46,7 @@ namespace RPGEditor
                 passiveSkill.AttributeChange.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", passiveSkill.AttributeChange.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 passiveSkill.AttributeChange.Skill = EditorGUILayout.IntSlider("技术", passiveSkill.AttributeChange.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 passiveSkill.AttributeChange.Speed = EditorGUILayout.IntSlider("速度", passiveSkill.AttributeChange.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                passiveSkill.AttributeChange.Lucky = EditorGUILayout.IntSlider("幸运", passiveSkill.AttributeChange.Lucky, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                passiveSkill.AttributeChange.Luck = EditorGUILayout.IntSlider("幸运", passiveSkill.AttributeChange.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 passiveSkill.AttributeChange.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", passiveSkill.AttributeChange.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 passiveSkill.AttributeChange.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", passiveSkill.AttributeChange.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 passiveSkill.AttributeChange.Movement = EditorGUILayout.IntSlider("移动", passiveSkill.AttributeChange.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);

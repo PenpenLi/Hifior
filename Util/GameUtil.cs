@@ -35,6 +35,7 @@ namespace Utils
         {
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
         }
+        
         public static void Quit()
         {
 #if (UNITY_EDITOR)

@@ -11,7 +11,7 @@ public class UController : UActor
     private UPawn OldPawn;
 
     /** PlayerState containing replicated information about the player using this controller (only exists for players, not NPCs). */
-    UPlayerController PlayerState;
+    public UPlayerState PlayerState;
 
     public virtual void SetInitialLocationAndRotation(Vector3 NewLocation, Quaternion NewRotation) { }
 

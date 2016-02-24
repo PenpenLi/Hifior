@@ -8,6 +8,7 @@ public class NewBehaviourScript : UActor
     public override void BeginPlay()
     {
         P = Instantiate<pawn1>(P);
+        P.transform.parent = GetGameMode<UGameMode>().transform;
         GetPlayerController<UPlayerController>().Possess(P);
         Invoke("ff", 10.0f);
     }

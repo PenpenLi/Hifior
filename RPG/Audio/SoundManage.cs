@@ -82,7 +82,7 @@ public class SoundManage : MonoSingleton<SoundManage>
     {
         if (index > effects.Length)
             return;
-        AudioSource asource = MiscUtil.GetComponentWeatherExists<AudioSource>(obj);
+        AudioSource asource = MiscUtil.GetComponentNotNull<AudioSource>(obj);
         asource.outputAudioMixerGroup = _3DEffectGroup;
         asource.PlayOneShot(effects[index]);
     }

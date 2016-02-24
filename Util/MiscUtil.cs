@@ -29,7 +29,7 @@ namespace Utils
         /// <typeparam name="T"></typeparam>
         /// <param name="gameObject"></param>
         /// <returns></returns>
-        public static T GetComponentWeatherExists<T>(GameObject gameObject) where T : Component
+        public static T GetComponentNotNull<T>(GameObject gameObject) where T : Component
         {
             T component = gameObject.GetComponent<T>();
             if (component == null)
