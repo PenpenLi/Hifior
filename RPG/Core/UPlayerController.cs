@@ -48,7 +48,7 @@ public class UPlayerController : UController
         return PlayerName;
     }
     /** Trys to set the player's name to the given name. */
-    public virtual void SetName(string S)
+    public override void SetName(string S)
     {
         PlayerName = S;
     }

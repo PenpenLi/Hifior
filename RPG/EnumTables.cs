@@ -1,5 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+public enum EnumTileOccupy
+{
+    Player,
+    Enemy,
+    NPC
+}
 public enum EnumEnemyActionAI
 {
     /// <summary>

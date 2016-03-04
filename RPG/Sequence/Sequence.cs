@@ -1,0 +1,216 @@
+﻿using System.Collections.Generic;
+using System.Collections;
+using UnityEngine;
+using System;
+public class Sequence : MonoBehaviour
+{
+    [ExecuteInEditMode]
+    public enum ExecutionState
+    {
+        Idle,
+        Executing,
+    }
+
+    [NonSerialized]
+    public ExecutionState executionState;
+
+    [HideInInspector]
+    public int ItemId = -1;
+    [Tooltip("The name of the Sequence")]
+    public string SequenceName = "New Block";
+
+    [TextArea(2, 5)]
+    [Tooltip("Description text to display under the Sequence")]
+    public string description = "";
+
+    [Tooltip("An optional Event Handler which can execute the block when an event occurs")]
+    public EventHandler eventHandler;
+
+    [HideInInspector]
+    [System.NonSerialized]
+    public SequenceEvent ActiveEvent;
+
+    // Index of last command executed before the current one
+    // -1 indicates no previous command
+    [HideInInspector]
+    [System.NonSerialized]
+    public int previousActiveSequenceEventIndex = -1;
+
+    [HideInInspector]
+    [System.NonSerialized]
+    public float executingIconTimer;
+
+    [HideInInspector]
+    public List<SequenceEvent> commandList = new List<SequenceEvent>();
+
+    protected int executionCount;
+
+    /**
+     * Duration of fade for executing icon displayed beside blocks & commands.
+     */
+    public const float executingIconFadeTime = 0.5f;
+
+    /**
+     * Controls the next command to execute in the block execution coroutine.
+     */
+    [NonSerialized]
+    public int jumpToSequenceEventIndex = -1;
+
+    protected virtual void Awake()
+    {
+        // Give each child command a reference back to its parent block
+        // and tell each command its index in the list.
+        int index = 0;
+        foreach (SequenceEvent command in commandList)
+        {
+            if (command == null)
+            {
+                continue;
+            }
+
+            command.RootSequence = this;
+            command.commandIndex = index++;
+        }
+    }
+
+#if UNITY_EDITOR
+    // The user can modify the command list order while playing in the editor,
+    // so we keep the command indices updated every frame. There's no need to
+    // do this in player builds so we compile this bit out for those builds.
+    void Update()
+    {
+        int index = 0;
+        foreach (SequenceEvent command in commandList)
+        {
+            if (command == null) // Null entry will be deleted automatically later
+            {
+                continue;
+            }
+
+            command.commandIndex = index++;
+        }
+    }
+#endif
+
+    public virtual bool HasError()
+    {
+        foreach (SequenceEvent command in commandList)
+        {
+            if (command.ErrorMessage.Length > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public virtual bool IsExecuting()
+    {
+        return (executionState == ExecutionState.Executing);
+    }
+
+    public virtual int GetExecutionCount()
+    {
+        return executionCount;
+    }
+
+    public virtual bool Execute(Action onComplete = null)
+    {
+        if (executionState != ExecutionState.Idle)
+        {
+            return false;
+        }
+
+        executionCount++;
+        StartCoroutine(ExecuteBlock(onComplete));
+
+        return true;
+    }
+
+    protected virtual IEnumerator ExecuteBlock(Action onComplete = null)
+    {
+        executionState = ExecutionState.Executing;
+
+        int i = 0;
+        while (true)
+        {
+            // Executing commands specify the next command to skip to by setting jumpToSequenceEventIndex using SequenceEvent.Continue()
+            if (jumpToSequenceEventIndex > -1)
+            {
+                i = jumpToSequenceEventIndex;
+                jumpToSequenceEventIndex = -1;
+            }
+
+            // Skip disabled commands, comments and labels
+            while (i < commandList.Count && !commandList[i].enabled)
+            {
+                i = commandList[i].commandIndex + 1;
+            }
+
+            if (i >= commandList.Count)
+            {
+                break;
+            }
+
+            // The previous active command is needed for if / else / else if commands
+            if (ActiveEvent == null)
+            {
+                previousActiveSequenceEventIndex = -1;
+            }
+            else
+            {
+                previousActiveSequenceEventIndex = ActiveEvent.commandIndex;
+            }
+
+            SequenceEvent command = commandList[i];
+            ActiveEvent = command;
+
+            command.isExecuting = true;
+            // This icon timer is managed by the FlowchartWindow class, but we also need to
+            // set it here in case a command starts and finishes execution before the next window update.
+            command.executingIconTimer = Time.realtimeSinceStartup + executingIconFadeTime;
+            command.Execute();
+
+            // Wait until the executing command sets another command to jump to via SequenceEvent.Continue()
+            while (jumpToSequenceEventIndex == -1)
+            {
+                yield return null;
+            }
+
+            command.isExecuting = false;
+        }
+
+        executionState = ExecutionState.Idle;
+        ActiveEvent = null;
+
+        if (onComplete != null)
+        {
+            onComplete();
+        }
+    }
+
+    public virtual void Stop()
+    {
+        // Tell the executing command to stop immediately
+        if (ActiveEvent != null)
+        {
+            ActiveEvent.isExecuting = false;
+            ActiveEvent.OnStopExecuting();
+        }
+
+        // This will cause the execution loop to break on the next iteration
+        jumpToSequenceEventIndex = int.MaxValue;
+    }
+
+    public virtual System.Type GetPreviousActiveSequenceEventType()
+    {
+        if (previousActiveSequenceEventIndex >= 0 &&
+            previousActiveSequenceEventIndex < commandList.Count)
+        {
+            return commandList[previousActiveSequenceEventIndex].GetType();
+        }
+
+        return null;
+    }
+}
