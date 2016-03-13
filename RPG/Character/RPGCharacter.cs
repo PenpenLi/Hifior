@@ -1,90 +1,44 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
+using System.Collections;
 
-public class RPGCharacter : UPawn
+public class RPGCharacter : RPGCharacterBase
 {
-    protected int Career;
-    protected int Level;
-    protected CharacterDef Definition;
-    protected CharacterAttribute Attribute;
-    public virtual void SetDefaultData(CharacterDef DefaultData)
-    {
-        Definition = DefaultData;
-    }
-    public string GetCharacterName()
-    {
-        return Definition.CommonProperty.Name;
-    }
-    public int GetCharacterID()
-    {
-        return Definition.CommonProperty.ID;
-    }
-    public string GetDescription()
-    {
-        return Definition.CommonProperty.Description;
-    }
-    public Sprite GetSprite()
-    {
-        return Definition.Portrait;
-    }
-    public GameObject GetStaticMesh()
-    {
-        return Definition.BattleModel;
-    }
-    public EnumCharacterImportance Importance
-    {
-        get
-        {
-            return Definition.CharacterImportance;
-        }
-    }
-    public int GetDefaultCareer()
-    {
-        return Definition.Career;
-    }
-    public CharacterAttribute GetDefaultAttribute()
-    {
-        return Definition.DefaultAttribute;
-    }
-    public virtual int GetLevel()
-    {
-        return Level;
-    }
+    public ItemGroup Item;
 
-    public int GetHP()
+    protected Animator anim;
+    [SerializeField]
+    protected bool bRunning = false;//是否在移动中
+
+    protected int damageCount = 0;//收到伤害和造成伤害的次数
+    [SerializeField]
+    protected Point2D tileCoords;
+    public RPGCharacter()
     {
-        return Attribute.HP;
+        Item = new ItemGroup(base.Attribute);
     }
-    public int GetPhysicalPower()
+    public Point2D GetTileCoord()
     {
-        return Attribute.PhysicalPower;
+        return tileCoords;
     }
-    public int GetMagicalPower()
+    public void SetTileCoord(int x,int y)
     {
-        return Attribute.MagicalPower;
+        tileCoords.x = x;
+        tileCoords.y = y;
     }
-    public int GetSkill()
+    public bool IsRunning()
     {
-        return Attribute.Skill;
+        return bRunning;
     }
-    public int GetSpeed()
+    public virtual void Run()
     {
-        return Attribute.Speed;
+        bRunning = true;
     }
-    public int GetLuck()
+    public virtual void StopRun()
     {
-        return Attribute.Luck;
+        bRunning = false;
     }
-    public int GetPhysicalDefense()
+    public int GetCareer()
     {
-        return Attribute.PhysicalDefense;
-    }
-    public int GetMagicalDefense()
-    {
-        return Attribute.MagicalDefense;
-    }
-    public int GetMovement()
-    {
-        return Attribute.Movement;
+        return 0;
     }
 }

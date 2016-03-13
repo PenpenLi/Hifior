@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 3195968178
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 7f7ec7f0cff4cdcfdb12628407e41a66
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: f979bb77abd876419d6354d05b41760e
+HashAppended: 0
+ClassTypes:
+- Class: 114
+  Script: {fileID: 11500000, guid: 890966e1438a83241baf607338a83f84, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/RPG Data/Map/TileProperty.asset
+Dependencies: []

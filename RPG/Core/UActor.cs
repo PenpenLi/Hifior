@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 /// <summary>
 /// 所有实体的基类
 /// </summary>
@@ -53,6 +54,14 @@ public class UActor : MonoBehaviour
     public void SetActorTickEnabled(bool bEnabled)
     {
         bCanEverTick = bEnabled;
+    }
+    public void BindAction(string KeyName, EInputActionType ActionType, UnityAction ActionDelegate)
+    {
+        InputComponent.BindAction(KeyName, ActionType, ActionDelegate);
+    }
+    public void BindAxis(string KeyName, UnityAction<float> ActionDelegate)
+    {
+        InputComponent.BindAxis(KeyName, ActionDelegate);
     }
     public virtual void EnableInput(UPlayerController PlayerController)
     {

@@ -12,10 +12,10 @@ public class MonoSingleton<T> : UActor where T : class
         private set;
     }
 
-    protected virtual void Awake()
+    public virtual void Awake()
     {
-        DontDestroyOnLoad(this);
         Instance = this as T;
+        DontDestroyOnLoad(this);
     }
     public MonoSingleton()
     {

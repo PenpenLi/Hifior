@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 4216485286
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 5d48834957b54d9cebc23af2cccb668f
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 690c1c6834f43ca3c894f068dda62598
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: e9a07d653f6d1004795091440c5b3320, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/RPG Data/Career/0.asset
+- Assets/RPG Data/Career/1.asset
+Dependencies: []

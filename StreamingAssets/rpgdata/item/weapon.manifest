@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 1130876887
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 93d9b66375a8f26cdf0bba8bc0ce4eeb
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 1df13679c065e7da71c62365d214b3f1
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8921699f4b3b777458d1de2ed83e7d27, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/RPG Data/Item/Weapon/1.asset
+- Assets/RPG Data/Item/Weapon/0.asset
+Dependencies: []

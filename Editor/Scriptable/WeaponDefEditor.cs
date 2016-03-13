@@ -11,7 +11,7 @@ namespace RPGEditor
         private static bool foldout_Range = true;
         private static bool foldout_AdditionalAttribute = true;
         private static bool foldout_AdditionalAttiburteGrow = true;
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Items/Weapon";
+        public const string DIRECTORY_PATH = "Assets/RPG Data/Item/Weapon";
         [MenuItem("RPGEditor/Create Items/Weapon", false)]
         public static WeaponDef CreateWeapon()
         {

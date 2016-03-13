@@ -19,3 +19,10 @@
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+*.tiff
+*.psd
+*.mp3
+*.ogg
+*.ogv
+*.FBX
+*.fbx

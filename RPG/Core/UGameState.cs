@@ -2,13 +2,15 @@
 using System.Collections;
 using FSM;
 /// <summary>
-/// 保存当前GameMode下的一些数据
+/// 保存当前GameMode下的一些数据,状态机在这个里面
 /// </summary>
 public class UGameState : UActor
 {
     public GameObject CurrentPlayer { private set; get; }//当前操作的角色
     public string CurrentStateOnInspector;
     private FSMSystem fsm = new FSMSystem();//内置一个fsm
+    private DoOnce onceLogNullFSM = new DoOnce(() => { Utils.Log.Write("当前状态机的状态为空"); });
+
     public void SetTickInterval(float Interval = 0.2f)
     {
         Time.fixedDeltaTime = Interval;
@@ -28,11 +30,11 @@ public class UGameState : UActor
     /// </summary>
     public virtual void MakeFSM()
     {
-        CompanyLogo companyLogo = new CompanyLogo();
+        /*CompanyLogo companyLogo = new CompanyLogo();
         AddState(companyLogo, Transition.StartGameMenu, StateID.StartGameMenu);
 
         MainMenu mainMenu = new MainMenu();
-        AddState(mainMenu, Transition.ShowStartMovie, StateID.StartMovie);
+        AddState(mainMenu, Transition.ShowStartMovie, StateID.StartMovie);*/
     }
     public override void BeginPlay()
     {
@@ -45,6 +47,11 @@ public class UGameState : UActor
     /// </summary>
     public void FixedUpdate()
     {
+        if (fsm.CurrentState == null)
+        {
+            onceLogNullFSM.Execute();
+            return;
+        }
         fsm.CurrentState.Reason(this);
         fsm.CurrentState.Act(this);
     }

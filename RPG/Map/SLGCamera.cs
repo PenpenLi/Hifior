@@ -3,8 +3,8 @@ using System.Collections;
 public class SLGCamera : MonoBehaviour
 {
     private const float DEFAULT_CAMERA_HEIGHT = 17.0f;
-    public float smoothTime;				// how smooth the camera movement is
-   
+    public float smoothTime;                // how smooth the camera movement is
+
     public float moveSpeed = 7.0f;
 
 
@@ -29,23 +29,23 @@ public class SLGCamera : MonoBehaviour
     //边界最小值  
     private float widthBorder = Screen.width / 10;
     private float heightBorder = Screen.height / 10;
-    void Update()
+    void FixedUpdate()
     {
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             if (Camera.main.fieldOfView <= 45.0f)
                 Camera.main.fieldOfView += 3.0f;
-            if (Camera.main.orthographicSize <= 6.0f)
-                Camera.main.orthographicSize += 0.2f;
+            if (Camera.main.orthographicSize <= 40.0f)
+                Camera.main.orthographicSize += 0.5f;
         }
         //Zoom in
         if (Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             if (Camera.main.fieldOfView > 15.0f)
                 Camera.main.fieldOfView -= 3.0f;
-            if (Camera.main.orthographicSize >= 2.5)
-                Camera.main.orthographicSize -= 0.2f;
+            if (Camera.main.orthographicSize >= 20f)
+                Camera.main.orthographicSize -= 0.5f;
         }
 
     }
@@ -97,4 +97,4 @@ public class SLGCamera : MonoBehaviour
         }
     }
 }
-    
+

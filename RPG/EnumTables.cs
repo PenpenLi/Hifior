@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-public enum EnumTileOccupy
+public enum EnumCharacterCamp
 {
     Player,
     Enemy,
     NPC
 }
+
 public enum EnumEnemyActionAI
 {
     /// <summary>
@@ -197,10 +198,11 @@ public enum EnumWeaponLevel
 }
 public enum EnumWeaponRangeType
 {
-    中心菱形,
-    正方形,
+    菱形菱形,
     十字形,
-    菱形菱形
+    正方形,
+    中心菱形,
+    扇形,
 }
 public enum EnumWeaponAttackEffectType
 {

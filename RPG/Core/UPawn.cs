@@ -29,7 +29,13 @@ public class UPawn : UActor
         InputComponent.bBlockInput = !bInputEnabled;
     }
     public virtual void Reset() { }
-    public virtual void SetupPlayerInputComponent(UInputComponent InInputComponent) { }
+    public virtual void SetupPlayerInputComponent(UInputComponent InInputComponent)
+    {
+        if (InputComponent == null)
+        {
+            InputComponent = new UInputComponent(this, "Pawn_InputComponent0");
+        }
+    }
     public override void SetName(string s)
     {
         PawnName = s;
@@ -49,14 +55,6 @@ public class UPawn : UActor
             InputComponent.ClearBindingValues();
             InputComponent = null;
         }
-    }
-    public void BindAction(string KeyName, EInputActionType ActionType, UnityAction ActionDelegate)
-    {
-        InputComponent.BindAction(KeyName, ActionType, ActionDelegate);
-    }
-    public void BindAxisBindAxis(string KeyName, UnityAction<float> ActionDelegate)
-    {
-        InputComponent.BindAxis(KeyName, ActionDelegate);
     }
 
     public void PossessedBy(UController NewController)
@@ -112,6 +110,22 @@ public class UPawn : UActor
         else
         {
             Debug.LogError("DisableInput can only be specified on a Pawn for its Controller");
+        }
+    }
+
+    public bool IsAnimating()
+    {
+        return GetComponent<Animation>().isPlaying;
+    }
+
+    public void ChangeSkinColor(Color c)
+    {
+        SkinnedMeshRenderer[] smr = GetComponentsInChildren<SkinnedMeshRenderer>();
+        if (smr == null)
+            return;
+        foreach (SkinnedMeshRenderer sr in smr)
+        {
+            sr.material.color = c;
         }
     }
 }

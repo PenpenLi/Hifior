@@ -95,14 +95,6 @@ public class UPlayerController : UController
             bInputEnabled = false;
         }
     }
-    public void BindAction(string KeyName, EInputActionType ActionType, UnityAction ActionDelegate)
-    {
-        InputComponent.BindAction(KeyName, ActionType, ActionDelegate);
-    }
-    public void BindAxisBindAxis(string KeyName, UnityAction<float> ActionDelegate)
-    {
-        InputComponent.BindAxis(KeyName, ActionDelegate);
-    }
     public void PushInputComponent(UInputComponent InputComponent)
     {
         if (InputComponent != null)

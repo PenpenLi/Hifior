@@ -64,7 +64,7 @@ namespace RPGEditor
 
                     if (Physics.Raycast(ray, out rayHit))
                     {
-                        Point2D p = SLGMap.Vector3ToPoint2D(rayHit.point);
+                        Point2D p = Point2D.Vector3ToPoint2D(rayHit.point);
 
                         x = Mathf.Clamp(p.x, 0, int.MaxValue);
                         y = Mathf.Clamp(p.y, 0, int.MaxValue);

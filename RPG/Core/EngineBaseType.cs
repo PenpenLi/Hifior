@@ -28,8 +28,3 @@ public enum ESceneState
     Battle,
     GameOver
 }
-public interface ISaveLoad
-{
-    void LoadData();
-    void SaveData();
-}

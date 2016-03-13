@@ -5,9 +5,8 @@ public class PositionGrid : MonoBehaviour
 {
     public int x;
     public int y;
-    public float cellSize = 1;
-    public Material cellMaterialValid;
-    public Material cellMaterialInvalid;
+    public float CellSize = 1;
+    public Material[] MaterialElements;
 
     void Start()
     {
@@ -15,7 +14,7 @@ public class PositionGrid : MonoBehaviour
     }
     public void Init(float CellSize,int X, int Y)
     {
-        this.cellSize = CellSize;
+        this.CellSize = CellSize;
         x = X;
         y = Y;
         CreateChild();
@@ -32,7 +31,7 @@ public class PositionGrid : MonoBehaviour
     {
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
-        meshRenderer.sharedMaterial = IsCellValid(x, y) ? cellMaterialValid : cellMaterialInvalid;
+        meshRenderer.materials = MaterialElements;
         meshRenderer.useLightProbes = false;
         meshRenderer.receiveShadows = false;
         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -46,7 +45,7 @@ public class PositionGrid : MonoBehaviour
     bool IsCellValid(int x, int z)
     {
         RaycastHit hitInfo;
-        Vector3 origin = new Vector3(x * cellSize + cellSize / 2, 200, z * cellSize + cellSize / 2);
+        Vector3 origin = new Vector3(x * CellSize + CellSize / 2, 200, z * CellSize + CellSize / 2);
         Physics.Raycast(transform.TransformPoint(origin), Vector3.down, out hitInfo, Mathf.Infinity, LayerMask.GetMask("Buildings"));
 
         return hitInfo.collider == null;
@@ -57,10 +56,10 @@ public class PositionGrid : MonoBehaviour
         
         mesh.name = "Grid Cell:" + x + "," + y;
         mesh.vertices = new Vector3[] {
-            new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z+1] ,cellSize),
-            new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z] ,0),
-            new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z+1] ,cellSize),
-            new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] ,0) };
+            new Vector3(CellSize,transform.parent.GetComponent<SLGMap>().Heights[x+1, z+1] ,CellSize),
+            new Vector3(CellSize,transform.parent.GetComponent<SLGMap>().Heights[x+1, z] ,0),
+            new Vector3(0,transform.parent.GetComponent<SLGMap>().Heights[x, z+1] ,CellSize),
+            new Vector3(0,transform.parent.GetComponent<SLGMap>().Heights[x, z] ,0) };
         mesh.triangles = new int[] { 0, 1, 2, 2, 1, 3 };
         mesh.normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
         mesh.uv = new Vector2[] { new Vector2(1, 1), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, 0) };
@@ -72,15 +71,15 @@ public class PositionGrid : MonoBehaviour
     //{
     //    Mesh mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
     //    mesh.vertices = new Vector3[] {
-    //        new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] ,0),
-    //        new Vector3(0,transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z+1] ,cellSize),
-    //        new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z] ,0),
-    //        new Vector3(cellSize,transform.parent.GetComponent<GetTerrainHeight>().Heights[x+1, z+1] ,cellSize)
+    //        new Vector3(0,transform.parent.GetComponent<SLGMap>().Heights[x, z] ,0),
+    //        new Vector3(0,transform.parent.GetComponent<SLGMap>().Heights[x, z+1] ,cellSize),
+    //        new Vector3(cellSize,transform.parent.GetComponent<SLGMap>().Heights[x+1, z] ,0),
+    //        new Vector3(cellSize,transform.parent.GetComponent<SLGMap>().Heights[x+1, z+1] ,cellSize)
     //    };
     //}
 
     /*Vector3 MeshVertex(int x, int z)
     {
-        return new Vector3(x * cellSize, transform.parent.GetComponent<GetTerrainHeight>().Heights[x, z] + yOffset, z * cellSize);
+        return new Vector3(x * cellSize, transform.parent.GetComponent<SLGMap>().Heights[x, z] + yOffset, z * cellSize);
     }*/
 }
