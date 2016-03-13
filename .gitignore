@@ -19,6 +19,8 @@
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+/LevelAssets
+LevelAssets.meta
 *.tiff
 *.psd
 *.mp3
