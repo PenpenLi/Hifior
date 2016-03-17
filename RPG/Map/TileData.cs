@@ -7,12 +7,15 @@ public struct TileData
         Player,
         Enemy
     }
-    public int Tile_x;
-    public int Tile_y;
+    [UnityEngine.SerializeField]
+    private int Tile_x;
+    [UnityEngine.SerializeField]
+    private int Tile_y;
     /// <summary>
     /// 图块类型
     /// </summary>
-    public int Tile_type;
+    [UnityEngine.SerializeField]
+    private int Tile_type;
     /// <summary>
     /// 前一个图块类型
     /// </summary>
@@ -20,7 +23,8 @@ public struct TileData
     /// <summary>
     /// 当前块的高度
     /// </summary>
-    public float Tile_height;
+    [UnityEngine.SerializeField]
+    private float Tile_height;
     private EnumOccupyState Tile_occupy;
     public TileData(int x, int y, int type, float height = 0f)
     {
@@ -31,6 +35,16 @@ public struct TileData
         Tile_type_prev = type;
         Tile_occupy = 0;
     }
+    /*
+    public void Init(int x, int y, int type, float height = 0f)
+    {
+        Tile_x = x;
+        Tile_y = y;
+        Tile_type = type;
+        Tile_height = height;
+        Tile_type_prev = type;
+        Tile_occupy = 0;
+    }*/
     public void ChangeToPreviousType()
     {
         int tempType = Tile_type_prev;

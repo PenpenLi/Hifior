@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace RPGEditor
 {
     /// <summary>
-    /// 编辑Tile属性的窗口
+    /// 编辑CurrentTileAttribute属性的窗口
     /// </summary>
     public class MapTilePropertyWindow : EditorWindow
     {
@@ -20,6 +20,7 @@ namespace RPGEditor
             get;
             private set;
         }
+        private TileAttribute CurrentTileAttribute;
         /// <summary>
         /// Path后面必须要加个 /
         /// </summary>
@@ -118,8 +119,7 @@ namespace RPGEditor
                 {
                     if (GUI.Button(new Rect(j * TILESIZE, i * TILESIZE, TILESIZE, TILESIZE), TileTextures[i * TILESET_W + j], RPGEditorGUI.RichLabelStyle))
                     {
-                        CurrentX = j;
-                        CurrentY = i;
+                        RefreshTileSelectInfo(j,i);
                     }
                 }
             }
@@ -127,8 +127,7 @@ namespace RPGEditor
             {
                 if (GUI.Button(new Rect(j * TILESIZE, yCount * TILESIZE, TILESIZE, TILESIZE), TileTextures[yCount * TILESET_W + j]))
                 {
-                    CurrentX = j;
-                    CurrentY = yCount;
+                    RefreshTileSelectInfo(j,yCount);
                 }
             }
 
@@ -145,29 +144,40 @@ namespace RPGEditor
             RefreshTilePropertyEditor(CurrentX, CurrentY);
 
         }
-        void RefreshTilePropertyEditor(int x, int y)
+        void RefreshTileSelectInfo(int x, int y)
         {
+            CurrentX = x;
+            CurrentY = y;
             int id = y * TILESET_W + x;
             CurrentSelectedTileID = id;
-            TileAttribute tile = TileDef.TileProperty[id];
-            if (tile == null)
+            CurrentTileAttribute = TileDef.TileProperty[id]; for (int i = 0; i < tileSeriesCount; i++)
             {
-                Debug.LogError("没有改Tile对应的数据");
-                return;
+                if (CurrentTileAttribute.MovementConsume[i] == 100)
+                    tileEnableTable[i] = false;
+                else
+                    tileEnableTable[i] = true;
             }
-            tile.CommonProperty.ID = id;
+        }
+        void RefreshTilePropertyEditor(int x, int y)
+        {
+            if (CurrentTileAttribute == null)
+            {
+                RefreshTileSelectInfo(0, 0);
+            }
+            int id = y * TILESET_W + x;
+            CurrentTileAttribute.CommonProperty.ID = id;
 
             GUILayout.BeginArea(new Rect(350, 0, 300, 600));
 
-            EditorGUILayout.LabelField("ID:" + tile.CommonProperty.ID);
-            tile.CommonProperty.Name = EditorGUILayout.TextField("名称", tile.CommonProperty.Name);
-            tile.Avoid = EditorGUILayout.IntSlider("回避", tile.Avoid, 0, 10);
+            EditorGUILayout.LabelField("ID:" + CurrentTileAttribute.CommonProperty.ID);
+            CurrentTileAttribute.CommonProperty.Name = EditorGUILayout.TextField("名称", CurrentTileAttribute.CommonProperty.Name);
+            CurrentTileAttribute.Avoid = EditorGUILayout.IntSlider("回避", CurrentTileAttribute.Avoid, 0, 10);
 
-            tile.PhysicalDefense = EditorGUILayout.IntSlider("防御", tile.PhysicalDefense, 0, 10);
-            tile.MagicalDefense = EditorGUILayout.IntSlider("魔防", tile.MagicalDefense, 0, 10);
+            CurrentTileAttribute.PhysicalDefense = EditorGUILayout.IntSlider("防御", CurrentTileAttribute.PhysicalDefense, 0, 10);
+            CurrentTileAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔防", CurrentTileAttribute.MagicalDefense, 0, 10);
 
-            tile.Recover = EditorGUILayout.IntSlider("恢复比例", tile.Recover, 0, 100);
-            tile.BattleBackgroundID = EditorGUILayout.IntPopup("战斗背景", tile.BattleBackgroundID, new string[] { "草原", "冰川", "草屋" }, EnumTables.GetSequentialArray(3)); ;
+            CurrentTileAttribute.Recover = EditorGUILayout.IntSlider("恢复比例", CurrentTileAttribute.Recover, 0, 100);
+            CurrentTileAttribute.BattleBackgroundID = EditorGUILayout.IntPopup("战斗背景", CurrentTileAttribute.BattleBackgroundID, new string[] { "草原", "冰川", "草屋" }, EnumTables.GetSequentialArray(3)); ;
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Box("移动消耗");
@@ -175,14 +185,24 @@ namespace RPGEditor
             if (GUILayout.Button("全部不可通行", GUILayout.Width(80)))
             {
                 for (int i = 0; i < tileEnableTable.Length; i++)
+                {
                     tileEnableTable[i] = false;
+                    CurrentTileAttribute.PassDown = false;
+                    CurrentTileAttribute.PassUp = false;
+                    CurrentTileAttribute.PassLeft = false;
+                    CurrentTileAttribute.PassRight = false;
+                }
             }
             if (GUILayout.Button("全部可以通行", GUILayout.Width(80)))
             {
                 for (int i = 0; i < tileEnableTable.Length; i++)
                 {
                     tileEnableTable[i] = true;
-                    tile.MovementConsume[i] = 1;
+                    CurrentTileAttribute.MovementConsume[i] = 1;
+                    CurrentTileAttribute.PassDown = true;
+                    CurrentTileAttribute.PassUp = true;
+                    CurrentTileAttribute.PassLeft = true;
+                    CurrentTileAttribute.PassRight = true;
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -196,13 +216,13 @@ namespace RPGEditor
                 tileEnableTable[i] = EditorGUILayout.Toggle(tileSeriesNames[i], tileEnableTable[i]);
                 if (tileEnableTable[i])
                 {
-                    if (tile.MovementConsume[i] < 1)
-                        tile.MovementConsume[i] = 1;
-                    tile.MovementConsume[i] = EditorGUILayout.IntSlider(tile.MovementConsume[i], 1, 8);
+                    if (CurrentTileAttribute.MovementConsume[i] < 1)
+                        CurrentTileAttribute.MovementConsume[i] = 1;
+                    CurrentTileAttribute.MovementConsume[i] = EditorGUILayout.IntSlider(CurrentTileAttribute.MovementConsume[i], 1, 8);
                 }
                 else
                 {
-                    tile.MovementConsume[i] = 100;
+                    CurrentTileAttribute.MovementConsume[i] = 100;
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -216,25 +236,25 @@ namespace RPGEditor
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button(RPGEditorGUI.Icon_Arrow2_Up, tile.PassUp ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
-                    tile.PassUp = !tile.PassUp;
+                if (GUILayout.Button(RPGEditorGUI.Icon_Arrow2_Up, CurrentTileAttribute.PassUp ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                    CurrentTileAttribute.PassUp = !CurrentTileAttribute.PassUp;
                 GUILayout.FlexibleSpace();
             }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button(RPGEditorGUI.Icon_Arrow3_Left, tile.PassLeft ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
-                tile.PassLeft = !tile.PassLeft;
+            if (GUILayout.Button(RPGEditorGUI.Icon_Arrow3_Left, CurrentTileAttribute.PassLeft ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                CurrentTileAttribute.PassLeft = !CurrentTileAttribute.PassLeft;
             EditorGUILayout.Space();
-            if (GUILayout.Button(RPGEditorGUI.Icon_Arrow3_Right, tile.PassRight ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
-                tile.PassRight = !tile.PassRight;
+            if (GUILayout.Button(RPGEditorGUI.Icon_Arrow3_Right, CurrentTileAttribute.PassRight ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                CurrentTileAttribute.PassRight = !CurrentTileAttribute.PassRight;
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button(RPGEditorGUI.Icon_Arrow2_Down, tile.PassDown ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
-                    tile.PassDown = !tile.PassDown;
+                if (GUILayout.Button(RPGEditorGUI.Icon_Arrow2_Down, CurrentTileAttribute.PassDown ? RPGEditorGUI.BoxStyle : RPGEditorGUI.RichLabelStyle, GUILayout.Width(32), GUILayout.Height(32)))
+                    CurrentTileAttribute.PassDown = !CurrentTileAttribute.PassDown;
                 GUILayout.FlexibleSpace();
             }
             EditorGUILayout.EndHorizontal();
@@ -261,5 +281,29 @@ namespace RPGEditor
             IsShowing = false;
         }
 
+        #region 外部信息获取
+        public static List<string> GetNames()
+        {
+            List<string> ret = new List<string>();
+            for (int i = 0; i < TileDataDef.Count; i++)
+            {
+                ret.Add(TileDataDef[i].CommonProperty.Name);
+            }
+            return ret;
+        }
+        public static Texture2D GetTexture(int id)
+        {
+            if (TileTextures == null || TileTextures.Count == 0)
+            {
+                LoadTileTexture();
+            }
+            if (TileTextures.Count <= id)
+            {
+                Debug.LogError("TileTextures不存在指定的ID");
+                return null;
+            }
+            return TileTextures[id];
+        }
+        #endregion
     }
 }

@@ -6,6 +6,20 @@ public struct Point2D
 {
     public int x;
     public int y;
+    public static Point2D InvalidPoint
+    {
+        get
+        {
+            return new Point2D(-1, -1);
+        }
+    }
+    public static Point2D ZeroPoint
+    {
+        get
+        {
+            return new Point2D(0, 0);
+        }
+    }
     public Point2D(int X, int Y)
     {
         x = X;

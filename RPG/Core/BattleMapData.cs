@@ -19,20 +19,18 @@ public class BattleMapData : ExtendScriptableObject
         MapWidth = width;
         MapHeight = height;
         Data = new TileData[width * height];
-        for (int i = 0; i < width; i++)
+        for (int y = 0; y < height; y++)
         {
-            for (int j = 0; j < height; j++)
+            for (int x = 0; x < width; x++)
             {
-                int index = i * height + j;
-                Data[index].Tile_x = i;
-                Data[index].Tile_y = j;
-                Data[index].Tile_height = TerrainHeights[i, j];
-                Data[index].Tile_type = type[i, j];
+                int index = y * MapWidth + x;
+                Data[index] = new TileData(x, y, type[x, y], TerrainHeights[x, y]);
+
             }
         }
     }
     public TileData GetTileData(int x, int y)
     {
-        return Data[x * MapHeight + y];
+        return Data[y * MapWidth + x];
     }
 }

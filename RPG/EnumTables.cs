@@ -304,6 +304,11 @@ public static class EnumTables
         int bitInt = (1 << ((int)bitPosition));
         return mask | bitInt;
     }
+    /// <summary>
+    /// 获取从0开始递增为1的 长度为length的数组
+    /// </summary>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static int[] GetSequentialArray(int length)
     {
         int[] x = new int[length];
