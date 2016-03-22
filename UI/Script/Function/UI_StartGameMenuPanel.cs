@@ -1,19 +1,21 @@
 ﻿using UnityEngine.UI;
 using System.Collections;
-
-public class UI_StartGameMenuPanel : IPanel
+namespace RPG.UI
 {
-    public Button StartGame;
-
-    public override void BeginPlay()
+    public class UI_StartGameMenuPanel : IPanel
     {
-        base.BeginPlay();
+        public Button StartGame;
 
-        StartGame.Select();
-    }
+        public override void BeginPlay()
+        {
+            base.BeginPlay();
 
-    public void OnEnable()
-    {
-        StartGame.Select();
+            StartGame.Select();
+        }
+
+        public void OnEnable()
+        {
+            StartGame.Select();
+        }
     }
 }

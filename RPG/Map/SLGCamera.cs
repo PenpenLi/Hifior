@@ -34,9 +34,9 @@ public class SLGCamera : MonoBehaviour
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
-            if (Camera.main.fieldOfView <= 45.0f)
+            if (Camera.main.fieldOfView <= 85.0f)
                 Camera.main.fieldOfView += 3.0f;
-            if (Camera.main.orthographicSize <= 40.0f)
+            if (Camera.main.orthographicSize <= 50.0f)
                 Camera.main.orthographicSize += 0.5f;
         }
         //Zoom in

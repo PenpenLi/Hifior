@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+using RPG.UI;
 public class PC_CompanyLogo : UPlayerController
 {
     public Image Background;

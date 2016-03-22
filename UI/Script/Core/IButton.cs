@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 public abstract class IButton : MonoBehaviour
 {
@@ -6,7 +7,6 @@ public abstract class IButton : MonoBehaviour
     {
         UnRegister(GetComponent<Button>());
     }
-
     /// <summary>
     /// 抽象函数，用于按钮点击后执行的事件
     /// </summary>

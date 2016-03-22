@@ -18,6 +18,7 @@ namespace RPGEditor
         public void OnEnable()
         {
             Target = target as TileType;
+            Target.TypeOfTile = Target.transform.GetComponentInParent<SLGMap>().MapTileData.Data[Target.transform.GetSiblingIndex()].GetTileType();
         }
     }
 }

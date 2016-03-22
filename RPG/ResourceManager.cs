@@ -51,7 +51,5 @@ public static class ResourceManager
     [RuntimeInitializeOnLoadMethod]
     public static void Initialize()
     {
-        WeaponDef w = GetWeaponDef(1);
-        Debug.Log(w.ToJson());
     }
 }
