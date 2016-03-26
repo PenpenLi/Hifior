@@ -27,22 +27,30 @@ namespace RPG.UI
         public EventButtonDetail button2Details;
         public EventButtonDetail button3Details;
 
-        public ModalPanelDetail(EventButtonDetail ButtonYesDetail, EventButtonDetail ButtonNoDetail)
+        public ModalPanelDetail(string Title, string Question, Sprite Icon, Sprite Background, EventButtonDetail ButtonYesDetail, EventButtonDetail ButtonNoDetail)
         {
+            this.Title = Title;
+            this.Question = Question;
+            this.IconImage = Icon;
+            this.PanelBackgroundImage = Background;
             MessageType = ModalMessageType.YesNo;
             button1Details = ButtonYesDetail;
             button2Details = ButtonNoDetail;
         }
 
-        public ModalPanelDetail(EventButtonDetail ButtonYesDetail, EventButtonDetail ButtonNoDetail, EventButtonDetail ButtonCancelDetail)
+        public ModalPanelDetail(string Title, string Question, Sprite Icon, Sprite Background, EventButtonDetail ButtonYesDetail, EventButtonDetail ButtonNoDetail, EventButtonDetail ButtonCancelDetail)
         {
+            this.Title = Title;
+            this.Question = Question;
+            this.IconImage = Icon;
+            this.PanelBackgroundImage = Background;
             MessageType = ModalMessageType.YesNoCancel;
             button1Details = ButtonYesDetail;
             button2Details = ButtonNoDetail;
             button3Details = ButtonCancelDetail;
         }
     }
-    
+
     public class ModalPanel : IPanel
     {
         public Text Question;

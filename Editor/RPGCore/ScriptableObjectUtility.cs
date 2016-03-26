@@ -62,6 +62,12 @@ namespace RPGEditor
             }
             return Directory.GetFiles(path).GetLength(0) / 2;
         }
+        /// <summary>
+        /// 返回指定目录指定后缀的所有文件的完整路径
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="postfix"></param>
+        /// <returns></returns>
         public static string[] GetFiles(string path, params string[] postfix)
         {
             return Directory.GetFiles(path).Where(x =>
@@ -77,6 +83,15 @@ namespace RPGEditor
         public static bool FileExists(string path)
         {
             return File.Exists(path);
+        }
+        public static string GetFileNameWithoutExtensionFromPath(string path)
+        {
+            return Path.GetFileNameWithoutExtension(path);
+        }
+
+        public static string GetFileNameFromPath(string path)
+        {
+            return Path.GetFileName(path);
         }
     }
 }

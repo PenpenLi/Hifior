@@ -84,10 +84,19 @@ public class WeaponDef : ExtendScriptableObject
     {
         return CommonProperty.ID;
     }
+    public string GetWeaponTypeName()
+    {
+        return WeaponType.ToString();
+    }
+    public string GetWeaponLevelName()
+    {
+        return WeaponLevel.ToString();
+    }
     public CharacterAttribute GetAdditionalAbility()
     {
         return AdditionalAttribute;
     }
+
     public bool IsPhysicalWeapon()
     {
         if (WeaponType <= EnumWeaponType.火枪)
@@ -118,11 +127,6 @@ public class WeaponDef : ExtendScriptableObject
             return false;
     }
 
-    public int GetCritical()
-    {
-        return Crit;
-    }
-
     public bool RefrainCareer(int CareerID)
     {
         return CareerEffect.Contains(CareerID);
@@ -137,28 +141,10 @@ public class WeaponDef : ExtendScriptableObject
     {
         return CommonProperty.Description;
     }
-
-    public int GetHit()
-    {
-        return Hit;
-    }
-
-    public int GetPower()
-    {
-        return Power;
-    }
-
-    public int GetSinglePrice()
-    {
-        return SinglePrice;
-    }
+    
     public int GetPrice()
     {
         return SinglePrice * UseNumber;
-    }
-    public SelectRangeType GetRangeType()
-    {
-        return RangeType;
     }
 
     public bool DedicatedUse(int CharacterID, int CareerID)
@@ -177,24 +163,9 @@ public class WeaponDef : ExtendScriptableObject
         return bCharacter && bCareer;
     }
 
-    public EnumWeaponLevel GetWeaponLevel()
-    {
-        return WeaponLevel;
-    }
-
-    public EnumWeaponType GetWeaponType()
-    {
-        return WeaponType;
-    }
-
-    public int GetUsageTimes()
+    public int GetUsageTime()
     {
         return UseNumber;
-    }
-
-    public int GetWeight()
-    {
-        return Weight;
     }
 
     public bool IsHaveSuperEffect(int SuperEffectType)

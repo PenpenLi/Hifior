@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Sequence
 {
+    [HierarchyIcon("Music.png", 2)]
     public class PlayMusic : SequenceEvent
     {
         [Tooltip("要播放的音乐片段")]

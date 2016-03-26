@@ -5,6 +5,7 @@ using System;
 
 namespace Sequence
 {
+    [HierarchyIcon("Sequence.png",1)]
     public class Sequence : MonoBehaviour
     {
         [ExecuteInEditMode]

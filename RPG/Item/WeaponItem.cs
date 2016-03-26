@@ -21,7 +21,10 @@ public class WeaponItem
             return usage;
         }
     }
-
+    public int GetMaxUsage()
+    {
+        return def.UseNumber;
+    }
     public WeaponItem(int ItemID)  
     {
         def = ResourceManager.GetWeaponDef(ItemID);
@@ -40,7 +43,7 @@ public class WeaponItem
     {
         get
         {
-            return Mathf.Max(10, def.GetPrice() / 2 * (def.GetUsageTimes() - Usage) / def.GetUsageTimes());
+            return Mathf.Max(10, def.GetPrice() / 2 * (def.GetUsageTime() - Usage) / def.GetUsageTime());
         }
     }
 

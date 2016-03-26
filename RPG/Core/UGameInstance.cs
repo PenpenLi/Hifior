@@ -8,6 +8,7 @@ using System.IO;
 /// 自游戏开始到游戏结束一直存在的一个对象，用于数据的交换，可以被所有的对象获取到
 /// 在一个空物体中创建该物体
 /// </summary>
+[HierarchyIcon("GameInstance.png")]
 public class UGameInstance : MonoSingleton<UGameInstance>
 {
     private UGameMode ActiveGameMode;

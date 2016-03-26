@@ -1,9 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+[System.Serializable]
 public struct Item
 {
     public int ID;
     public int Usage;
+    public Item(int id,int usage)
+    {
+        ID = id;
+        Usage = usage;
+    }
 }
 public class ItemGroup
 {
@@ -72,6 +79,7 @@ public class ItemGroup
         if (itemNew.Count > 0)
             EquipItem(0);
     }
+    
     public bool AddItem(WeaponItem Item)//获得装备
     {
         if (Items.Count == ConstTable.CONST_ITEM_COUNT)//装备已满返回false
@@ -204,12 +212,12 @@ public class ItemGroup
             return null;
         return this.Items[this._currentEquipItemIndex];
     }
-    public WeaponItem getItem(int index)
+    public WeaponItem GetItem(int index)
     {
         if ((index >= Items.Count) || (index < 0)) return null;
         return this.Items[index];
     }
-    public int getItemCount()
+    public int GetItemCount()
     {
         return this.Items.Count;
     }

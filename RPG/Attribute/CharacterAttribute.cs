@@ -23,4 +23,16 @@ public class CharacterAttribute
         MagicalDefense = 60;
         Movement = 12;
     }
+    public override string ToString()
+    {
+        return " HP= " + HP +
+   " PhysicalPower= " + PhysicalPower +
+   " MagicalPower= " + MagicalPower +
+   " Skill= " + Skill +
+   " Speed= " + Speed +
+   " Luck= " + Luck +
+   " PhysicalDefense= " + PhysicalDefense +
+   " MagicalDefense= " + MagicalDefense +
+   " Movement= " + Movement;
+    }
 }

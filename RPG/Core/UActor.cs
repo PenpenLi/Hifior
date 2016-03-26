@@ -6,6 +6,7 @@ using UnityEngine.Events;
 /// </summary>
 public class UActor : MonoBehaviour
 {
+    [Header("Actor基类参数")]
     public bool bHidden;
     public bool bActorEnableCollision;
     public bool bActorIsBeingDestroyed;

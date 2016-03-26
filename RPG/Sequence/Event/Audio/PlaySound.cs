@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Sequence
 {
+    [HierarchyIcon("Sound.jpg",2)]
     public class PlaySound : SequenceEvent
     {
         [Tooltip("需要播放的声音效果")]

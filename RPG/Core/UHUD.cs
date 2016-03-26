@@ -55,37 +55,86 @@ public class UHUD : UActor
     /// <summary>
     /// Debug专用Text列表
     /// </summary>
-    protected List<string> DebugTextList;
+    protected Dictionary<string, DebugText> DebugTextList=new Dictionary<string, DebugText>();
+    public struct DebugText
+    {
+        public string Content;
+        public Rect Bound;
+        public Color FontColor;
+        public float FontSize;
+        public float Duration;
 
+        private bool m_show;
+        private float m_lifeSpan;
+
+        public DebugText(string content, float duration, Rect bound, Color fontColor, float fontSize)
+        {
+            Content = content;
+            Bound = bound;
+            FontColor = fontColor;
+            FontSize = fontSize;
+            Duration = duration;
+            m_lifeSpan = Duration;
+            m_show = false;
+        }
+        public float GetLifeSpan()
+        {
+            return m_lifeSpan;
+        }
+        public void Show()
+        {
+            m_lifeSpan = Duration;
+            m_show = true;
+        }
+        public void Hide()
+        {
+            m_show = false;
+        }
+        public bool Visible()
+        {
+            return m_show;
+        }
+        public void Draw()
+        {
+            if (!m_show)
+                return;
+            GUI.Label(Bound, Content);
+            m_lifeSpan -= Time.deltaTime;
+            if (m_lifeSpan < 0f)
+            {
+                m_lifeSpan = 0.0f;
+                m_show = false;
+            }
+        }
+    }
+    public override void BeginPlay()
+    {
+        base.BeginPlay();
+        Canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+    }
     /**
 	 * Toggles displaying properties of player's current ViewTarget
 	 * DebugType input values supported by base engine include "AI", "physics", "net", "camera", and "collision"
 	 */
-    public virtual void ShowDebug(string DebugType) { }
-    /**
-	 * Add debug text for a specific actor to be displayed via DrawDebugTextList().  If the debug text is invalid then it will
-	 * attempt to remove any previous entries via RemoveDebugText().
-	 * 
-	 * @param DebugText				Text to draw
-	 * @param SrcActor				Actor to which this relates
-	 * @param Duration				Duration to display the string
-	 * @param Offset 				Initial offset to render text
-	 * @param DesiredOffset 		Desired offset to render text - the text will move to this location over the given duration
-	 * @param TextColor 			Color of text to render
-	 * @param bSkipOverwriteCheck 	skips the check to see if there is already debug text for the given actor
-	 * @param bAbsoluteLocation 	use an absolute world location
-	 * @param bKeepAttachedToActor 	if this is true the text will follow the actor, otherwise it will be drawn at the location when the call was made
-	 * @param InFont 				font to use
-	 * @param FontScale 			scale
-	 * @param bDrawShadow 			Draw shadow on this string
-	 */
-    public void AddDebugText(string DebugText, Vector3 Offset, Vector3 DesiredOffset, Color TextColor, UActor SrcActor = null, float Duration = 0f, bool bSkipOverwriteCheck = false, bool bAbsoluteLocation = false, bool bKeepAttachedToActor = false, Font InFont = null, float FontScale = 1.0f, bool bDrawShadow = false)
-    { }
+    public virtual void ShowDebug(string DebugType)
+    {
+        if (DebugTextList.ContainsKey(DebugType))
+        {
+            DebugTextList[DebugType].Show();
+        }
+    }
+    public void AddDebugText(string DebugType, string Content, Rect Bound, Color TextColor, float Duration = 0f, bool bKeepAttachedToActor = false, float FontSize = 1.0f)
+    {
+        DebugTextList.Add(DebugType, new DebugText(Content, Duration, Bound, TextColor, FontSize));
+    }
 
-    /**
-	 * Remove all debug strings added via AddDebugText
-	 */
-    public void RemoveAllDebugStrings() { }
+    /// <summary>
+    /// Remove all debug strings added via AddDebugText
+    /// </summary>
+    public void RemoveAllDebugStrings()
+    {
+        DebugTextList.Clear();
+    }
 
     /**
 	 * Remove debug strings for the given actor
@@ -116,40 +165,6 @@ public class UHUD : UActor
         GUI.Label(Rect, Text);
     }
 
-    /**
-	 * Draws a 2D line on the HUD.
-	 * @param StartScreenX		Screen-space X coordinate of start of the line.
-	 * @param StartScreenY		Screen-space Y coordinate of start of the line.
-	 * @param EndScreenX		Screen-space X coordinate of end of the line.
-	 * @param EndScreenY		Screen-space Y coordinate of end of the line.
-	 * @param LineColor			Color to draw line
-	 */
-    public void DrawLine(float StartScreenX, float StartScreenY, float EndScreenX, float EndScreenY, Color LineColor)
-    {
-
-    }
-
-    /**
-	 * Draws a colored untextured quad on the HUD.
-	 * @param RectColor			Color of the rect. Can be translucent.
-	 * @param ScreenX			Screen-space X coordinate of upper left corner of the quad.
-	 * @param ScreenY			Screen-space Y coordinate of upper left corner of the quad.
-	 * @param ScreenW			Screen-space width of the quad (in pixels).
-	 * @param ScreenH			Screen-space height of the quad (in pixels).
-	 */
-    public void DrawRect(Color RectColor, float ScreenX, float ScreenY, float ScreenW, float ScreenH)
-    {
-
-    }
-
-    /**
-	 * Draws a textured quad on the HUD. Assumes 1:1 texel density.
-	 * @param Texture			Texture to draw.
-	 * @param ScreenX			Screen-space X coordinate of upper left corner of the quad.
-	 * @param ScreenY			Screen-space Y coordinate of upper left corner of the quad.
-	 * @param Scale				Scale multiplier to control size of the text.
-	 * @param bScalePosition	Whether the "Scale" parameter should also scale the position of this draw call.
-	 */
     public void DrawTextureSimple(Texture2D Texture, Rect Rect, float Scale = 1.0f, bool bScalePosition = false)
     {
         GUI.DrawTexture(Rect, Texture);
@@ -228,12 +243,15 @@ public class UHUD : UActor
      */
     public void DrawDebugTextList()
     {
-
+        foreach (KeyValuePair<string, DebugText> p in DebugTextList)
+        {
+            p.Value.Draw();
+        }
     }
 
     // GetResolution
     public Vector2 GetScreenResolution() { return new Vector2(Screen.width, Screen.height); }
-    
+
     public void OnGUI()
     {
         if (!bShowHUD)

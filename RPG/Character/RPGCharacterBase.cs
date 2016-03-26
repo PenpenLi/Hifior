@@ -5,8 +5,15 @@ using System.Collections.Generic;
 /// </summary>
 public class RPGCharacterBase : UPawn
 {
+    [Header("CharacterBase")]
     protected int Career;
     protected int Level;
+    protected int Exp;
+
+    public int GetExp()
+    {
+        return Exp;
+    }
     /// <summary>
     /// 属于哪一方
     /// </summary>
@@ -30,7 +37,7 @@ public class RPGCharacterBase : UPawn
     {
         return Definition.CommonProperty.Description;
     }
-    public Sprite GetSprite()
+    public Sprite GetPortrait()
     {
         return Definition.Portrait;
     }
@@ -62,7 +69,7 @@ public class RPGCharacterBase : UPawn
         return Level;
     }
 
-    public int GetHP()
+    public int GetMaxHP()
     {
         return Attribute.HP;
     }

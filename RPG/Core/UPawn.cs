@@ -5,6 +5,7 @@ using UnityEngine.Events;
 /// </summary>
 public class UPawn : UActor
 {
+    [Header("Pawn基类参数")]
     public UController Controller;
     UPlayerState PlayerState;
     private bool bInputEnabled;

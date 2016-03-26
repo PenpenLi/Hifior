@@ -593,7 +593,6 @@ public class SLGMap : MonoBehaviour
                 {
                     int j = i + 1;
                     curDir = GetDirByPoint(_MoveRoute[i], _MoveRoute[j]);
-                    Quaternion q;
                     float zRotation = 0.0f;
                     if (curDir == lastDir)//方向相同--绘制箭头3，
                     {
@@ -1159,11 +1158,11 @@ public class SLGMap : MonoBehaviour
             ShowAttackableRange();
         }
     }
-    public bool[,] getMoveAcessArray()
+    public bool[,] GetMoveAcessArray()
     {
         return bMoveAcessList;
     }
-    public List<Point2D> getAttackRangeData()
+    public List<Point2D> GetAttackRangeData()
     {
         return _AttackRangeData;
     }

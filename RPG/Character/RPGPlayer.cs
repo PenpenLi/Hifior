@@ -4,8 +4,7 @@ using System.Collections.Generic;
 public class RPGPlayer : RPGCharacter
 {
     protected PlayerDef PlayerDefinition;
-
-    private int Exp;
+    
     public RPGPlayer()
     {
         base.Definition = PlayerDefinition;

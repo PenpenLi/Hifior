@@ -1,11 +1,27 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Assertions;
-using System.Collections;
+using System.Collections.Generic;
+using System;
+
+public abstract class BaseEventData
+{
+    string EventName;
+    public BaseEventData(string name)
+    {
+        EventName = name;
+    }
+}
+[System.Serializable]
+public class CustomEvent : UnityEvent<BaseEventData>
+{
+}
 /// <summary>
 /// 负责游戏的玩法主体，没一个关卡有个独立的GameMode，重新载入地图GameMode会初始化
 /// 在一个空物体中创建该物体保存为预制体(不用添加到场景里，这个赋给GameInstance即可)，并将以下几个对象选入,必须要指定以下几个对象，如果不指定则报错
 /// 不同性质的关卡设置不同的GameMode,如果是主菜单，设置主菜单的GameMode,如果是战斗，设置战斗的GameMode，如果是大地图设置大地图的GameMode，一个关卡一个GameMode
 /// </summary>
+[HierarchyIcon("GameMode.png")]
 public class UGameMode : UActor
 {
     public UPawn ActivePawn;
@@ -65,13 +81,65 @@ public class UGameMode : UActor
     /* Send a player to a URL.*/
     public virtual void SendPlayer(UPlayerController aPlayer, string URL) { }
 
-    /** Broadcast a string to all players. */
-    public virtual void Broadcast(UActor Sender, string Msg, string MsgType = "") { }
+    private UnityEvent Event_GameOver;
+    private Dictionary<string, CustomEvent> eventTable = new Dictionary<string, CustomEvent>();
+    public void BoardCast(string name, BaseEventData eventData = null)
+    {
+        if (eventTable[name] != null)
+        {
+            eventTable[name].Invoke(eventData);
+        }
+    }
+    /*
+public class eventdata0 : BaseEventData
+{
+    public int KK;
+    public eventdata0(int value, string name) : base(name)
+    {
+        KK = value;
+    }
+}
+    eventdata0 d = new eventdata0(12, "fafs");
+        AddEventHandler("Game", ss);
+        PostNotification("Game", d);
+    private void ss(BaseEventData arg0)
+    {
+        eventdata0 e = arg0 as eventdata0;
+        Debug.Log("value = " + e.KK);
+    }
+    */
+    /// <summary>
+    /// 添加一个回调函数。
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="action"></param>
+    public void AddEventHandler(string name, UnityAction<BaseEventData> action)
+    {
+        if (eventTable.ContainsKey(name))
+            eventTable[name].AddListener(action);
+        else
+        {
+            CustomEvent ce = new CustomEvent();
+            ce.AddListener(action);
+            eventTable.Add(name, ce);
+        }
+    }
+    /// <summary>
+    /// 移除了一个回调函数。
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="handler"></param>
+    public void RemoveEventHandler(string name, UnityAction<BaseEventData> action = null)
+    {
+        if (eventTable.ContainsKey(name))
+            if (action != null)
+                eventTable[name].RemoveListener(action);
+            else {
+                eventTable[name].RemoveAllListeners();
+                eventTable.Remove(name);
+            }
+    }
 
-    /**
-	 * Make sure pawn properties are back to default
-	 * Also a good place to modify them on spawn
-	 */
     public virtual void SetPlayerDefaults(UPawn PlayerPawn) { }
 
     void Awake()
@@ -95,5 +163,7 @@ public class UGameMode : UActor
         ActiveGameState.transform.parent = transform;
 
         GetGameInstance().SetGameMode(this);
+
     }
+
 }
