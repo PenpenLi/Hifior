@@ -2,8 +2,9 @@
 using UnityEngine;
 using System;
 using System.Reflection;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace RPGEditor
 {
     [InitializeOnLoad]
@@ -49,6 +50,8 @@ namespace RPGEditor
         {
             foreach (MonoBehaviour comp in go.GetComponents<MonoBehaviour>())
             {
+                if (comp == null)
+                    return;
                 if (subTypeQuery.Contains(comp.GetType()))
                 {
                     var attr = (HierarchyIconAttribute)Attribute.GetCustomAttribute(comp.GetType(), typeof(HierarchyIconAttribute));
