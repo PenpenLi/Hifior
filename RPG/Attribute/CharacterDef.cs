@@ -3,11 +3,6 @@ using System.Collections.Generic;
 
 public class CharacterDef : ExtendScriptableObject
 {
-    [ContextMenu("Json")]
-    void Json()
-    {
-        Debug.Log(JsonUtility.ToJson(this));
-    }
     public PropertyIDNameDesc CommonProperty;
     /// <summary>
     /// 战场上的模型

@@ -105,6 +105,8 @@ namespace RPGEditor
         public void OnEnable()
         {
             props = target as PropsDef;
+            if (props.DedicatedCharacter == null)
+                props.DedicatedCharacter = new System.Collections.Generic.List<int>();
             dedicatedCharacterCount = props.DedicatedCharacter.Count;
             dedicatedJobCount = props.DedicatedJob.Count;
         }

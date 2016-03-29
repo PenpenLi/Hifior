@@ -71,6 +71,60 @@ Shader "Shader Forge/OldMoniter" {
             }
             ENDCG
         }
+        Pass {
+            Name "Meta"
+            Tags {
+                "LightMode"="Meta"
+            }
+            Cull Off
+            
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #define UNITY_PASS_META 1
+            #define _GLOSSYENV 1
+            #include "UnityCG.cginc"
+            #include "UnityPBSLighting.cginc"
+            #include "UnityStandardBRDF.cginc"
+            #include "UnityMetaPass.cginc"
+            #pragma fragmentoption ARB_precision_hint_fastest
+            #pragma exclude_renderers metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
+            #pragma target 3.0
+            uniform float4 _Color;
+            uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
+            struct VertexInput {
+                float4 vertex : POSITION;
+                float2 texcoord0 : TEXCOORD0;
+                float2 texcoord1 : TEXCOORD1;
+                float2 texcoord2 : TEXCOORD2;
+            };
+            struct VertexOutput {
+                float4 pos : SV_POSITION;
+                float2 uv0 : TEXCOORD0;
+            };
+            VertexOutput vert (VertexInput v) {
+                VertexOutput o = (VertexOutput)0;
+                o.uv0 = v.texcoord0;
+                v.vertex.xyz = float3(((o.uv0*2.0+-1.0)*float2(1.0,_ProjectionParams.r)),0.0);
+                o.pos = UnityMetaVertexPosition(v.vertex, v.texcoord1.xy, v.texcoord2.xy, unity_LightmapST, unity_DynamicLightmapST );
+                return o;
+            }
+            float4 frag(VertexOutput i, float facing : VFACE) : SV_Target {
+                float isFrontFace = ( facing >= 0 ? 1 : 0 );
+                float faceSign = ( facing >= 0 ? 1 : -1 );
+                UnityMetaInput o;
+                UNITY_INITIALIZE_OUTPUT( UnityMetaInput, o );
+                
+                float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
+                o.Emission = (_Color.rgb*_MainTex_var.rgb);
+                
+                float3 diffColor = float3(0,0,0);
+                o.Albedo = diffColor;
+                
+                return UnityMetaFragment( o );
+            }
+            ENDCG
+        }
     }
     CustomEditor "ShaderForgeMaterialInspector"
 }

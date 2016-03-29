@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+[RequireComponent(typeof(SLGChapter))]
+/// <summary>
+/// 每个地图的Terrain里都附加这个脚本
+/// </summary>
 public class SLGMap : MonoBehaviour
 {
     public const float CELLSIZE = 10f;
@@ -12,7 +15,7 @@ public class SLGMap : MonoBehaviour
     private Texture2D gSprite_Arrow1;
     private Texture2D gSprite_Arrow2;
     private Texture2D gSprite_Arrow3;
-
+    [Header("SLGMap")]
     public RPGCharacter TestCharacter;
     /*
      public GameObject gSprite_Attackable;
@@ -75,6 +78,7 @@ public class SLGMap : MonoBehaviour
             }
         }
     }
+   
     public PositionGrid TilePrefab;
     private float[,] _heights;
     public float[,] Heights
@@ -82,6 +86,14 @@ public class SLGMap : MonoBehaviour
         get { return _heights; }
     }
 #endif
+    [Header("地图信息")]
+    public BattleMapData MapTileData;
+    public int TileWidth = 30;//地图x
+    public int TileHeight = 20;//地图y
+
+    [Header("图块坐标详情")]
+    [SerializeField]
+    private Point2D CharacterCenter;//角色坐标
     [SerializeField]
     private Point2D MouseTileXY;
     [SerializeField]
@@ -91,9 +103,8 @@ public class SLGMap : MonoBehaviour
     [SerializeField]
     private List<Point2D> _AttackRangeData = new List<Point2D>();//int表示剩余的攻击范围消耗点
     [SerializeField]
-    private Point2D CharacterCenter;//角色坐标
-    [SerializeField]
     private List<Point2D> _MoveRoute = new List<Point2D>();//存储移动路径
+    [Header("人物信息")]
     [SerializeField]
     private int _ItemRangeMin;//所有可用装备的最小范围
     [SerializeField]
@@ -102,9 +113,6 @@ public class SLGMap : MonoBehaviour
     private int _Mov; //移动力
     private int _Career;
     private EnumWeaponRangeType _WeaponRangeType;
-    public BattleMapData MapTileData;
-    public int TileWidth = 30;//地图x
-    public int TileHeight = 20;//地图y
 
     public AStarNode[,] AStarGrid;
 
@@ -140,7 +148,8 @@ public class SLGMap : MonoBehaviour
     private bool[,] bMoveAcessList;//包含己方单位的可用坐标
     private bool[,] bMoveAcessListExcluded;//排除了己方单位的可用坐标
     private bool bPlayer;
-
+    private MeshRenderer[] tileMeshRenders;
+    [Header("范围数据")]
     [SerializeField]
     private List<Point2D> m_AttackRangeList = new List<Point2D>();
     [SerializeField]
@@ -159,6 +168,12 @@ public class SLGMap : MonoBehaviour
         gSprite_Arrow2 = Resources.Load<Texture2D>(Utils.TextUtil.GetResourcesFullPath("arrow2", "App", "Map"));
         gSprite_Arrow3 = Resources.Load<Texture2D>(Utils.TextUtil.GetResourcesFullPath("arrow3", "App", "Map"));
 
+        tileMeshRenders = new MeshRenderer[transform.childCount];
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            tileMeshRenders[i] = transform.GetChild(i).GetComponent<MeshRenderer>();
+        }
+
         PList = new List<Point2D>();
         _FootData = new Dictionary<Point2D, Point2D>();
         bMoveAcessList = new bool[MapTileX, MapTileY];
@@ -174,21 +189,25 @@ public class SLGMap : MonoBehaviour
     }
     public T GetTileComponent<T>(int x, int y) where T : Component
     {
-        return transform.GetChild(y * MapTileX + x).GetComponent<T>();
+        return tileMeshRenders[y * MapTileX + x].GetComponent<T>();
+    }
+    public MeshRenderer GetTileMeshRender(int x, int y)
+    {
+        return tileMeshRenders[y * MapTileX + x];
     }
     public void SetTileActive(int x, int y, bool active)
     {
-        transform.GetChild(y * MapTileX + x).gameObject.SetActive(active);
+        GetTileMeshRender(x, y).gameObject.SetActive(active);
     }
     private void SetTileMaterialTexture(int x, int y, Texture2D texture = null, float rotation = 0.0f)
     {
-        Material mat = GetTileComponent<MeshRenderer>(x, y).material;
+        Material mat = GetTileMeshRender(x, y).material;
         mat.SetTexture("_Texture", texture);
         mat.SetFloat("_RotationDegrees", Mathf.Deg2Rad * rotation);
     }
     private void SetTextureRotation(int x, int y, float rotation)
     {
-        GetTileComponent<MeshRenderer>(x, y).material.SetFloat("_RotationDegrees", Mathf.Deg2Rad * rotation);
+        GetTileMeshRender(x, y).material.SetFloat("_RotationDegrees", Mathf.Deg2Rad * rotation);
     }
     public void Clear()
     {
@@ -439,7 +458,7 @@ public class SLGMap : MonoBehaviour
     }
     public void ShowRange(Point2D Point, Color color)
     {
-        MeshRenderer mr = GetTileComponent<MeshRenderer>(Point.x, Point.y);
+        MeshRenderer mr = GetTileMeshRender(Point.x, Point.y);
         mr.material.SetColor("_Color", color);
         mr.material.SetTexture("_Texture", null);
         mr.gameObject.SetActive(true);

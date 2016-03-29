@@ -57,8 +57,8 @@ public struct Point2D
 
     public static Vector3 Point2DToVector3(float x, float y, float h)
     { //地图相对坐标坐标转换为大地图渲染位置
-        float _x = x*10;
-        float _z = y*10;
+        float _x = x * 10;
+        float _z = y * 10;
         return new Vector3(_x, h, _z);
     }
     public static Vector3 Point2DToVector3(int x, int y)
@@ -67,16 +67,19 @@ public struct Point2D
         float _z = -(y + 0.5f);
         return new Vector3(_x, 0, _z);
     }
-
-
+}
+[System.Serializable]
+public struct Range2D
+{
+    public int x, y, width, height;
 }
 public class TileCoord
 {
     private List<Point2D> tileCoords = new List<Point2D>();
-    private Point2D LeftTop;
-    private Point2D RightTop;
-    private Point2D LeftBottom;
-    private Point2D RightBottom;
+    private Point2D LeftTop = Point2D.ZeroPoint;
+    private Point2D RightTop = Point2D.ZeroPoint;
+    private Point2D LeftBottom = Point2D.ZeroPoint;
+    private Point2D RightBottom = Point2D.ZeroPoint;
     public TileCoord(Point2D Point)
     {
         tileCoords.Add(Point);

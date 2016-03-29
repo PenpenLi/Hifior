@@ -37,7 +37,6 @@ private string ShaderName="CameraFilterPack/Blend2Camera_Darken";
 	#endregion
 	void Start ()
 	{
-		
 		if (Camera2 !=null)
 		{DestroyImmediate(Camera2.targetTexture);
 			Camera2tex=new RenderTexture(Screen.width,Screen.height, 24); 
@@ -60,7 +59,7 @@ private string ShaderName="CameraFilterPack/Blend2Camera_Darken";
 		{
 			TimeX+=Time.deltaTime;
 			if (TimeX>100)  TimeX=0;
-			if (Camera2 != null) material.SetTexture("_MainTex2",Camera2tex);
+			if (Camera2 != null) material.SetTexture("_MainTex2",Camera2.targetTexture);
 			material.SetFloat("_TimeX", TimeX);
 			material.SetFloat("_Value", BlendFX);
 			material.SetFloat("_Value2", SwitchCameraToCamera2);
@@ -76,7 +75,6 @@ private string ShaderName="CameraFilterPack/Blend2Camera_Darken";
 	{	
 		if (Camera2 != null) 
 		{
-			DestroyImmediate(Camera2.targetTexture);
 			Camera2tex=new RenderTexture(Screen.width,Screen.height, 24); 
 			Camera2.targetTexture = Camera2tex;
 		}
@@ -100,7 +98,8 @@ private string ShaderName="CameraFilterPack/Blend2Camera_Darken";
 	void OnEnable ()
 	{
 		if (Camera2 !=null)
-		{DestroyImmediate(Camera2.targetTexture);
+		{
+            DestroyImmediate(Camera2.targetTexture);
 			Camera2tex=new RenderTexture(Screen.width,Screen.height, 24); 
 			Camera2.targetTexture=Camera2tex;
 		}

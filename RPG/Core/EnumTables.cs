@@ -20,8 +20,6 @@ public enum EnumEnemyActionAI
 }
 public enum EnumEventTriggerCondition
 {
-    章节开始,
-    章节结束,
     /// <summary>
     /// 每回合之间触发
     /// </summary>
@@ -29,11 +27,15 @@ public enum EnumEventTriggerCondition
     /// <summary>
     /// 到达特定的地点进行触发,比如村庄宝箱
     /// </summary>
-    地点事件,
+    位置事件,
     /// <summary>
     /// 到达指定坐标进行待机后触发
     /// </summary>
-    坐标事件,
+    范围事件,
+    /// <summary>
+    /// 敌人数量小于等于一定数量触发
+    /// </summary>
+    敌人少于事件,
     /// <summary>
     /// 某个人物死亡后触发,通常设在Boss和NPC身上
     /// </summary>

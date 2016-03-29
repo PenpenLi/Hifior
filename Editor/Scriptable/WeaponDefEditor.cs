@@ -135,6 +135,8 @@ namespace RPGEditor
         public void OnEnable()
         {
             wea = target as WeaponDef;
+            if (wea.DedicatedCharacter == null)
+                wea.DedicatedCharacter = new System.Collections.Generic.List<int>();
             dedicatedCharacterCount = wea.DedicatedCharacter.Count;
             dedicatedJobCount = wea.DedicatedJob.Count;
             careerEffectCount = wea.CareerEffect.Count;
