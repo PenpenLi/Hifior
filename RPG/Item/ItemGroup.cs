@@ -79,7 +79,10 @@ public class ItemGroup
         if (itemNew.Count > 0)
             EquipItem(0);
     }
-    
+    public bool AddItem(int ID)//获得装备
+    {
+       return AddItem(new WeaponItem(ID));
+    }
     public bool AddItem(WeaponItem Item)//获得装备
     {
         if (Items.Count == ConstTable.CONST_ITEM_COUNT)//装备已满返回false

@@ -14,27 +14,4 @@ public class ExtendScriptableObject : ScriptableObject
     {
         return JsonUtility.ToJson(this);
     }
-#if UNITY_EDITOR
-    [ContextMenu("Create AssetBundles")]
-    public void CreateAssetBundleThemelves()
-    {
-        string targetPath = Application.dataPath + "/StreamingAssets";
-        if (BuildPipeline.BuildAssetBundles(targetPath, BuildAssetBundleOptions.ChunkBasedCompression))
-        {
-
-            Debug.Log("packed successfully!");
-        }
-        else {
-            Debug.Log("packed failly!");
-        }
-        AssetDatabase.Refresh();
-    }
-    [ContextMenu("Get AssetBundle names")]
-    public void GetNames()
-    {
-        var names = AssetDatabase.GetAllAssetBundleNames();
-        foreach (var name in names)
-            Debug.Log("AssetBundle: " + name);
-    }
-#endif
 }

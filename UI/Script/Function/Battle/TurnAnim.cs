@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace RPG.UI
 {
-    public class TurnAnim : AbstractUI
+    public class TurnAnim : IPanel
     {
         private Text text;
         private bool isAnimEnd = false;
@@ -15,18 +15,16 @@ namespace RPG.UI
             text = GetComponent<Text>();
             Hide();
         }
-        public override void Show()
+        public void Show(int Round, EnumCharacterCamp CampTurn)
         {
-           /* if (SLGLevel.SLG._whichturn == TURN_TYPE.Player)
-                text.text = "回合" + SLGLevel.SLG._round + "\n" + "我方行动回合";
-            if (SLGLevel.SLG._whichturn == TURN_TYPE.Enemy)
-                text.text = "回合" + SLGLevel.SLG._round + "\n" + "敌方行动回合";
+            if (CampTurn == EnumCharacterCamp.Player)
+                text.text = "回合" + Round + "\n" + "我方行动回合";
+            if (CampTurn == EnumCharacterCamp.Enemy)
+                text.text = "回合" + Round + "\n" + "敌方行动回合";
 
-            if (SLGLevel.SLG._whichturn == TURN_TYPE.PlayerAlly)
-                text.text = "回合" + SLGLevel.SLG._round + "\n" + "我方同盟行动回合";
-            if (SLGLevel.SLG._whichturn == TURN_TYPE.EnemyAlly)
-                text.text = "回合" + SLGLevel.SLG._round + "\n" + "敌方同盟行动回合";
-                */
+            if (CampTurn == EnumCharacterCamp.NPC)
+                text.text = "回合" + Round + "\n" + "我方同盟行动回合";
+
             gameObject.SetActive(true);
             StartCoroutine(Anim());
         }
@@ -39,7 +37,10 @@ namespace RPG.UI
             gameObject.SetActive(false);
             isAnimEnd = true;
         }
-        public bool isEnd
+        /// <summary>
+        /// 动画播放结束
+        /// </summary>
+        public bool Finish
         {
             get
             {

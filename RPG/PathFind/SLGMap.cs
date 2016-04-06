@@ -51,7 +51,15 @@ public class SLGMap : MonoBehaviour
                 _heights[x, z] = hitInfo.point.y;
             }
         }
-        MapTileData.InitMapData(TileWidth, TileHeight, new float[TileWidth, TileHeight], new int[TileWidth, TileHeight]);
+        float[,] CenterHeightData = new float[TileWidth, TileHeight];
+        for (int i = 0; i < TileHeight; i++)
+        {
+            for (int j = 0; j < TileWidth; j++)
+            {
+                CenterHeightData[j, i] = Mathf.Max(_heights[j, i], _heights[j + 1, i], _heights[j, i + 1], _heights[j + 1, i + 1]);
+            }
+        }
+        MapTileData.InitMapData(TileWidth, TileHeight, CenterHeightData, new int[TileWidth, TileHeight]);
     }
     [ContextMenu("生成Tile网格")]
     void AddChild()
@@ -78,7 +86,7 @@ public class SLGMap : MonoBehaviour
             }
         }
     }
-   
+
     public PositionGrid TilePrefab;
     private float[,] _heights;
     public float[,] Heights
@@ -116,8 +124,8 @@ public class SLGMap : MonoBehaviour
 
     public AStarNode[,] AStarGrid;
 
-    UnityEvent FuncMoveStart;
-    UnityEvent FuncMoveEnd;
+    private UnityEvent FuncMoveStart = new UnityEvent();
+    private UnityEvent FuncMoveEnd = new UnityEvent();
 
     /*
      攻击范围的判断，在消耗点用完的那个最终节点进行遍历，如果遍历的坐标包括在_FootData移动数据里，则不进行红色显示，
@@ -176,9 +184,9 @@ public class SLGMap : MonoBehaviour
 
         PList = new List<Point2D>();
         _FootData = new Dictionary<Point2D, Point2D>();
-        bMoveAcessList = new bool[MapTileX, MapTileY];
-        bMoveAcessListExcluded = new bool[MapTileX, MapTileY];
-        AStarGrid = new AStarNode[TileWidth, MapTileY];
+        bMoveAcessList = new bool[TileWidth, TileHeight];
+        bMoveAcessListExcluded = new bool[TileWidth, TileHeight];
+        AStarGrid = new AStarNode[TileWidth, TileHeight];
 
     }
     void Start()
@@ -187,13 +195,17 @@ public class SLGMap : MonoBehaviour
         InitActionScope(TestCharacter, 8);
         ShowMoveRoutine(3, 11);
     }
+    public float GetTileHeight(int x, int y)
+    {
+        return MapTileData.GetTileData(x, y).GetHeight();
+    }
     public T GetTileComponent<T>(int x, int y) where T : Component
     {
-        return tileMeshRenders[y * MapTileX + x].GetComponent<T>();
+        return tileMeshRenders[y * TileWidth + x].GetComponent<T>();
     }
     public MeshRenderer GetTileMeshRender(int x, int y)
     {
-        return tileMeshRenders[y * MapTileX + x];
+        return tileMeshRenders[y * TileWidth + x];
     }
     public void SetTileActive(int x, int y, bool active)
     {
@@ -222,8 +234,8 @@ public class SLGMap : MonoBehaviour
         _FootData.Clear();//存储指定坐标处的剩余路径
         _TempFootData.Clear();//int表示剩余的移动范围消耗点
         _AttackRangeData.Clear();//int表示剩余的攻击范围消耗点
-        for (int i = 0; i < MapTileX; i++)
-            for (int j = 0; j < MapTileY; j++)
+        for (int i = 0; i < TileWidth; i++)
+            for (int j = 0; j < TileHeight; j++)
             {
                 {
                     bMoveAcessList[i, j] = false;
@@ -294,11 +306,12 @@ public class SLGMap : MonoBehaviour
     {
         MapTileData.GetTileData(x, y).OccupyNone();
     }
-    public void InitActionScope(RPGCharacter Gamechar, int Mov, bool Show = true)
+    public void InitActionScope(RPGCharacter Gamechar, int Movement, bool Show = true)
     {
+        HideAllRange();
         bPlayer = (Gamechar.GetCamp() == EnumCharacterCamp.Player);//0,2为我方的单位
 
-        _Mov = Mov;
+        _Mov = Movement;
         /* if (Gamechar.SkillGroup.isHaveStaticSkill(18))//探险家，无视地形，将其职业设为天马
              _Job = 15;//medifyneed
          if (Gamechar.SkillGroup.isHaveStaticSkill(19))
@@ -577,11 +590,21 @@ public class SLGMap : MonoBehaviour
         }
         m_SkillEffectRangeList.Clear();
     }
+    /// <summary>
+    /// 是否可以移动到这里
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public bool CanMoveTo(Point2D point)
+    {
+        return _FootData.ContainsKey(point);
+    }
     #endregion
     public bool ShowMoveRoutine(int x, int y)
     {
+        HideRoutine();
         Point2D point = new Point2D(x, y);
-        if (_FootData.ContainsKey(point))
+        if (CanMoveTo(point))
         {
             buildMoveRoutine(x, y);
             if (_MoveRoute.Count < 1)
@@ -694,7 +717,7 @@ public class SLGMap : MonoBehaviour
 
     public bool MoveWithOutShowRoutine(RPGCharacter Gamechar, int x, int y)
     {
-        Gamechar.SetTileCoord(x, y);
+        Gamechar.SetTileCoord(x, y, false);
         Point2D point = new Point2D(x, y);
         if (_FootData.ContainsKey(point))
         {
@@ -717,16 +740,17 @@ public class SLGMap : MonoBehaviour
     }
     private void iTweenGameCharMove(RPGCharacter Gamechar, Vector3[] paths, UnityAction callStart, UnityAction callEnd)
     {
+        FuncMoveStart.RemoveAllListeners();
+        FuncMoveEnd.RemoveAllListeners();
         FuncMoveStart.AddListener(callStart);
         FuncMoveEnd.AddListener(callEnd);
-        Gamechar.Run();
         Hashtable args = new Hashtable();
         //设置路径的点
         args.Add("path", paths);
         //设置类型为线性，线性效果会好一些。
         args.Add("easeType", iTween.EaseType.linear);
         //设置寻路的速度
-        args.Add("speed", 3.0f);
+        args.Add("speed", 15f);
         //是否先从原始位置走到路径中第一个点的位置
         args.Add("movetopath", true);
         //是否让模型始终面朝当面目标的方向，拐弯的地方会自动旋转模型
@@ -743,6 +767,12 @@ public class SLGMap : MonoBehaviour
         args.Add("oncompletetarget", gameObject);
         iTween.MoveTo(Gamechar.gameObject, args);
     }
+    /// <summary>
+    /// 按照当前的路径进行移动
+    /// </summary>
+    /// <param name="Gamechar"></param>
+    /// <param name="callStart"></param>
+    /// <param name="callEnd"></param>
     public void Move(RPGCharacter Gamechar, UnityAction callStart = null, UnityAction callEnd = null) //MoveRoutine的路径 移动
     {
         if (_MoveRoute != null)
@@ -753,7 +783,7 @@ public class SLGMap : MonoBehaviour
                 int c = 0;
                 for (int i = 0; i < _MoveRoute.Count; i++)//将动画数组复制到空间坐标
                 {
-                    paths[c] = Point2D.Point2DToVector3(_MoveRoute[i].x, _MoveRoute[i].y);
+                    paths[c] = Point2D.Point2DToVector3(_MoveRoute[i].x, _MoveRoute[i].y, true);
                     c++;
                 }
                 iTweenGameCharMove(Gamechar, paths, callStart, callEnd);
@@ -769,7 +799,7 @@ public class SLGMap : MonoBehaviour
     /// </summary>
     public void MoveThenAttack(RPGCharacter Gamechar, int x, int y, UnityAction callStart = null, UnityAction callEnd = null)  //直接移动到指定的地点,用于自动攻击的单位
     {
-        Gamechar.SetTileCoord(x, y);
+        Gamechar.SetTileCoord(x, y, false);
         Point2D point = new Point2D(x, y);
         if (_FootData.ContainsKey(point))
         {
@@ -783,7 +813,7 @@ public class SLGMap : MonoBehaviour
                 int c = 0;
                 for (int i = 0; i < _MoveRoute.Count; i++)//将动画数组复制到空间坐标
                 {
-                    paths[c] = Point2D.Point2DToVector3(_MoveRoute[i].x, _MoveRoute[i].y);
+                    paths[c] = Point2D.Point2DToVector3(_MoveRoute[i].x, _MoveRoute[i].y, true);
                     c++;
                 }
                 iTweenGameCharMove(Gamechar, paths, callStart, callEnd);
@@ -796,7 +826,7 @@ public class SLGMap : MonoBehaviour
     }
     public void MoveByRoutine(RPGCharacter Gamechar, Point2D[] p, UnityAction callStart = null, UnityAction callEnd = null)
     {
-        Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y);
+        Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y, false);
         _FootData.Clear();//存储指定坐标处的剩余路径
         _TempFootData.Clear();//int表示剩余的移动范围消耗点
         _AttackRangeData.Clear();//int表示剩余的攻击范围消耗点
@@ -811,7 +841,7 @@ public class SLGMap : MonoBehaviour
                 int c = 0;
                 for (int i = 0; i < p.Length; i++)//将动画数组复制到空间坐标
                 {
-                    paths[c] = Point2D.Point2DToVector3(p[i].x, p[i].y);
+                    paths[c] = Point2D.Point2DToVector3(p[i].x, p[i].y, true);
                     c++;
                 }
                 iTweenGameCharMove(Gamechar, paths, callStart, callEnd);
@@ -821,21 +851,14 @@ public class SLGMap : MonoBehaviour
     #region 移动后处理
     void OnMoveStart(RPGCharacter Gamechar)
     {
-        if (FuncMoveStart != null)
+        if (FuncMoveStart != null && FuncMoveStart.GetPersistentEventCount()>0)
             FuncMoveStart.Invoke();
-        FuncMoveStart = null;
-        Gamechar.Run();
-        //Gamechar.PlayAnimation(5);
     }
     void OnMoveEnd(RPGCharacter Gamechar) //移动结束后
     {
         if (FuncMoveEnd != null)
             FuncMoveEnd.Invoke();
-        FuncMoveEnd = null;
-        Gamechar.StopRun();
         Clear();
-        //Gamechar.PlayAnimation(0);//动画切换回来idle
-        //SLGLevel.SLG.checkWinMission(Gamechar.TileCoords.x, Gamechar.TileCoords.y);//检查是否符合到达地点胜利条件
     }
     #endregion
     public void MoveToCroods(RPGCharacter Gamechar, int x, int y)
@@ -1185,20 +1208,24 @@ public class SLGMap : MonoBehaviour
     {
         return _AttackRangeData;
     }
-
+    /// <summary>
+    /// Tile的宽度-1
+    /// </summary>
     public int MapTileX
     {
         get
         {
-            return this.TileWidth;
+            return this.TileWidth - 1;
         }
     }
-
+    /// <summary>
+    /// Tile的高度-1
+    /// </summary>
     public int MapTileY
     {
         get
         {
-            return this.TileHeight;
+            return this.TileHeight - 1;
         }
     }
     public bool IsCoordsAccessable(int x, int y)//此处是否可以到达
@@ -1211,15 +1238,5 @@ public class SLGMap : MonoBehaviour
         {
             child.gameObject.SetActive(true);
         }*/
-    }
-    public void DrawGrid(GameObject g, GameObject parent, List<Point2D> points)
-    {
-        foreach (Point2D Key in points)
-        {
-            Vector3 ve = Point2D.Point2DToVector3(Key.x, Key.y);
-            ve.y += 0.01f;
-            GameObject obj = Instantiate(g, ve, g.transform.rotation) as GameObject;//绘制可移动范围和可攻击范围
-            obj.transform.parent = parent.transform;
-        }
     }
 }

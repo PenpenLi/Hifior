@@ -2,6 +2,7 @@
 using System.Collections;
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Toggle Script Enable")]
     public class SetScriptActive : SequenceEvent
     {
         public MonoBehaviour Script;

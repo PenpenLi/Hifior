@@ -4,7 +4,7 @@ using System.Collections.Generic;
 /// 用于战斗场景章节初始化，和SLGMap一起
 /// </summary>
 [RequireComponent(typeof(SLGMap))]
-public class SLGChapter : MonoBehaviour
+public class SLGChapter : UActor
 {
     #region 事件结构
     [System.Serializable]
@@ -173,4 +173,10 @@ public class SLGChapter : MonoBehaviour
     [Tooltip("敌方死亡事件")]
     public List<EnemyDieEventType> EnemyDieEvent;
 
+    public void Start()
+    {
+        StartSequence.gameObject.SetActive(true);
+        //播放完开始剧情后再OnFinish里添加结束后的事件，显示章节第一回合开始或者弹出准备画面
+        StartSequence.OnFinish.AddListener(() => { GetGameMode<GM_Battle>().OnStartSequenceFinish.Invoke(); });
+    }
 }

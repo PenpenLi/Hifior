@@ -24,7 +24,10 @@ public class RPGCharacterBase : UPawn
     {
         Definition = DefaultData;
     }
-    
+    public void SetAttribute(CharacterAttribute InAttribute)
+    {
+        this.Attribute = (CharacterAttribute)InAttribute.Clone();
+    }
     public string GetCharacterName()
     {
         return Definition.CommonProperty.Name;

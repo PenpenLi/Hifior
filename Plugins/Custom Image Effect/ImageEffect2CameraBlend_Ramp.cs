@@ -7,7 +7,7 @@ public class ImageEffect2CameraBlend_Ramp : ImageEffect2CameraBlend
     [Range(-0.5f, 0.5f)]
     public float Bias;
 
-    public override void SetMaterial(Material material)
+    public override void SetMaterial(Material material,RenderTexture sourceTexture,RenderTexture destTexture)
     {
         material.SetFloat("_Blend",(Blend-0.1f)*1.1111111f);
         material.SetFloat("_Bias", Bias);

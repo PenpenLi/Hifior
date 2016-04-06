@@ -5,6 +5,7 @@ using System.Collections;
 public abstract class ImageEffectBase : MonoBehaviour
 {
     #region Variables  
+    [Header("Shader")]
     public Shader curShader;
     private Material curMaterial;
     #endregion
@@ -24,7 +25,7 @@ public abstract class ImageEffectBase : MonoBehaviour
     }
     #endregion
     public abstract string ShaderName();
-    public abstract void SetMaterial(Material material);
+    public abstract void SetMaterial(Material material,RenderTexture sourceTexture,RenderTexture destTexture);
     // Use this for initialization  
     protected virtual void Start()
     {
@@ -48,7 +49,7 @@ public abstract class ImageEffectBase : MonoBehaviour
     }
     void OnRenderImage(RenderTexture sourceTexture, RenderTexture destTexture)
     {
-        SetMaterial(Material);
+        SetMaterial(Material,sourceTexture,destTexture);
         if (curShader != null)
         {
             Graphics.Blit(sourceTexture, destTexture, Material);

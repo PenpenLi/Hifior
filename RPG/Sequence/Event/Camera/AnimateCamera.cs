@@ -2,6 +2,7 @@
 using System.Collections;
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Animate Camera")]
     public class AnimateCamera : SequenceEvent
     {
         public AnimationClip Clip;

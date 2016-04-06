@@ -11,6 +11,7 @@ public enum CameraRotationSpeedOptions { SuperSlow, Slow, Medium, Fast, Faster, 
 
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Smooth Move Camera")]
     public class SmoothMoveCamera : SequenceEvent
     {
         [Tooltip("等待直到移动完毕再执行下一个片段")]

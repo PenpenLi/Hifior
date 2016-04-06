@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class RPGEnemy : RPGCharacterBase
+public class RPGEnemy : RPGCharacter
 {
 }

@@ -28,3 +28,4 @@ LevelAssets.meta
 *.ogv
 *.FBX
 *.fbx
+/StreamingAssets

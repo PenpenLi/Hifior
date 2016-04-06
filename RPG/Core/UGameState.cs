@@ -1,58 +1,59 @@
 ﻿using UnityEngine;
-using System.Collections;
-using FSM;
+using System.Collections.Generic;
 /// <summary>
 /// 保存当前GameMode下的一些数据,状态机在这个里面
 /// </summary>
 public class UGameState : UActor
 {
-    public GameObject CurrentPlayer { private set; get; }//当前操作的角色
-    public string CurrentStateOnInspector;
-    private FSMSystem fsm = new FSMSystem();//内置一个fsm
-    private DoOnce onceLogNullFSM = new DoOnce(() => { Utils.Log.Write("当前状态机的状态为空"); });
-
-    public void SetTickInterval(float Interval = 0.2f)
-    {
-        Time.fixedDeltaTime = Interval;
-    }
-    public void SetTransition(Transition t) //转换状态
-    {
-        fsm.PerformTransition(t);
-        CurrentStateOnInspector = t.ToString();
-    }
-    public void AddState(FSMState State, Transition InTransition, StateID InStateID)
-    {
-        State.AddTransition(InTransition, InStateID);
-        fsm.AddState(State);
-    }
     /// <summary>
-    /// 重写这个函数用于创建一个状态机
+    /// 战场上的我方玩家
     /// </summary>
-    public virtual void MakeFSM()
+    protected List<UPawn> LocalPlayers = new List<UPawn>();
+    protected List<UPawn> LocalEnemies = new List<UPawn>();
+    public int AddLocalPlayer(UPawn Player)
     {
-        /*CompanyLogo companyLogo = new CompanyLogo();
-        AddState(companyLogo, Transition.StartGameMenu, StateID.StartGameMenu);
-
-        MainMenu mainMenu = new MainMenu();
-        AddState(mainMenu, Transition.ShowStartMovie, StateID.StartMovie);*/
+        LocalPlayers.Add(Player);
+        return LocalPlayers.Count;
     }
-    public override void BeginPlay()
+    public int AddLocalEnemy(UPawn Enemy)
     {
-        base.BeginPlay();
-
-        MakeFSM();
+        LocalEnemies.Add(Enemy);
+        return LocalEnemies.Count;
     }
-    /// <summary>
-    /// //作为驱动源
-    /// </summary>
-    public void FixedUpdate()
+    public int GetNumLocalPlayers()
     {
-        if (fsm.CurrentState == null)
+        return LocalPlayers.Count;
+    }
+    public int GetNumLocalEnemies()
+    {
+        return LocalEnemies.Count;
+    }
+    public UPawn GetFirstGamePlayer()
+    {
+        if (LocalPlayers.Count > 0)
+            return LocalPlayers[0];
+        Debug.LogError("No Player exists");
+        return null;
+    }
+    public UPawn GetLocalPlayerByIndex(int Index)
+    {
+        if (LocalPlayers.Count <= Index)
         {
-            onceLogNullFSM.Execute();
-            return;
+            Debug.LogError("The Index Player don't exists");
+            return null;
         }
-        fsm.CurrentState.Reason(this);
-        fsm.CurrentState.Act(this);
+        if (LocalPlayers[Index] == null)
+        {
+            Debug.LogError("Null Pawn");
+        }
+        return LocalPlayers[Index];
+    }
+    public UPlayerController GetFirstLocalPlayerController()
+    {
+        return GetFirstGamePlayer().GetPlayerController<UPlayerController>();
+    }
+    List<UPawn> GetLocalPlayers()
+    {
+        return LocalPlayers;
     }
 }

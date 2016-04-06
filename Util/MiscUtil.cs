@@ -32,9 +32,14 @@ namespace Utils
         public static T GetComponentNotNull<T>(GameObject gameObject) where T : Component
         {
             T component = gameObject.GetComponent<T>();
-            if (component == null)
+            if (!component)
             {
                 component = gameObject.AddComponent<T>();
+                if(component is MonoBehaviour)
+                {
+                    MonoBehaviour mono = component as MonoBehaviour;
+                    mono.enabled = true;
+                }
             }
             return component;
         }

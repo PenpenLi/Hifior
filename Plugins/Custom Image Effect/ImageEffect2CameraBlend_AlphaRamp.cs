@@ -5,7 +5,7 @@ public class ImageEffect2CameraBlend_AlphaRamp : ImageEffect2CameraBlend
     public bool Reverse;
     public Texture Ramp;
 
-    public override void SetMaterial(Material material)
+    public override void SetMaterial(Material material,RenderTexture sourceTexture,RenderTexture destTexture)
     {
         material.SetFloat("_Blend", (Blend - 0.5f) * 2);
         material.SetTexture("_Ramp", Ramp);

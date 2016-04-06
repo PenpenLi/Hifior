@@ -12,9 +12,6 @@ using System.IO;
 public class UGameInstance : MonoSingleton<UGameInstance>
 {
     private UGameMode ActiveGameMode;
-    private List<UPawn> LocalPlayers = new List<UPawn>();
-    private List<UPawn> LocalEnemies = new List<UPawn>();
-    private List<UPawn> LocalPlayerAllys = new List<UPawn>();
     #region UE4
     public new T GetGameMode<T>() where T : UGameMode
     {
@@ -46,73 +43,6 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     {
         OutError = null;
         return null;
-    }
-
-    /**
-	 * Adds a new player.
-	 * @param ControllerId - The controller ID the player should accept input from.
-	 * @param OutError - If no player is returned, OutError will contain a string describing the reason.
-	 * @param SpawnActor - True if an actor should be spawned for the new player.
-	 * @return The player which was created.
-	 */
-    public UPawn CreateLocalPlayer(int ControllerId, out string OutError, bool bSpawnActor)
-    {
-        OutError = null;
-        return ActiveGameMode.ActivePawn;
-    }
-
-    /**
-	 * Adds a LocalPlayer to the local and global list of Players.
-	 *
-	 * @param	NewPlayer	the player to add
-	 * @param	ControllerId id of the controller associated with the player
-	 */
-    public int AddLocalPlayer(UPawn NewPlayer, int ControllerId)
-    {
-        return 0;
-    }
-
-    /**
-	 * Removes a player.
-	 * @param Player - The player to remove.
-	 * @return whether the player was successfully removed. Removal is not allowed while connected to a server.
-	 */
-    public bool RemoveLocalPlayer(UPawn ExistingPlayer)
-    {
-        return true;
-    }
-
-    public int GetNumLocalPlayers()
-    {
-        return LocalPlayers.Count;
-    }
-    public UPawn GetFirstGamePlayer()
-    {
-        if (LocalPlayers.Count > 0)
-            return LocalPlayers[0];
-        Debug.LogError("No Player exists");
-        return null;
-    }
-    public UPawn GetLocalPlayerByIndex(int Index)
-    {
-        if (LocalPlayers.Count <= Index)
-        {
-            Debug.LogError("The Index Player don't exists");
-            return null;
-        }
-        if (LocalPlayers[Index] == null)
-        {
-            Debug.LogError("Null Pawn");
-        }
-        return LocalPlayers[Index];
-    }
-    public UPlayerController GetFirstLocalPlayerController()
-    {
-        return GetFirstGamePlayer().GetPlayerController<UPlayerController>();
-    }
-    List<UPawn> GetLocalPlayers()
-    {
-        return LocalPlayers;
     }
 
     public void SetGameMode(UGameMode GameMode)

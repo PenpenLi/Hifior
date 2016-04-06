@@ -54,17 +54,43 @@ public struct Point2D
     {
         return new Point2D((int)vector.x / 10, (int)vector.y / 10);
     }
-
-    public static Vector3 Point2DToVector3(float x, float y, float h)
-    { //地图相对坐标坐标转换为大地图渲染位置
+    /// <summary>
+    /// 地图相对坐标坐标转换为大地图渲染位置
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="h"></param>
+    /// <param name="Shift">是否有半个单位的偏移</param>
+    /// <returns></returns>
+    public static Vector3 Point2DToVector3(float x, float y, float h,bool Shift)
+    { 
         float _x = x * 10;
         float _z = y * 10;
+
+        if (Shift)
+        {
+            _x += 5;
+            _z += 5;
+        }
         return new Vector3(_x, h, _z);
     }
-    public static Vector3 Point2DToVector3(int x, int y)
-    { //地图相对坐标坐标转换为大地图渲染位置
-        float _x = (x + 0.5f);
-        float _z = -(y + 0.5f);
+    /// <summary>
+    /// 地图相对坐标坐标转换为大地图渲染位置
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="Shift">是否有半个单位的偏移</param>
+    /// <returns></returns>
+    public static Vector3 Point2DToVector3(int x, int y, bool Shift)
+    {
+        float _x = x * 10;
+        float _z = y * 10;
+
+        if (Shift)
+        {
+            _x += 5;
+            _z += 5;
+        }
         return new Vector3(_x, 0, _z);
     }
 }

@@ -20,20 +20,22 @@ namespace RPG.UI
         public void Show(RPGCharacter ch)
         {
             if (gameObject.activeSelf == true) return;
-            /*if (ch != null && StateMachine.SManage.CurrentBattleState == BATTLE_STATE.PlayerAction)
+            if (ch != null)
             {
-                charIcon.sprite = ch.IconGroup.Icon;
-                charName.text = ch.attribute.Name;
-                hp.text = ch.attribute.CurHP + "/" + ch.attribute.MaxHP;
-                lv.text = ch.attribute.LV.ToString();
-                WeaponItem item = ch.ItemGroup.getEquipItem();
+                charIcon.sprite = ch.GetPortrait();
+                charName.text = ch.GetCharacterName();
+                hp.text = ch.GetCurrentHP() + "/" + ch.GetMaxHP();
+                lv.text = ch.GetLevel().ToString();
+                WeaponItem item = ch.Item.GetEquipItem();
                 if (item != null)
                 {
-                    weaponName.text = Table._ItemTable.getName(item.ID);
-                    weaponIcon.sprite = item.Icon;
+                    weaponIcon.gameObject.SetActive(true);
+                    weaponName.text = item.GetDefinition().CommonProperty.Name;
+                    weaponIcon.sprite = item.GetDefinition().Icon;
                 }
                 else
                 {
+                    weaponIcon.gameObject.SetActive(false);
                     weaponName.text = null;
                     weaponIcon.sprite = null;
                 }
@@ -43,7 +45,7 @@ namespace RPG.UI
             else
             {
                 gameObject.SetActive(false);
-            }*/
+            }
         }
     }
 }

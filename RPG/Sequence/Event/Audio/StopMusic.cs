@@ -2,6 +2,7 @@
 using System.Collections;
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Stop Music")]
     public class StopMusic : SequenceEvent
     {
 

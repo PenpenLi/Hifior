@@ -4,7 +4,7 @@ using System.Collections.Generic;
 ///  If Disabled, this tick will not fire
 ///  If CoolingDown, this tick has an interval frequency that is being adhered to currently
 /// </summary>
-enum ETickState
+public enum ETickState
 {
     Disabled,
     Enabled,
@@ -27,4 +27,14 @@ public enum ESceneState
     Home,
     Battle,
     GameOver
+}
+public enum EBattleState
+{
+    剧情,
+    回合动画, 
+    选择角色,
+    选定移动,
+    选定动作,
+    攻击过程,
+
 }

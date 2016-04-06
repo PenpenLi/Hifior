@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PositionGrid : MonoBehaviour
 {
+#if UNITY_EDITOR
     public int x;
     public int y;
     public float CellSize = 1;
@@ -82,4 +83,5 @@ public class PositionGrid : MonoBehaviour
     {
         return new Vector3(x * cellSize, transform.parent.GetComponent<SLGMap>().Heights[x, z] + yOffset, z * cellSize);
     }*/
+#endif 
 }

@@ -2,7 +2,6 @@
 using UnityEngine.Events;
 using UnityEngine.Assertions;
 using System.Collections.Generic;
-using System;
 
 public abstract class BaseEventData
 {
@@ -141,7 +140,10 @@ public class eventdata0 : BaseEventData
     }
 
     public virtual void SetPlayerDefaults(UPawn PlayerPawn) { }
-
+    /// <summary>
+    /// 在Awake里进行初始化
+    /// </summary>
+    public virtual void Initialize() { }
     void Awake()
     {
         Assert.IsNotNull<UPawn>(ActivePawn, "You nees assign a Pawn");
@@ -163,7 +165,7 @@ public class eventdata0 : BaseEventData
         ActiveGameState.transform.parent = transform;
 
         GetGameInstance().SetGameMode(this);
-
+        Initialize();
     }
 
 }

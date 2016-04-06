@@ -24,6 +24,13 @@ namespace RPG.UI
         {
             gameObject.SetActive(false);
         }
+        public bool Visible
+        {
+            get
+            {
+                return gameObject.activeSelf;
+            }
+        }
         /// <summary>
         /// 使其显示在最前方
         /// </summary>
@@ -110,7 +117,7 @@ namespace RPG.UI
 
         IEnumerator Tween()
         {
-            
+
             bool isOver = false;
             while (!isOver)
             {
@@ -155,6 +162,8 @@ namespace RPG.UI
         }
         public void UpdateTween(float ratio)
         {
+            if (!selfGraphic)
+                return;
             if (fadeType == FadeType.Alpha)
             {
                 selfColor = selfGraphic.color;

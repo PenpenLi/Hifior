@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 [System.Serializable]
-public class CharacterAttribute
+public class CharacterAttribute:System.ICloneable
 {
     public int HP;
     public int PhysicalPower;
@@ -34,5 +35,10 @@ public class CharacterAttribute
    " PhysicalDefense= " + PhysicalDefense +
    " MagicalDefense= " + MagicalDefense +
    " Movement= " + Movement;
+    }
+
+    public object Clone()
+    {
+        return MemberwiseClone();
     }
 }

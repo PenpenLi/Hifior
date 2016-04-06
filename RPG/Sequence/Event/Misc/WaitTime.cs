@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Wait Time")]
     public class WaitTime : SequenceEvent
     {
         [Tooltip("等待的时间")]

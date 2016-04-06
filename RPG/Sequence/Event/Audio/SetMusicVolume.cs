@@ -2,6 +2,7 @@
 using System.Collections;
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Set Music Volume")]
     public class SetMusicVolume : SequenceEvent
     {
         [Range(0f, 1.0f)]

@@ -25,6 +25,6 @@ namespace Utils
                 Log.Write("movie play finished");
             }
         }
-    }
 #endif
+    }
 }

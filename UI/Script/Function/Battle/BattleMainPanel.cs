@@ -24,7 +24,7 @@ namespace RPG.UI
 
         void Button_Environment()
         {
-            UISet.Panel_Config.Show();
+            UIController.Instance.GetUI<RPG.UI.ConfigPanel>().Show();
         }
         void Button_Army()
         {

@@ -2,6 +2,7 @@
 using System.Collections;
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Shake Camera")]
     public class ShakeCamera : SequenceEvent
     {
         [Tooltip("晃动摄像机的时间")]

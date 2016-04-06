@@ -95,4 +95,8 @@ public struct TileData
     {
         return Tile_occupy == EnumOccupyState.Enemy;
     }
+    public float GetHeight()
+    {
+        return Tile_height;
+    }
 }

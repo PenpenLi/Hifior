@@ -4,6 +4,40 @@ using System.Collections.Generic;
 
 public class UInputComponent
 {
+    public static bool A_Clicked
+    {
+        get {
+            return Input.GetButton("A");
+    }
+    }
+    public static bool B_Clicked
+    {
+        get
+        {
+            return Input.GetButton("B");
+        }
+    }
+    public static bool X_Clicked
+    {
+        get
+        {
+            return Input.GetButton("X");
+        }
+    }
+    public static bool Y_Clicked
+    {
+        get
+        {
+            return Input.GetButton("Y");
+        }
+    }
+    public static bool Start_Clicked
+    {
+        get
+        {
+            return Input.GetButton("Start");
+        }
+    }
     public string Name
     {
         get;

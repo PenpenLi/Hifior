@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using UnityEngine.UI;
 using System.Collections.Generic;
 
 namespace RPG.UI
@@ -12,6 +12,11 @@ namespace RPG.UI
         static bool afterAttack;
         static bool afterSkill;
         static bool afterUseItem;
+        public override void Show()
+        {
+            base.Show();
+            GetComponentInChildren<Button>().Select();
+        }
         /*
         public static void AfterMove()
         {

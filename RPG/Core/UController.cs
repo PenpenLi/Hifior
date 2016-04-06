@@ -99,8 +99,8 @@ public class UController : UActor
         OldPawn = Pawn;
         Pawn = InPawn;
         if (OldPawn != null)
-            OldPawn.GetComponent<UPawn>().enabled = false;
-        Pawn.GetComponent<UPawn>().enabled = true;
+            OldPawn.enabled = false;
+        Pawn.enabled = true;
     }
     public void PossessOld()
     {
@@ -111,7 +111,7 @@ public class UController : UActor
 	 */
     public virtual void UnPossess()
     {
-        Destroy(Pawn);
+        Pawn.enabled = false;
     }
 
     /**

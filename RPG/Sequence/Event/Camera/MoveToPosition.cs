@@ -3,9 +3,9 @@ using System.Collections;
 
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Camera Move To")]
     public class MoveToPosition : SequenceEvent
     {
-
         public Vector3 TargetPoint;
         [Tooltip("平滑类型")]
         public iTween.EaseType EaseType;

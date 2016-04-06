@@ -8,7 +8,7 @@ public class UPawn : UActor
     [Header("Pawn基类参数")]
     public UController Controller;
     UPlayerState PlayerState;
-    private bool bInputEnabled;
+    private bool bInputEnabled=true;
     public string PawnName;
 
     public UPawn()
@@ -61,6 +61,8 @@ public class UPawn : UActor
     public void PossessedBy(UController NewController)
     {
         Controller = NewController;
+        this.enabled = true;
+        NewController.SetPawn(this);
         if (Controller.PlayerState != null)
         {
             PlayerState = Controller.PlayerState;
@@ -69,11 +71,11 @@ public class UPawn : UActor
     public void UnPossessed()
     {
         UController OldController = Controller;
-
+        OldController.SetPawn(null);
         PlayerState = null;
         transform.SetParent(null);
         Controller = null;
-
+        this.enabled = false;
         // Unregister input component if we created one
         DestroyPlayerInputComponent();
     }

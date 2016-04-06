@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using RPG.UI;
 /// <summary>
 /// 控制界面上2D UI的显示
 /// </summary>
@@ -45,17 +46,12 @@ public class UHUD : UActor
     /// <summary>
     /// 当前HUD下UI的Canvas
     /// </summary>
-    public Canvas Canvas;
-
-    /// <summary>
-    /// Debug专用Canvas
-    /// </summary>
-    public Canvas DebugCanvas;
+    public UIController Canvas;
 
     /// <summary>
     /// Debug专用Text列表
     /// </summary>
-    protected Dictionary<string, DebugText> DebugTextList=new Dictionary<string, DebugText>();
+    protected Dictionary<string, DebugText> DebugTextList = new Dictionary<string, DebugText>();
     public struct DebugText
     {
         public string Content;
@@ -107,10 +103,13 @@ public class UHUD : UActor
             }
         }
     }
+    void Awake()
+    {
+        Canvas = UIController.Instance;
+    }
     public override void BeginPlay()
     {
         base.BeginPlay();
-        Canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
     }
     /**
 	 * Toggles displaying properties of player's current ViewTarget

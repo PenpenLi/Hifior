@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Sequence
 {
+    [AddComponentMenu("Sequence/Play Sound")]
     [HierarchyIcon("Sound.jpg",2)]
     public class PlaySound : SequenceEvent
     {
