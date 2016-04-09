@@ -8,16 +8,16 @@ namespace FSM
         {
             stateID = StateID.StartGameMenu;
         }
-        public override void Act(UGameState Manager)
+        public override void Act(UGameStatus Manager)
         {
             Debug.Log(stateID.ToString() + " action");
         }
 
-        public override void Reason(UGameState Manager)
+        public override void Reason(UGameStatus Manager)
         {
 
         }
-        public override void DoBeforeEntering(UGameState Manager)
+        public override void DoBeforeEntering(UGameStatus Manager)
         {
             base.DoBeforeEntering(Manager);
         }

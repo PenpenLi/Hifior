@@ -37,7 +37,7 @@ namespace RPG.UI
             }
 
         }
-        public void init(RPGCharacter ch)
+        public void Init(RPGCharacter ch)
         {
             disable();
             int itemCount = ch.Item.GetItemCount();

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Events;
 using RPG.UI;
 /// <summary>
@@ -8,7 +8,7 @@ using RPG.UI;
 /// </summary>
 public class GM_Battle : UGameMode
 {
-    public EBattleState BattleState;
+    public EBattleStatus BattleStatus;
     public int Round;
     public EnumCharacterCamp RoundCamp;
 
@@ -17,17 +17,28 @@ public class GM_Battle : UGameMode
     private SLGMap m_slgMap;
     private SLGChapter m_slgChapter;
 
-    /// <summary>
-    /// 开始剧情结束后触发的事件
-    /// </summary>
-    public UnityEvent OnStartSequenceFinish;
     public TurnAnim TurnSwitchText;
     public override void Initialize()
     {
         FindSLGMapChapter();
         FindCharacterParent();
-
-        OnStartSequenceFinish.AddListener(() => { Round++; TurnSwitchText.Show(Round, RoundCamp); });
+    }
+    /// <summary>
+    /// 开始剧情结束后执行的事件
+    /// </summary>
+    public void OnStartSequenceFinished()
+    {
+        Round++;
+        RPG.UI.TurnAnim TurnAnim = UIController.Instance.GetUI<RPG.UI.TurnAnim>();
+        TurnAnim.RegisterOnHide(OnFirstPhaseStart);
+        TurnAnim.Show(Round, RoundCamp);
+    }
+    /// <summary>
+    /// 开始剧情播放完毕，回合动画播放完毕后执行
+    /// </summary>
+    private void OnFirstPhaseStart()
+    {
+        GetPlayerPawn<Pawn_BattleArrow>().Reset();
     }
     public SLGMap GetSLGMap()
     {
@@ -72,12 +83,15 @@ public class GM_Battle : UGameMode
         m_enemyParent = GameObject.Find("InstCharacter/Enemy").transform;
     }
 
-    private RPGCharacter AddCharacter(CharacterDef Def, int x, int y, CharacterAttribute CustomAttribute = null)
+    private RPGCharacter AddCharacter(CharacterDef Def, EnumCharacterCamp Camp, int x, int y, CharacterAttribute CustomAttribute = null)
     {
         GameObject playerObj = Def.BattleModel;
         Transform instObj = Instantiate(playerObj).transform;
         instObj.rotation = Quaternion.identity;
-        instObj.parent = m_playerParent;
+        if (Camp == EnumCharacterCamp.Player)
+            instObj.parent = m_playerParent;
+        else
+            instObj.parent = m_enemyParent;
         RPGCharacter Character = instObj.GetComponent<RPGCharacter>();
         if (CustomAttribute != null)
         {
@@ -87,6 +101,7 @@ public class GM_Battle : UGameMode
         {
             Character.SetAttribute(Def.DefaultAttribute);
         }
+        Character.SetCamp(Camp);
         Character.SetTileCoord(x, y, true);
         return Character;
     }
@@ -100,9 +115,7 @@ public class GM_Battle : UGameMode
     public void AddPlayer(int ID, int x, int y, bool FromRecord = true, CharacterAttribute CustomAttribute = null)
     {
         PlayerDef def = ResourceManager.GetPlayerDef(ID);
-        RPGPlayer Character = AddCharacter(def, x, y, CustomAttribute) as RPGPlayer;
-        Character.SetDefaultData(def);
-        GetGameState<UGameState>().AddLocalPlayer(Character);
+        AddPlayer(def, x, y, CustomAttribute);
     }
     /// <summary>
     /// 通过PlayerDef添加Player到场景中
@@ -112,9 +125,9 @@ public class GM_Battle : UGameMode
     /// <param name="y"></param>
     public void AddPlayer(PlayerDef Def, int x, int y, CharacterAttribute CustomAttribute = null)
     {
-        RPGPlayer Character = AddCharacter(Def, x, y, CustomAttribute) as RPGPlayer;
+        RPGPlayer Character = AddCharacter(Def, EnumCharacterCamp.Player, x, y, CustomAttribute) as RPGPlayer;
         Character.SetDefaultData(Def);
-        GetGameState<UGameState>().AddLocalPlayer(Character);
+        GetGameStatus<UGameStatus>().AddLocalPlayer(Character);
     }
     /// <summary>
     /// 添加一个Enemy到场景中
@@ -123,12 +136,10 @@ public class GM_Battle : UGameMode
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="FromRecord">从存档加载人物属性</param>
-    public void AddEnemy(int ID, int x, int y, bool FromRecord = true, CharacterAttribute CustomAttribute = null)
+    public void AddEnemy(int ID, int x, int y, List<int> Items, CharacterAttribute CustomAttribute = null)
     {
         EnemyDef def = ResourceManager.GetEnemyDef(ID);
-        RPGEnemy Character = AddCharacter(def, x, y, CustomAttribute) as RPGEnemy;
-        Character.SetDefaultData(def);
-        GetGameState<UGameState>().AddLocalEnemy(Character);
+        AddEnemy(def, x, y, Items, CustomAttribute);
     }
     /// <summary>
     /// 通过EnemyDef添加Enemy到场景中
@@ -136,11 +147,12 @@ public class GM_Battle : UGameMode
     /// <param name="Def"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    public void AddEnemy(EnemyDef Def, int x, int y, CharacterAttribute CustomAttribute = null)
+    public void AddEnemy(EnemyDef Def, int x, int y, List<int> Items, CharacterAttribute CustomAttribute = null)
     {
-        RPGEnemy Character = AddCharacter(Def, x, y, CustomAttribute) as RPGEnemy;
+        RPGEnemy Character = AddCharacter(Def, EnumCharacterCamp.Enemy, x, y, CustomAttribute) as RPGEnemy;
+        Character.Item.AddItem(Items);
         Character.SetDefaultData(Def);
-        GetGameState<UGameState>().AddLocalEnemy(Character);
+        GetGameStatus<UGameStatus>().AddLocalEnemy(Character);
     }
 
     public override void BeginPlay()

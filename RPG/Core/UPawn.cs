@@ -7,15 +7,14 @@ public class UPawn : UActor
 {
     [Header("Pawn基类参数")]
     public UController Controller;
-    UPlayerState PlayerState;
-    private bool bInputEnabled=true;
+    UPlayerStatus PlayerState;
     public string PawnName;
 
     public UPawn()
     {
         CreatePlayerInputComponent();
     }
-    public void SetPlayerState(UPlayerState PlayerState)
+    public void SetPlayerState(UPlayerStatus PlayerState)
     {
         this.PlayerState = PlayerState;
     }
@@ -27,16 +26,8 @@ public class UPawn : UActor
     public override void Tick(float DeltaSeconds)
     {
         base.Tick(DeltaSeconds);
-        InputComponent.bBlockInput = !bInputEnabled;
     }
     public virtual void Reset() { }
-    public virtual void SetupPlayerInputComponent(UInputComponent InInputComponent)
-    {
-        if (InputComponent == null)
-        {
-            InputComponent = new UInputComponent(this, "Pawn_InputComponent0");
-        }
-    }
     public override void SetName(string s)
     {
         PawnName = s;
@@ -44,6 +35,13 @@ public class UPawn : UActor
     public override string GetHumanReadableName()
     {
         return PawnName;
+    }
+    public virtual void SetupPlayerInputComponent(UInputComponent InInputComponent)
+    {
+        if (InputComponent == null)
+        {
+            InputComponent = new UInputComponent(this, "Pawn_InputComponent0");
+        }
     }
     public virtual void CreatePlayerInputComponent()
     {
@@ -92,7 +90,7 @@ public class UPawn : UActor
     {
         return Controller;
     }
-    public override void EnableInput(UPlayerController PlayerController)
+    public override void EnableInput(UPlayerController PlayerController = null)
     {
         if (PlayerController == Controller || PlayerController == null)
         {
@@ -104,11 +102,11 @@ public class UPawn : UActor
         }
     }
 
-    public override void DisableInput(UPlayerController PlayerController)
+    public override void DisableInput(UPlayerController PlayerController = null)
     {
         if (PlayerController == Controller || PlayerController == null)
         {
-            bInputEnabled = false;
+            InputComponent.bBlockInput = true;
         }
         else
         {

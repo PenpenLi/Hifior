@@ -55,6 +55,31 @@ namespace RPGEditor
                 EditorUtility.SetDirty(target);
             }
         }
+
+        public static void CharacterAttributeInspector(ref CharacterAttribute Attribute,ref bool foldout_Attribute)
+        {
+            foldout_Attribute = EditorGUILayout.Foldout(foldout_Attribute, "初始属性");
+            if (foldout_Attribute)
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginVertical();
+
+                Attribute.HP = EditorGUILayout.IntSlider("HP", Attribute.HP, 0, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
+                Attribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", Attribute.PhysicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", Attribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.Skill = EditorGUILayout.IntSlider("技术", Attribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.Speed = EditorGUILayout.IntSlider("速度", Attribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.Luck = EditorGUILayout.IntSlider("幸运", Attribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", Attribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", Attribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.Movement = EditorGUILayout.IntSlider("移动", Attribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
+
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndHorizontal();
+            }
+
+        }
         public void InitTarget(CharacterDef def)
         {
             character = def;

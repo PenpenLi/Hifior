@@ -28,7 +28,7 @@ public enum ESceneState
     Battle,
     GameOver
 }
-public enum EBattleState
+public enum EBattleStatus
 {
     剧情,
     回合动画, 

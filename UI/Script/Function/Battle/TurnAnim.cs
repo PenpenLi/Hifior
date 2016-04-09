@@ -7,7 +7,6 @@ namespace RPG.UI
     public class TurnAnim : IPanel
     {
         private Text text;
-        private bool isAnimEnd = false;
         protected override void Awake()
         {
             base.Awake();
@@ -31,21 +30,9 @@ namespace RPG.UI
         IEnumerator Anim()
         {
             GetComponent<Animation>().Play("turnAnimation");
-            isAnimEnd = false;
             yield return new WaitForSeconds(2.0f);
             GetComponent<Animation>().Stop("turnAnimation");
-            gameObject.SetActive(false);
-            isAnimEnd = true;
-        }
-        /// <summary>
-        /// 动画播放结束
-        /// </summary>
-        public bool Finish
-        {
-            get
-            {
-                return isAnimEnd;
-            }
+            base.Hide();
         }
     }
 }

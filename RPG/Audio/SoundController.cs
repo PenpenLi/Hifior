@@ -62,7 +62,7 @@ public class SoundController : MonoBehaviour
      * @param soundClip The sound effect clip to play
      * @param volume The volume level of the sound effect
      */
-    public void PlaySound(AudioClip soundClip, float volume)
+    public void PlaySound(AudioClip soundClip, float volume=1.0f)
     {
         _2DEffectAudio.PlayOneShot(soundClip, volume);
     }

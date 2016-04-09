@@ -9,9 +9,14 @@ namespace Utils
             yield return new WaitForSeconds(Time);
             Action();
         }
-        public static void DelayFunc(MonoBehaviour MonoInstance, UnityEngine.Events.UnityAction Action, float Time)
+        public static void DelayFunc(UnityEngine.Events.UnityAction Action, float Time)
         {
-            MonoInstance.StartCoroutine(IEnumDelayFunc(Action, Time));
+            UnityEngine.Assertions.Assert.IsNotNull(UGameInstance.Instance,"GameInstance 是Null，请确保GameInstance 存在于场景中且Active");
+            UGameInstance.Instance.StartCoroutine(IEnumDelayFunc(Action, Time));
+        }
+        public static void DelayFunc(MonoBehaviour Mono, UnityEngine.Events.UnityAction Action, float Time)
+        {
+            Mono.StartCoroutine(IEnumDelayFunc(Action, Time));
         }
         public static GameObject Instantiate(GameObject ob, Transform parent)
         {

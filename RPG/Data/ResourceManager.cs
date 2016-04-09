@@ -30,7 +30,7 @@ public static class ResourceManager
     }
     public static EnemyDef GetEnemyDef(int ID)
     {
-        if (playerPrefabBundle == null)
+        if (enemyPrefabBundle == null)
             enemyPrefabBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, ASSET_PREFAB_ENEMY));
         return GetDef(enemyDefTable, ASSET_ENEMY, ID);
     }

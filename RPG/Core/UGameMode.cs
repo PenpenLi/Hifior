@@ -25,9 +25,9 @@ public class UGameMode : UActor
 {
     public UPawn ActivePawn;
     public UPlayerController ActivePlayerController;
-    public UPlayerState ActivePlayerState;
+    public UPlayerStatus ActivePlayerStatus;
     public UHUD ActiveHUD;
-    public UGameState ActiveGameState;
+    public UGameStatus ActiveGameStatus;
     /// <summary>
     /// 当前的玩家数量
     /// </summary>
@@ -48,7 +48,7 @@ public class UGameMode : UActor
     /// </summary>
     int CurrentID;
 
-    public new T GetPawn<T>() where T : UPawn
+    public new T GetPlayerPawn<T>() where T : UPawn
     {
         return (T)ActivePawn;
     }
@@ -56,17 +56,17 @@ public class UGameMode : UActor
     {
         return (T)ActivePlayerController;
     }
-    public new T GetPlayerState<T>() where T : UPlayerState
+    public new T GetPlayerState<T>() where T : UPlayerStatus
     {
-        return (T)ActivePlayerState;
+        return (T)ActivePlayerStatus;
     }
     public new T GetHUD<T>() where T : UHUD
     {
         return (T)ActiveHUD;
     }
-    public new T GetGameState<T>() where T : UGameState
+    public new T GetGameStatus<T>() where T : UGameStatus
     {
-        return (T)ActiveGameState;
+        return (T)ActiveGameStatus;
     }
     public virtual void RestartGame() { }
     /** 
@@ -148,21 +148,21 @@ public class eventdata0 : BaseEventData
     {
         Assert.IsNotNull<UPawn>(ActivePawn, "You nees assign a Pawn");
         Assert.IsNotNull<UPlayerController>(ActivePlayerController, "You nees assign a PlayerController");
-        Assert.IsNotNull<UPlayerState>(ActivePlayerState, "You nees assign a PlayerState");
+        Assert.IsNotNull<UPlayerStatus>(ActivePlayerStatus, "You nees assign a PlayerStatus");
         Assert.IsNotNull<UHUD>(ActiveHUD, "You nees assign a HUD");
-        Assert.IsNotNull<UGameState>(ActiveGameState, "You nees assign a GameState");
+        Assert.IsNotNull<UGameStatus>(ActiveGameStatus, "You nees assign a GameStatus");
 
         ActivePlayerController = Instantiate<UPlayerController>(ActivePlayerController);
         ActivePlayerController.transform.parent = transform;
         ActivePawn = Instantiate<UPawn>(ActivePawn);
         ActivePawn.transform.parent = transform;
         ActivePlayerController.Possess(ActivePawn);
-        ActivePlayerState = Instantiate<UPlayerState>(ActivePlayerState);
-        ActivePlayerState.transform.parent = transform;
+        ActivePlayerStatus = Instantiate<UPlayerStatus>(ActivePlayerStatus);
+        ActivePlayerStatus.transform.parent = transform;
         ActiveHUD = Instantiate<UHUD>(ActiveHUD);
         ActiveHUD.transform.parent = transform;
-        ActiveGameState = Instantiate<UGameState>(ActiveGameState);
-        ActiveGameState.transform.parent = transform;
+        ActiveGameStatus = Instantiate<UGameStatus>(ActiveGameStatus);
+        ActiveGameStatus.transform.parent = transform;
 
         GetGameInstance().SetGameMode(this);
         Initialize();

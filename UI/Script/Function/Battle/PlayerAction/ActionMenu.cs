@@ -1,10 +1,11 @@
 ﻿using UnityEngine.UI;
 using System.Collections.Generic;
-
+using UnityEngine;
 namespace RPG.UI
 {
     public class ActionMenu : IPanel
     {
+        private static GameObject prefab;
         /// <summary>
         /// 操作是否进行了
         /// </summary>
@@ -16,6 +17,45 @@ namespace RPG.UI
         {
             base.Show();
             GetComponentInChildren<Button>().Select();
+        }
+        public void Show(List<EventButtonDetail> Details)
+        {
+            Show(Details.ToArray());
+        }
+        public void Show(params EventButtonDetail[] Details)
+        {
+            if (prefab == null)
+            {
+                prefab = Resources.Load<GameObject>(ConstTable.PREFAB_UI_ACTIONMENU_BUTTON);
+            }
+            foreach (EventButtonDetail detail in Details)
+            {
+                if (detail.buttonTitle != null && detail.buttonTitle.Length > 0)
+                {
+                    GameObject g = Instantiate(prefab);
+                    g.transform.SetParent(transform);
+                    g.transform.GetChild(0).GetComponent<Text>().text = detail.buttonTitle;
+
+                    g.GetComponent<Button>().onClick.RemoveAllListeners();
+                    g.GetComponent<Button>().onClick.AddListener(detail.action);
+                    g.GetComponent<Button>().onClick.AddListener(() => base.Hide());
+                }
+            }
+            base.Show();
+            transform.GetChild(0).GetComponent<Button>().Select();
+        }
+        public override void Hide()
+        {
+            base.Hide();
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
+        }
+        void OnDisable()
+        {
+            this.Hide();
         }
         /*
         public static void AfterMove()

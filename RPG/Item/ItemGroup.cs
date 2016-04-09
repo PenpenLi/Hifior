@@ -79,6 +79,11 @@ public class ItemGroup
         if (itemNew.Count > 0)
             EquipItem(0);
     }
+    public void AddItem(List<int> Items)
+    {
+        foreach (int i in Items)
+            AddItem(i);
+    }
     public bool AddItem(int ID)//获得装备
     {
        return AddItem(new WeaponItem(ID));

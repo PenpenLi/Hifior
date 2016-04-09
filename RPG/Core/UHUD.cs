@@ -170,7 +170,7 @@ public class UHUD : UActor
     }
 
     protected UPlayerController GetOwningPlayerController() { return base.GetPlayerController<UPlayerController>(); }
-    protected UPawn GetOwningPawn() { return base.GetPawn<UPawn>(); }
+    protected UPawn GetOwningPawn() { return base.GetPlayerPawn<UPawn>(); }
 
     /**
 	 * Draws a colored line between two points

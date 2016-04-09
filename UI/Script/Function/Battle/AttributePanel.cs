@@ -17,19 +17,18 @@ namespace RPG.UI
         }
         public void Show(RPGCharacter ch)
         {
-            if (gameObject.activeSelf) return;
-            this.gameObject.SetActive(true);
-            charStateBiggerPanel.GetComponent<CharStateBiggerPanel>().init(ch);
-            attackInfoPanel.GetComponent<AttackInfoPanel>().init(ch);
-            abilityPanel.GetComponent<AbilityPanel>().init(ch);
-            itemPanel.GetComponent<ItemPanel>().init(ch);
+            gameObject.SetActive(true);
+            charStateBiggerPanel.GetComponent<CharStateBiggerPanel>().Init(ch);
+            attackInfoPanel.GetComponent<AttackInfoPanel>().Init(ch);
+            abilityPanel.GetComponent<AbilityPanel>().Init(ch);
+            itemPanel.GetComponent<ItemPanel>().Init(ch);
         }
 
         void Update()
         {
             if (Input.GetButton("Cancel") && gameObject.activeSelf)
             {
-                gameObject.SetActive(false);
+                base.Hide();
             }
         }
     }

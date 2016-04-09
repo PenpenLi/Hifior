@@ -26,9 +26,9 @@ namespace RPG.UI
             }
             this.gameObject.SetActive(true);*/
         }
-        public override void Hide()
+        public override void Hide(bool InvokeDelegate = true)
         {
-            base.Hide();
+            base.Hide(InvokeDelegate);
 
             Clear();
         }

@@ -1,5 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+public enum EnumOccupyStatus
+{
+    None,
+    Player,
+    Enemy
+}
 public enum EnumCharacterCamp
 {
     Player,
@@ -277,7 +283,8 @@ public static class EnumTables
     /// <summary>
     /// 如果位为0则代表存在这个位上的int值
     /// </summary>
-    /// <param name="state"></param>
+    /// <param name="mask"></param>
+    /// <param name="bitPosition"></param>
     /// <returns></returns>
     public static bool MaskFieldIdentify(int mask, int bitPosition)
     {

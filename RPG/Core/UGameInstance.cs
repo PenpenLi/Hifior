@@ -17,21 +17,21 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     {
         return (T)ActiveGameMode;
     }
-    public new T GetPawn<T>() where T : UPawn
+    public new T GetPlayerPawn<T>() where T : UPawn
     {
-        return ActiveGameMode.GetPawn<T>();
+        return ActiveGameMode.GetPlayerPawn<T>();
     }
     public new T GetPlayerController<T>() where T : UPlayerController
     {
         return ActiveGameMode.GetPlayerController<T>();
     }
-    public new T GetPlayerState<T>() where T : UPlayerState
+    public new T GetPlayerState<T>() where T : UPlayerStatus
     {
         return ActiveGameMode.GetPlayerState<T>();
     }
-    public new T GetGameState<T>() where T : UGameState
+    public T GetGameState<T>() where T : UGameStatus
     {
-        return ActiveGameMode.GetGameState<T>();
+        return ActiveGameMode.GetGameStatus<T>();
     }
 
     /** virtual function to allow custom GameInstances an opportunity to set up what it needs */

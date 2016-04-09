@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using System;
+using UnityEngine.Events;
 
 namespace Sequence
 {
@@ -19,7 +20,10 @@ namespace Sequence
 
         [NonSerialized]
         public ExecutionState executionState;
-
+        /// <summary>
+        /// OnEnable时开始执行
+        /// </summary>
+        public bool ExecuteOnEnable = false;
         [HideInInspector]
         public int ItemId = -1;
         [Tooltip("The name of the Sequence")]
@@ -113,7 +117,7 @@ namespace Sequence
             return executionCount;
         }
 
-        public virtual bool Execute(Action onComplete = null)
+        public virtual bool Execute(UnityAction onComplete = null)
         {
             if (executionState != ExecutionState.Idle)
             {
@@ -126,7 +130,7 @@ namespace Sequence
             return true;
         }
 
-        protected virtual IEnumerator ExecuteBlock(Action onComplete = null)
+        protected virtual IEnumerator ExecuteBlock(UnityAction onComplete = null)
         {
             executionState = ExecutionState.Executing;
 
@@ -216,9 +220,14 @@ namespace Sequence
             return null;
         }
 
-        public void OnEnable()
+        public void PlaySequence()
         {
             Execute(OnFinish.Invoke);
+        }
+        void OnEnable()
+        {
+            if (ExecuteOnEnable)
+                PlaySequence();
         }
     }
 }

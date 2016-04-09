@@ -9,7 +9,12 @@ public class RPGCharacterBase : UPawn
     protected int Career;
     protected int Level;
     protected int Exp;
+    protected int CurrentHP;
 
+    public int GetCurrentHP()
+    {
+        return CurrentHP;
+    }
     public int GetExp()
     {
         return Exp;
@@ -23,10 +28,14 @@ public class RPGCharacterBase : UPawn
     public virtual void SetDefaultData(CharacterDef DefaultData)
     {
         Definition = DefaultData;
+        Career = DefaultData.Career;
+        Level = DefaultData.DefaultLevel;
+        Exp = 0;
     }
     public void SetAttribute(CharacterAttribute InAttribute)
     {
         this.Attribute = (CharacterAttribute)InAttribute.Clone();
+        CurrentHP = InAttribute.HP;
     }
     public string GetCharacterName()
     {
@@ -35,6 +44,14 @@ public class RPGCharacterBase : UPawn
     public int GetCharacterID()
     {
         return Definition.CommonProperty.ID;
+    }
+    /// <summary>
+    /// 是否是领导者，在Player里和Enemy类里重写
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool IsLeader()
+    {
+        return false;
     }
     public string GetDescription()
     {
@@ -51,6 +68,10 @@ public class RPGCharacterBase : UPawn
     public EnumCharacterCamp GetCamp()
     {
         return Camp;
+    }
+    public void SetCamp(EnumCharacterCamp Camp)
+    {
+        this.Camp = Camp;
     }
     public EnumCharacterImportance Importance
     {

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 namespace Sequence
 {
     [AddComponentMenu("Sequence/Add Character")]
@@ -15,6 +17,7 @@ namespace Sequence
         public Point2D Coord;
         public bool UseDefaultAttribute = true;
         public CharacterAttribute Attribute;
+        public List<int> Items;
         public override void OnEnter()
         {
             GM_Battle GameMode = GetGameMode<GM_Battle>();
@@ -33,11 +36,11 @@ namespace Sequence
             {
                 if (UseDefaultAttribute)
                 {
-                    GameMode.AddEnemy(ID, Coord.x, Coord.y);
+                    GameMode.AddEnemy(ID, Coord.x, Coord.y,Items);
                 }
                 else
                 {
-                    GameMode.AddEnemy(ID, Coord.x, Coord.y, false, Attribute);
+                    GameMode.AddEnemy(ID, Coord.x, Coord.y, Items, Attribute);
                 }
             }
             Continue();

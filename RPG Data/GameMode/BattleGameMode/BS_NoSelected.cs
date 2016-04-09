@@ -3,11 +3,11 @@ using System.Collections;
 using System;
 
 public class BS_NoSelected : FSM.FSMState {
-    public override void Act(UGameState Manager)
+    public override void Act(UGameStatus Manager)
     {
     }
 
-    public override void Reason(UGameState Manager)
+    public override void Reason(UGameStatus Manager)
     {
     }
 }

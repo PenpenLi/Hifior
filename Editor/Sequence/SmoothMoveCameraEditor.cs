@@ -2,7 +2,6 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using Sequence;
 /// <summary>
 /// This is the custom editor script for the QuickTakeCutsceneController.

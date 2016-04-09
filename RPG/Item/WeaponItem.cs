@@ -21,6 +21,14 @@ public class WeaponItem
             return usage;
         }
     }
+    /// <summary>
+    /// 武器是否可用
+    /// </summary>
+    /// <returns></returns>
+    public bool IsValid()
+    {
+        return usage > 0;
+    }
     public int GetMaxUsage()
     {
         return def.UseNumber;

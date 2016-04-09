@@ -11,7 +11,7 @@ public class UController : UActor
     private UPawn OldPawn;
 
     /** PlayerState containing replicated information about the player using this controller (only exists for players, not NPCs). */
-    public UPlayerState PlayerState;
+    public UPlayerStatus PlayerState;
 
     public virtual void SetInitialLocationAndRotation(Vector3 NewLocation, Quaternion NewRotation) { }
 
@@ -64,11 +64,28 @@ public class UController : UActor
         out_Location = Vector3.zero;
         out_Rotation = Quaternion.identity;
     }
-
-    /* Overridden to create the player replication info and perform other mundane initialization tasks. */
+    void Awake()
+    {
+        PostInitializeComponents();
+    }
+    /// <summary>
+    /// Awake里执行该代码
+    /// </summary>
     public virtual void PostInitializeComponents() { }
-    public virtual void Reset() { }
+
+    void OnDestroy()
+    {
+        Destroyed();
+    }
     public virtual void Destroyed() { }
+    void OnEnable()
+    {
+        Reset();
+    }
+    /// <summary>
+    /// 被再次激活的时候执行
+    /// </summary>
+    public virtual void Reset() { }
     // End AActor interface
 
     /** Getter for Pawn */
@@ -83,12 +100,10 @@ public class UController : UActor
     /** Called from Destroyed().  Cleans up PlayerState. */
     public virtual void CleanupPlayerState() { }
 
-    /**
-	 * Handles attaching this controller to the specified pawn.
-	 * Only runs on the network authority (where HasAuthority() returns true).
-	 * @param InPawn The Pawn to be possessed.
-	 * @see HasAuthority()
-	 */
+    /// <summary>
+    /// 被拥有后则该脚本Enable=true
+    /// </summary>
+    /// <param name="InPawn"></param>
     public virtual void Possess(UPawn InPawn)
     {
         if (InPawn == null)
@@ -154,6 +169,7 @@ public class UController : UActor
 
     public virtual void StopMovement() { }
 
+    public virtual void OnMoveCompleted(EPathFollowingStatus Result) { }
     /** State entered when inactive (no possessed pawn, not spectating, etc). */
     protected virtual void BeginInactiveState() { }
 

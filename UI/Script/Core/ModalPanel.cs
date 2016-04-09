@@ -2,57 +2,14 @@
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
+using System;
+
 namespace RPG.UI
 {
-    public class EventButtonDetail
-    {
-        public string buttonTitle;
-        public Sprite buttonBackground;  // Not implemented
-        public UnityAction action;
-    }
-
-    public class ModalPanelDetail
-    {
-        public enum ModalMessageType
-        {
-            YesNo,
-            YesNoCancel
-        }
-        public ModalMessageType MessageType;
-        public string Title; // Not implemented
-        public string Question;
-        public Sprite IconImage;
-        public Sprite PanelBackgroundImage; // Not implemented
-        public EventButtonDetail button1Details;
-        public EventButtonDetail button2Details;
-        public EventButtonDetail button3Details;
-
-        public ModalPanelDetail(string Title, string Question, Sprite Icon, Sprite Background, EventButtonDetail ButtonYesDetail, EventButtonDetail ButtonNoDetail)
-        {
-            this.Title = Title;
-            this.Question = Question;
-            this.IconImage = Icon;
-            this.PanelBackgroundImage = Background;
-            MessageType = ModalMessageType.YesNo;
-            button1Details = ButtonYesDetail;
-            button2Details = ButtonNoDetail;
-        }
-
-        public ModalPanelDetail(string Title, string Question, Sprite Icon, Sprite Background, EventButtonDetail ButtonYesDetail, EventButtonDetail ButtonNoDetail, EventButtonDetail ButtonCancelDetail)
-        {
-            this.Title = Title;
-            this.Question = Question;
-            this.IconImage = Icon;
-            this.PanelBackgroundImage = Background;
-            MessageType = ModalMessageType.YesNoCancel;
-            button1Details = ButtonYesDetail;
-            button2Details = ButtonNoDetail;
-            button3Details = ButtonCancelDetail;
-        }
-    }
-
     public class ModalPanel : IPanel
     {
+        public HorizontalLayoutGroup HorizontalLayoutControl;
+
         public Text Question;
         public Image IconImage;
         public Button button1;
@@ -63,13 +20,13 @@ namespace RPG.UI
         public Text button2Text;
         public Text button3Text;
 
-        public GameObject modalPanelObject;
-
-        private static ModalPanel modalPanel;
-
-        public void NewChoice(ModalPanelDetail details)
+        public void Show(ModalPanelDetail details)
         {
-            modalPanelObject.SetActive(true);
+            base.Show();
+
+            button1.Select();
+
+            Background.sprite = details.PanelBackgroundImage;
 
             this.IconImage.gameObject.SetActive(false);
             button1.gameObject.SetActive(false);
@@ -82,6 +39,12 @@ namespace RPG.UI
             {
                 this.IconImage.sprite = details.IconImage;
                 this.IconImage.gameObject.SetActive(true);
+                Question.GetComponent<RectTransform>().anchoredPosition = new Vector2(200, -45);//如果有图片显示则调整文字的显示位置
+            }
+            else
+            {
+                IconImage.gameObject.SetActive(false);
+                Question.GetComponent<RectTransform>().anchoredPosition = new Vector2(160, -45);
             }
 
             button1.onClick.RemoveAllListeners();
@@ -106,6 +69,13 @@ namespace RPG.UI
                 button3.onClick.AddListener(Hide);
                 button3Text.text = details.button3Details.buttonTitle;
                 button3.gameObject.SetActive(true);
+
+                HorizontalLayoutControl.spacing = 20;
+            }
+            else
+            {
+                button3.gameObject.SetActive(false);
+                HorizontalLayoutControl.spacing = 35;
             }
         }
     }

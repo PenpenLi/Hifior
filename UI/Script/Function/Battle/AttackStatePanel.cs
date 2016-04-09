@@ -27,7 +27,7 @@ namespace RPG.UI
 
             gameObject.SetActive(false);
         }
-        public void init()
+        public new void Init()
         {
             /*RPGPlayer ch = SLGLevel.SLG.getCurrentSelectGameChar();
             RPGPlayer en = SLGLevel.SLG.getCurrentSelectEnemy();
@@ -64,7 +64,7 @@ namespace RPG.UI
         }
         public override void Show()
         {
-            init();
+            Init();
             gameObject.SetActive(true);
         }
 

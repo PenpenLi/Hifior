@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace RPG.UI
 {
@@ -20,13 +21,20 @@ namespace RPG.UI
             weaponselect = Panel_WeaponSelect.GetComponent<SelectWeapon>();
             gameObject.SetActive(false);//刚开始不显示
         }
-        public void Show(RPGCharacter ch)
+
+        /// <summary>
+        /// 显示面板
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <param name="OnWeaponClicked"></param>
+        public void Show(RPGCharacter ch,UnityAction<int> OnWeaponClicked)
         {
             //在这里做控件初始化
-            charstate.init(ch);
-            attackinfo.init(ch);
-            weaponselect.init(ch);
+            charstate.Init(ch);
+            attackinfo.Init(ch);
+            weaponselect.Init(ch,OnWeaponClicked);
             gameObject.SetActive(true);
+            weaponselect.Buttons[0].Select();
         }
     }
 }

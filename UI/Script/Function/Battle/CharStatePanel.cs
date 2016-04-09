@@ -19,7 +19,6 @@ namespace RPG.UI
         }
         public void Show(RPGCharacter ch)
         {
-            if (gameObject.activeSelf == true) return;
             if (ch != null)
             {
                 charIcon.sprite = ch.GetPortrait();

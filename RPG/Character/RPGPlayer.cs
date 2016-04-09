@@ -8,6 +8,14 @@ public class RPGPlayer : RPGCharacter
     {
         base.Definition = PlayerDefinition;
     }
+    /// <summary>
+    /// 是否是主角
+    /// </summary>
+    /// <returns></returns>
+    public override bool IsLeader()
+    {
+        return GetCharacterID() == ConstTable.LEADER_0 || GetCharacterID() == ConstTable.LEADER_1 || GetCharacterID() == ConstTable.LEADER_2;
+    }
     public override void SetDefaultData(CharacterDef DefaultData)
     {
         base.SetDefaultData(DefaultData);
@@ -24,7 +32,7 @@ public class RPGPlayer : RPGCharacter
     }
     private void A()
     {
-        
+
     }
     private void B()
     {

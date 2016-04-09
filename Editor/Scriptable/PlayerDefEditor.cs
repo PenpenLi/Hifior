@@ -87,7 +87,7 @@ namespace RPGEditor
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
             }
-            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref player.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count));
+            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref player.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count),5);
 
             player.DeadSpeech = EditorGUILayout.TextField("战败话语", player.DeadSpeech);
             player.LeaveSpeech = EditorGUILayout.TextField("战败话语", player.LeaveSpeech);

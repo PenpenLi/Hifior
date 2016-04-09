@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace RPG.UI
 {
-    public class CharStateBiggerPanel : AbstractUI
+    public class CharStateBiggerPanel : IPanel
     {
         public Text Text_Name;
         public Text Text_Job;
@@ -12,7 +12,7 @@ namespace RPG.UI
         public Text Text_EXP;
         public Text Text_HP;
         public Image icon;
-        public void init(RPGCharacter ch)
+        public void Init(RPGCharacter ch)
         {
             Text_Name.text = ch.PawnName;
             Text_Job.text = ch.GetCareerName() ;

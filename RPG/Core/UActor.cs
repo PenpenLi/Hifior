@@ -23,15 +23,15 @@ public class UActor : MonoBehaviour
     {
         return GetGameInstance().GetGameMode<T>();
     }
-    public T GetPawn<T>() where T : UPawn
+    public T GetPlayerPawn<T>() where T : UPawn
     {
-        return GetGameInstance().GetPawn<T>();
+        return GetGameInstance().GetPlayerPawn<T>();
     }
     public T GetPlayerController<T>() where T : UPlayerController
     {
         return GetGameInstance().GetPlayerController<T>();
     }
-    public T GetGameState<T>() where T : UGameState
+    public T GetGameStatus<T>() where T : UGameStatus
     {
         return GetGameInstance().GetGameState<T>();
     }
@@ -39,7 +39,7 @@ public class UActor : MonoBehaviour
     {
         return GetGameInstance().GetHUD<T>();
     }
-    public T GetPlayerState<T>() where T : UPlayerState
+    public T GetPlayerState<T>() where T : UPlayerStatus
     {
         return GetGameInstance().GetPlayerState<T>();
     }
@@ -97,8 +97,6 @@ public class UActor : MonoBehaviour
             }
         }
     }
-
-
     public bool IsActorTickEnabled()
     {
         return bCanEverTick;
@@ -114,6 +112,7 @@ public class UActor : MonoBehaviour
     {
         BeginPlay();
     }
+    
     void Update()
     {
         if (InputComponent != null)

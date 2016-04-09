@@ -32,14 +32,6 @@ namespace RPG.UI
             ConfirmStartPanel.SetActive(false);
             Hide();
         }
-        public bool Visible
-        {
-            get
-            {
-                return gameObject.activeSelf;
-            }
-        }
-
         #region CommandPanel
         public void OnCommandButton_CharSelect()//选择出场人物
         {

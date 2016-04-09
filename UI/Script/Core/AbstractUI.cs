@@ -12,6 +12,7 @@ namespace RPG.UI
         [Header("AbstructUI 基类参数")]
         private static AbstractUI m_UI;
         public int SortOrder = 0;
+        protected UnityAction OnHideDelegate;
         protected virtual void Awake()
         {
             Init();
@@ -20,9 +21,26 @@ namespace RPG.UI
         {
             gameObject.SetActive(true);
         }
+        /// <summary>
+        /// 关闭窗口，如果不执行Delegate事件 使用Hide(false)
+        /// </summary>
         public virtual void Hide()
         {
+            Hide(true);
+        }
+        /// <summary>
+        /// 关闭窗口，如果不执行Delegates事件，传入false
+        /// </summary>
+        /// <param name="InvokeDelegate"></param>
+        public virtual void Hide(bool InvokeDelegate)
+        {
             gameObject.SetActive(false);
+            if (OnHideDelegate != null && InvokeDelegate)
+                OnHideDelegate.Invoke();
+        }
+        public void RegisterOnHide(UnityAction OnHide)
+        {
+            OnHideDelegate = OnHide;
         }
         public bool Visible
         {

@@ -98,7 +98,14 @@ public class SLGMap : MonoBehaviour
     public BattleMapData MapTileData;
     public int TileWidth = 30;//地图x
     public int TileHeight = 20;//地图y
-
+    /// <summary>
+    /// 前一个图块类型
+    /// </summary>
+    private int[,] Tile_type_prev;
+    /// <summary>
+    /// 图块占用
+    /// </summary>
+    private EnumOccupyStatus[,] Tile_occupy;
     [Header("图块坐标详情")]
     [SerializeField]
     private Point2D CharacterCenter;//角色坐标
@@ -153,8 +160,14 @@ public class SLGMap : MonoBehaviour
          {0,0,0,0,15,15,15,15,15,15,0,0,0,0},
      };
      public static int[,] MapHeightArray = new int[50, 50];*/
-    private bool[,] bMoveAcessList;//包含己方单位的可用坐标
-    private bool[,] bMoveAcessListExcluded;//排除了己方单位的可用坐标
+    /// <summary>
+    /// 包含己方单位的可用坐标
+    /// </summary>
+    private bool[,] bMoveAcessList;
+    /// <summary>
+    /// 排除了己方单位的可用坐标,也就是未被占用的坐标
+    /// </summary>
+    private bool[,] bMoveAcessListExcluded;
     private bool bPlayer;
     private MeshRenderer[] tileMeshRenders;
     [Header("范围数据")]
@@ -167,7 +180,7 @@ public class SLGMap : MonoBehaviour
     [SerializeField]
     private List<Point2D> m_SkillEffectRangeList = new List<Point2D>();
     [SerializeField]
-    private Point2D m_CompanionRange;
+    private List<Point2D> m_CompanionRange = new List<Point2D>();
     ////////////////////////////////////////////////////////////////////////////////
 
     void Awake()
@@ -184,20 +197,16 @@ public class SLGMap : MonoBehaviour
 
         PList = new List<Point2D>();
         _FootData = new Dictionary<Point2D, Point2D>();
+        Tile_type_prev = new int[TileWidth, TileHeight];
+        Tile_occupy = new EnumOccupyStatus[TileWidth, TileHeight];
         bMoveAcessList = new bool[TileWidth, TileHeight];
         bMoveAcessListExcluded = new bool[TileWidth, TileHeight];
         AStarGrid = new AStarNode[TileWidth, TileHeight];
+    }
 
-    }
-    void Start()
-    {
-        HideAllRange();
-        InitActionScope(TestCharacter, 8);
-        ShowMoveRoutine(3, 11);
-    }
     public float GetTileHeight(int x, int y)
     {
-        return MapTileData.GetTileData(x, y).GetHeight();
+        return MapTileData.GetTileData(x, y).Height;
     }
     public T GetTileComponent<T>(int x, int y) where T : Component
     {
@@ -243,68 +252,77 @@ public class SLGMap : MonoBehaviour
                 }
             }
     }
-    /*
-    public void HideMouseArrow()
-    {
-        gSprite_MouseArea.transform.position = new Vector3(-1000f, 100f, 100f);
-    }
-    public void SetArrowCroods(int x, int y)
-    {
-        gSprite_MouseArea.transform.position = Point2D.Point2DToVector3(x, y);
-    }
 
-    public bool DrawMouseArea(Point2D mouseTileXY, int state)//state=0 判定是否在FootData中 ，在显示移动范围时使用，=1在选择攻击范围时使用
-    {
-        if (state == 0) //移动路线
-        {
-            if (_FootData.ContainsKey(mouseTileXY))//如果坐标不在FootData，则不显示
-            {
-                gSprite_MouseArea.transform.position = Point2D.Point2DToVector3(mouseTileXY.x, mouseTileXY.y, 0.015f);
-                return true;
-            }
-            else
-            {
-                HideMouseArrow();
-            }
-        }
-        if (state == 1) //攻击范围
-        {
-            if (_AttackRangeData.Contains(mouseTileXY))
-            {
-                gSprite_MouseArea.transform.position = Point2D.Point2DToVector3(mouseTileXY.x, mouseTileXY.y, 0.015f);
-                return true;
-            }
-            else
-            {
-                HideMouseArrow();
-            }
-        }
-        return false;
-    }
-    public bool DrawMouseArea(List<Point2D> companionCoordsList, Point2D p)//state=0 判定是否在FootData中 ，在显示移动范围时使用，=1在选择攻击范围时使用
-    {
-        if (companionCoordsList.Contains(p))
-        {
-            gSprite_MouseArea.transform.position = Point2D.Point2DToVector3(p.x, p.y, 0.015f);
-            return true;
-        }
-        else
-        {
-            HideMouseArrow();
-        }
-        return false;
-    }*/
+    #region 图块占用处理函数
     public void SetTileEnemyOccupied(int x, int y)
     {
-        MapTileData.GetTileData(x, y).OccupyEnemy();
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            Tile_occupy[x, y] = EnumOccupyStatus.Enemy;
     }
     public void SetTilePlayerOccupied(int x, int y)
     {
-        MapTileData.GetTileData(x, y).OccupyPlayer();
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            Tile_occupy[x, y] = EnumOccupyStatus.Player;
     }
-    public void ResetTileOccupyState(int x, int y)
+    public void ResetTileOccupyStatus(int x, int y)
     {
-        MapTileData.GetTileData(x, y).OccupyNone();
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            Tile_occupy[x, y] = EnumOccupyStatus.None;
+    }
+    public bool IsOccupyByEnemy(int x, int y)
+    {
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            return Tile_occupy[x, y] == EnumOccupyStatus.Enemy;
+        return false;
+    }
+    public bool IsOccupyByPlayer(int x, int y)
+    {
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            return Tile_occupy[x, y] == EnumOccupyStatus.Player;
+        return false;
+    }
+    public bool IsOccupyByNone(int x, int y)
+    {
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            return Tile_occupy[x, y] == EnumOccupyStatus.None;
+        return false;
+    }
+    public EnumOccupyStatus GetTileOccupyStatus(int x, int y)
+    {
+        if (IsEffectivelyCoordinateWithWarning(x, y))
+            return Tile_occupy[x, y];
+        return EnumOccupyStatus.None;
+    }
+    private bool IsOccupiedBySameParty(int x, int y)
+    {
+        if (Tile_occupy[x, y] == EnumOccupyStatus.None)
+            return false;
+        if (bPlayer)
+        {
+            return (Tile_occupy[x, y] == EnumOccupyStatus.Player);
+        }
+        else
+        {
+            return (Tile_occupy[x, y] == EnumOccupyStatus.Enemy);
+        }
+    }
+    private bool IsOccupiedByDiffentParty(int x, int y)
+    {
+        if (Tile_occupy[x, y] == EnumOccupyStatus.None)
+            return false;
+        if (bPlayer)
+        {
+            return (Tile_occupy[x, y] == EnumOccupyStatus.Enemy);
+        }
+        else
+        {
+            return (Tile_occupy[x, y] == EnumOccupyStatus.Player);
+        }
+    }
+    #endregion
+    public void InitActionScope(RPGCharacter Gamechar, bool Show = true)
+    {
+        InitActionScope(Gamechar, Gamechar.GetMovement(), Show);
     }
     public void InitActionScope(RPGCharacter Gamechar, int Movement, bool Show = true)
     {
@@ -488,10 +506,10 @@ public class SLGMap : MonoBehaviour
         m_AttackRangeList.AddRange(_AttackRangeData);
     }
 
-    public void ShowCompanionSprite(Point2D p)
+    public void ShowCompanionSprite(List<Point2D> Points)
     {
-        ShowRange(p, new Color(0, 1, 1, 0.5f));
-        m_CompanionRange = p;
+        ShowRange(Points, new Color(0.2f, 0.8f, 1, 0.5f));
+        m_CompanionRange.AddRange(Points);
     }
 
     public void ShowSkillPlayer(List<Point2D> Points)
@@ -569,10 +587,16 @@ public class SLGMap : MonoBehaviour
         }
         m_MoveRangeList.Clear();
     }
+    /// <summary>
+    /// 隐藏选择同伴的图块
+    /// </summary>
     public void HideCompanionRange()
     {
-        SetTileActive(m_CompanionRange.x, m_CompanionRange.y, false);
-        m_CompanionRange = Point2D.InvalidPoint;
+        foreach (Point2D p in m_CompanionRange)
+        {
+            SetTileActive(p.x, p.y, false);
+        }
+        m_CompanionRange.Clear();
     }
     public void HideSkillSelect()
     {
@@ -715,14 +739,14 @@ public class SLGMap : MonoBehaviour
         return dir;
     }
 
-    public bool MoveWithOutShowRoutine(RPGCharacter Gamechar, int x, int y)
+    public bool MoveWithOutShowRoutine(RPGCharacter Gamechar, int x, int y, UnityAction OnMoveFinish)
     {
         Gamechar.SetTileCoord(x, y, false);
         Point2D point = new Point2D(x, y);
         if (_FootData.ContainsKey(point))
         {
             buildMoveRoutine(x, y);
-            Move(Gamechar);
+            Move(Gamechar, null, OnMoveFinish);
             return true;
         }
         return false;
@@ -826,7 +850,7 @@ public class SLGMap : MonoBehaviour
     }
     public void MoveByRoutine(RPGCharacter Gamechar, Point2D[] p, UnityAction callStart = null, UnityAction callEnd = null)
     {
-        Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y, false);
+        Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y, true);
         _FootData.Clear();//存储指定坐标处的剩余路径
         _TempFootData.Clear();//int表示剩余的移动范围消耗点
         _AttackRangeData.Clear();//int表示剩余的攻击范围消耗点
@@ -851,7 +875,7 @@ public class SLGMap : MonoBehaviour
     #region 移动后处理
     void OnMoveStart(RPGCharacter Gamechar)
     {
-        if (FuncMoveStart != null && FuncMoveStart.GetPersistentEventCount()>0)
+        if (FuncMoveStart != null && FuncMoveStart.GetPersistentEventCount() > 0)
             FuncMoveStart.Invoke();
     }
     void OnMoveEnd(RPGCharacter Gamechar) //移动结束后
@@ -861,6 +885,7 @@ public class SLGMap : MonoBehaviour
         Clear();
     }
     #endregion
+    #region A星寻路
     public void MoveToCroods(RPGCharacter Gamechar, int x, int y)
     {
         int startX = Gamechar.GetTileCoord().x;
@@ -971,49 +996,33 @@ public class SLGMap : MonoBehaviour
         }
         return neibourhood;
     }
-
-
+    #endregion
     public void StopMoveImmediate()
     {
         iTween.Stop();
     }
-    private bool IsOccupiedBySameParty(int x, int y)
-    {
-        if (bPlayer)
-        {
-            if (MapTileData.GetTileData(x, y).IsOccupiedByPlayer())
-                return true;
-        }
-        else
-        {
-            if (MapTileData.GetTileData(x, y).IsOccupiedByEnemy())
-                return true;
-        }
-        return false;
-    }
-    private bool IsOccupiedByDiffentParty(int x, int y)
-    {
-        if (bPlayer)
-        {
-            if (MapTileData.GetTileData(x, y).IsOccupiedByEnemy())
-                return true;
-        }
-        else
-        {
-            if (MapTileData.GetTileData(x, y).IsOccupiedByPlayer())
-                return true;
-        }
-        return false;
-    }
+
     private bool IsEffectivelyCoordinate(Point2D p)
     {
         return p.x >= 0 && p.y >= 0 && p.x < TileWidth && p.y < TileHeight ? true : false;
     }
+    private bool IsEffectivelyCoordinateWithWarning(int x, int y)
+    {
+        bool effective = x >= 0 && y >= 0 && x < TileWidth && y < TileHeight;
+        if (effective)
+        {
+            return true;
+        }
+        else
+        {
+            Debug.LogError("输入的坐标不是有效的坐标" + new Point2D(x, y));
+            return false;
+        }
+    }
     private bool IsEffectivelyCoordinate(int x, int y)
     {
-        return x >= 0 && y >= 0 && x < TileWidth && y < TileHeight ? true : false;
+        return x >= 0 && y >= 0 && x < TileWidth && y < TileHeight;
     }
-
     public int GetMapPassValue(int job, int x, int y)//得到此处的人物通过消耗
     {
         if (IsOccupiedByDiffentParty(x, y))//图块被敌方占用，则我方不可通过,敌方按正常计算
@@ -1021,21 +1030,21 @@ public class SLGMap : MonoBehaviour
             return 100;
         }
         else
-            return ResourceManager.GetMapDef().GetMovementConsume(MapTileData.GetTileData(x, y).GetTileType(), job);
+            return ResourceManager.GetMapDef().GetMovementConsume(MapTileData.GetTileData(x, y).Type, job);
     }
     public int GetMapPhysicalDefenseValue(int x, int y)//得到此处的人物通过消耗
     {
-        int mapData = MapTileData.GetTileData(x, y).GetTileType();
+        int mapData = MapTileData.GetTileData(x, y).Type;
         return ResourceManager.GetMapDef().GetPhysicalDefense(mapData);
     }
     public int GetMapMagicalDefenseValue(int x, int y)//得到此处的人物通过消耗
     {
-        int mapData = MapTileData.GetTileData(x, y).GetTileType();
+        int mapData = MapTileData.GetTileData(x, y).Type;
         return ResourceManager.GetMapDef().GetMagicalDefense(mapData);
     }
     public int GetMapAvoidValue(int x, int y)//得到此处的人物通过消耗
     {
-        int mapData = MapTileData.GetTileData(x, y).GetTileType();
+        int mapData = MapTileData.GetTileData(x, y).Type;
         return ResourceManager.GetMapDef().GetAvoid(mapData);
     }
 
@@ -1102,13 +1111,12 @@ public class SLGMap : MonoBehaviour
 
     }
 
-    public void FindAttackRange(int x, int y, int itemID, bool bShow = true)//指定的坐标
+    public List<Point2D> FindAttackRange(int x, int y, WeaponDef EquipItem, bool bShow = true)//指定的坐标
     {
         _AttackRangeData.Clear();
-        WeaponDef def = ResourceManager.GetWeaponDef(itemID);
-        _ItemRangeMax = def.RangeType.MaxSelectRange;
-        _ItemRangeMin = def.RangeType.MinSelectRange;
-        EnumWeaponRangeType rangeType = def.RangeType.RangeType;
+        _ItemRangeMax = EquipItem.RangeType.MaxSelectRange;
+        _ItemRangeMin = EquipItem.RangeType.MinSelectRange;
+        EnumWeaponRangeType rangeType = EquipItem.RangeType.RangeType;
 
         if (_ItemRangeMin > 1)
         {
@@ -1199,6 +1207,7 @@ public class SLGMap : MonoBehaviour
         {
             ShowAttackableRange();
         }
+        return _AttackRangeData;
     }
     public bool[,] GetMoveAcessArray()
     {
@@ -1238,5 +1247,9 @@ public class SLGMap : MonoBehaviour
         {
             child.gameObject.SetActive(true);
         }*/
+    }
+    public List<Point2D> GetRealMoveableTiles()
+    {
+        return PList;
     }
 }

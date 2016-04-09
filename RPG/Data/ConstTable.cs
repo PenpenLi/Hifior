@@ -4,14 +4,15 @@
     public const string PREFAB_CANVAS = "Prefab/Canvas";
     public const string PREFAB_UI_ACTION_STATE = "Prefab/UIElement/Action_State";
     public const string PREFAB_UI_START_MENU = "Prefab/UIElement/Panel_StartMenu";
+    public const string PREFAB_UI_ACTIONMENU_BUTTON = "Prefab/UIElement/ActionMenuButton";
     #endregion
 
     //包含 游戏中的设置和 相应的固定的信息
     public const int CONST_SAVE_MAXCOUNT = 6;
 
-    public const int CONST_LEADER_0 = 0;
-    public const int CONST_LEADER_1 = 1;
-    public const int CONST_LEADER_2 = 2;
+    public const int LEADER_0 = 0;
+    public const int LEADER_1 = 1;
+    public const int LEADER_2 = 2;
 
     public const int CONST_AI_CURE_DISTANCE=0;
     public const int CONST_AI_DAMAGE_HP_WEIGHT = 0;

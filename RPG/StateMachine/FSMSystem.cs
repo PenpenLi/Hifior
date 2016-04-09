@@ -82,11 +82,11 @@ namespace FSM
             }
             return StateID.NullState;
         }
-        public virtual void DoBeforeEntering(UGameState Manager) { }
-        public virtual void DoBeforeLeaving(UGameState Manager) { }
-        public abstract void Reason(UGameState Manager);
+        public virtual void DoBeforeEntering(UGameStatus Manager) { }
+        public virtual void DoBeforeLeaving(UGameStatus Manager) { }
+        public abstract void Reason(UGameStatus Manager);
 
-        public abstract void Act(UGameState Manager);
+        public abstract void Act(UGameStatus Manager);
     }
 
     public class FSMSystem
@@ -194,9 +194,9 @@ namespace FSM
             {
                 if (state.ID == currentStateID)
                 {
-                    currentState.DoBeforeLeaving(UGameInstance.Instance.GetGameState<UGameState>());//我们在转换之前或许要做点什么吧！，所以我们如有需要，得在FSMState实现类中覆写一下这个方法
+                    currentState.DoBeforeLeaving(UGameInstance.Instance.GetGameState<UGameStatus>());//我们在转换之前或许要做点什么吧！，所以我们如有需要，得在FSMState实现类中覆写一下这个方法
                     currentState = state;//好了，做完了转换之前的预备工作（DoBeforeLeaving），是时候该转换状态了
-                    currentState.DoBeforeEntering(UGameInstance.Instance.GetGameState<UGameState>());//状态转换完成之后，有可能得先为新状态做点事吧，那么我们也得DoBeforeEntering函数
+                    currentState.DoBeforeEntering(UGameInstance.Instance.GetGameState<UGameStatus>());//状态转换完成之后，有可能得先为新状态做点事吧，那么我们也得DoBeforeEntering函数
                     break;
                 }
             }

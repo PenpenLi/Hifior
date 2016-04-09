@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
+using System;
+
 [System.Serializable]
 public struct Point2D
 {
@@ -20,6 +22,34 @@ public struct Point2D
             return new Point2D(0, 0);
         }
     }
+    public static Point2D Up
+    {
+        get
+        {
+            return new Point2D(0, 1);
+        }
+    }
+    public static Point2D Down
+    {
+        get
+        {
+            return new Point2D(0, -1);
+        }
+    }
+    public static Point2D Left
+    {
+        get
+        {
+            return new Point2D(-1, 0);
+        }
+    }
+    public static Point2D Right
+    {
+        get
+        {
+            return new Point2D(1, 0);
+        }
+    }
     public Point2D(int X, int Y)
     {
         x = X;
@@ -28,6 +58,14 @@ public struct Point2D
     public override string ToString()
     {
         return "x:" + x + " y:" + y;
+    }
+    public static Point2D operator +(Point2D p1, Point2D p2)
+    {
+        return new Point2D(p1.x + p2.x, p1.y + p2.y);
+    }
+    public static Point2D operator -(Point2D p1, Point2D p2)
+    {
+        return new Point2D(p1.x - p2.x, p1.y - p2.y);
     }
     public static bool operator ==(Point2D p1, Point2D p2)
     {
@@ -62,8 +100,8 @@ public struct Point2D
     /// <param name="h"></param>
     /// <param name="Shift">是否有半个单位的偏移</param>
     /// <returns></returns>
-    public static Vector3 Point2DToVector3(float x, float y, float h,bool Shift)
-    { 
+    public static Vector3 Point2DToVector3(float x, float y, float h, bool Shift)
+    {
         float _x = x * 10;
         float _z = y * 10;
 
@@ -93,11 +131,24 @@ public struct Point2D
         }
         return new Vector3(_x, 0, _z);
     }
+
+    public static int GetDistance(int x1, int y1, int x2, int y2)
+    {
+        return Mathf.Abs(x1 - x2) + Mathf.Abs(y1 - y2);
+    }
+    public static int GetDistance(Point2D Point1, Point2D Point2)
+    {
+        return Mathf.Abs(Point1.x - Point2.x) + Mathf.Abs(Point1.y - Point2.y);
+    }
 }
 [System.Serializable]
 public struct Range2D
 {
     public int x, y, width, height;
+    public static bool InRange(int x, int y, Range2D Range)
+    {
+        return (x >= Range.x && x <= Range.x + Range.width && y >= Range.y && y <= Range.y + Range.height);
+    }
 }
 public class TileCoord
 {
