@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using UnityEngine.Assertions;
 using System.IO;
 /// <summary>
 /// 自游戏开始到游戏结束一直存在的一个对象，用于数据的交换，可以被所有的对象获取到
@@ -64,6 +64,45 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         return tem;
     }
 
+    #endregion
+
+    #region 存档相关函数
+    private ChapterRecordCollection ChapterRecord;
+    /// <summary>
+    /// 章节结束保存下数据缓存
+    /// </summary>
+    public void SaveChapter()
+    {
+        ChapterRecord = new ChapterRecordCollection();
+        ChapterRecord.Chapter = 1;
+        List<int> AvailablePlayer = new List<int>();
+        AvailablePlayer.Add(1);
+        AvailablePlayer.Add(2);
+        ChapterRecord.AvailablePlayers = AvailablePlayer;
+        ChapterRecord.Money = 10000;
+        ChapterRecord.RefreshPlayerInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+    }
+    public void SaveToDisk(int Index)
+    {
+        Assert.IsNotNull(ChapterRecord, "章节存档尚未初始化");
+        ChapterRecord.SetIndex(Index);
+        ChapterRecord.SaveBinary();
+    }
+    public void LoadFromDisk(int Index)
+    {
+        ChapterRecord = new ChapterRecordCollection();
+        if (ChapterRecord.Exists())
+        {
+            ChapterRecord = ChapterRecord.LoadBinary<ChapterRecordCollection>();
+
+            Debug.Log(ChapterRecord.Money);
+            Debug.Log(ChapterRecord.PlayersInfo);
+        }
+        else
+        {
+            Debug.LogError("请先保存" + ChapterRecord.GetFullRecordPathName());
+        }
+    }
     #endregion
 
     public override void Awake()

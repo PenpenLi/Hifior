@@ -340,7 +340,7 @@ public class SLGMap : MonoBehaviour
         ResetMoveAcessList();
         bMoveAcessList[CharacterCenter.x, CharacterCenter.y] = true;
         bMoveAcessListExcluded[CharacterCenter.x, CharacterCenter.y] = true;
-        _FootData.Add(CharacterCenter, new Point2D(-1, -1));
+        _FootData.Add(CharacterCenter, Point2D.InvalidPoint);
         _TempFootData.Add(CharacterCenter, _Mov);
 
         int countPoint = 0;
@@ -571,6 +571,11 @@ public class SLGMap : MonoBehaviour
         }
         _MoveRoute.Clear();
     }
+    public void HideMoveAttackRange()
+    {
+        HideAttackRange();
+        HideMoveRange();
+    }
     public void HideAttackRange()
     {
         foreach (Point2D p in m_AttackRangeList)
@@ -754,8 +759,9 @@ public class SLGMap : MonoBehaviour
 
     private void buildMoveRoutine(int x, int y)//将存储在_FootData中的节点转换为实际移动路径
     {
+        _MoveRoute.Clear();
         Point2D parentPoint = new Point2D(x, y);
-        while (parentPoint.x != -1) //当父节点存在时，不存在时为Point2D(-1,-1);
+        while (parentPoint != Point2D.InvalidPoint) //当父节点存在时，不存在时为Point2D(-1,-1);
         {
             _MoveRoute.Add(parentPoint);
             parentPoint = _FootData[parentPoint];

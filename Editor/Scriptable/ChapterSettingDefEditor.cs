@@ -106,7 +106,7 @@ namespace RPGEditor
             }
             if (EnumTables.MaskFieldIdentify(win.Condition, (int)EnumWinCondition.回合坚持))
             {
-                win.Round = EditorGUILayout.IntSlider("回合数", win.Round, 5, 50);
+                win.Round = EditorGUILayout.IntSlider("回合数", win.Round, 2, 50);
             }
             if (EnumTables.MaskFieldIdentify(win.Condition, (int)EnumWinCondition.领主地点撤离))
             {

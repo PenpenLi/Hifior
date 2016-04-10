@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using RPG.UI;
 /// <summary>
 /// 包含战场上需要用到的逻辑，例如胜利失败条件(操作ChapterDef)，各种事件的触发管理（数据从GS_Battle里面拉取）
@@ -155,6 +156,67 @@ public class GM_Battle : UGameMode
         GetGameStatus<UGameStatus>().AddLocalEnemy(Character);
     }
 
+    #region 回合结束处理
+
+    private UnityAction OnRoundAnimationFinished;
+    /// <summary>
+    /// 主菜单结束回合按钮
+    /// </summary>
+    public void EndRound(UnityAction OnRoundAnimationFinish)
+    {
+        OnRoundAnimationFinished = OnRoundAnimationFinish;
+        if (RoundCamp == EnumCharacterCamp.Player)
+        {
+            Debug.Log("Player  结束行动");
+            RoundCamp = EnumCharacterCamp.Enemy;
+            GetGameStatus<GS_Battle>().EnableAllPlayerControl();
+        }
+        else
+        {
+            Debug.Log("Enemy  结束行动");
+            RoundCamp = EnumCharacterCamp.Player;
+            Round++;
+        }
+        if (GetSLGChapter().CheckWin_Round(Round))
+        {
+            WinTheChapter();
+        }
+        CheckTurnEvent();
+    }
+    private void CheckTurnEvent()
+    {
+        SLGChapter.TurnEventType Event = m_slgChapter.GetTurnEvent(Round, RoundCamp);
+        if (Event != null)
+        {
+            Event.Execute(ShowRoundAnimation);
+        }
+        else
+        {
+            ShowRoundAnimation();
+        }
+    }
+    private void ShowRoundAnimation()
+    {
+        UIController.Instance.GetUI<RPG.UI.TurnAnim>().RegisterOnHide(OnRoundAnimationFinished);
+        UIController.Instance.GetUI<RPG.UI.TurnAnim>().Show(Round, RoundCamp);
+    }
+    /// <summary>
+    /// 本章过关，执行结束事件，然后去下一关
+    /// </summary>
+    public void WinTheChapter()
+    {
+        Debug.Log("过关");
+        GetSLGChapter().EndSequence.Execute(EndThisChapter);
+    }
+    /// <summary>
+    /// 结束事件执行完毕后执行，结束本章，进入存档场景
+    /// </summary>
+    private void EndThisChapter()
+    {
+        Debug.Log("进入下一关");
+        LoadingScreenManager.LoadScene(0);
+    }
+    #endregion
     public override void BeginPlay()
     {
         base.BeginPlay();

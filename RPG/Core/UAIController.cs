@@ -58,12 +58,7 @@ public class UAIController : UController
     {
 
     }
-
-    public override void SetPawn(UPawn InPawn)
-    {
-        base.SetPawn(InPawn);
-
-    }
+    
     public EPathFollowingStatus GetMoveStatus()
     {
         return EPathFollowingStatus.Idle;

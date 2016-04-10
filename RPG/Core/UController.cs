@@ -91,9 +91,6 @@ public class UController : UActor
     /** Getter for Pawn */
     public UPawn GetPawn() { return Pawn; }
 
-    /** Setter for Pawn. Normally should only be used internally when possessing/unpossessing a Pawn. */
-    public virtual void SetPawn(UPawn InPawn) { Pawn = InPawn; }
-
     /** Get the actor the controller is looking at */
     public virtual UActor GetViewTarget() { return null; }
 
@@ -106,11 +103,6 @@ public class UController : UActor
     /// <param name="InPawn"></param>
     public virtual void Possess(UPawn InPawn)
     {
-        if (InPawn == null)
-        {
-            Debug.LogError("The Pawn you try to possess is null");
-            return;
-        }
         OldPawn = Pawn;
         Pawn = InPawn;
         if (OldPawn != null)

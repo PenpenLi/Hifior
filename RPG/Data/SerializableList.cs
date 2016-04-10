@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine.Assertions;
 using UnityEngine;
 /// <summary>
-/// 生命为抽象类，这样可以不用实现父类中的抽象方法
+/// 抽象类，这样可以不用实现父类中的抽象方法
 /// </summary>
 /// <typeparam name="T"></typeparam>
 [Serializable]

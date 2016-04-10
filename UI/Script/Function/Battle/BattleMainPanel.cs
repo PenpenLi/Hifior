@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Collections.Generic;
 
 namespace RPG.UI
 {
@@ -38,11 +39,31 @@ namespace RPG.UI
         }
         void Button_Environment()
         {
-            UIController.Instance.GetUI<RPG.UI.ConfigPanel>().Show();
+            //UIController.Instance.GetUI<RPG.UI.ConfigPanel>().Show();
+            ChapterRecordCollection ChapterRecord = new ChapterRecordCollection();
+            ChapterRecord.Chapter = 1;
+            List<int> AvailablePlayer = new List<int>();
+            AvailablePlayer.Add(1);
+            AvailablePlayer.Add(2);
+            ChapterRecord.AvailablePlayers = AvailablePlayer;
+            ChapterRecord.Money = 10000;
+            ChapterRecord.RefreshPlayerInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+            ChapterRecord.SaveBinary();
         }
         void Button_Army()
         {
+            ChapterRecordCollection ChapterRecord = new ChapterRecordCollection();
+            if (ChapterRecord.Exists())
+            {
+                ChapterRecord = ChapterRecord.LoadBinary<ChapterRecordCollection>();
 
+                Debug.Log(ChapterRecord.Money);
+                Debug.Log(ChapterRecord.PlayersInfo);
+            }
+            else
+            {
+                Debug.LogError("请先保存" + ChapterRecord.GetFullRecordPathName());
+            }
         }
         void Button_Instruction()
         {

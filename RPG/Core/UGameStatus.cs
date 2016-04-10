@@ -60,13 +60,13 @@ public class UGameStatus : UActor
     }
     public UPawn GetLocalPlayerByIndex(int Index)
     {
-      return  GetLocalPawnByIndex<RPGCharacter>(Index, LocalPlayers);
+        return GetLocalPawnByIndex<RPGCharacter>(Index, LocalPlayers);
     }
     public UPawn GetLocalEnemyByIndex(int Index)
     {
         return GetLocalPawnByIndex<RPGCharacter>(Index, LocalEnemies);
     }
-    protected T GetLocalPawnByIndex<T>(int Index,List<RPGCharacter> LocalPawns)where T :RPGCharacter
+    protected T GetLocalPawnByIndex<T>(int Index, List<RPGCharacter> LocalPawns) where T : RPGCharacter
     {
         if (LocalPawns.Count <= Index)
         {
@@ -83,7 +83,7 @@ public class UGameStatus : UActor
     {
         return GetFirstGamePlayer().GetPlayerController<UPlayerController>();
     }
-    List<RPGCharacter> GetLocalPlayers()
+    public List<RPGCharacter> GetLocalPlayers()
     {
         return LocalPlayers;
     }

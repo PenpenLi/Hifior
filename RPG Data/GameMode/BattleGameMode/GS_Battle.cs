@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class GS_Battle : UGameStatus
 {
     private List<RPGCharacter> LocalPlayerAllys = new List<RPGCharacter>();
+    private List<RPGCharacter> LocalBosses = new List<RPGCharacter>();
     private T GetCharacterByID<T>(List<RPGCharacter> CharacterList, int ID) where T : RPGCharacter
     {
         for (int i = 0; i < CharacterList.Count; i++)

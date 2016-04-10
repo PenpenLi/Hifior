@@ -60,7 +60,7 @@ public class UPawn : UActor
     {
         Controller = NewController;
         this.enabled = true;
-        NewController.SetPawn(this);
+        NewController.Possess(this);
         if (Controller.PlayerState != null)
         {
             PlayerState = Controller.PlayerState;
@@ -69,7 +69,7 @@ public class UPawn : UActor
     public void UnPossessed()
     {
         UController OldController = Controller;
-        OldController.SetPawn(null);
+        OldController.Possess(null);
         PlayerState = null;
         transform.SetParent(null);
         Controller = null;

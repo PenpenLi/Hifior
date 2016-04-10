@@ -15,8 +15,12 @@ public class SLGChapter : UActor
         /// <summary>
         /// 是否可用,这个触发完就关闭
         /// </summary>
-        public bool Enable = true;
+        public bool Enable;
         public Sequence.Sequence Sequence;
+        public EventTypeBase()
+        {
+            Enable = true;
+        }
         /// <summary>
         /// 执行Sequence
         /// </summary>
@@ -28,7 +32,7 @@ public class SLGChapter : UActor
         }
     }
     [System.Serializable]
-    public class TurnEventType:EventTypeBase
+    public class TurnEventType : EventTypeBase
     {
         public int From = 0;
         public int To = 0;
@@ -39,7 +43,7 @@ public class SLGChapter : UActor
         public List<EventEnableSwitch> Switcher;
     }
     [System.Serializable]
-    public class BattleTalkEventType:EventTypeBase
+    public class BattleTalkEventType : EventTypeBase
     {
         /// <summary>
         /// 发送者的ID
@@ -67,9 +71,20 @@ public class SLGChapter : UActor
             Enable = false;
         }
     }
+    public enum EnumLocationEventCaption
+    {
+        宝箱,
+        访问村庄,
+        开门,
+        使用开关
+    }
     [System.Serializable]
     public class LocationEventType : EventTypeBase
     {
+        /// <summary>
+        /// 显示的文字
+        /// </summary>
+        public EnumLocationEventCaption Caption;
         /// <summary>
         /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
         /// </summary>
@@ -79,10 +94,6 @@ public class SLGChapter : UActor
         /// </summary>
         public int DedicatedCharacter = -1;
         /// <summary>
-        /// 指定的人才可以触发
-        /// </summary>
-        public int DedicatedCareer = -1;
-        /// <summary>
         /// 触发点
         /// </summary>
         public Point2D Location = Point2D.InvalidPoint;
@@ -90,6 +101,16 @@ public class SLGChapter : UActor
         /// 对相关事件设置Enable
         /// </summary>
         public List<EventEnableSwitch> Switcher;
+        public override void Execute(UnityAction OnFinish)
+        {
+            base.Execute(OnFinish);
+
+            HasTrigger = true;
+        }
+        public string GetButtonText()
+        {
+            return Caption.ToString();
+        }
     }
     [System.Serializable]
     public class RangeEventType : EventTypeBase
@@ -144,6 +165,8 @@ public class SLGChapter : UActor
         public List<EventEnableSwitch> Switcher;
     }
     #endregion
+
+    #region 事件函数
     [System.Serializable]
     public struct EventEnableSwitch
     {
@@ -179,13 +202,14 @@ public class SLGChapter : UActor
         //StartSequence.OnFinish.AddListener();
         StartSequence.Execute(GetGameMode<GM_Battle>().OnStartSequenceFinished);
     }
-    public LocationEventType GetLocationEvent(Point2D TilePosition)
+    public LocationEventType GetLocationEvent(Point2D TilePosition, int CharacterID)
     {
         foreach (LocationEventType Event in LocationEvent)
         {
-            if (Event.Location == TilePosition && Event.Enable)
+            if (Event.Enable && Event.Location == TilePosition)
             {
-                return Event;
+                if (Event.DedicatedCharacter < 0 || CharacterID == Event.DedicatedCharacter)
+                    return Event;
             }
         }
         return null;
@@ -254,4 +278,70 @@ public class SLGChapter : UActor
         }
         return null;
     }
+    #endregion
+
+    #region 章节设置
+    public int Condition;
+    public int BossID;
+    public int CityID;
+    public int Round;
+    public int WinX, WinY;
+    public bool CheckWin_KillAllEnemy()
+    {
+        if (HasWinCondition(EnumWinCondition.全灭敌人) && GetGameStatus<GS_Battle>().GetNumLocalEnemies()==0)
+            return true;
+        else
+            return false;
+    }
+    /// <summary>
+    /// 每一个加入的Boss都有一个唯一的ID，从0开始增长
+    /// </summary>
+    /// <param name="BossID"></param>
+    /// <returns></returns>
+    public bool CheckWin_DefeatBoss(int BossID)
+    {
+        if (HasWinCondition(EnumWinCondition.击败指定Boss))
+            return true;
+        return false;
+    }
+    /// <summary>
+    /// 在Sequence里添加Start() 在Start里将GameMode 里的当前CityID加入
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckWin_Seize(int CityID=0)
+    {
+        if (HasWinCondition(EnumWinCondition.压制指定城池) && ChapterSetting.WinCondition.CityID == CityID)
+            return true;
+        return false;
+    }
+    public bool CheckWin_Leave()
+    {
+        if (HasWinCondition(EnumWinCondition.领主地点撤离))
+            return true;
+        return false;
+    }
+    public bool CheckWin_Round(int Round)
+    {
+        if (HasWinCondition(EnumWinCondition.回合坚持) && Round == ChapterSetting.WinCondition.Round)
+            return true;
+        return false;
+    }
+    public List<EnumWinCondition> GetAllWinCondition()
+    {
+        int max = 6;
+        List<EnumWinCondition> L = new List<EnumWinCondition>();
+        for (int i = 0; i < max; i++)
+        {
+            if (EnumTables.MaskFieldIdentify(ChapterSetting.WinCondition.Condition, i))
+            {
+                L.Add((EnumWinCondition)i);
+            }
+        }
+        return L;
+    }
+    public bool HasWinCondition(EnumWinCondition Condition)
+    {
+        return EnumTables.MaskFieldIdentify(ChapterSetting.WinCondition.Condition, (int)Condition);
+    }
+    #endregion
 }

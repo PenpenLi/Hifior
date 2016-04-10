@@ -11,7 +11,6 @@ public class AC_EnemyRoundAction : UAIController
 
         CurrentIndex = 0;
         PossessAI(CurrentIndex);
-        ArrowOnCharacterTwoSeconds();
     }
     public override void PostInitializeComponents()
     {
@@ -91,6 +90,7 @@ public class AC_EnemyRoundAction : UAIController
         {
             UPawn Pawn = _GameState.GetLocalEnemyByIndex(Index);
             Possess(Pawn);
+            ArrowOnCharacterTwoSeconds();
         }
         else //跳过控制结束回合
         {
@@ -103,9 +103,7 @@ public class AC_EnemyRoundAction : UAIController
     /// </summary>
     private void EndEnemyTurn()
     {
-        RPG.UI.TurnAnim turn = UIController.Instance.GetUI<RPG.UI.TurnAnim>();
-        turn.RegisterOnHide(ActivePlayerTurn);
-        turn.Show(_GameMode.Round, _GameMode.RoundCamp);
+        _GameMode.EndRound(ActivePlayerTurn);
     }
     /// <summary>
     /// 玩家开始行动
@@ -128,11 +126,8 @@ public class AC_EnemyRoundAction : UAIController
     /// </summary>
     private void ArrowOnCharacterTwoSeconds()
     {
-        BattleArrow.SetArrowActive(true);
-        RPGCharacter Character = CurrentControledPawn;
-        Point2D TilePos = Character.GetTileCoord();
-        BattleArrow.SetPosition(TilePos.x, TilePos.y);
-        Utils.GameUtil.DelayFunc(OnArrowShowFinish, 1f);
+        BattleArrow.SetArrowActive(true,AIPawnTilePos);
+        Utils.GameUtil.DelayFunc(OnArrowShowFinish, 2f);
     }
     /// <summary>
     /// 隐藏箭头
@@ -266,6 +261,7 @@ public class AC_EnemyRoundAction : UAIController
             Debug.Log("不用移动,直接攻击");
             PossessNext();
         }
+        else
         {
             _Map.MoveWithOutShowRoutine(CurrentControledPawn, TileXY.x, TileXY.y, () => { Debug.Log("AI移动结束，开始攻击"); PossessNext(); });
         }

@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+[System.Serializable]
 public class WeaponItem
 {
+    [SerializeField]
     private int itemID;
+    [SerializeField]
     private int usage;
+    [System.NonSerialized]
     private WeaponDef def;
 
     public int ID

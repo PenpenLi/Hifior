@@ -32,6 +32,10 @@ public class RPGCharacterBase : UPawn
         Level = DefaultData.DefaultLevel;
         Exp = 0;
     }
+    public CharacterAttribute GetAttribute()
+    {
+        return Attribute;
+    }
     public void SetAttribute(CharacterAttribute InAttribute)
     {
         this.Attribute = (CharacterAttribute)InAttribute.Clone();

@@ -145,7 +145,7 @@ public class UPlayerController : UController
         {
             GetPawn().UnPossessed();
         }
-        SetPawn(null);
+        Possess(null);
     }
 
     public override void BeginPlay()

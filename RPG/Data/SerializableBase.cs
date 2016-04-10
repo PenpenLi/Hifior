@@ -22,12 +22,9 @@ public abstract class SerializableBase
     /// </summary>
     /// <returns></returns>
     public abstract string GetKey();
-    public SerializableBase()
-    {
-        Key = GetKey();
-    }
     public void SaveBinary()
     {
+        Key = GetKey();
         RefreshTime();
         Assert.IsTrue(GetFullRecordPathName().Length > 0 || GetKey().Length > 0, "请重写 GetFullRecordPathName()和 GetKey()方法");
         Now = System.DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
@@ -64,6 +61,7 @@ public abstract class SerializableBase
 
     public void Save()
     {
+        Key = GetKey();
         RefreshTime();
         string s = JsonUtility.ToJson(this);
 

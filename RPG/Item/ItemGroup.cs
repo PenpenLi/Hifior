@@ -1,17 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-[System.Serializable]
-public struct Item
-{
-    public int ID;
-    public int Usage;
-    public Item(int id,int usage)
-    {
-        ID = id;
-        Usage = usage;
-    }
-}
 public class ItemGroup
 {
     private List<WeaponItem> items = new List<WeaponItem>();//装备 0-5为可用的，7-8为装备的持有的

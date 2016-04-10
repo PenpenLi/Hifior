@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class Pawn_BattleArrow : UPawn
 {
     [Header("敌方行动AI控制器")]
-    public AC_EnemyRoundAction EnemyAI;
+    public AC_EnemyRoundAction EnemyAIController;
     [Header("素材选定")]
     public AudioClip Audio_OutBounds;
     /// <summary>
@@ -97,7 +97,7 @@ public class Pawn_BattleArrow : UPawn
     /// <param name="y"></param>
     public void SetPosition(int x, int y)
     {
-        if (!Visible)
+        if (!Visible || selectStatus == ESelectStatus.剧情播放中)
             return;
         int fx = x;
         int fy = y;
@@ -120,6 +120,7 @@ public class Pawn_BattleArrow : UPawn
         else
         {
             UIController.Instance.GetUI<RPG.UI.CharStatePanel>().Hide();
+
         }
         if (selectStatus == ESelectStatus.选定出移动范围)
         {
@@ -162,7 +163,7 @@ public class Pawn_BattleArrow : UPawn
         {
             case ESelectStatus.无物体选定:
                 {
-                    if (HasCharacterOnArrow && ArrowOnCharacter.Controllable)
+                    if (HasCharacterOnArrow)
                     {
                         OldPosition = Position;
                         ArrowOnCharacter.ShowMovement();
@@ -181,11 +182,15 @@ public class Pawn_BattleArrow : UPawn
                 }
             case ESelectStatus.选定出移动范围:
                 {
-                    ///选择的人物不是我方的则返回
-                    if (SelectedCharacter.GetCamp() != EnumCharacterCamp.Player)
+                    ///选择的人物不是我方人物，或者已经行动过了的
+                    if (SelectedCharacter.GetCamp() != EnumCharacterCamp.Player || SelectedCharacter.Controllable == false)
+                    {
+                        SoundController.Instance.PlaySound(Audio_OutBounds);
                         return;
+                    }
                     if (Position == SelectedCharacter.GetTileCoord() || SlgMap.CanMoveTo(Position))
                     {
+                        SetArrowActive(false);
                         SelectedCharacter.MoveTo(Position, null, OnMoveToDest);
                         selectStatus = ESelectStatus.人物移动中;
                     }
@@ -209,7 +214,7 @@ public class Pawn_BattleArrow : UPawn
                     {
                         if (Neighbor.GetTileCoord() == Position)
                         {
-                           SLGChapter.BattleTalkEventType Talk= SlgChapter.GetBattleTalkEvent(SelectedCharacter.GetCharacterID(), Neighbor.GetCharacterID(), Neighbor.GetCamp());
+                            SLGChapter.BattleTalkEventType Talk = SlgChapter.GetBattleTalkEvent(SelectedCharacter.GetCharacterID(), Neighbor.GetCharacterID(), Neighbor.GetCamp());
                             Talk.Execute(ResetToChooseActionAfterTalkEvent);
                             selectStatus = ESelectStatus.剧情播放中;
                             SetArrowActive(false);
@@ -231,8 +236,7 @@ public class Pawn_BattleArrow : UPawn
 
             case ESelectStatus.选定出移动范围:
                 {
-                    SlgMap.HideMoveRange();
-                    SlgMap.HideAttackRange();
+                    SlgMap.HideMoveAttackRange();
                     SetPosition(OldPosition.x, OldPosition.y);
                     selectStatus = ESelectStatus.无物体选定;
                     break;
@@ -315,6 +319,17 @@ public class Pawn_BattleArrow : UPawn
         else
             UIController.Instance.GetUI<RPG.UI.BattleTileInfo>().Hide();
     }
+    /// <summary>
+    ///  设置光标可见性,并设置初始位置
+    /// </summary>
+    /// <param name="Visible"></param>
+    /// <param name="NewPosition"></param>
+    public void SetArrowActive(bool Visible, Point2D NewPosition)
+    {
+        Position = NewPosition;
+        transform.position = Point2D.Point2DToVector3(NewPosition.x, NewPosition.y, ArrowHeight + SlgMap.GetTileHeight(NewPosition.x, NewPosition.y), true);
+        SetArrowActive(Visible);
+    }
     public void SetArrowOnDefaultPlayer()
     {
         RPGCharacter FirstPlayer = GetGameStatus<GS_Battle>().GetFirstGamePlayer() as RPGCharacter;
@@ -373,6 +388,12 @@ public class Pawn_BattleArrow : UPawn
         selectStatus = ESelectStatus.无法再次返回的动作;
         ShowActionMenu();
     }
+    private void ResetToChooseActionAfterLocationEvent()
+    {
+        Debug.Log("位置事件结束");
+        selectStatus = ESelectStatus.无法再次返回的动作;
+        ShowActionMenu();
+    }
     /// <summary>
     /// 重置到选择武器的界面
     /// </summary>
@@ -387,10 +408,7 @@ public class Pawn_BattleArrow : UPawn
     /// </summary>
     private void OnMoveToDest()
     {
-        SlgMap.HideCompanionRange();
-        SlgMap.HideRoutine();
-        SlgMap.HideMoveRange();
-        SlgMap.HideAttackRange();
+        SlgMap.HideAllRange();
         selectStatus = ESelectStatus.未执行任何动作前选定动作;
         UIController.Instance.GetUI<RPG.UI.CharStatePanel>().Hide();
         SetArrowActive(false);
@@ -412,7 +430,7 @@ public class Pawn_BattleArrow : UPawn
     }
     #endregion
     /// <summary>
-    /// 计算需要显示那几个按钮
+    /// 计算需要显示哪些按钮
     /// </summary>
     private void ShowActionMenu()
     {
@@ -423,7 +441,8 @@ public class Pawn_BattleArrow : UPawn
         {
             Details.Add(new RPG.UI.EventButtonDetail("等待", Button_Wait));
         }
-        else {
+        else
+        {
             #region 攻击按钮
             Details.Add(new RPG.UI.EventButtonDetail("攻击", Button_Attack));
             #endregion
@@ -445,7 +464,12 @@ public class Pawn_BattleArrow : UPawn
             #endregion
 
             #region 村庄，宝箱 
-
+            SLGChapter.LocationEventType LocationEvent = SlgChapter.GetLocationEvent(SelectedCharacter.GetTileCoord(), SelectedCharacter.GetCharacterID());
+            if (LocationEvent != null)
+            {
+                string LocationName = LocationEvent.GetButtonText();
+                Details.Add(new RPG.UI.EventButtonDetail(LocationName, Button_Location));
+            }
             #endregion
             Details.Add(new RPG.UI.EventButtonDetail("等待", Button_Wait));
         }
@@ -461,6 +485,9 @@ public class Pawn_BattleArrow : UPawn
         selectStatus = ESelectStatus.选择武器;
         UIController.Instance.GetUI<RPG.UI.AttackMenu>().Show(SelectedCharacter, Button_OnWeaponClicked);
     }
+    /// <summary>
+    /// 按钮对话
+    /// </summary>
     private void Button_TalkTo()
     {
         Debug.Log("选择人物进行对话");
@@ -476,16 +503,27 @@ public class Pawn_BattleArrow : UPawn
         DelaySetStatus(ESelectStatus.选择要对话的人物);
     }
     /// <summary>
+    /// 按钮 位置事件
+    /// </summary>
+    private void Button_Location()
+    {
+        selectStatus = ESelectStatus.剧情播放中;
+        bActionHasLocation = true;
+        SLGChapter.LocationEventType LocationEvent = SlgChapter.GetLocationEvent(SelectedCharacter.GetTileCoord(), SelectedCharacter.GetCharacterID());
+        LocationEvent.Execute(ResetToChooseActionAfterLocationEvent);
+        SetArrowActive(false);
+    }
+    /// <summary>
     /// 按下 待机 按钮 进行待机
     /// </summary>
     private void Button_Wait()
     {
+        SelectedCharacter.DisableControl();
         ClearActionRecord();//清除记录的动作
 
         UIController.Instance.GetUI<RPG.UI.ActionMenu>().Hide();
         SetArrowActive(true);
         DelaySetStatus(ESelectStatus.无物体选定);
-        SelectedCharacter.DisableControl();
     }
     /// <summary>
     /// 选择了一个武器进行攻击 弹出攻击范围选择攻击的对象
@@ -515,12 +553,9 @@ public class Pawn_BattleArrow : UPawn
     public void EndPlayerTurn()
     {
         Debug.Log("确认结束回合");
+        selectStatus = ESelectStatus.剧情播放中;
         //GetPawn<Pawn_BattleArrow>().SetArrowActive(true, 0.1f);
-        int round = GetGameMode<GM_Battle>().Round;
-        GetGameMode<GM_Battle>().RoundCamp = EnumCharacterCamp.Enemy;
-        UIController.Instance.GetUI<RPG.UI.TurnAnim>().RegisterOnHide(() => EnemyAI.Reset());
-        UIController.Instance.GetUI<RPG.UI.TurnAnim>().Show(round, EnumCharacterCamp.Enemy);
-        GetGameStatus<GS_Battle>().EnableAllPlayerControl();
+        GetGameMode<GM_Battle>().EndRound(EnemyAIController.Reset);
     }
     #endregion
     /// <summary>
