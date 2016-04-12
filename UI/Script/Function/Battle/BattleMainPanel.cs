@@ -47,7 +47,7 @@ namespace RPG.UI
             AvailablePlayer.Add(2);
             ChapterRecord.AvailablePlayers = AvailablePlayer;
             ChapterRecord.Money = 10000;
-            ChapterRecord.RefreshPlayerInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+            ChapterRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
             ChapterRecord.SaveBinary();
         }
         void Button_Army()
@@ -98,14 +98,10 @@ namespace RPG.UI
             Debug.Log("取消结束回合");
             this.Show();
         }
-        public override void Tick(float DeltaTime)
+        public override void OnCancelKeyDown()
         {
-            base.Tick(DeltaTime);
-            if (Input.GetButton("Cancel"))
-            {
-                base.Hide();
-                Utils.GameUtil.DelayFunc(GetGameInstance(), () => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
-            }
+            base.Hide();
+            Utils.GameUtil.DelayFunc(GetGameInstance(), () => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
         }
     }
 }

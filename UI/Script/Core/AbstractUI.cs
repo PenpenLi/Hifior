@@ -9,13 +9,19 @@ namespace RPG.UI
 {
     public class AbstractUI : UActor, IComparable<AbstractUI>
     {
+
         [Header("AbstructUI 基类参数")]
         private static AbstractUI m_UI;
         public int SortOrder = 0;
         protected UnityAction OnHideDelegate;
+
         protected virtual void Awake()
         {
             Init();
+        }
+        public void OnEnable()
+        {
+            SortUIPosition();
         }
         public virtual void Show()
         {
@@ -97,7 +103,7 @@ namespace RPG.UI
 
         public int CompareTo(AbstractUI other)
         {
-            return SortOrder.CompareTo(other.SortOrder);
+            return -SortOrder.CompareTo(other.SortOrder);
         }
 
         #region Tween
@@ -211,5 +217,13 @@ namespace RPG.UI
         }
 
         #endregion
+        public virtual void OnCancelKeyDown() { }
+        public void FixedUpdate()
+        {
+            if (Input.GetButtonDown("Cancel") && GetGameMode<UGameMode>().InputModeUI)
+            {
+                OnCancelKeyDown();
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ public static class ResourceManager
     private const string ASSET_PROPS = "rpgdata/item/props";
     private const string ASSET_WEAPON = "rpgdata/item/weapon";
     private const string ASSET_MAP = "rpgdata/map";
+    private const string ASSET_CHAPTERSETTING = "rpgdata/chaptersetting";
     private const string ASSET_PASSIVESKILL = "rpgdata/passiveskill";
     private const string ASSET_PLAYER = "rpgdata/character/player";
     private const string ASSET_ENEMY = "rpgdata/character/enemy";
@@ -46,6 +47,16 @@ public static class ResourceManager
             enemyPrefabBundle.Unload(true);
             enemyPrefabBundle = null;
         }
+    }
+    public static string GetChapterName(int ChapterIndex)
+    {
+        ChapterSettingDef def= UGameInstance.Instance.LoadAssetFromBundle<ChapterSettingDef>(Path.Combine(Application.streamingAssetsPath, ASSET_CHAPTERSETTING), ChapterIndex.ToString());
+        return def.CommonProperty.Name;
+    }
+    [RuntimeInitializeOnLoadMethod]
+    static void Run()
+    {
+        Debug.Log(GetChapterName(0));
     }
     public static PropsDef GetPropsDef(int ID)
     {

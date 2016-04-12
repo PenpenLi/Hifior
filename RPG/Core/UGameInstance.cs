@@ -11,6 +11,14 @@ using System.IO;
 [HierarchyIcon("GameInstance.png")]
 public class UGameInstance : MonoSingleton<UGameInstance>
 {
+    /// <summary>
+    ///  战场模板场景
+    /// </summary>
+    public const int SCENEINDEX_BATTLE_TEMPLATE = 5;
+    /// <summary>
+    /// 章节结束记录场景
+    /// </summary>
+    public const int SCENEINDEX_CHAPTER_ENDSAVE = 4;
     private UGameMode ActiveGameMode;
     #region UE4
     public new T GetGameMode<T>() where T : UGameMode
@@ -69,39 +77,112 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     #region 存档相关函数
     private ChapterRecordCollection ChapterRecord;
     /// <summary>
+    /// 章节结束时保存当前章节的信息到这个变量里
+    /// </summary>
+    private ChapterRecordCollection TempChapterEndRecord;
+    /// <summary>
+    /// 当前存档章节数
+    /// </summary>
+    public int ChapterID;
+    /// <summary>
+    /// 当前存档金钱
+    /// </summary>
+    public int Money;
+
+    /// <summary>
+    /// 当前可用的角色，保留在存档中，每一章开始时从存档读取，当有我方人物加入时，写入该表，当有角色离开时，从该表里删除，每一章结束后存储到Save文件里
+    /// </summary>
+    private List<int> AvailablePlayers = new List<int>();
+    /// <summary>
+    /// 获取所有可用的角色列表
+    /// </summary>
+    /// <returns></returns>
+    public List<int> GetAvailablePlayers()
+    {
+        return AvailablePlayers;
+    }
+    /// <summary>
+    /// 添加角色为可用
+    /// </summary>
+    /// <param name="ID"></param>
+    public void AddAvailablePlayer(int ID)
+    {
+        if (AvailablePlayers.Contains(ID))
+            return;
+        AvailablePlayers.Add(ID);
+    }
+    /// <summary>
+    /// 移除可用角色，当角色因为剧情事件被移除时执行，死亡时不会移除。被移除的角色将不会在准备画面显示
+    /// </summary>
+    /// <param name="ID"></param>
+    public void RemoveAvailablePlayer(int ID)
+    {
+        if (AvailablePlayers.Contains(ID))
+            AvailablePlayers.Remove(ID);
+        else
+            Debug.LogError("你想要移除的有效角色并不存在");
+    }
+    /// <summary>
     /// 章节结束保存下数据缓存
     /// </summary>
-    public void SaveChapter()
+    /// <param name="AfterStartSequence">是否是开始剧情播放完记录的</param>
+    public void SaveChapter(bool AfterStartSequence)
+    {
+        GM_Battle GameMode = GetGameMode<GM_Battle>();
+        TempChapterEndRecord = new ChapterRecordCollection();
+        TempChapterEndRecord.Chapter = ChapterID;
+        TempChapterEndRecord.AfterStartSequence = AfterStartSequence;
+        TempChapterEndRecord.AvailablePlayers = AvailablePlayers;
+        TempChapterEndRecord.Money = Money;
+        TempChapterEndRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+    }
+
+    public void SaveChapterToDisk(int Index)
+    {
+        Assert.IsNotNull(TempChapterEndRecord, "章节存档尚未初始化");
+        TempChapterEndRecord.SetIndex(Index);
+        TempChapterEndRecord.SaveBinary();
+    }
+    public bool HasChapterSave(int Index)
     {
         ChapterRecord = new ChapterRecordCollection();
-        ChapterRecord.Chapter = 1;
-        List<int> AvailablePlayer = new List<int>();
-        AvailablePlayer.Add(1);
-        AvailablePlayer.Add(2);
-        ChapterRecord.AvailablePlayers = AvailablePlayer;
-        ChapterRecord.Money = 10000;
-        ChapterRecord.RefreshPlayerInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
-    }
-    public void SaveToDisk(int Index)
-    {
-        Assert.IsNotNull(ChapterRecord, "章节存档尚未初始化");
         ChapterRecord.SetIndex(Index);
-        ChapterRecord.SaveBinary();
+        return ChapterRecord.Exists();
     }
-    public void LoadFromDisk(int Index)
+    /// <summary>
+    /// 从磁盘载入章节，返回章节数，并实例化ChapterRecord文件，如果没有则返回-1,并让ChapterRecord为null
+    /// </summary>
+    /// <param name="Index">第几个存档</param>
+    /// <returns>当前存档的章节数</returns>
+    public ChapterRecordCollection LoadChapterFromDisk(int Index)
     {
-        ChapterRecord = new ChapterRecordCollection();
-        if (ChapterRecord.Exists())
+        if (HasChapterSave(Index))
         {
             ChapterRecord = ChapterRecord.LoadBinary<ChapterRecordCollection>();
 
-            Debug.Log(ChapterRecord.Money);
-            Debug.Log(ChapterRecord.PlayersInfo);
+            AvailablePlayers = ChapterRecord.AvailablePlayers;
         }
         else
         {
-            Debug.LogError("请先保存" + ChapterRecord.GetFullRecordPathName());
+            ChapterRecord = null;
         }
+        return ChapterRecord;
+    }
+    /// <summary>
+    /// 是否有可用的章节存档
+    /// </summary>
+    /// <returns></returns>
+    public bool IsChapterRecordAvailable()
+    {
+        return ChapterRecord != null;
+    }
+    /// <summary>
+    /// 获取当前应用的章节存档
+    /// </summary>
+    /// <returns></returns>
+    public ChapterRecordCollection GetCurrentChapterRecord()
+    {
+        return ChapterRecord;
     }
     #endregion
 
@@ -111,5 +192,16 @@ public class UGameInstance : MonoSingleton<UGameInstance>
 
         ActiveGameMode = GameObject.FindObjectOfType<UGameMode>();
         Init();
+    }
+    /// <summary>
+    /// 进入章节场景,BattleTemplate作为起始index为0的章节
+    /// </summary>
+    /// <param name="ChapterID"></param>
+    public void LoadChapterScene(int ChapterID, ChapterRecordCollection Record)
+    {
+        ChapterRecord = Record;
+        Money = ChapterRecord.Money;
+
+        LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + ChapterID);
     }
 }

@@ -25,11 +25,27 @@ public class GM_Battle : UGameMode
         FindCharacterParent();
     }
     /// <summary>
-    /// 开始剧情结束后执行的事件
+    /// 开始剧情结束后执行的事件,如果有准备画面进入准备画面，没有则直接进入战场
     /// </summary>
     public void OnStartSequenceFinished()
     {
-        Round++;
+        if (GetSLGChapter().ChapterSetting.Preparation)
+        {
+            BattleReadyPanel Ready = UIController.Instance.GetUI<BattleReadyPanel>();
+            Ready.RegisterOnHide(ShowFirstPlayerRound);
+            Ready.Show();
+        }
+        else
+        {
+            ShowFirstPlayerRound();
+        }
+    }
+    /// <summary>
+    /// 开始进入战场
+    /// </summary>
+    private void ShowFirstPlayerRound()
+    {
+        Round = 1;
         RPG.UI.TurnAnim TurnAnim = UIController.Instance.GetUI<RPG.UI.TurnAnim>();
         TurnAnim.RegisterOnHide(OnFirstPhaseStart);
         TurnAnim.Show(Round, RoundCamp);
@@ -129,6 +145,8 @@ public class GM_Battle : UGameMode
         RPGPlayer Character = AddCharacter(Def, EnumCharacterCamp.Player, x, y, CustomAttribute) as RPGPlayer;
         Character.SetDefaultData(Def);
         GetGameStatus<UGameStatus>().AddLocalPlayer(Character);
+
+        GetGameInstance().AddAvailablePlayer(Def.CommonProperty.ID);//添加到可用角色列表
     }
     /// <summary>
     /// 添加一个Enemy到场景中
@@ -214,11 +232,14 @@ public class GM_Battle : UGameMode
     private void EndThisChapter()
     {
         Debug.Log("进入下一关");
-        LoadingScreenManager.LoadScene(0);
+        GetGameInstance().SaveChapter(false);
+        LoadingScreenManager.LoadScene(UGameInstance.SCENEINDEX_CHAPTER_ENDSAVE);
     }
     #endregion
     public override void BeginPlay()
     {
         base.BeginPlay();
+
+        //GetGameInstance().ChapterID = GetSLGChapter().ChapterSetting.CommonProperty.ID;
     }
 }

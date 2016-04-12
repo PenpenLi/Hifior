@@ -49,6 +49,10 @@ public class ChapterRecordCollection : SerializableBase
     /// </summary>
     public int Chapter;
     /// <summary>
+    /// 是否已经播放完开始剧情
+    /// </summary>
+    public bool AfterStartSequence;
+    /// <summary>
     /// 存档玩家信息
     /// </summary>
     public PlayerInfoCollection PlayersInfo;
@@ -67,12 +71,25 @@ public class ChapterRecordCollection : SerializableBase
         Assert.IsTrue(SaveIndex < 10, "存档Index需小于10");
         Index = SaveIndex;
     }
-    public void RefreshPlayerInfo(List<RPGCharacter> Characters)
+    /// <summary>
+    /// 更新玩家的信息，如果存档中已经存在该玩家，则替换存在的玩家信息，如果不存在则添加该玩家信息
+    /// </summary>
+    /// <param name="Characters"></param>
+    public void RefreshPlayersInfo(List<RPGCharacter> Characters)
     {
         if (PlayersInfo == null)
             PlayersInfo = new PlayerInfoCollection();
         foreach (RPGCharacter Ch in Characters)
-            PlayersInfo.AddContent(new CharacterInfo(Ch));
+        {
+            if (PlayersInfo.HasCharacterInfo(Ch.GetCharacterID()))
+            {
+                PlayersInfo.ReplaceCharacterInfo(Ch.GetCharacterID(), Ch);
+            }
+            else
+            {
+                PlayersInfo.AddContent(new CharacterInfo(Ch));
+            }
+        }
     }
     public override string GetKey()
     {
@@ -89,6 +106,32 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
     public override string GetFullRecordPathName()
     {
         return Application.persistentDataPath + "/PlayerInfoCollection.sav";
+    }
+    /// <summary>
+    /// 存档是否已经包含某个角色的信息
+    /// </summary>
+    /// <returns></returns>
+    public bool HasCharacterInfo(int CharacterID)
+    {
+        CheckRecordList();
+        foreach (CharacterInfo info in RecordList)
+        {
+            if (info.ID == CharacterID)
+                return true;
+        }
+        return false;
+    }
+    public CharacterInfo ReplaceCharacterInfo(int CharacterID, RPGCharacter Character)
+    {
+        for (int i = 0; i < RecordList.Count; i++)
+        {
+            if (RecordList[i].ID == CharacterID)
+            {
+                RecordList[i] = new CharacterInfo(Character);
+                return RecordList[i];
+            }
+        }
+        return null;
     }
     public override string GetKey()
     {
@@ -110,7 +153,7 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
     [RuntimeInitializeOnLoadMethod]
     public static void III()
     {
-        
+
     }
 }
 #endregion
@@ -121,10 +164,41 @@ public static class GameRecord
 {
     public static void SaveTo(int index)
     {
-
+        UGameInstance.Instance.SaveChapterToDisk(index);
     }
-    public static void LoadFrom(int index)
+    /// <summary>
+    /// 从磁盘载入章节，返回当前存档的数据，如果不存在则返回null
+    /// </summary>
+    /// <param name="Index">第几个存档</param>
+    /// <returns>当前存档的数据</returns>
+    public static ChapterRecordCollection LoadChapterRecordFrom(int index)
     {
-
+        return UGameInstance.Instance.LoadChapterFromDisk(index);
+    }
+    /// <summary>
+    /// 载入章节，并设置当前章节使用的存档数据
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="Record"></param>
+    /// <returns></returns>
+    public static void LoadChapterSceneWithRecordData(int index, ChapterRecordCollection Record)
+    {
+        UGameInstance.Instance.LoadChapterScene(index, Record);
+    }
+    /// <summary>
+    /// 载入序章0，不使用存档
+    /// </summary>
+    public static void LoadNewGame()
+    {
+        UGameInstance.Instance.LoadChapterScene(0, null);
+    }
+    /// <summary>
+    /// 该处是否存在存档
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public static bool HasSave(int index)
+    {
+        return UGameInstance.Instance.HasChapterSave(index);
     }
 }

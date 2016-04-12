@@ -22,7 +22,7 @@ public abstract class SerializableList<T> : SerializableBase where T : Serializa
         CheckRecordList();
         RecordList.AddRange(Content);
     }
-    private void CheckRecordList()
+    public void CheckRecordList()
     {
         if (RecordList == null)
             RecordList = new List<T>();

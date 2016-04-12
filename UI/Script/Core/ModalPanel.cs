@@ -19,7 +19,13 @@ namespace RPG.UI
         public Text button1Text;
         public Text button2Text;
         public Text button3Text;
-
+        public override void OnCancelKeyDown()
+        {
+            if (button3.gameObject.activeSelf)
+                button3.onClick.Invoke();
+            else
+                button2.onClick.Invoke();
+        }
         public void Show(ModalPanelDetail details)
         {
             base.Show();
@@ -29,10 +35,8 @@ namespace RPG.UI
             Background.sprite = details.PanelBackgroundImage;
 
             this.IconImage.gameObject.SetActive(false);
-            button1.gameObject.SetActive(false);
-            button2.gameObject.SetActive(false);
             button3.gameObject.SetActive(false);
-
+            button2.gameObject.SetActive(false);
             this.Question.text = details.Question;
 
             if (details.IconImage)

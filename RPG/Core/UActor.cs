@@ -97,6 +97,14 @@ public class UActor : MonoBehaviour
             }
         }
     }
+    public void EnableTick()
+    {
+        bCanEverTick = true;
+    }
+    public void DisableTick()
+    {
+        bCanEverTick = false;
+    }
     public bool IsActorTickEnabled()
     {
         return bCanEverTick;
@@ -112,10 +120,13 @@ public class UActor : MonoBehaviour
     {
         BeginPlay();
     }
-    
+
     void Update()
     {
-        if (InputComponent != null)
+        UGameMode Mode = GetGameMode<UGameMode>();
+        if (Mode == null)
+            return;
+        if (Mode.InputModeGame && InputComponent != null)
             InputComponent.TickPlayerInput();
         if (bCanEverTick)
             Tick(Time.deltaTime);

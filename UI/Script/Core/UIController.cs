@@ -46,9 +46,4 @@ public class UIController : MonoBehaviour
         return MonoScript;
     }
     public static UIController CurrentActiveUI;
-  
-    public void Awake()
-    {
-        //Utils.MiscUtil.GetChildComponent<AbstractUI>(transform).SortUIPosition();
-    }
 }

@@ -42,7 +42,9 @@ public abstract class SerializableBase
         {
             BinaryFormatter binary = new BinaryFormatter();
             FileStream fStream = File.Open(GetFullRecordPathName(), FileMode.Open);
-            return binary.Deserialize(fStream) as T;
+            T ret= binary.Deserialize(fStream) as T;
+            fStream.Close();
+            return ret;
         }
     }
 

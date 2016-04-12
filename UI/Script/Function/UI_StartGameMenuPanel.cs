@@ -5,6 +5,7 @@ namespace RPG.UI
     public class UI_StartGameMenuPanel : IPanel
     {
         public Button StartGame;
+        public RecordChapterPanel RecordChapter;
 
         public override void BeginPlay()
         {
@@ -16,6 +17,14 @@ namespace RPG.UI
         public void OnEnable()
         {
             StartGame.Select();
+        }
+        /// <summary>
+        /// 点击开始游戏按钮
+        /// </summary>
+        public void Button_StartGame()
+        {
+            Hide();
+            RecordChapter.ShowFadeAlpha();
         }
     }
 }
