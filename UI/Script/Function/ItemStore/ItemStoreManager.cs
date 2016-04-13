@@ -24,7 +24,7 @@ namespace RPG.UI
         {
             GameObject obj = Instantiate(ItemPrefab) as GameObject;
             obj.transform.SetParent(LayoutGroup.transform, false);//设为false否则会有问题
-            obj.GetComponent<ItemElement>().SetItem(itemID);
+            //obj.GetComponent<ItemElement>().SetWeapon(itemID);
         }
     }
 }

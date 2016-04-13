@@ -16,7 +16,7 @@ namespace RPG.UI
         {
             Text_Name.text = ch.PawnName;
             Text_Job.text = ch.GetCareerName() ;
-            WeaponItem item = ch.Item.GetEquipItem();
+            WeaponItem item = ch.Item.GetEquipWeapon();
             if (item != null)
             {
                 Text_Weapon.text = item.GetDefinition().CommonProperty.Name;

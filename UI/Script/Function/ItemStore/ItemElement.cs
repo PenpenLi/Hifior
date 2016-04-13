@@ -1,27 +1,41 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 namespace RPG.UI
 {
-    public class ItemElement : AbstractUI, IPointerDownHandler
+    /// <summary>
+    /// 用于显示单个UI的初始化脚本
+    /// </summary>
+    public class ItemElement :MonoBehaviour
     {
-        public int ItemID;
-        public Text WeaponName;
-        public Text WeaponPrice;
+        public int Index;
         public Image Icon;
-        public void SetItem(int itemID)
+        public Text WeaponName;
+        public Text WeaponDesc;
+        
+        public void RegisterClickEvent(UnityEngine.Events.UnityAction Action)
         {
-            ItemID = itemID;
-            WeaponDef def = ResourceManager.GetWeaponDef(itemID);
-            WeaponName.text =def.CommonProperty.Name;
-            WeaponPrice.text = def.GetPrice().ToString();
-            //Icon.sprite = ItemIcon.GetIcon(itemID);
+            GetComponent<Button>().onClick.RemoveAllListeners();
+            GetComponent<Button>().onClick.AddListener(Action);
         }
-
-        public void OnPointerDown(PointerEventData eventData)
+        public void Show(int Index, Sprite Icon, string Name, string Desc)
         {
-            Debug.Log(ItemID + " " + WeaponName.text + " = " + WeaponPrice.text);
+            GetComponent<Button>().interactable = true;
+            this.Index = Index;
+            this.Icon.gameObject.SetActive(true);
+            this.Icon.sprite = Icon;
+            this.WeaponName.text = Name;
+            this.WeaponDesc.text = Desc;
+        }
+        public void ShowNothing(int Index)
+        {
+            GetComponent<Button>().interactable = false;
+            this.Index = Index;
+            this.Icon.gameObject.SetActive(false);
+            this.WeaponName.text = string.Empty;
+            this.WeaponDesc.text = string.Empty;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace RPG.UI
                 charName.text = ch.GetCharacterName();
                 hp.text = ch.GetCurrentHP() + "/" + ch.GetMaxHP();
                 lv.text = ch.GetLevel().ToString();
-                WeaponItem item = ch.Item.GetEquipItem();
+                WeaponItem item = ch.Item.GetEquipWeapon();
                 if (item != null)
                 {
                     weaponIcon.gameObject.SetActive(true);

@@ -12,7 +12,11 @@ public enum EnumCharacterCamp
     Enemy,
     NPC
 }
-
+public enum EnumItemType
+{
+    武器,
+    道具
+}
 public enum EnumEnemyActionAI
 {
     /// <summary>

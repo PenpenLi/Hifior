@@ -351,7 +351,7 @@ public class SLGMap : MonoBehaviour
             countPoint++;
         }
 
-        WeaponItem item = Gamechar.Item.GetEquipItem();
+        WeaponItem item = Gamechar.Item.GetEquipWeapon();
         item = new WeaponItem(1);
         if (item != null)//装备武器不为空
         {

@@ -21,7 +21,7 @@ public class CharacterInfo : SerializableBase
         Level = Character.GetLevel();
         Exp = Character.GetLevel();
         Attribute = Character.GetAttribute();
-        Items = Character.Item.Items;
+        Items = Character.Item.Weapons;
     }
     public override string ToString()
     {
@@ -41,9 +41,9 @@ public class ChapterRecordCollection : SerializableBase
     /// </summary>
     public int Index;
     /// <summary>
-    /// 当前队伍的钱
+    /// 当前运输队
     /// </summary>
-    public int Money;
+    public Warehouse Ware;
     /// <summary>
     /// 章节
     /// </summary>

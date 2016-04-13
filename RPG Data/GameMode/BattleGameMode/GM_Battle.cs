@@ -32,7 +32,7 @@ public class GM_Battle : UGameMode
         if (GetSLGChapter().ChapterSetting.Preparation)
         {
             BattleReadyPanel Ready = UIController.Instance.GetUI<BattleReadyPanel>();
-            Ready.RegisterOnHide(ShowFirstPlayerRound);
+            Ready.RegisterHideEvent(ShowFirstPlayerRound);
             Ready.Show();
         }
         else
@@ -47,7 +47,7 @@ public class GM_Battle : UGameMode
     {
         Round = 1;
         RPG.UI.TurnAnim TurnAnim = UIController.Instance.GetUI<RPG.UI.TurnAnim>();
-        TurnAnim.RegisterOnHide(OnFirstPhaseStart);
+        TurnAnim.RegisterHideEvent(OnFirstPhaseStart);
         TurnAnim.Show(Round, RoundCamp);
     }
     /// <summary>
@@ -169,7 +169,7 @@ public class GM_Battle : UGameMode
     public void AddEnemy(EnemyDef Def, int x, int y, List<int> Items, CharacterAttribute CustomAttribute = null)
     {
         RPGEnemy Character = AddCharacter(Def, EnumCharacterCamp.Enemy, x, y, CustomAttribute) as RPGEnemy;
-        Character.Item.AddItem(Items);
+        Character.Item.AddWeapons(Items);
         Character.SetDefaultData(Def);
         GetGameStatus<UGameStatus>().AddLocalEnemy(Character);
     }
@@ -215,7 +215,7 @@ public class GM_Battle : UGameMode
     }
     private void ShowRoundAnimation()
     {
-        UIController.Instance.GetUI<RPG.UI.TurnAnim>().RegisterOnHide(OnRoundAnimationFinished);
+        UIController.Instance.GetUI<RPG.UI.TurnAnim>().RegisterHideEvent(OnRoundAnimationFinished);
         UIController.Instance.GetUI<RPG.UI.TurnAnim>().Show(Round, RoundCamp);
     }
     /// <summary>

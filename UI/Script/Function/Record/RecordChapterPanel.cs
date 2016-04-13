@@ -54,8 +54,10 @@ namespace RPG.UI
             bSaveMode = !bSaveMode;
             Debug.Log(bSaveMode ? "保存模式" : "载入模式");
         }
-        void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+
             AvailableSave = new bool[Buttons.Length];
             ChapterRecordDatas = new ChapterRecordCollection[Buttons.Length];
             //设置按钮显示的文字

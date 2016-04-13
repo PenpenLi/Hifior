@@ -50,7 +50,7 @@ public class Pawn_BattleArrow : UPawn
     /// <summary>
     /// 当前选择的角色
     /// </summary>
-    private RPGCharacter SelectedCharacter;
+    public RPGCharacter SelectedCharacter { private set; get; }
     /// <summary>
     /// 当前选择的角色的周围人物;
     /// </summary>
@@ -273,7 +273,7 @@ public class Pawn_BattleArrow : UPawn
                 {
                     UIController.Instance.GetUI<RPG.UI.AttributePanel>().Show(ArrowOnCharacter);
                     ShowNothingUI();
-                    UIController.Instance.GetUI<RPG.UI.AttributePanel>().RegisterOnHide(OnHideNothingUI);
+                    UIController.Instance.GetUI<RPG.UI.AttributePanel>().RegisterHideEvent(OnHideNothingUI);
                 }
                 break;
         }
@@ -532,7 +532,7 @@ public class Pawn_BattleArrow : UPawn
     {
         SetArrowActive(true);
         List<Point2D> p = SelectedCharacter.FindAttack(true);
-        SelectedCharacter.Item.EquipItemWithSort(ItemIndex);//点击选择武器则重新排列武器并装备第一个
+        SelectedCharacter.Item.EquipWeaponWithSort(ItemIndex);//点击选择武器则重新排列武器并装备第一个
         int x = SelectedCharacter.GetTileCoord().x;
         int y = SelectedCharacter.GetTileCoord().y;
         //延迟0.2s后切换状态

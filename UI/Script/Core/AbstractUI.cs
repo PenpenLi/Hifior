@@ -19,7 +19,7 @@ namespace RPG.UI
         {
             Init();
         }
-        public void OnEnable()
+        protected virtual void OnEnable()
         {
             SortUIPosition();
         }
@@ -44,7 +44,7 @@ namespace RPG.UI
             if (OnHideDelegate != null && InvokeDelegate)
                 OnHideDelegate.Invoke();
         }
-        public void RegisterOnHide(UnityAction OnHide)
+        public void RegisterHideEvent(UnityAction OnHide)
         {
             OnHideDelegate = OnHide;
         }

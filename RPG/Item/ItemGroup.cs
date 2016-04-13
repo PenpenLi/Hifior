@@ -1,26 +1,32 @@
-﻿using System;
+﻿using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine;
 public class ItemGroup
 {
-    private List<WeaponItem> items = new List<WeaponItem>();//装备 0-5为可用的，7-8为装备的持有的
-    private List<WeaponItem> passiveItems = new List<WeaponItem>();//被动装备  
+    public const int MAX_WEAPON_COUNT = 6;
+    private List<WeaponItem> weapons = new List<WeaponItem>();
+    private List<PropsItem> props = new List<PropsItem>();
+    private List<PropsItem> passiveItems = new List<PropsItem>();//被动装备  
     private CharacterAttribute attribute;
     private int lastWeaponIndex;//上一个装备的Index
     private int _currentEquipItemIndex = -1; //当前装备武器的index
+    /// <summary>
+    /// 在完全获得该道具后执行的事件
+    /// </summary>
+    private UnityAction AfterSuccessAddItem;
     public ItemGroup(CharacterAttribute attr)
     {
         attribute = attr;
     }
-    public List<WeaponItem> Items
+    public List<WeaponItem> Weapons
     {
         get
         {
-            return items;
+            return weapons;
         }
     }
 
-    public List<WeaponItem> PassiveItems
+    public List<PropsItem> PassiveItems
     {
         get
         {
@@ -29,99 +35,121 @@ public class ItemGroup
     }
 
     #region 装备处理函数
-    public void SortItems()
+    public void SortWeapons()
     {
         List<WeaponItem> itemNew = new List<WeaponItem>();
         if (_currentEquipItemIndex >= 0)//有装备的武器
         {
-            itemNew.Add(Items[_currentEquipItemIndex]);
-            Items.RemoveAt(_currentEquipItemIndex);//删除原items中的装备的武器
+            itemNew.Add(Weapons[_currentEquipItemIndex]);
+            Weapons.RemoveAt(_currentEquipItemIndex);//删除原items中的装备的武器
             _currentEquipItemIndex = 0;
         }
         else//没有装备武器
         {
             _currentEquipItemIndex = -1;
-            for (int i = 0; i < Items.Count; i++)
+            for (int i = 0; i < Weapons.Count; i++)
             {
-                if (IsItemEnabled(Items[i].ID))
+                if (IsWeaponEnabled(Weapons[i].ID))
                 {
-                    itemNew.Add(Items[i]);
-                    Items.RemoveAt(i);//删除原items中的装备的武器
+                    itemNew.Add(Weapons[i]);
+                    Weapons.RemoveAt(i);//删除原items中的装备的武器
                     _currentEquipItemIndex = 0;
                     break;
                 }
             }
         }
-        for (int i = 0; i < Items.Count; i++)//然后是没有装备的武器
+        for (int i = 0; i < Weapons.Count; i++)//然后是没有装备的武器
         {
-            if (IsItemEnabled(Items[i].ID))//武器类型放上面
+            if (IsWeaponEnabled(Weapons[i].ID))//武器类型放上面
             {
-                itemNew.Add(Items[i]);
-                Items.RemoveAt(i);
+                itemNew.Add(Weapons[i]);
+                Weapons.RemoveAt(i);
             }
         }
-        foreach (WeaponItem i in Items)//最后是不可以装备的消耗品
+        foreach (WeaponItem i in Weapons)//最后是不可以装备的消耗品
         {
             itemNew.Add(i);
         }
-        items = itemNew;
+        weapons = itemNew;
         if (itemNew.Count > 0)
-            EquipItem(0);
+            EquipWeapon(0);
     }
-    public void AddItem(List<int> Items)
+    /// <summary>
+    /// 只添加道具，不做显示处理
+    /// </summary>
+    /// <param name="Items"></param>
+    public void AddWeapons(List<int> Items)
     {
         foreach (int i in Items)
-            AddItem(i);
+        {
+            if (weapons.Count > MAX_WEAPON_COUNT)
+            {
+                Debug.LogError("武器超过最大可容纳的数量了");
+            }
+            else {
+                AddWeapon(i, null);
+            }
+        }
     }
-    public bool AddItem(int ID)//获得装备
+    public bool AddWeapon(int ID, UnityAction AfterAddItem)//获得装备
     {
-       return AddItem(new WeaponItem(ID));
+        return AddWeapon(new WeaponItem(ID), AfterAddItem);
     }
-    public bool AddItem(WeaponItem Item)//获得装备
+    public bool AddWeapon(WeaponItem Item, UnityAction AfterAddItem)//获得装备
     {
-        if (Items.Count == ConstTable.CONST_ITEM_COUNT)//装备已满返回false
+        AfterSuccessAddItem = AfterAddItem;
+
+        if (Weapons.Count == MAX_WEAPON_COUNT)//装备已满返回false
         {
             Debug.Log("物品已达上限");
+            weapons.Add(Item);
+            RPG.UI.SendWeaponToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendWeaponToWarehouse>();
+            if(AfterSuccessAddItem!=null)
+            Sender.RegisterHideEvent(AfterSuccessAddItem);
+            Sender.Show(weapons);
             return false;
-        }
-        if (_currentEquipItemIndex < 0)//没有装备武器，判断武器是否可以装备，如果可以装备到第一格，否则直接添加到末尾
-        {
-            if (IsItemEnabled(Item.ID))//可用的武器
-            {
-
-                Items.Insert(0, Item);
-                EquipItem(0);
-                return true;
-            }
-            else
-            {
-                Items.Add(Item);
-                return true;
-            }
         }
         else
         {
-            Items.Add(Item);
+            if (_currentEquipItemIndex < 0)//没有装备武器，判断武器是否可以装备，如果可以装备到第一格，否则直接添加到末尾
+            {
+                if (IsWeaponEnabled(Item.ID))//可用的武器
+                {
+
+                    Weapons.Insert(0, Item);
+                    EquipWeapon(0);
+                }
+                else
+                {
+                    Weapons.Add(Item);
+                }
+            }
+            else
+            {
+                Weapons.Add(Item);
+            }
+            if (AfterSuccessAddItem != null)
+                AfterSuccessAddItem.Invoke();
             return true;
         }
     }
 
-    public bool AddItem(WeaponItem Item, int InsertIndex)//添加装备到指定顺序
+    public bool AddWeapon(WeaponItem Item, int InsertIndex)//添加装备到指定顺序
     {
-        if (Items.Count == ConstTable.CONST_ITEM_COUNT)//若装备已满，返回FALSE
+        if (Weapons.Count == ConstTable.CONST_M_COUNT)//若装备已满，返回FALSE
         {
             Debug.Log("物品已达上限");
             return false;
         }
-        if (InsertIndex >= Items.Count)
-            Items.Add(Item);
+        if (InsertIndex >= Weapons.Count)
+            Weapons.Add(Item);
         else
-            Items.Insert(InsertIndex, Item);
+            Weapons.Insert(InsertIndex, Item);
         return true;
     }
-    public void EquipItem(int index)
+    public void EquipWeapon(int index)
     {
-        if (Items.Count <= index)
+        if (Weapons.Count <= index)
         {
             this._currentEquipItemIndex = -1;
             return;
@@ -130,37 +158,38 @@ public class ItemGroup
         //ExtraAblityManage();
     }
 
-    public void EquipItemWithSort(int index)
+    public void EquipWeaponWithSort(int index)
     {
-        EquipItem(index);
-        SortItems();
+        EquipWeapon(index);
+        SortWeapons();
     }
-    public void DischargeItem()
+
+    public void DischargeWeapon()
     {
         this._currentEquipItemIndex = -1;
     }
-    public List<WeaponItem> GetAllItems()
+    public List<WeaponItem> GetAllWeapons()
     {
-        return this.Items;
+        return this.Weapons;
     }
 
     public List<WeaponItem> GetAttackWeapon()//获得可以攻击的武器
     {
         List<WeaponItem> attackWeapon = new List<WeaponItem>();
-        for (int i = 0; i < Items.Count; i++)
+        for (int i = 0; i < Weapons.Count; i++)
         {
-            if (Items[i] != null)
+            if (Weapons[i] != null)
             {
-                if (Items[i].GetDefinition().IsWeaponType() && IsItemEnabled(Items[i].ID))
+                if (Weapons[i].GetDefinition().IsWeaponType() && IsWeaponEnabled(Weapons[i].ID))
                 {
-                    attackWeapon.Add(Items[i]);
+                    attackWeapon.Add(Weapons[i]);
                 }
 
             }
         }
         return attackWeapon;
     }
-    public bool IsItemEnabled(int itemID)//medifyneed
+    public bool IsWeaponEnabled(int itemID)//medifyneed
     {
         /*WeaponDef def = ResourceManager.GetWeaponDef(itemID);
         EnumWeaponType t = def.GetWeaponType();//武器类型1剑
@@ -191,74 +220,69 @@ public class ItemGroup
         return true;
     }
 
-    public int GetCurrentItemMaxRange()
+    public int GetCurrentWeaponMaxRange()
     {
         int maxRange = 0;
-        for (int i = 0; i < Items.Count; i++)
+        for (int i = 0; i < Weapons.Count; i++)
         {
-            int tempMaxRange = Items[i].GetDefinition().RangeType.MaxSelectRange;
+            int tempMaxRange = Weapons[i].GetDefinition().RangeType.MaxSelectRange;
             if (tempMaxRange > maxRange)
                 maxRange = tempMaxRange;
         }
         return maxRange;
     }
 
-    public WeaponItem GetEquipItem()
+    public WeaponItem GetEquipWeapon()
     {
         if (this._currentEquipItemIndex == -1)
             return null;
-        return this.Items[this._currentEquipItemIndex];
+        return this.Weapons[this._currentEquipItemIndex];
     }
-    public WeaponItem GetItem(int index)
+    public WeaponItem GetWeaponByIndex(int index)
     {
-        if ((index >= Items.Count) || (index < 0)) return null;
-        return this.Items[index];
+        if ((index >= Weapons.Count) || (index < 0)) return null;
+        return this.Weapons[index];
     }
-    public int GetItemCount()
+    public int GetWeaponCount()
     {
-        return this.Items.Count;
+        return this.Weapons.Count;
     }
-    public int getLastWeaponIndex()
+    public int GetLastWeaponIndex()
     {
         return this.lastWeaponIndex;
     }
-    public bool isHaveItem(int itemID)
+    public bool HaveWeapon(int WeaponID)
     {
-        for (int i = 0; i < Items.Count; i++)
+        for (int i = 0; i < Weapons.Count; i++)
         {
-            if (this.Items[i].ID == itemID)
+            if (this.Weapons[i].ID == WeaponID)
             {
                 return true;
             }
         }
         return false;
     }
-    public void removeAllItem()
+    public void RemoveAllWeapons()
     {
-        Items.Clear();
+        Weapons.Clear();
     }
 
-    public void removeItem(int paramInt)
+    public void RemoveWeaponByIndex(int Index)
     {
-        if ((paramInt >= this.Items.Count) || (paramInt < 0) || (this.Items.Count == 0))
+        if ((Index >= this.Weapons.Count) || (Index < 0) || (this.Weapons.Count == 0))
         {
             return;
         }
-        this.Items.RemoveAt(paramInt);
+        this.Weapons.RemoveAt(Index);
     }
 
-    public void removeLastItem()
+    public void RemoveLastWeapon()
     {
-        if (this.Items.Count == 0)
+        if (this.Weapons.Count == 0)
         {
             return;
         }
-        removeItem(this.Items.Count - 1);
-    }
-
-    public void SetLastWeaponIndex(int Index)//上一个武器id
-    {
-        this.lastWeaponIndex = Index;
+        RemoveWeaponByIndex(this.Weapons.Count - 1);
     }
     #endregion
 }

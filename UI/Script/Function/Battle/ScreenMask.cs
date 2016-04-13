@@ -30,8 +30,10 @@ namespace RPG.UI
             animator = GetComponent<Animator>();
             Hide();
         }
-        void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+
             animator.speed = 1.0f / Duration;
             if (bReverse) 
             {

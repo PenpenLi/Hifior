@@ -174,19 +174,7 @@ public class eventdata0 : BaseEventData
         Assert.IsNotNull<UPlayerStatus>(ActivePlayerStatus, "You nees assign a PlayerStatus");
         Assert.IsNotNull<UHUD>(ActiveHUD, "You nees assign a HUD");
         Assert.IsNotNull<UGameStatus>(ActiveGameStatus, "You nees assign a GameStatus");
-
-        ActivePlayerController = Instantiate<UPlayerController>(ActivePlayerController);
-        ActivePlayerController.transform.parent = transform;
-        ActivePawn = Instantiate<UPawn>(ActivePawn);
-        ActivePawn.transform.parent = transform;
-        ActivePlayerController.Possess(ActivePawn);
-        ActivePlayerStatus = Instantiate<UPlayerStatus>(ActivePlayerStatus);
-        ActivePlayerStatus.transform.parent = transform;
-        ActiveHUD = Instantiate<UHUD>(ActiveHUD);
-        ActiveHUD.transform.parent = transform;
-        ActiveGameStatus = Instantiate<UGameStatus>(ActiveGameStatus);
-        ActiveGameStatus.transform.parent = transform;
-
+        
         GetGameInstance().SetGameMode(this);
         SetInputModeGameAndUI();
 

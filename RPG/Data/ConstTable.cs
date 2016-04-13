@@ -34,7 +34,7 @@
     public const int CONST_HEAL_XP = 0;
     public const int CONST_REVIVE_PRICE_BASE = 0;
     public const int CONST_REVIVE_PRICE_LV_ADDITION = 0;
-    public const int CONST_ITEM_COUNT = 6;
+    public const int CONST_M_COUNT = 6;
     public const int CONST_PASSIVEITEM_COUNT = 2;
 
 }

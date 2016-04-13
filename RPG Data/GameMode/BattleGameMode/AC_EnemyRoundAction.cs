@@ -445,7 +445,7 @@ public class AC_EnemyRoundAction : UAIController
 
     private int getAttackScore(RPGCharacter attacker, RPGCharacter defender)//得到攻击的伤害
     {
-        WeaponItem item = attacker.Item.GetEquipItem();
+        WeaponItem item = attacker.Item.GetEquipWeapon();
         if (item == null || item.IsValid())//没有装备武器或者武器耐久度为0
             return 0;
         return attacker.GetAttack() - (defender.GetPhysicalDefense() + defender.GetMagicalDefense()) / 2;
@@ -455,7 +455,7 @@ public class AC_EnemyRoundAction : UAIController
         //获取Map中可到达的图块数组，得到Gamechar周围的坐标，以自己的武器范围扩展在此范围内寻找回避+防御*10最大的图块
         int ex = defender.GetTileCoord().x;
         int ey = defender.GetTileCoord().y;
-        _Map.FindAttackRange(ex, ey, attacker.Item.GetEquipItem().GetDefinition(), false);
+        _Map.FindAttackRange(ex, ey, attacker.Item.GetEquipWeapon().GetDefinition(), false);
         List<Point2D> AttackRangeList = _Map.GetAttackRangeData();//得到敌方人物在我方武器的范围，存储在_AttackRangeData
         int tileValue = 0, tempTileValue = 0;
         Point2D xy = new Point2D(-1, -1);
@@ -483,7 +483,7 @@ public class AC_EnemyRoundAction : UAIController
         List<WeaponItem> attackItems = attacker.Item.GetAttackWeapon();
         for (int j = 0; j < attackItems.Count; j++)
         {
-            WeaponItem localItem = attacker.Item.GetItem(j);
+            WeaponItem localItem = attacker.Item.GetWeaponByIndex(j);
             if ((localItem.GetDefinition().RangeType.MaxSelectRange >= i) && (localItem.GetDefinition().RangeType.MinSelectRange <= i) && (localItem.IsValid()))
                 return localItem.ID;
         }

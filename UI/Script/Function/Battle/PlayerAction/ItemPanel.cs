@@ -40,11 +40,11 @@ namespace RPG.UI
         public void Init(RPGCharacter ch)
         {
             disable();
-            int itemCount = ch.Item.GetItemCount();
-            items = ch.Item.GetAllItems().ToArray();
+            int itemCount = ch.Item.GetWeaponCount();
+            items = ch.Item.GetAllWeapons().ToArray();
             if (EquipIcon != null)
             {
-                if (ch.Item.GetEquipItem() != null)
+                if (ch.Item.GetEquipWeapon() != null)
                     EquipIcon.gameObject.SetActive(true);
                 else
                 {
@@ -61,7 +61,7 @@ namespace RPG.UI
                 Text_WeaponName[i].enabled = true;
                 Image_WeaponIcon[i].enabled = true;
                 Text_WeaponName[i].text =items[i].GetDefinition().CommonProperty.Name;
-                if (!ch.Item.IsItemEnabled(items[i].ID))
+                if (!ch.Item.IsWeaponEnabled(items[i].ID))
                     Text_WeaponName[i].color = Color.grey;
                 else
                     Text_WeaponName[i].color = Color.white;

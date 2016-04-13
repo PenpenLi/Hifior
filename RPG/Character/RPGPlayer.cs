@@ -21,8 +21,7 @@ public class RPGPlayer : RPGCharacter
         base.SetDefaultData(DefaultData);
 
         PlayerDefinition = (PlayerDef)DefaultData;
-        foreach (int itemID in PlayerDefinition.DefaultWeapons)
-            Item.AddItem(itemID);
+        Item.AddWeapons(PlayerDefinition.DefaultWeapons);
     }
     public override void SetupPlayerInputComponent(UInputComponent InInputComponent)
     {

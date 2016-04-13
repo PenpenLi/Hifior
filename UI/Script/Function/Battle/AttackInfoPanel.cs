@@ -37,7 +37,7 @@ namespace RPG.UI
         public void OnWeaponSelectChange(int index)
         {
             SoundController.Instance.PlaySound(WeaponSelectChange);
-            m_curGamechar.Item.EquipItem(index);//只改变当前选择的装备标识
+            m_curGamechar.Item.EquipWeapon(index);//只改变当前选择的装备标识
             Init(m_curGamechar);
         }
     }

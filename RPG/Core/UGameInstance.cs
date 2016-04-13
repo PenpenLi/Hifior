@@ -84,11 +84,7 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     /// 当前存档章节数
     /// </summary>
     public int ChapterID;
-    /// <summary>
-    /// 当前存档金钱
-    /// </summary>
-    public int Money;
-
+    public Warehouse Ware;
     /// <summary>
     /// 当前可用的角色，保留在存档中，每一章开始时从存档读取，当有我方人物加入时，写入该表，当有角色离开时，从该表里删除，每一章结束后存储到Save文件里
     /// </summary>
@@ -133,7 +129,7 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         TempChapterEndRecord.Chapter = ChapterID;
         TempChapterEndRecord.AfterStartSequence = AfterStartSequence;
         TempChapterEndRecord.AvailablePlayers = AvailablePlayers;
-        TempChapterEndRecord.Money = Money;
+        TempChapterEndRecord.Ware = Ware;
         TempChapterEndRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
     }
 
@@ -200,8 +196,9 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     public void LoadChapterScene(int ChapterID, ChapterRecordCollection Record)
     {
         ChapterRecord = Record;
-        Money = ChapterRecord.Money;
-
+        //在此通过ChapterRecord 初始化所有的数据
+        if(ChapterRecord!=null)
+        { }
         LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + ChapterID);
     }
 }

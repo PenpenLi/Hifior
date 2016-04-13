@@ -56,6 +56,7 @@ namespace RPGEditor
 
             props.ImportantProps = EditorGUILayout.Toggle(guiContent_ImportantWeapon, props.ImportantProps);
             props.NoExchange = EditorGUILayout.Toggle(guiContent_NoExchange, props.NoExchange);
+            props.Sellable = EditorGUILayout.Toggle("是否可以出售", props.Sellable);
 
             foldout_AdditionalAttribute = EditorGUILayout.Foldout(foldout_AdditionalAttribute, "人物属性修正");
             if (foldout_AdditionalAttribute)

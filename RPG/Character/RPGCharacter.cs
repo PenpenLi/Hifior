@@ -110,7 +110,7 @@ public class RPGCharacter : RPGCharacterBase
     #region 人物战斗获取函数
     public int GetAttack()//攻击力等于自身的伤害加武器伤害
     {
-        WeaponItem equipItem = Item.GetEquipItem();
+        WeaponItem equipItem = Item.GetEquipWeapon();
         if (equipItem == null)
             return 0;
         WeaponDef itemDef = ResourceManager.GetWeaponDef(equipItem.ID);
@@ -127,12 +127,12 @@ public class RPGCharacter : RPGCharacterBase
 
     public int GetHit()
     {
-        WeaponItem equipItem = Item.GetEquipItem();
+        WeaponItem equipItem = Item.GetEquipWeapon();
         return ResourceManager.GetWeaponDef(equipItem.ID).Hit + Attribute.Skill;//武器命中+技术
     }
     public int GetCritical()
     {
-        WeaponItem equipItem = Item.GetEquipItem();
+        WeaponItem equipItem = Item.GetEquipWeapon();
         return ResourceManager.GetWeaponDef(equipItem.ID).Crit + (Attribute.Skill + Attribute.Luck / 2) / 2;
     }
     public int GetAvoid()
@@ -145,15 +145,15 @@ public class RPGCharacter : RPGCharacterBase
     }
     public int GetRangeMax()
     {
-        return ResourceManager.GetWeaponDef(Item.GetEquipItem().ID).RangeType.MaxSelectRange;
+        return ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).RangeType.MaxSelectRange;
     }
     public int GetRangeMin()
     {
-        return ResourceManager.GetWeaponDef(Item.GetEquipItem().ID).RangeType.MinSelectRange;
+        return ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).RangeType.MinSelectRange;
     }
     public EnumWeaponRangeType GetRangeType()
     {
-        return ResourceManager.GetWeaponDef(Item.GetEquipItem().ID).RangeType.RangeType;
+        return ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).RangeType.RangeType;
     }
     public int GetAnger()
     {
@@ -161,7 +161,7 @@ public class RPGCharacter : RPGCharacterBase
     }
     public int GetAttackSpeed()
     {
-        return Attribute.Speed - ResourceManager.GetWeaponDef(Item.GetEquipItem().ID).Weight;
+        return Attribute.Speed - ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).Weight;
     }
     #endregion
     #region 地图相关
@@ -197,7 +197,7 @@ public class RPGCharacter : RPGCharacterBase
     public List<Point2D> FindAttack(bool ShowRange)
     {
         SLGMap m_slgmap = GetGameMode<GM_Battle>().GetSLGMap();
-        List<Point2D> p = ShowRange ? m_slgmap.FindAttackRange(tileCoords.x, tileCoords.y, Item.GetEquipItem().GetDefinition()) : m_slgmap.FindAttackRangeWithoutShow(this);
+        List<Point2D> p = ShowRange ? m_slgmap.FindAttackRange(tileCoords.x, tileCoords.y, Item.GetEquipWeapon().GetDefinition()) : m_slgmap.FindAttackRangeWithoutShow(this);
         return p;
     }
     /// <summary>

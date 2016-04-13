@@ -13,7 +13,7 @@ namespace RPG.UI
 
             gameObject.SetActive(false);
         }
-        public void ShowGetItem(int itemID)
+        public void ShowGetWeapon(int itemID)
         {
             gameObject.SetActive(true);
             text.text = "得到 <color=yellow>" + ResourceManager.GetWeaponDef(itemID).CommonProperty.Name + "</color>";

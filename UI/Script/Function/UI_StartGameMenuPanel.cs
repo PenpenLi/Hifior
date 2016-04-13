@@ -14,8 +14,10 @@ namespace RPG.UI
             StartGame.Select();
         }
 
-        public void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+
             StartGame.Select();
         }
         /// <summary>

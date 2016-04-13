@@ -18,19 +18,23 @@ namespace RPG.UI
         /// <summary>
         /// 结束本回合被点击
         /// </summary>
-        public UnityEvent OnEndPlayerTurnClick;
+        private UnityEvent OnEndPlayerTurnClick;
 
         protected override void Awake()
         {
             base.Awake();
-
-            environment.onClick.AddListener(Button_Environment);
+            
             army.onClick.AddListener(Button_Army);
             instruction.onClick.AddListener(Button_Instruction);
             interrupt.onClick.AddListener(Button_Interrpt);
             endturn.onClick.AddListener(Button_EndTurn);
         }
-
+        public override void BeginPlay()
+        {
+            base.BeginPlay();
+            OnEndPlayerTurnClick = new UnityEvent();
+            OnEndPlayerTurnClick.AddListener(GetPlayerPawn<Pawn_BattleArrow>().EndPlayerTurn);
+        }
         public override void Show()
         {
             base.Show();
@@ -46,7 +50,7 @@ namespace RPG.UI
             AvailablePlayer.Add(1);
             AvailablePlayer.Add(2);
             ChapterRecord.AvailablePlayers = AvailablePlayer;
-            ChapterRecord.Money = 10000;
+            ChapterRecord.Ware.Money = 10000;
             ChapterRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
             ChapterRecord.SaveBinary();
         }
@@ -57,7 +61,7 @@ namespace RPG.UI
             {
                 ChapterRecord = ChapterRecord.LoadBinary<ChapterRecordCollection>();
 
-                Debug.Log(ChapterRecord.Money);
+                Debug.Log(ChapterRecord.Ware.Money);
                 Debug.Log(ChapterRecord.PlayersInfo);
             }
             else
@@ -101,7 +105,7 @@ namespace RPG.UI
         public override void OnCancelKeyDown()
         {
             base.Hide();
-            Utils.GameUtil.DelayFunc(GetGameInstance(), () => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
+            Utils.GameUtil.DelayFunc(this, () => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
         }
     }
 }
