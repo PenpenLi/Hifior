@@ -123,10 +123,7 @@ public class UActor : MonoBehaviour
 
     void Update()
     {
-        UGameMode Mode = GetGameMode<UGameMode>();
-        if (Mode == null)
-            return;
-        if (Mode.InputModeGame && InputComponent != null)
+        if (UGameInstance.Instance.InputModeGame && InputComponent != null)
             InputComponent.TickPlayerInput();
         if (bCanEverTick)
             Tick(Time.deltaTime);

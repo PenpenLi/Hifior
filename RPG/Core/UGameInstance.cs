@@ -43,7 +43,7 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     }
 
     /** virtual function to allow custom GameInstances an opportunity to set up what it needs */
-    public virtual void Init() { }
+    public virtual void Initiate() { }
 
     /** virtual function to allow custom GameInstances an opportunity to do cleanup when shutting down */
     public virtual void Shutdown() { }
@@ -53,6 +53,32 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         return null;
     }
 
+    public bool InputModeUI { get; private set; }
+    public bool InputModeGame { get; private set; }
+    /// <summary>
+    /// 键盘只接受UI事件
+    /// </summary>
+    public void SetInputModeUIOnly()
+    {
+        InputModeUI = true;
+        InputModeGame = false;
+    }
+    /// <summary>
+    /// 键盘只接受游戏内Actor
+    /// </summary>
+    public void SetInputModeGameOnly()
+    {
+        InputModeGame = true;
+        InputModeUI = false;
+    }
+    /// <summary>
+    /// 同时接受UI和游戏事件
+    /// </summary>
+    public void SetInputModeGameAndUI()
+    {
+        InputModeUI = true;
+        InputModeGame = true;
+    }
     public void SetGameMode(UGameMode GameMode)
     {
         UnityEngine.Assertions.Assert.IsNotNull<UGameMode>(GameMode, "The GameMode you assign is null");
@@ -186,8 +212,9 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     {
         base.Awake();
 
+        SetInputModeGameAndUI();
         ActiveGameMode = GameObject.FindObjectOfType<UGameMode>();
-        Init();
+        Initiate();
     }
     /// <summary>
     /// 进入章节场景,BattleTemplate作为起始index为0的章节
@@ -197,7 +224,7 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     {
         ChapterRecord = Record;
         //在此通过ChapterRecord 初始化所有的数据
-        if(ChapterRecord!=null)
+        if (ChapterRecord != null)
         { }
         LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + ChapterID);
     }

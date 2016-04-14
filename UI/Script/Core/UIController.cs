@@ -35,6 +35,10 @@ public class UIController : MonoBehaviour
             return instance;
         }
     }
+    void Awake()
+    {
+        instance = this;
+    }
     private static T GetMonoScript<T>(T MonoScript, string PrefabPath) where T : MonoBehaviour
     {
         if (!MonoScript)

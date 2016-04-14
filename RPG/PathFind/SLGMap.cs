@@ -185,6 +185,8 @@ public class SLGMap : MonoBehaviour
 
     void Awake()
     {
+        Utils.MiscUtil.SetChildActive(transform, false);
+
         gSprite_Arrow1 = Resources.Load<Texture2D>(Utils.TextUtil.GetResourcesFullPath("arrow1", "App", "Map"));
         gSprite_Arrow2 = Resources.Load<Texture2D>(Utils.TextUtil.GetResourcesFullPath("arrow2", "App", "Map"));
         gSprite_Arrow3 = Resources.Load<Texture2D>(Utils.TextUtil.GetResourcesFullPath("arrow3", "App", "Map"));

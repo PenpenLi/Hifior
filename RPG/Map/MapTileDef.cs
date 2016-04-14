@@ -52,7 +52,7 @@ public class MapTileDef : ExtendScriptableObject
     {
         AttributeExists(ID);
         Assert.IsTrue(CareerType < TileProperty[ID].MovementConsume.Length, "CareerType越界");
-        return TileProperty[ID].MovementConsume[CareerType] > 0 ? TileProperty[ID].MovementConsume[CareerType] : 1;
+        return TileProperty[ID].MovementConsume[CareerType];
     }
     public bool GetPassUp(int ID)
     {

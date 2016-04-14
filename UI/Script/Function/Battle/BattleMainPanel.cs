@@ -105,7 +105,7 @@ namespace RPG.UI
         public override void OnCancelKeyDown()
         {
             base.Hide();
-            Utils.GameUtil.DelayFunc(this, () => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
+            Utils.GameUtil.DelayFunc(() => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
         }
     }
 }

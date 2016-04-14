@@ -35,4 +35,8 @@ public class Warehouse
     {
         Props.Remove(Prop);
     }
+    public void AddMoney(int MoneyAmount)
+    {
+        Money += MoneyAmount;
+    }
 }

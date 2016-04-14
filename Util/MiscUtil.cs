@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Utils
 {
@@ -75,6 +76,15 @@ namespace Utils
                     return ui;
             }
             return null;
+        }
+
+        public static void SetChildActive(Transform transform,bool active)
+        {
+            int count = transform.childCount;
+            for(int i = 0; i < count; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(active);
+            }
         }
     }
 }

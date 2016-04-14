@@ -32,8 +32,6 @@ public class UGameMode : UActor
     /// 当前的玩家数量
     /// </summary>
     int NumPlayers;
-    public bool InputModeUI { get; private set; }
-    public bool InputModeGame { get; private set; }
     /// <summary>
     /// 当前AI控制的数量
     /// </summary>
@@ -139,30 +137,7 @@ public class eventdata0 : BaseEventData
                 eventTable.Remove(name);
             }
     }
-    /// <summary>
-    /// 键盘只接受UI事件
-    /// </summary>
-    public void SetInputModeUIOnly()
-    {
-        InputModeUI = true;
-        InputModeGame = false;
-    }
-    /// <summary>
-    /// 键盘只接受游戏内Actor
-    /// </summary>
-    public void SetInputModeGameOnly()
-    {
-        InputModeGame = true;
-        InputModeUI = false;
-    }
-    /// <summary>
-    /// 同时接受UI和游戏事件
-    /// </summary>
-    public void SetInputModeGameAndUI()
-    {
-        InputModeUI = true;
-        InputModeGame = true;
-    }
+
     /// <summary>
     /// 在Awake里进行初始化
     /// </summary>
@@ -176,7 +151,6 @@ public class eventdata0 : BaseEventData
         Assert.IsNotNull<UGameStatus>(ActiveGameStatus, "You nees assign a GameStatus");
         
         GetGameInstance().SetGameMode(this);
-        SetInputModeGameAndUI();
 
         Initialize();
     }

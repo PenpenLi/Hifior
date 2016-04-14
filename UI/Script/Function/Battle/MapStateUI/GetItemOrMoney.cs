@@ -13,15 +13,20 @@ namespace RPG.UI
 
             gameObject.SetActive(false);
         }
-        public void ShowGetWeapon(int itemID)
+        public void ShowGetWeapon(int WeaponID)
         {
             gameObject.SetActive(true);
-            text.text = "得到 <color=yellow>" + ResourceManager.GetWeaponDef(itemID).CommonProperty.Name + "</color>";
+            text.text = "得到 <color=yellow>" + ResourceManager.GetWeaponDef(WeaponID).CommonProperty.Name + "</color>";
         }
-        public void ShowGetMoney(int money)
+        public void ShowGetProps(int PropsID)
         {
             gameObject.SetActive(true);
-            text.text = "得到金钱 <color=green>" + money + "</color>";
+            text.text = "得到 <color=cyan>" + ResourceManager.GetPropsDef(PropsID).CommonProperty.Name + "</color>";
+        }
+        public void ShowGetMoney(int MoneyAmount)
+        {
+            gameObject.SetActive(true);
+            text.text = "得到金钱 <color=green>" + MoneyAmount + "</color>";
         }
     }
 }

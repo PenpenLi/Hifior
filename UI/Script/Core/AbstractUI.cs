@@ -220,7 +220,7 @@ namespace RPG.UI
         public virtual void OnCancelKeyDown() { }
         public void FixedUpdate()
         {
-            if (Input.GetButtonDown("Cancel") && GetGameMode<UGameMode>().InputModeUI)
+            if (Input.GetButtonDown("Cancel") && UGameInstance.Instance.InputModeUI)
             {
                 OnCancelKeyDown();
             }

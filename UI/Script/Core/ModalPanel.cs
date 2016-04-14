@@ -11,6 +11,7 @@ namespace RPG.UI
         public HorizontalLayoutGroup HorizontalLayoutControl;
 
         public Text Question;
+        public Image WidgetBG;
         public Image IconImage;
         public Button button1;
         public Button button2;
@@ -32,7 +33,7 @@ namespace RPG.UI
 
             button1.Select();
 
-            Background.sprite = details.PanelBackgroundImage;
+            WidgetBG.sprite = details.PanelBackgroundImage;
 
             this.IconImage.gameObject.SetActive(false);
             button3.gameObject.SetActive(false);

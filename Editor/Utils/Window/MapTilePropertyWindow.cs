@@ -39,7 +39,22 @@ namespace RPGEditor
         private static MapTileDef TileDef;
         private static Vector2 scrollVector = Vector2.zero;
         private static string[] tileSeriesNames;
-        private static int tileSeriesCount = 0;
+        public static string[] TileSeries
+        {
+            get
+            {
+                if(tileSeriesNames==null)
+                    tileSeriesNames = System.Enum.GetNames(typeof(EnumCareerSeries));
+                return tileSeriesNames;
+            }
+        }
+        private static int TileSeriesCount
+        {
+            get
+            {
+                return TileSeries.Length;
+            }
+        }
         private static bool[] tileEnableTable;
         private static int CurrentX;
         private static int CurrentY;
@@ -80,9 +95,7 @@ namespace RPGEditor
 
         public void Awake()
         {
-            tileSeriesNames = System.Enum.GetNames(typeof(EnumCareerSeries));
-            tileSeriesCount = tileSeriesNames.Length;
-            tileEnableTable = EnumTables.GetTrueArray(tileSeriesCount);
+            tileEnableTable = EnumTables.GetTrueArray(TileSeriesCount);
 
             int count = LoadTileTexture();
             int CountDif = count - TileDef.TileProperty.Count;
@@ -150,7 +163,7 @@ namespace RPGEditor
             CurrentY = y;
             int id = y * TILESET_W + x;
             CurrentSelectedTileID = id;
-            CurrentTileAttribute = TileDef.TileProperty[id]; for (int i = 0; i < tileSeriesCount; i++)
+            CurrentTileAttribute = TileDef.TileProperty[id]; for (int i = 0; i < TileSeriesCount; i++)
             {
                 if (CurrentTileAttribute.MovementConsume[i] == 100)
                     tileEnableTable[i] = false;
@@ -210,10 +223,10 @@ namespace RPGEditor
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
 
-            for (int i = 0; i < tileSeriesCount; i++)
+            for (int i = 0; i < TileSeriesCount; i++)
             {
                 EditorGUILayout.BeginHorizontal();
-                tileEnableTable[i] = EditorGUILayout.Toggle(tileSeriesNames[i], tileEnableTable[i]);
+                tileEnableTable[i] = EditorGUILayout.Toggle(TileSeries[i], tileEnableTable[i]);
                 if (tileEnableTable[i])
                 {
                     if (CurrentTileAttribute.MovementConsume[i] < 1)
