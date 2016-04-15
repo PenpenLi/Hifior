@@ -14,4 +14,10 @@ public class CharacterDef : ExtendScriptableObject
     public int Career;
     public int DefaultLevel;
     public CharacterAttribute DefaultAttribute;
+    public List<Sprite> TalkPortrait;
+    public CharacterDef()
+    {
+        TalkPortrait = new List<Sprite>();
+        DefaultAttribute = new CharacterAttribute();
+    }
 }

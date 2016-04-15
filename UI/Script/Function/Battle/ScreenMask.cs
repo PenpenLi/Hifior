@@ -20,8 +20,17 @@ namespace RPG.UI
             bReverse = Reverse;
             bDark = Dark;
             Duration = duration;
-            gameObject.SetActive(true);
+            Show();
             OnEnable();
+        }
+        public override void Show()
+        {
+            base.Show();
+            transform.SetAsLastSibling();
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1920f);
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,1080f);
+            rt.localScale = Vector3.one;
         }
         protected override void Awake()
         {
@@ -32,8 +41,6 @@ namespace RPG.UI
         }
         protected override void OnEnable()
         {
-            base.OnEnable();
-
             animator.speed = 1.0f / Duration;
             if (bReverse) 
             {

@@ -2,8 +2,8 @@
 {
     #region Resource文件夹 Prefab 路径
     public const string PREFAB_CANVAS = "Prefab/Canvas";
-    public const string PREFAB_UI_ACTION_STATE = "Prefab/UIElement/Action_State";
-    public const string PREFAB_UI_START_MENU = "Prefab/UIElement/Panel_StartMenu";
+    /*public const string PREFAB_UI_ACTION_STATE = "Prefab/UIElement/Action_State";
+    public const string PREFAB_UI_START_MENU = "Prefab/UIElement/Panel_StartMenu";*/
     public const string PREFAB_UI_ACTIONMENU_BUTTON = "Prefab/UIElement/ActionMenuButton";
     #endregion
 

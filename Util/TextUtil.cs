@@ -1,4 +1,6 @@
-﻿namespace Utils
+﻿using System.Collections.Generic;
+
+namespace Utils
 {
     public class TextUtil
     {
@@ -43,6 +45,24 @@
             ret += folder + "/";
             ret += fileName;
             return ret;
+        }
+        /// <summary>
+        /// 返回List中的String用于Debug用
+        /// </summary>
+        /// <returns></returns>
+        public static string GetListString<T>(List<T> InList)
+        {
+            return GetListString<T>(InList.ToArray());
+        } /// <summary>
+          /// 返回数组中的String用于Debug用
+          /// </summary>
+          /// <returns></returns>
+        public static string GetListString<T>(T[] InList)
+        {
+            string r = string.Empty;
+            foreach (object s in InList)
+                r += (s.ToString() + "\n");
+            return r;
         }
     }
 }

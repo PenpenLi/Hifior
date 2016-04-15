@@ -90,7 +90,7 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     protected string BundleURL;
     protected string AssetName;
     protected int version;
-    public T LoadAssetFromBundle<T>(string URL, string AssetName) where T : UnityEngine.Object
+    public static T LoadAssetFromBundle<T>(string URL, string AssetName) where T : UnityEngine.Object
     {
         AssetBundle bundle = AssetBundle.LoadFromFile(URL);
         T tem = bundle.LoadAsset<T>(AssetName);

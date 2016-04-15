@@ -1,24 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System.Collections.Generic;
 
 namespace RPG.UI
 {
-    public class TalkWithbg : IPanel
+    /// <summary>
+    /// RegisterHide事件
+    /// </summary>
+    public class TalkWithBackground : IPanel
     {
         private float TypeTime = 0.1f;
 
         public Image MainBackground;
+        public Image TalkArea;
         public Text TextBox;
         public Text TextNameBox;
         public Image arrow;
-
         public Image CharTalk_0;
         public Image CharTalk_1;
         public Image CharTalk_2;
         public Image CharTalk_3;
-
-
+        private SoundController musicController;
         Image[] CharTalk;
         private Color COLOR_DARK = new Color(0.7f, 0.7f, 0.7f, 1f);
         private Color COLOR_LIGHT = new Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -28,6 +32,9 @@ namespace RPG.UI
         private bool bStopType = false;
         private bool bAutoText = false;
         private float updateStartTime = 2.0f;
+
+        private bool bWaitFade = false;
+        private Sprite SecondTex;
         /*
        +8,1,0 设置人物id位置和头像，split获取数组，判断数组长度，若为3则新建并激活位置，为1则激活某个位置 <pp Portrait,Position
         #0 激活pos处的人物头像 <ap Active,Position
@@ -41,17 +48,17 @@ namespace RPG.UI
         =1,2 弹出YesNo面板,确定事件id,取消事件id <yn Yes,No 接收一个反馈的操作,传入一个函数,点击yes,执行一段什么,动态生成一个函数
         =fd=1,fd=2 弹出ListButton面板,前面显示,后面触发的事件 <lb List,Button
        */
-        private string[] mTalkData = {
-		//i代表人物id，p代表显示的位置，f代表显示的头像id
-		"+0,1,0",
-        "你好啊，我是米卡娅",//a代表要激活的位置
-		"+1,2,0",
-        "我叫艾克，是一名剑客",
-        "*0",
-        "你用剑啊，粗鲁的男人",
-        "*2",
-        "咕~~(╯﹏╰)b，好无辜的感觉啊"
-    };
+        private List<string> m_TalkData;/* = 
+        {//i代表人物id，p代表显示的位置，f代表显示的头像id
+		"<pp 0,1,0",
+		"嗯…这边的骑士走这边，然后是天马骑士…",//a代表要激活的位置
+		"<pp 1,2,0",
+		"噢呀，真是热心啊。你在做什么呢？",
+		"<ap 1",
+		"我用石盘摆弄各种各样的战局来揣摩实战可行的战略，与实际上指挥部队模拟训练相比起来还是有所限制的地方的。",
+		"<ap 2",
+		"噢，敌方的队伍用木头和石块做了这么多啊，总觉得下了不少功夫呢。"
+    };*/
 
 
         public struct Portrait
@@ -70,7 +77,7 @@ namespace RPG.UI
                 this.bActive = bActive;
             }
         };
-        Portrait[] portrait = {
+        private static Portrait[] portrait = {
         new Portrait (0, 0, null, false),
         new Portrait (1, 0, null, false),
         new Portrait (2, 0, null, false),
@@ -93,34 +100,35 @@ namespace RPG.UI
         {
             base.Awake();
 
+            musicController = SoundController.Instance;
+
             arrow.gameObject.SetActive(false);
             CharTalk = new Image[] { CharTalk_0, CharTalk_1, CharTalk_2, CharTalk_3 };
             for (int i = 0; i < 4; i++)
             {
-                portrait[i].image = CharTalk[i].GetComponent<Image>(); //将portrait中的image赋值为对话框中的image
+                portrait[i].image = CharTalk[i]; //将portrait中的image赋值为对话框中的image
                 CharTalk[i].gameObject.SetActive(false);//初始的四个对话框不显示
             }
-            SetAllColor(Color.black);
             MainBackground.gameObject.SetActive(false);
-        }
-        void OnDisable()
-        {
-            SetTextFrameActive(false);
         }
         private void SetTextFrameActive(bool active)
         {
-            TextNameBox.gameObject.SetActive(active);
-            TextBox.gameObject.SetActive(active);
+            TalkArea.gameObject.SetActive(active);
+            if (active == false)
+            {
+                TextBox.text = null;
+                TextNameBox.text = null;
+            }
         }
-        /*
+
         void Update()
         {
             updateStartTime -= Time.deltaTime;
-            if (updateStartTime > 0f)
+            if (updateStartTime > 0f || bWaitFade)
                 return;
-            if (scriptLineIndex < mTalkData.Length)
+            if (scriptLineIndex < m_TalkData.Count)
             {
-                bool isWaitForInput = AnalyseOneLine(mTalkData[scriptLineIndex]);
+                bool isWaitForInput = AnalyseOneLine(m_TalkData[scriptLineIndex]);
                 lastLineIndex = scriptLineIndex;
                 if (!isWaitForInput)
                 {
@@ -143,9 +151,8 @@ namespace RPG.UI
             }
             else//此处结束显示
             {
-                SLGLevel.SLG._sound.NormalBGM();
-                //StartCoroutine(fadeHide());
-                Util.GameUtils.ScreenNormalToDark(1.0f, Hide);
+                musicController.RestoreBGMVolume();
+                UIController.ScreenNormalToDark(1.0f, false, Hide);
             }
         }
         bool AnalyseOneLine(string str)
@@ -190,22 +197,18 @@ namespace RPG.UI
                         if (paramsStr.Length != 1)
                             DebugParamError("cm");
                         else
-                            SLGLevel.SLG._sound.PlayBGMImmediate(int.Parse(paramsStr[0]));
+                            musicController.PlayBGMImmediate(int.Parse(paramsStr[0]));
                         break;
                     case "lv"://降低音量 Lower,Volume
-                        SLGLevel.SLG._sound.LowerBGM();
+                        musicController.LowerBGMVolume();
                         break;
                     case "rv"://重置音量 Reset,Volume
-                        SLGLevel.SLG._sound.NormalBGM();
+                        musicController.RestoreBGMVolume();
                         break;
                     case "cb"://以某种过渡方式更换背景 Change,Background
-                        if (paramsStr.Length == 1)
+                        if (paramsStr.Length == 2)
                         {
-                            //MainBackground.sprite=
-                        }
-                        else if (paramsStr.Length == 2)
-                        {
-
+                            FadeBackground(int.Parse(paramsStr[0]), float.Parse(paramsStr[1]));
                         }
                         else
                             DebugParamError("cb");
@@ -222,6 +225,7 @@ namespace RPG.UI
 
             else
             {
+                SetTextFrameActive(true);
                 if (lastLineIndex != scriptLineIndex)//翻译的不是同一行
                 {
                     StartCoroutine(Typing(str));
@@ -231,52 +235,108 @@ namespace RPG.UI
         }
 
         #region
-        public void Show(string[] talkData)
+        /// <summary>
+        /// 渐变到另一个背景
+        /// </summary>
+        /// <param name="BackgroundID"></param>
+        /// <param name="Duration"></param>
+        public void FadeBackground(int BackgroundID, float Duration)
         {
-            mTalkData = talkData;
-            SLGLevel.SLG._sound.LowerBGM();
-            SLGLevel.SLG.cameraController.FadeOutDark(0.5f);
-            gameObject.SetActive(true);
-            Util.GameUtils.ScreenDarkToNormal();
+            SecondTex = ResourceManager.GetTalkBackground(BackgroundID);
+            UnityEngine.Assertions.Assert.IsNotNull(SecondTex, "通过ResourceManager.GetTalkBackground载入ID为" + BackgroundID + "的Sprite失败 ");
+            MainBackground.material.SetTexture("_SecondTex", SecondTex.texture);
+            StartCoroutine(FadingBG(Duration));
         }
-        void SetTalkName(int i) //Config NameBox Content
+        private float m_fadingBGTime;
+        IEnumerator FadingBG(float Duration)
         {
-            TextNameBox.text = Table._GameCharTable.getName(i);
+            bWaitFade = true;
+            m_fadingBGTime = 0;
+            Debug.Log("初始化");
+            while (m_fadingBGTime < Duration)
+            {
+                m_fadingBGTime += Time.deltaTime;
+                MainBackground.material.SetFloat("_Percent", m_fadingBGTime / Duration);
+                Debug.Log(m_fadingBGTime);
+                yield return null;
+            }
+            Debug.Log("Fade 结束");
+            MainBackground.material.SetFloat("_Percent", 0);
+            MainBackground.sprite = SecondTex;
+            bWaitFade = false;
         }
-        void ShowCharacter(int characterID, int position, int faceID)
+        /// <summary>
+        /// 显示字符串
+        /// </summary>
+        /// <param name="talkData"></param>
+        public void Show(List<string> talkData, int DefaultBackground)
+        {
+            Sprite bgSprite = ResourceManager.GetTalkBackground(DefaultBackground);
+            UnityEngine.Assertions.Assert.IsNotNull(bgSprite, "通过ResourceManager.GetTalkBackground载入ID为" + DefaultBackground + "的Sprite失败 ");
+            MainBackground.sprite = bgSprite;
+
+            updateStartTime = 2.0f;
+            SetTextFrameActive(false);
+            m_TalkData = talkData;
+            musicController.LowerBGMVolume();
+            base.Show();
+        }
+        /// <summary>
+        /// 设置显示的玩家名称
+        /// </summary>
+        /// <param name="i"></param>
+        public void SetTalkName(int i) //Config NameBox Content
+        {
+            TextNameBox.text = ResourceManager.GetPlayerDef(i).CommonProperty.Name;
+        }
+        public void ShowCharacter(int characterID, int position, int faceID)
         {//此处通过Id更换头像和名称
             portrait[position].charID = characterID; //设置ID
             CharTalk[position].gameObject.SetActive(true);
-            /// 通过id和faceID获取头像image
-            portrait[position].image.sprite = GameCharIconGroup.GetTalkPortrait(characterID, faceID);
-            ///
+            List<Sprite> sps = ResourceManager.GetPlayerDef(characterID).TalkPortrait;
+            if (sps.Count <= faceID)
+            {
+                Debug.LogError("FaceID大于数据中存在的数目 TalkPortrait的Count=" + sps.Count);
+                return;
+            }
+            portrait[position].image.sprite = sps[faceID];
             ActivePosition(position);  //显示后再设置一下头像激活状态
         }
-        void ActivePosition(int position)//设置位置的明暗度
+        /// <summary>
+        /// 设置位置的明暗度
+        /// </summary>
+        /// <param name="position"></param>
+        public void ActivePosition(int position)
         {
             for (int i = 0; i < 4; i++)
             {
                 portrait[i].bActive = false;
                 portrait[i].image.color = COLOR_DARK;
             }
+            CharTalk[position].gameObject.SetActive(true);
             portrait[position].bActive = true;
             portrait[position].image.color = COLOR_LIGHT;
             SetTalkName(portrait[position].charID);
-            SetTextFrameActive(true);
         }
-
-        void HideCharacter(int position)
+        /// <summary>
+        /// 隐藏该位置的角色
+        /// </summary>
+        /// <param name="position"></param>
+        public void HideCharacter(int position)
         {
             CharTalk[position].gameObject.SetActive(false);
         }
-
-        void ShakePosition(int position)
+        /// <summary>
+        /// 震动该角色
+        /// </summary>
+        /// <param name="position"></param>
+        public void ShakePosition(int position)
         {
             CharTalk[position].GetComponent<Animation>().Play("UIChar_Shake");
         }
         #endregion
 
-        void PrintTalk(string sContent)
+        public void PrintTalk(string sContent)
         {
             arrow.gameObject.SetActive(false);
             TextBox.text = sContent;
@@ -295,27 +355,5 @@ namespace RPG.UI
             PrintTalk(s);
             bTyping = false;
         }
-        IEnumerator fadeShow()
-        {
-            for (int i = 0; i < 256; i += 4)
-            {
-                float c = (float)i / 255.0f;
-                Color col = new Color(c, c, c);
-                setAllColor(col);
-                yield return null;
-            }
-        }
-        IEnumerator fadeHide()
-        {
-            for (int i = 255; i >= 0; i -= 4)
-            {
-                float c = (float)i / 255.0f;
-                Color col = new Color(c, c, c);
-                setAllColor(col);
-                yield return null;
-            }
-            setAllColor(Color.black);
-            MainBackground.gameObject.SetActive(false);
-        }*/
     }
 }

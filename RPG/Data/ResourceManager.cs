@@ -13,6 +13,7 @@ public static class ResourceManager
     private const string ASSET_ENEMY = "rpgdata/character/enemy";
     private const string ASSET_PREFAB_PLAYER = "prefab/player";
     private const string ASSET_PREFAB_ENEMY = "prefab/enemy";
+    private const string ASSET_TALKBACKGROUND = "talkbackground";
     private static AssetBundle playerPrefabBundle;
     private static AssetBundle enemyPrefabBundle;
     private static Dictionary<int, WeaponDef> weaponDefTable;
@@ -28,6 +29,10 @@ public static class ResourceManager
         if (playerPrefabBundle == null)
             playerPrefabBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, ASSET_PREFAB_PLAYER));
         return GetDef(playerDefTable, ASSET_PLAYER, ID);
+    }
+    public static Sprite GetTalkBackground(int ID)
+    {
+        return UGameInstance.LoadAssetFromBundle<Sprite>(Path.Combine(Application.streamingAssetsPath, ASSET_TALKBACKGROUND), ID.ToString());
     }
     public static EnemyDef GetEnemyDef(int ID)
     {
@@ -50,7 +55,7 @@ public static class ResourceManager
     }
     public static string GetChapterName(int ChapterIndex)
     {
-        ChapterSettingDef def= UGameInstance.Instance.LoadAssetFromBundle<ChapterSettingDef>(Path.Combine(Application.streamingAssetsPath, ASSET_CHAPTERSETTING), ChapterIndex.ToString());
+        ChapterSettingDef def = UGameInstance.LoadAssetFromBundle<ChapterSettingDef>(Path.Combine(Application.streamingAssetsPath, ASSET_CHAPTERSETTING), ChapterIndex.ToString());
         return def.CommonProperty.Name;
     }
     [RuntimeInitializeOnLoadMethod]
@@ -70,7 +75,7 @@ public static class ResourceManager
     {
         if (mapDef == null)
         {
-            mapDef = UGameInstance.Instance.LoadAssetFromBundle<MapTileDef>(Path.Combine(Application.streamingAssetsPath, ASSET_MAP), "TileProperty");
+            mapDef = UGameInstance.LoadAssetFromBundle<MapTileDef>(Path.Combine(Application.streamingAssetsPath, ASSET_MAP), "TileProperty");
         }
         return mapDef;
     }
@@ -90,7 +95,7 @@ public static class ResourceManager
         }
         else
         {
-            TargetDictionary.Add(ID, UGameInstance.Instance.LoadAssetFromBundle<T>(Path.Combine(Application.streamingAssetsPath, AssetBundleURL), ID.ToString()));
+            TargetDictionary.Add(ID, UGameInstance.LoadAssetFromBundle<T>(Path.Combine(Application.streamingAssetsPath, AssetBundleURL), ID.ToString()));
             return TargetDictionary[ID];
         }
     }
@@ -102,7 +107,7 @@ public static class ResourceManager
 
     [RuntimeInitializeOnLoadMethod]
     public static void Initialize()
-    {
+    { 
 
     }
 }
