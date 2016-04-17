@@ -9,6 +9,7 @@ public class CharacterInfo : SerializableBase
     public int ID;
     public int Level;
     public int Exp;
+    public int Career;
     public CharacterAttribute Attribute;
     public List<WeaponItem> Items;
     public override string GetKey()
@@ -20,6 +21,7 @@ public class CharacterInfo : SerializableBase
         ID = Character.GetCharacterID();
         Level = Character.GetLevel();
         Exp = Character.GetLevel();
+        Career = Character.GetCareer();
         Attribute = Character.GetAttribute();
         Items = Character.Item.Weapons;
     }
@@ -83,7 +85,7 @@ public class ChapterRecordCollection : SerializableBase
         {
             if (PlayersInfo.HasCharacterInfo(Ch.GetCharacterID()))
             {
-                PlayersInfo.ReplaceCharacterInfo(Ch.GetCharacterID(), Ch);
+                PlayersInfo.RefreshCharacterInfo(Ch.GetCharacterID(), Ch);
             }
             else
             {
@@ -111,17 +113,42 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
     /// 存档是否已经包含某个角色的信息
     /// </summary>
     /// <returns></returns>
+    public bool HasCharacterInfo(int CharacterID,out CharacterInfo OutCharacterInfo)
+    {
+        CheckRecordList();
+        foreach (CharacterInfo info in RecordList)
+        {
+            if (info.ID == CharacterID)
+            {
+                OutCharacterInfo = info;
+                return true;
+            }
+        }
+        OutCharacterInfo = null;
+        return false;
+    }    /// <summary>
+         /// 存档是否已经包含某个角色的信息
+         /// </summary>
+         /// <returns></returns>
     public bool HasCharacterInfo(int CharacterID)
     {
         CheckRecordList();
         foreach (CharacterInfo info in RecordList)
         {
             if (info.ID == CharacterID)
+            {
                 return true;
+            }
         }
         return false;
     }
-    public CharacterInfo ReplaceCharacterInfo(int CharacterID, RPGCharacter Character)
+    /// <summary>
+    /// 替换一个角色的信息，如果该角色不存在，则添加该角色信息
+    /// </summary>
+    /// <param name="CharacterID"></param>
+    /// <param name="Character"></param>
+    /// <returns></returns>
+    public CharacterInfo RefreshCharacterInfo(int CharacterID, RPGCharacter Character)
     {
         for (int i = 0; i < RecordList.Count; i++)
         {
@@ -131,7 +158,9 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
                 return RecordList[i];
             }
         }
-        return null;
+        CharacterInfo NewInfo = new CharacterInfo(Character);
+        RecordList.Add(NewInfo);
+        return NewInfo;
     }
     public override string GetKey()
     {
@@ -181,16 +210,16 @@ public static class GameRecord
     /// <param name="index"></param>
     /// <param name="Record"></param>
     /// <returns></returns>
-    public static void LoadChapterSceneWithRecordData(int index, ChapterRecordCollection Record)
+    public static void LoadChapterSceneWithRecordData( ChapterRecordCollection Record)
     {
-        UGameInstance.Instance.LoadChapterScene(index, Record);
+        UGameInstance.Instance.LoadChapterScene(Record);
     }
     /// <summary>
     /// 载入序章0，不使用存档
     /// </summary>
     public static void LoadNewGame()
     {
-        UGameInstance.Instance.LoadChapterScene(0, null);
+        UGameInstance.Instance.LoadChapterScene(null);
     }
     /// <summary>
     /// 该处是否存在存档

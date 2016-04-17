@@ -48,7 +48,7 @@ namespace RPG.UI
             {
                 if (AlreadyHadSave[Index])
                 {
-                    ModalPanelDetail details = new ModalPanelDetail("是否读取该存档?", ModalIcon, ModalBG, new EventButtonDetail("确定", () => GameRecord.LoadChapterSceneWithRecordData(Index, ChapterRecordDatas[Index])), new EventButtonDetail("取消", ConfirmPanel.Hide));
+                    ModalPanelDetail details = new ModalPanelDetail("是否读取该存档?", ModalIcon, ModalBG, new EventButtonDetail("确定", () => GameRecord.LoadChapterSceneWithRecordData( ChapterRecordDatas[Index])), new EventButtonDetail("取消", ConfirmPanel.Hide));
                     ConfirmPanel.Show(details);
                 }
                 else
@@ -87,7 +87,7 @@ namespace RPG.UI
             ConfirmPanel.Hide();
             if (bLoadNewChapterAfterSaved)
             {
-                GameRecord.LoadChapterSceneWithRecordData(m_saveIndex, GameRecord.LoadChapterRecordFrom(m_saveIndex));
+                GameRecord.LoadChapterSceneWithRecordData(GameRecord.LoadChapterRecordFrom(m_saveIndex));
             }
         }
         protected override void OnEnable()

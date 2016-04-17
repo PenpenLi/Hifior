@@ -24,6 +24,7 @@ public class PropsDef : ExtendScriptableObject
     /// 职业专用
     /// </summary>
     public List<int> DedicatedJob;
+    public bool EquipItem;
     public bool ImportantProps;
     public bool NoExchange;
     public bool Sellable=true;

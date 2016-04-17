@@ -23,6 +23,8 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     #region UE4
     public new T GetGameMode<T>() where T : UGameMode
     {
+        if (ActiveGameMode == null)
+            ActiveGameMode = GameObject.FindObjectOfType<UGameMode>();
         return (T)ActiveGameMode;
     }
     public new T GetPlayerPawn<T>() where T : UPawn
@@ -53,8 +55,8 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         return null;
     }
 
-    public bool InputModeUI { get; private set; }
-    public bool InputModeGame { get; private set; }
+    public static bool InputModeUI { get; private set; }
+    public static bool InputModeGame { get; private set; }
     /// <summary>
     /// 键盘只接受UI事件
     /// </summary>
@@ -119,9 +121,22 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     /// 获取所有可用的角色列表
     /// </summary>
     /// <returns></returns>
-    public List<int> GetAvailablePlayers()
+    public List<int> GetAvailablePlayersID()
     {
         return AvailablePlayers;
+    }
+    public List<CharacterInfo> GetAvailablePlayersInfo()
+    {
+        List<CharacterInfo> L = new List<CharacterInfo>();
+        for (int i = 0; i < AvailablePlayers.Count; i++)
+        {
+            CharacterInfo info;
+            if (ChapterRecord.PlayersInfo.HasCharacterInfo(AvailablePlayers[i], out info))
+            {
+                L.Add(info);
+            }
+        }
+        return L;
     }
     /// <summary>
     /// 添加角色为可用
@@ -220,12 +235,13 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     /// 进入章节场景,BattleTemplate作为起始index为0的章节
     /// </summary>
     /// <param name="ChapterID"></param>
-    public void LoadChapterScene(int ChapterID, ChapterRecordCollection Record)
+    public void LoadChapterScene(ChapterRecordCollection Record)
     {
         ChapterRecord = Record;
+        Debug.Log("载入章节:" + ChapterID);
         //在此通过ChapterRecord 初始化所有的数据
         if (ChapterRecord != null)
         { }
-        LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + ChapterID);
+        LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + Record.Chapter);
     }
 }

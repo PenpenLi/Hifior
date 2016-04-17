@@ -24,16 +24,17 @@ namespace RPG.UI
         public Text lv;
         public Text exp;
         public Text mhp;
-        public void init(int index, RPGCharacter ch, int state)//此处确定必须出场和不允许出场的人物，必须出场的放到最前面，不允许出场的强制放到最后面
+        public void Init(int index, CharacterInfo ch, int state)//此处确定必须出场和不允许出场的人物，必须出场的放到最前面，不允许出场的强制放到最后面
         {
             this.index = index;
             this.state = state;
-            icon.sprite = ch.GetPortrait();
-            charname.text = ch.PawnName;
-            job.text =ch.GetCareerName();
-            lv.text = ch.GetLevel().ToString();
-            exp.text = ch.GetExp().ToString();
-            mhp.text = ch.GetMaxHP().ToString();
+            PlayerDef def = ResourceManager.GetPlayerDef(ch.ID);
+            icon.sprite = def.Portrait;
+            charname.text = def.CommonProperty.Name;
+            job.text = ch.Career.ToString();
+            lv.text = ch.Level.ToString();
+            exp.text = ch.Exp.ToString();
+            mhp.text = ch.Attribute.HP.ToString();
 
             //初始状态由父类中的count决定 如果已经大于最大出场人物，则后面的人物都显示为灰的
             if (state == (int)toBattle.ForceNo)
@@ -81,7 +82,7 @@ namespace RPG.UI
                 charname.color = disable_color;
                 SelectToBattlePanel.selectToBattle.currentSelectCount--;
             }
-            SelectToBattlePanel.selectToBattle.refreshSelectCount();
+            SelectToBattlePanel.selectToBattle.RefreshSelectCount();
         }
     }
 }

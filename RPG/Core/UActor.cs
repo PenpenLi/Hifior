@@ -7,10 +7,6 @@ using UnityEngine.Events;
 public class UActor : MonoBehaviour
 {
     [Header("Actor基类参数")]
-    public bool bActorEnableCollision;
-    public bool bActorIsBeingDestroyed;
-    public float CreationTime;
-    public bool bCanBeDamaged;
     public bool bBlockInput;
     public int InputPriority;
     public UInputComponent InputComponent;
@@ -123,7 +119,7 @@ public class UActor : MonoBehaviour
 
     void Update()
     {
-        if (UGameInstance.Instance.InputModeGame && InputComponent != null)
+        if (UGameInstance.InputModeGame && InputComponent != null)
             InputComponent.TickPlayerInput();
         if (bCanEverTick)
             Tick(Time.deltaTime);

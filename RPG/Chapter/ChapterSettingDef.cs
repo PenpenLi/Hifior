@@ -38,15 +38,12 @@ public class WinCondition
     public int BossID;
     public int CityID;
     public int Round;
-    public int WinX, WinY;
-    public WinCondition(int condition, int bossID, int cityID, int round, int winX, int winY)
+    public WinCondition(int condition, int bossID, int cityID, int round)
     {
         Condition = condition;
         BossID = bossID;
         CityID = cityID;
         Round = round;
-        WinX = winX;
-        WinY = winY;
     }
 }
 [System.Serializable]

@@ -10,6 +10,9 @@ public class WeaponDef : ExtendScriptableObject
     public EnumWeaponLevel WeaponLevel;
     public Sprite Icon;
     public int SinglePrice;
+    /// <summary>
+    /// 为-1时代表可以无限使用
+    /// </summary>
     public int UseNumber;
     public SelectRangeType RangeType;
     public int Weight;
@@ -171,6 +174,14 @@ public class WeaponDef : ExtendScriptableObject
     public bool IsHaveSuperEffect(int SuperEffectType)
     {
         return EnumTables.MaskFieldIdentify(SuperEffect, SuperEffectType);
+    }
+    /// <summary>
+    /// 是否可以无限使用
+    /// </summary>
+    /// <returns></returns>
+    public bool IsInifiniteUsage()
+    {
+        return UseNumber < 0;
     }
     /*
         #region Effect1判断

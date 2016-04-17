@@ -6,6 +6,7 @@ namespace RPG.UI
     public class PrepareCommandMenu : IPanel
     {
         public BattleReadyPanel Main;
+        public SelectToBattlePanel SelectPlayerPanel;
         [Header("按钮选择")]
         public Button CharacterSelect;
         public Button SettingConfirm;
@@ -23,8 +24,18 @@ namespace RPG.UI
         {
             base.Awake();
             StartBattle.onClick.AddListener(Button_StartBattle);
+            CharacterSelect.onClick.AddListener(Button_SelectCharacter);
         }
-
+        /// <summary>
+        /// 选择出场人物
+        /// </summary>
+        public void Button_SelectCharacter()
+        {
+            SelectPlayerPanel.Show();
+        }
+        /// <summary>
+        /// 开始战斗
+        /// </summary>
         public void Button_StartBattle()
         {
             ModalPanelDetail details = new ModalPanelDetail("是否开始进行战斗？", ModalIcon_StartBattle, ModalBG_StartBattle, new EventButtonDetail("确认", StartBattleConfirm), new EventButtonDetail("取消", StartBattleCancel));

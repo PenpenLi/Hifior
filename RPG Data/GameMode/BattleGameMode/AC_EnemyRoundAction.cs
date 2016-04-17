@@ -127,7 +127,7 @@ public class AC_EnemyRoundAction : UAIController
     private void ArrowOnCharacterTwoSeconds()
     {
         BattleArrow.SetArrowActive(true,AIPawnTilePos);
-        Utils.GameUtil.DelayFunc(OnArrowShowFinish, 2f);
+        Utils.GameUtil.DelayFunc(_Map, OnArrowShowFinish, 2f);
     }
     /// <summary>
     /// 隐藏箭头

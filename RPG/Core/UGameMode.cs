@@ -67,6 +67,7 @@ public class UGameMode : UActor
     {
         return (T)ActiveGameStatus;
     }
+
     public virtual void RestartGame() { }
     /** 
 	 * Sets the name for a controller 

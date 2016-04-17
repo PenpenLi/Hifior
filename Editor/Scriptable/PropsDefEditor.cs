@@ -53,7 +53,7 @@ namespace RPGEditor
             int[] value = EnumTables.GetSequentialArray(RPGData.CareerNameList.Count);
             RPGEditorGUI.DynamicArrayView(ref dedicatedCharacterCount, ref props.DedicatedCharacter, "专用人物", "人物", display, value);
             RPGEditorGUI.DynamicArrayView(ref dedicatedJobCount, ref props.DedicatedJob, "专用职业", "职业", display, value);
-
+            props.EquipItem = EditorGUILayout.Toggle("是否可以装备", props.EquipItem);
             props.ImportantProps = EditorGUILayout.Toggle(guiContent_ImportantWeapon, props.ImportantProps);
             props.NoExchange = EditorGUILayout.Toggle(guiContent_NoExchange, props.NoExchange);
             props.Sellable = EditorGUILayout.Toggle("是否可以出售", props.Sellable);

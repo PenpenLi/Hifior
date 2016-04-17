@@ -83,6 +83,8 @@ namespace RPG.UI
         public void SortUIPosition()
         {
             List<AbstractUI> UIs = Utils.MiscUtil.GetChildComponents<AbstractUI>(transform.parent);
+            if (UIs == null)
+                return;
             UIs.Sort();
             for (int i = 0; i < UIs.Count; i++)
             {
@@ -220,7 +222,7 @@ namespace RPG.UI
         public virtual void OnCancelKeyDown() { }
         public void FixedUpdate()
         {
-            if (Input.GetButtonDown("Cancel") && UGameInstance.Instance.InputModeUI)
+            if (Input.GetButtonDown("Cancel") && UGameInstance.InputModeUI)
             {
                 OnCancelKeyDown();
             }

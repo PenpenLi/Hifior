@@ -6,17 +6,23 @@ namespace RPG.UI
     {
         public Text HitsHead;
         public Text Hitstext;
+        public Button ConfirmButton;
         public bool isHide;
 
         protected override void Awake()
         {
             base.Awake();
-
-            gameObject.SetActive(false);
+            ConfirmButton.onClick.AddListener(Hide);
         }
-        public void Show(string sHits)
-        { //如果包含标题
-            string[] s = sHits.Split('#');
+        public override void Show()
+        {
+            base.Show();
+            ConfirmButton.Select();
+        }
+        public void Show(string Hints)
+        {
+            Show();
+            string[] s = Hints.Split('#');
             if (s.Length > 1)
             {
                 HitsHead.text = s[0];
@@ -25,9 +31,14 @@ namespace RPG.UI
             else
             {
                 HitsHead.text = "提示";
-                Hitstext.text = sHits;
+                Hitstext.text = Hints;
             }
-            gameObject.SetActive(true);
+        }
+        public void Show(string Caption, string Content)
+        {
+            Show();
+            HitsHead.text = Caption;
+            Hitstext.text = Content;
         }
     }
 }

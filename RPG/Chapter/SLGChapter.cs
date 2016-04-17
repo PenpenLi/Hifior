@@ -75,6 +75,7 @@ public class SLGChapter : UActor
     {
         宝箱,
         访问村庄,
+        占领,
         开门,
         使用开关
     }
@@ -288,7 +289,7 @@ public class SLGChapter : UActor
     public int WinX, WinY;
     public bool CheckWin_KillAllEnemy()
     {
-        if (HasWinCondition(EnumWinCondition.全灭敌人) && GetGameStatus<GS_Battle>().GetNumLocalEnemies()==0)
+        if (HasWinCondition(EnumWinCondition.全灭敌人) && GetGameStatus<GS_Battle>().GetNumLocalEnemies() == 0)
             return true;
         else
             return false;
@@ -308,7 +309,7 @@ public class SLGChapter : UActor
     /// 在Sequence里添加Start() 在Start里将GameMode 里的当前CityID加入
     /// </summary>
     /// <returns></returns>
-    public bool CheckWin_Seize(int CityID=0)
+    public bool CheckWin_Seize(int CityID = 0)
     {
         if (HasWinCondition(EnumWinCondition.压制指定城池) && ChapterSetting.WinCondition.CityID == CityID)
             return true;
@@ -325,6 +326,26 @@ public class SLGChapter : UActor
         if (HasWinCondition(EnumWinCondition.回合坚持) && Round == ChapterSetting.WinCondition.Round)
             return true;
         return false;
+    }
+    public List<string> GetWinConditionText()
+    {
+        List<string> texts = new List<string>();
+        List<EnumWinCondition> L = GetAllWinCondition();
+        if (L.Contains(EnumWinCondition.全灭敌人))
+            texts.Add("击败所有敌方单位");
+        if (L.Contains(EnumWinCondition.击败全部Boss))
+            texts.Add("击败所有Boss");
+        if (L.Contains(EnumWinCondition.击败指定Boss))
+            texts.Add("击败" + ResourceManager.GetEnemyDef(ChapterSetting.WinCondition.BossID));
+        if (L.Contains(EnumWinCondition.回合坚持))
+            texts.Add("坚持" + ChapterSetting.WinCondition.Round + "个回合");
+        if (L.Contains(EnumWinCondition.领主地点撤离))
+            texts.Add("在指定地点撤离");
+        if (L.Contains(EnumWinCondition.压制指定城池))
+            texts.Add("压制指定城池");
+        if (L.Contains(EnumWinCondition.压制所有城池))
+            texts.Add("压制所有城池");
+        return texts;
     }
     public List<EnumWinCondition> GetAllWinCondition()
     {

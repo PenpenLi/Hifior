@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sequence
 {
-    [AddComponentMenu("Sequence/Add Character")]
+    [AddComponentMenu("Sequence/Get Money")]
     public class GetMoney : SequenceEvent
     {
         public int MoneyAmount = 0;

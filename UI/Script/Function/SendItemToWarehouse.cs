@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 namespace RPG.UI
 {
-    public class SendWeaponToWarehouse : IPanel
+    public class SendItemToWarehouse : IPanel
     {
-        public Button WeaponButton;
-        public Button PropsButton;
-        public ItemElement[] ItemWeapons;
-        public ItemElement[] ItemProps;
-        List<WeaponItem> Weapons;
-        List<PropsItem> Props;
+        public ItemElement[] Elements;
+        List<WeaponItem> WeaponItems;
+        List<PropsItem> PropsItems;
+
         /// <summary>
         /// 显示所有武器，选择一个武器送到运输队里去
         /// </summary>
@@ -18,31 +16,31 @@ namespace RPG.UI
         /// <param name="ItemType"></param>
         public void Show(List<WeaponItem> Items)
         {
-            Weapons = Items;
-            WeaponButton.Select();
-            WeaponButton.interactable = true;
-            PropsButton.interactable = false;
-            for (int i = 0; i < ItemWeapons.Length; i++)
+            base.Show();
+            Elements[0].GetComponent<Button>().Select();
+
+            WeaponItems = Items;
+            for (int i = 0; i < Elements.Length; i++)
             {
                 if (i < Items.Count)
                     InitButton(i, Items[i]);
                 else
-                    ItemWeapons[i].ShowNothing(i);
+                    Elements[i].ShowNothing(i);
             }
-            Show();
         }
+
         public void Show(List<PropsItem> Items)
         {
-            Props = Items;
-            PropsButton.Select();
-            WeaponButton.interactable = false;
-            PropsButton.interactable = true;
-            for (int i = 0; i < ItemWeapons.Length; i++)
+            base.Show();
+            Elements[0].GetComponent<Button>().Select();
+
+            PropsItems = Items;
+            for (int i = 0; i < Elements.Length; i++)
             {
                 if (i < Items.Count)
                     InitButton(i, Items[i]);
                 else
-                    ItemProps[i].ShowNothing(i);
+                    Elements[i].ShowNothing(i);
             }
         }
 
@@ -54,14 +52,15 @@ namespace RPG.UI
         public void InitButton(int index, WeaponItem Weapon)
         {
             WeaponDef def = Weapon.GetDefinition();
-            ItemWeapons[index].Show(index, def.Icon, def.CommonProperty.Name, Weapon.Usage + "/" + def.UseNumber);
-            ItemWeapons[index].RegisterClickEvent(() =>
+            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, def.IsInifiniteUsage() ? " -- " : Weapon.Usage + "/" + def.UseNumber);
+            Elements[index].RegisterClickEvent(() =>
             {
                 GetGameInstance().Ware.AddWeapon(Weapon);
-                Weapons.RemoveAt(index);
+                WeaponItems.RemoveAt(index);
                 Hide();
             });
         }
+
         /// <summary>
         /// 初始化控件中道具的信息显示
         /// </summary>
@@ -70,13 +69,26 @@ namespace RPG.UI
         public void InitButton(int index, PropsItem Prop)
         {
             PropsDef def = Prop.GetDefinition();
-            ItemProps[index].Show(index, def.Icon, def.CommonProperty.Name, Prop.Usage + "/" + def.UseNumber);
-            ItemWeapons[index].RegisterClickEvent(() =>
+            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, PropsThirdText(def, Prop.Usage));
+            Elements[index].RegisterClickEvent(() =>
             {
                 GetGameInstance().Ware.AddProp(Prop);
-                Props.RemoveAt(index);
+                PropsItems.RemoveAt(index);
                 Hide();
             });
+        }
+        /// <summary>
+        /// 第三个栏位显示，如果是可装备物品，则不显示
+        /// </summary>
+        /// <param name="def"></param>
+        /// <param name="Usage"></param>
+        /// <returns></returns>
+        private string PropsThirdText(PropsDef def, int Usage)
+        {
+            if (def.EquipItem)
+                return " E ";
+            else
+                return Usage + "/" + def.UseNumber;
         }
     }
 }

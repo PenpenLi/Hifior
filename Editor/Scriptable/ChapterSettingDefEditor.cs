@@ -108,13 +108,11 @@ namespace RPGEditor
             {
                 win.Round = EditorGUILayout.IntSlider("回合数", win.Round, 2, 50);
             }
-            if (EnumTables.MaskFieldIdentify(win.Condition, (int)EnumWinCondition.领主地点撤离))
+            /*if (EnumTables.MaskFieldIdentify(win.Condition, (int)EnumWinCondition.领主地点撤离))
             {
                 EditorGUILayout.BeginHorizontal();
-                win.WinX = EditorGUILayout.IntField("X", win.WinX);
-                win.WinY = EditorGUILayout.IntField("Y", win.WinY);
                 EditorGUILayout.EndHorizontal();
-            }
+            }*/
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
         }

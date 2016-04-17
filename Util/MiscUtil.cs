@@ -52,6 +52,8 @@ namespace Utils
         /// <returns></returns>
         public static List<T> GetChildComponents<T>(Transform transform)where T :Component
         {
+            if (transform == null)
+                return null;
             List<T> tList = new List<T>();
             foreach (Transform t in transform)
             {

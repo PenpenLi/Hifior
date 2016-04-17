@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ItemGroup
 {
-    public const int MAX_WEAPON_COUNT = 6;
+    public const int MAX_WEAPON_COUNT = 5;
+    public const int MAX_PROPS_COUNT = 5;
+    public const int MAX_PASSIVEITEM_COUNT = 2;//鞋子，护甲，饰品，
     private List<WeaponItem> weapons = new List<WeaponItem>();
-    private List<PropsItem> props = new List<PropsItem>();
+    private List<PropsItem> Props = new List<PropsItem>();
     private List<PropsItem> passiveItems = new List<PropsItem>();//被动装备  
     private CharacterAttribute attribute;
-    private int lastWeaponIndex;//上一个装备的Index
     private int _currentEquipItemIndex = -1; //当前装备武器的index
     /// <summary>
     /// 在完全获得该道具后执行的事件
@@ -75,7 +76,7 @@ public class ItemGroup
             EquipWeapon(0);
     }
     /// <summary>
-    /// 只添加道具，不做显示处理
+    /// 只添加武器，不做显示处理
     /// </summary>
     /// <param name="Items"></param>
     public void AddWeapons(List<int> Items)
@@ -103,9 +104,9 @@ public class ItemGroup
         {
             Debug.Log("物品已达上限");
             weapons.Add(Item);
-            RPG.UI.SendWeaponToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendWeaponToWarehouse>();
-            if(AfterSuccessAddItem!=null)
-            Sender.RegisterHideEvent(AfterSuccessAddItem);
+            RPG.UI.SendItemToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendItemToWarehouse>();
+            if (AfterSuccessAddItem != null)
+                Sender.RegisterHideEvent(AfterSuccessAddItem);
             Sender.Show(weapons);
             return false;
         }
@@ -136,7 +137,7 @@ public class ItemGroup
 
     public bool AddWeapon(WeaponItem Item, int InsertIndex)//添加装备到指定顺序
     {
-        if (Weapons.Count == ConstTable.CONST_M_COUNT)//若装备已满，返回FALSE
+        if (Weapons.Count == MAX_WEAPON_COUNT)//若装备已满，返回FALSE
         {
             Debug.Log("物品已达上限");
             return false;
@@ -238,19 +239,18 @@ public class ItemGroup
             return null;
         return this.Weapons[this._currentEquipItemIndex];
     }
+
     public WeaponItem GetWeaponByIndex(int index)
     {
         if ((index >= Weapons.Count) || (index < 0)) return null;
         return this.Weapons[index];
     }
+
     public int GetWeaponCount()
     {
         return this.Weapons.Count;
     }
-    public int GetLastWeaponIndex()
-    {
-        return this.lastWeaponIndex;
-    }
+
     public bool HaveWeapon(int WeaponID)
     {
         for (int i = 0; i < Weapons.Count; i++)
@@ -262,6 +262,7 @@ public class ItemGroup
         }
         return false;
     }
+
     public void RemoveAllWeapons()
     {
         Weapons.Clear();
@@ -283,6 +284,114 @@ public class ItemGroup
             return;
         }
         RemoveWeaponByIndex(this.Weapons.Count - 1);
+    }
+    #endregion
+
+    #region 道具和被动物品处理函数    
+
+    /// <summary>
+    /// 只添加道具，不做显示处理
+    /// </summary>
+    /// <param name="Items"></param>
+    public void AddProps(List<int> Items)
+    {
+        foreach (int i in Items)
+        {
+            if (weapons.Count > MAX_WEAPON_COUNT)
+            {
+                Debug.LogError("武器超过最大可容纳的数量了");
+            }
+            else {
+                AddProp(i, null);
+            }
+        }
+    }
+
+    public bool AddProp(int ID, UnityAction AfterAddItem)//获得装备
+    {
+        return AddProp(new PropsItem(ID), AfterAddItem);
+    }
+
+    public bool AddProp(PropsItem Item, UnityAction AfterAddItem)//获得装备
+    {
+        AfterSuccessAddItem = AfterAddItem;
+
+        if (Props.Count == MAX_PROPS_COUNT)//装备已满返回false
+        {
+            Debug.Log("物品已达上限");
+            Props.Add(Item);
+            RPG.UI.SendItemToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendItemToWarehouse>();
+            if (AfterSuccessAddItem != null)
+                Sender.RegisterHideEvent(AfterSuccessAddItem);
+            Sender.Show(Props);
+            return false;
+        }
+        else
+        {
+            Props.Add(Item);
+            if (AfterSuccessAddItem != null)
+                AfterSuccessAddItem.Invoke();
+            return true;
+        }
+    }
+
+    public bool AddProp(PropsItem Item, int InsertIndex)//添加装备到指定顺序
+    {
+        if (Weapons.Count == ConstTable.CONST_M_COUNT)//若装备已满，返回FALSE
+        {
+            Debug.Log("物品已达上限");
+            return false;
+        }
+        if (InsertIndex >= Weapons.Count)
+            Props.Add(Item);
+        else
+            Props.Insert(InsertIndex, Item);
+        return true;
+    }
+    public bool EquipProp(int Index)
+    {
+        if (passiveItems.Count == MAX_PASSIVEITEM_COUNT)
+        {
+            Debug.Log("慢了，无法在进行装备被动物品");
+            return false;
+        }
+        PropsItem item = Props[Index];
+        if (item.GetDefinition().EquipItem)
+        {
+            passiveItems.Add(item);
+            Props.RemoveAt(Index);
+        }
+        else
+        {
+            Debug.Log("无法装备的物品");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool UnEquipProp(int Index)
+    {
+        if (passiveItems.Count > Index)
+        {
+            PropsItem item = Props[Index];
+            Props.Add(item);
+            passiveItems.RemoveAt(Index);
+            return true;
+        }
+        else
+        {
+            Debug.Log("该处没有装备");
+            return false;
+        }
+    }
+    /// <summary>
+    /// 获得道具的数目
+    /// </summary>
+    /// <returns></returns>
+    public int GetPropsCount()
+    {
+        return Props.Count;
     }
     #endregion
 }

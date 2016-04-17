@@ -11,9 +11,9 @@ namespace RPG.UI
         public Text Text_Number;//显示人物出场数和最大出场数
         public GameObject ContentContainer;//包含子游戏角色对象的容器
         public GameObject Char_BattleInfo_Element;//选择去战场的人物信息
-        public List<RPGCharacter> _gameCharList;
-        private List<int> _forceCome = new List<int>();//必须出场的人物
-        private List<int> _dontCome = new List<int>();//此章节强制不可出动的人物
+        public List<CharacterInfo> _PlayersList;
+        private List<int> _forceCome ;//必须出场的人物
+        private List<int> _dontCome;//此章节强制不可出动的人物
         public int _limit;
         public int currentSelectCount = 0;
         private List<int> _toBattleIndexList = new List<int>();
@@ -24,82 +24,88 @@ namespace RPG.UI
             selectToBattle = this;
             gameObject.SetActive(false);
         }
-        public void init(List<RPGCharacter> gameCharList, int limit, List<int> forceCome, List<int> forceDont)
+        public override void Show()
+        {
+            base.Show();
+            ChapterSettingDef def = GetGameMode<GM_Battle>().GetSLGChapter().ChapterSetting;
+            Init(GetGameInstance().GetAvailablePlayersInfo(), def.MaxPlayerCount, def.ForceInvolve, new List<int>());
+        }
+        public void Init(List<CharacterInfo> PlayerList, int PlayersLimit, List<int> ForceInvolve, List<int> ForceDontInvolve)
         {
             ///////////////清理工作
             foreach (Transform child in ContentContainer.transform)
             {
                 Destroy(child.gameObject);
             }
-            _gameCharList.Clear();
-            _forceCome.Clear();//必须出场的人物
-            _dontCome.Clear();//此章节强制不可出动的人物
-            _limit = 0;
+            //_PlayersList.Clear();
+            //_forceCome.Clear();//必须出场的人物
+           // _dontCome.Clear();//此章节强制不可出动的人物
+           // _limit = 0;
             currentSelectCount = 0;
             _toBattleIndexList.Clear();
-            //////////////
-
-            if (this.gameObject.activeSelf)
-                return;
             //
-            _limit = limit;
-            _forceCome = forceCome;
-            _dontCome = forceDont;
-            _gameCharList = gameCharList;
+            _limit = PlayersLimit;
+            _forceCome = ForceInvolve;
+            _dontCome = ForceDontInvolve;
+            _PlayersList = PlayerList;
             //
-            resortCharList();//重新整理排序
+            ResortCharList();//重新整理排序
 
             //将角色表中的所有角色放到Content的子物件，设置第一个为默认选择的对象，并且在右边显示人物的状态和装备的物品
-            for (int i = 0; i < gameCharList.Count; i++)
+            for (int i = 0; i < PlayerList.Count; i++)
             {
                 GameObject obj = Instantiate(Char_BattleInfo_Element) as GameObject;
                 obj.transform.SetParent(ContentContainer.transform, false);//设为false否则会有问题
-                if (i < forceCome.Count)
+                if (i < ForceInvolve.Count)
                 {
-                    obj.GetComponent<CharacterBattleInfoElement>().init(i, gameCharList[i], 1);
+                    obj.GetComponent<CharacterBattleInfoElement>().Init(i, PlayerList[i], 1);
                 }
                 else
                 {
-                    if (i >= _gameCharList.Count - forceDont.Count)//大于等于所有数量-不能出动的人物数量 ，则显示为灰的
-                        obj.GetComponent<CharacterBattleInfoElement>().init(i, gameCharList[i], -1);
+                    if (i >= _PlayersList.Count - ForceDontInvolve.Count)//大于等于所有数量-不能出动的人物数量 ，则显示为灰的
+                        obj.GetComponent<CharacterBattleInfoElement>().Init(i, PlayerList[i], -1);
                     else
-                        obj.GetComponent<CharacterBattleInfoElement>().init(i, gameCharList[i], 0);
+                        obj.GetComponent<CharacterBattleInfoElement>().Init(i, PlayerList[i], 0);
                 }
             }
-            refreshSelectCount();
-            this.gameObject.SetActive(true);
+            RefreshSelectCount();
         }
-        public void resortCharList()
+        public override void OnCancelKeyDown()
+        {
+            base.OnCancelKeyDown();
+            base.Hide();
+        }
+        public void ResortCharList()
         {
             currentSelectCount = 0;
-            List<RPGCharacter> forceComeChar = new List<RPGCharacter>();
-            List<RPGCharacter> forceDontComeChar = new List<RPGCharacter>();
-            for (int i = 0; i < _gameCharList.Count; i++)
+            List<CharacterInfo> forceComeChar = new List<CharacterInfo>();
+            List<CharacterInfo> forceDontComeChar = new List<CharacterInfo>();
+            for (int i = 0; i < _PlayersList.Count; i++)
             {
-                if (_forceCome.Contains(_gameCharList[i].GetCharacterID()))
+                if (_forceCome.Contains(_PlayersList[i].ID))
                 {
-                    forceComeChar.Add(_gameCharList[i]);
+                    forceComeChar.Add(_PlayersList[i]);
                     continue;
                 }
 
-                if (_dontCome.Contains(_gameCharList[i].GetCharacterID()))//将当前的角色与后面的调换
+                if (_dontCome.Contains(_PlayersList[i].ID))//将当前的角色与后面的调换
                 {
-                    forceDontComeChar.Add(_gameCharList[i]);
+                    forceDontComeChar.Add(_PlayersList[i]);
                     continue;
                 }
             }
-            foreach (RPGCharacter ch in forceComeChar)
+            foreach (CharacterInfo ch in forceComeChar)
             {
-                _gameCharList.Remove(ch);
+                _PlayersList.Remove(ch);
             }
-            foreach (RPGCharacter ch in forceDontComeChar)
+            foreach (CharacterInfo ch in forceDontComeChar)
             {
-                _gameCharList.Remove(ch);
+                _PlayersList.Remove(ch);
             }
-            _gameCharList.InsertRange(0, forceComeChar);
-            _gameCharList.AddRange(forceDontComeChar);
+            _PlayersList.InsertRange(0, forceComeChar);
+            _PlayersList.AddRange(forceDontComeChar);
         }
-        public void refreshSelectCount()
+        public void RefreshSelectCount()
         {
             Text_Number.text = currentSelectCount + "/" + _limit;
             if (currentSelectCount == _limit)
@@ -110,7 +116,7 @@ namespace RPG.UI
             }
         }
 
-        public void getBattleCharIndexList()//Button_OK点击触发的事件
+        public void GetBattleCharIndexList()//Button_OK点击触发的事件
         {
             CharacterBattleInfoElement[] cviArray = ContentContainer.GetComponentsInChildren<CharacterBattleInfoElement>();
             for (int i = 0; i < cviArray.Length; i++)

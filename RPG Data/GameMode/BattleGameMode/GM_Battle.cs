@@ -195,11 +195,16 @@ public class GM_Battle : UGameMode
             RoundCamp = EnumCharacterCamp.Player;
             Round++;
         }
+        //如果获得指定回合到了，胜利
         if (GetSLGChapter().CheckWin_Round(Round))
         {
-            WinTheChapter();
+            ClearTheStage();
         }
-        CheckTurnEvent();
+        //否则执行回合事件
+        else
+        {
+            CheckTurnEvent();
+        }
     }
     private void CheckTurnEvent()
     {
@@ -215,8 +220,18 @@ public class GM_Battle : UGameMode
     }
     private void ShowRoundAnimation()
     {
-        UIController.Instance.GetUI<RPG.UI.TurnAnim>().RegisterHideEvent(OnRoundAnimationFinished);
-        UIController.Instance.GetUI<RPG.UI.TurnAnim>().Show(Round, RoundCamp);
+        RPG.UI.TurnAnim turn = UIController.Instance.GetUI<RPG.UI.TurnAnim>();
+        turn.RegisterHideEvent(OnRoundAnimationFinished);
+        turn.Show(Round, RoundCamp);
+    }
+    /// <summary>
+    /// 过关状态，显示过关动画
+    /// </summary>
+    public void ClearTheStage()
+    {
+        ClearStagePanel clear = UIController.Instance.GetUI<RPG.UI.ClearStagePanel>();
+        clear.RegisterHideEvent(WinTheChapter);
+        clear.Show();
     }
     /// <summary>
     /// 本章过关，执行结束事件，然后去下一关
