@@ -15,12 +15,13 @@ namespace RPGEditor
         public static void CreateAssetBundleThemelves()
         {
             string targetPath = Application.dataPath + "/StreamingAssets";
-            if (BuildPipeline.BuildAssetBundles(targetPath, BuildAssetBundleOptions.ChunkBasedCompression))
+            if (BuildPipeline.BuildAssetBundles(targetPath, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.StandaloneWindows64))
             {
 
                 Debug.Log("packed successfully!");
             }
-            else {
+            else
+            {
                 Debug.Log("packed failly!");
             }
             AssetDatabase.Refresh();

@@ -241,7 +241,12 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         Debug.Log("载入章节:" + ChapterID);
         //在此通过ChapterRecord 初始化所有的数据
         if (ChapterRecord != null)
-        { }
-        LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + Record.Chapter);
+        {
+            LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + Record.Chapter);
+        }
+        else
+        {
+            LoadingScreenManager.LoadScene(SCENEINDEX_BATTLE_TEMPLATE + 0);
+        }
     }
 }
