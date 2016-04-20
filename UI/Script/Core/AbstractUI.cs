@@ -220,11 +220,16 @@ namespace RPG.UI
 
         #endregion
         public virtual void OnCancelKeyDown() { }
+        public virtual void OnSubmitKeyDown() { }
         public void FixedUpdate()
         {
             if (Input.GetButtonDown("Cancel") && UGameInstance.InputModeUI)
             {
                 OnCancelKeyDown();
+            }
+            if (Input.GetButtonDown("Submit") && UGameInstance.InputModeUI)
+            {
+                OnSubmitKeyDown();
             }
         }
     }

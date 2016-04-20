@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
             if (p is T)
                 return p as T;
         }
+        Debug.LogError("没有找到该UI:" + typeof(T).ToString());
         return null;
     }
 
