@@ -1,89 +1,113 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-
 namespace RPG.UI
 {
     public class ItemPanel : IPanel
     {
-        public GameObject TipPanel;
-        public Image itemsBG;
-        public Image EquipIcon;
-        private ItemTip itemTipControl;
-        private int currentSelectIndex = -1;
+        public enum Mode
+        {
+            仅查看武器属性,
+            选择攻击的武器,
+            选择装备的武器,
+            仅查看物品属性,
+            选择使用的物品
+        }
+        public Mode ShowMode;
+        public Image ItemsBG;
+        private int currentSelectIndex
+        {
+            get
+            {
+                return ItemElement.SelectIndex;
+            }
+        }
         private int currentSelectItemID = -1;
-        public Text[] Text_Usage;
-        public Text[] Text_WeaponName;
-        public Image[] Image_WeaponIcon;
-        private WeaponItem[] items;
+
+        public ItemElement[] Elements;
+
+        private WeaponItem[] weaponItems;
+        private PropsItem[] propsItems;
+
         protected override void Awake()
         {
             base.Awake();
-
-            itemTipControl = TipPanel.GetComponent<ItemTip>();
         }
-        private void disable()
+        /// <summary>
+        /// 使所有的子按钮不可用不可见，但是仍然占用位置
+        /// </summary>
+        private void DisableAllUIElement()
         {
-            foreach (Text text in Text_Usage)
+            for (int i = 0; i < Elements.Length; i++)
             {
-                text.enabled = false;
+                DisableItem(i);
             }
-            foreach (Text text in Text_WeaponName)
-            {
-                text.enabled = false;
-            }
-            foreach (Image image in Image_WeaponIcon)
-            {
-                image.enabled = false;
-            }
-
         }
-        public void Init(RPGCharacter ch)
+
+        private void DisableItem(int Index)
         {
-            disable();
-            int itemCount = ch.Item.GetWeaponCount();
-            items = ch.Item.GetAllWeapons().ToArray();
-            if (EquipIcon != null)
+            Elements[Index].ShowNothing(Index);
+        }
+
+        public void Init(RPGCharacter ch, Mode ShowMode = Mode.仅查看武器属性)
+        {
+            this.ShowMode = ShowMode;
+
+            DisableAllUIElement();
+
+            if (ItemsBG != null)
             {
-                if (ch.Item.GetEquipWeapon() != null)
-                    EquipIcon.gameObject.SetActive(true);
-                else
+                ItemsBG.sprite = ch.GetPortrait();
+            }
+            if (ShowMode <= Mode.选择装备的武器)
+            {
+                int itemCount = ch.Item.GetWeaponCount();
+                weaponItems = ch.Item.Weapons.ToArray();
+                int EquipIndex = ch.Item.GetEquipIndex();
+                for (int i = 0; i < itemCount; i++)
                 {
-                    EquipIcon.gameObject.SetActive(false);
+                    WeaponDef def = weaponItems[i].GetDefinition();
+                    string ShowName = EquipIndex == i ? def.CommonProperty.Name + Utils.TextUtil.GetColorString("  E", Color.yellow) : def.CommonProperty.Name;
+                    Elements[i].Show(i, def.Icon, ShowName, weaponItems[i].Usage + "/" + Utils.TextUtil.GetColorString(weaponItems[i].GetMaxUsage().ToString(), Color.green), ch.Item.IsWeaponEnabled(weaponItems[i].ID), def.Tooltip);
                 }
             }
-            if (itemsBG != null)
+            else
             {
-                itemsBG.sprite = ch.GetPortrait();
-            }
-            for (int i = 0; i < itemCount; i++)
-            {
-                Text_Usage[i].enabled = true;
-                Text_WeaponName[i].enabled = true;
-                Image_WeaponIcon[i].enabled = true;
-                Text_WeaponName[i].text =items[i].GetDefinition().CommonProperty.Name;
-                if (!ch.Item.IsWeaponEnabled(items[i].ID))
-                    Text_WeaponName[i].color = Color.grey;
-                else
-                    Text_WeaponName[i].color = Color.white;
-                Text_Usage[i].text = items[i].Usage + "/<color=green>" + +items[i].GetMaxUsage() + "</color>";
-                Image_WeaponIcon[i].sprite = items[i].GetDefinition().Icon;
+                int propsCount = ch.Item.GetPropsCount();
+                propsItems = ch.Item.Props.ToArray();
+
+                for (int i = 0; i < propsCount; i++)
+                {
+                    PropsDef def = propsItems[i].GetDefinition();
+                    Elements[i].Show(i, def.Icon, def.CommonProperty.Name, def.EquipItem ? "<color=green> E </ color > " : weaponItems[i].Usage + "/<color=green>" + +weaponItems[i].GetMaxUsage() + "</color>", true, def.Tooltip);
+                }
             }
         }
         public void ShowTip(int index)
         {
-            currentSelectIndex = index;
-            WeaponDef def =ResourceManager.GetWeaponDef( items[currentSelectIndex].ID);
+            /*WeaponDef def = ResourceManager.GetWeaponDef(weaponItems[currentSelectIndex].ID);
 
             string content = def.GetWeaponTypeName() + " " + def.GetWeaponLevelName() + "  " + "威力" + " " + def.Power + "  " + "命中" + " " + def.Hit + "  " + "必杀" + " " + def.Crit + "  " +
                 "重量" + " " + def.Weight + "  " + "射程" + " " + def.RangeType.MinSelectRange + "-" + def.RangeType.MaxSelectRange + "\n" + def.CommonProperty.Description;
-            itemTipControl.Show(Input.mousePosition, content);
+            ItemTipControl.Show(Input.mousePosition, content);*/
 
         }
         public void HideTip()
         {
-            currentSelectIndex = -1;
             currentSelectItemID = -1;
-            itemTipControl.Hide();
+            UIController.ItemTipPanel.Hide();
+        }
+        public override void Tick(float DeltaTime)
+        {
+            base.Tick(DeltaTime);
+            if (Input.GetButtonDown("X"))
+            {
+                if (currentSelectIndex < 0)
+                    return;
+                if (UIController.ItemTipPanel.gameObject.activeSelf)
+                    UIController.ItemTipPanel.Hide();
+                else
+                    Elements[currentSelectIndex].ShowTip();
+            }
         }
     }
 }

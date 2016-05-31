@@ -149,7 +149,15 @@ public class WeaponDef : ExtendScriptableObject
     {
         return SinglePrice * UseNumber;
     }
+    public string Tooltip
+    {
+        get
+        {
+            return GetWeaponTypeName() + " " + GetWeaponLevelName() + "  " + "威力" + " " + Power + "  " + "命中" + " " + Hit + "  " + "必杀" + " " + Crit + "  " +
+           "重量" + " " + Weight + "  " + "射程" + " " + RangeType.MinSelectRange + "-" + RangeType.MaxSelectRange + "\n" + CommonProperty.Description;
 
+        }
+    }
     public bool DedicatedUse(int CharacterID, int CareerID)
     {
         bool bCharacter = false;

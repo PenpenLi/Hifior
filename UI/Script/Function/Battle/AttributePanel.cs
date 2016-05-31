@@ -23,13 +23,12 @@ namespace RPG.UI
             abilityPanel.GetComponent<AbilityPanel>().Init(ch);
             itemPanel.GetComponent<ItemPanel>().Init(ch);
         }
-
-        void Update()
+        public override void OnCancelKeyDown()
         {
-            if (Input.GetButton("Cancel") && gameObject.activeSelf)
-            {
+            if (UIController.ItemTipPanel.gameObject.activeSelf)
+                UIController.ItemTipPanel.Hide();
+            else
                 base.Hide();
-            }
         }
     }
 }

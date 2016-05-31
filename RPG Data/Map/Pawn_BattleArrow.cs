@@ -419,6 +419,7 @@ public class Pawn_BattleArrow : UPawn
     private bool bActionHasAttack = false;
     private bool bActionHasTalk = false;
     private bool bActionHasLocation = false;
+    private bool bActionHasUseProps = false;
     /// <summary>
     /// 设置以上标志量为false
     /// </summary>
@@ -437,7 +438,7 @@ public class Pawn_BattleArrow : UPawn
         GS_Battle GameStatus = GetGameStatus<GS_Battle>();
         List<RPG.UI.EventButtonDetail> Details = new List<RPG.UI.EventButtonDetail>();
         //如果已经攻击，或者对话，或者进入村庄开宝箱等则直接等待
-        if (bActionHasAttack || bActionHasTalk || bActionHasLocation)
+        if (bActionHasAttack || bActionHasTalk || bActionHasLocation || bActionHasUseProps)
         {
             Details.Add(new RPG.UI.EventButtonDetail("等待", Button_Wait));
         }
@@ -463,6 +464,10 @@ public class Pawn_BattleArrow : UPawn
                 Details.Add(new RPG.UI.EventButtonDetail("对话", Button_TalkTo));
             #endregion
 
+            #region 物品按钮
+            Details.Add(new RPG.UI.EventButtonDetail("物品", Button_UseProps));
+            #endregion
+
             #region 村庄，宝箱 
             SLGChapter.LocationEventType LocationEvent = SlgChapter.GetLocationEvent(SelectedCharacter.GetTileCoord(), SelectedCharacter.GetCharacterID());
             if (LocationEvent != null)
@@ -471,8 +476,10 @@ public class Pawn_BattleArrow : UPawn
                 Details.Add(new RPG.UI.EventButtonDetail(LocationName, Button_Location));
             }
             #endregion
+
             Details.Add(new RPG.UI.EventButtonDetail("等待", Button_Wait));
         }
+        Details.Add(new RPG.UI.EventButtonDetail("武器", Button_Weapon));
         UIController.Instance.GetUI<RPG.UI.ActionMenu>().Show(Details);
 
     }
@@ -512,6 +519,20 @@ public class Pawn_BattleArrow : UPawn
         SLGChapter.LocationEventType LocationEvent = SlgChapter.GetLocationEvent(SelectedCharacter.GetTileCoord(), SelectedCharacter.GetCharacterID());
         LocationEvent.Execute(ResetToChooseActionAfterLocationEvent);
         SetArrowActive(false);
+    }
+    /// <summary>
+    /// 使用物品
+    /// </summary>
+    private void Button_UseProps()
+    {
+
+    }
+    /// <summary>
+    /// 选择装备的武器
+    /// </summary>
+    private void Button_Weapon()
+    {
+
     }
     /// <summary>
     /// 按下 待机 按钮 进行待机

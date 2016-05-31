@@ -33,7 +33,7 @@ public class PositionGrid : MonoBehaviour
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
         meshRenderer.materials = MaterialElements;
-        meshRenderer.useLightProbes = false;
+        meshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
         meshRenderer.receiveShadows = false;
         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }

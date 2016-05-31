@@ -131,7 +131,10 @@ public struct Point2D
         }
         return new Vector3(_x, 0, _z);
     }
-
+    public static Vector3 Point2DToVector3(Point2D p, bool Shift)
+    {
+      return  Point2DToVector3(p.x, p.y, Shift);
+    }
     public static int GetDistance(int x1, int y1, int x2, int y2)
     {
         return Mathf.Abs(x1 - x2) + Mathf.Abs(y1 - y2);

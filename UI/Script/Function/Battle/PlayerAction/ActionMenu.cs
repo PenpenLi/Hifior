@@ -33,7 +33,8 @@ namespace RPG.UI
                 if (detail.buttonTitle != null && detail.buttonTitle.Length > 0)
                 {
                     GameObject g = Instantiate(prefab);
-                    g.transform.SetParent(transform);
+                    g.transform.SetParent(transform, false);
+
                     g.transform.GetChild(0).GetComponent<Text>().text = detail.buttonTitle;
 
                     g.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -57,126 +58,7 @@ namespace RPG.UI
         {
             this.Hide();
         }
-        /*
-        public static void AfterMove()
-        {
-            afterMove = true;
-        }
-        public static void AfterAttack()
-        {
-            afterAttack = true;
-        }
-        static void AfterSkill()
-        {
-            afterSkill = true;
-        }
-        static void AfteUseItem()
-        {
-            afterUseItem = true;
-        }
-
-        public UnityEngine.UI.Button leave;
-        public UnityEngine.UI.Button opendoor;
-        public UnityEngine.UI.Button treasure;
-        public UnityEngine.UI.Button village;
-        public UnityEngine.UI.Button seize;
-        public UnityEngine.UI.Button talk;
-        public UnityEngine.UI.Button attack;
-        public UnityEngine.UI.Button wand;
-        public UnityEngine.UI.Button skill;
-        public UnityEngine.UI.Button item;
-        public UnityEngine.UI.Button wait;
-        public UnityEngine.UI.Button remove;
-        public UnityEngine.UI.Button steal;
-        public UnityEngine.UI.Button dance;
-        public UnityEngine.UI.Button defence;
-        public UnityEngine.UI.Button hide;
-        public UnityEngine.UI.Button dishide;
-        void Awake()
-        {
-            gameObject.SetActive(false);
-            leave.onClick.AddListener(Button_Leave);
-            opendoor.onClick.AddListener(Button_OpenDoor);
-            treasure.onClick.AddListener(Button_Treasure);
-            village.onClick.AddListener(Button_Village);
-            seize.onClick.AddListener(Button_Seize);
-            talk.onClick.AddListener(Button_Talk);
-            attack.onClick.AddListener(Button_Attack);
-            wand.onClick.AddListener(Button_Wand);
-            skill.onClick.AddListener(Button_Skill);
-            item.onClick.AddListener(Button_Item);
-            wait.onClick.AddListener(Button_Wait);
-            remove.onClick.AddListener(Button_Remove);
-            steal.onClick.AddListener(Button_Steal);
-            dance.onClick.AddListener(Button_Dance);
-            defence.onClick.AddListener(Button_Defence);
-            hide.onClick.AddListener(Button_Hide);
-            dishide.onClick.AddListener(Button_DisHide);
-        }
-        
-        public void ShowActionMenu(bool isItem, bool isSkill, bool isAttack, bool isTalk,
-            bool isSeize, bool isViliage, bool isTreasure, bool isLeave, bool isOpenDoor,
-            bool isWand, bool isReMove, bool isSteal, bool isDance,
-              bool isDenfence, bool isHide, bool isDisHide, bool isGoodHeart)
-        {
-            gameObject.SetActive(true);
-            item.gameObject.SetActive(isItem);
-            skill.gameObject.SetActive(isSkill);
-            attack.gameObject.SetActive(isAttack);
-            talk.gameObject.SetActive(isTalk);
-            seize.gameObject.SetActive(isSeize);
-            village.gameObject.SetActive(isViliage);
-            treasure.gameObject.SetActive(isTreasure);
-            leave.gameObject.SetActive(isLeave);
-            opendoor.gameObject.SetActive(isOpenDoor);
-            wand.gameObject.SetActive(isWand);
-            remove.gameObject.SetActive(isReMove);
-            steal.gameObject.SetActive(isSteal);
-            dance.gameObject.SetActive(isDance);
-            defence.gameObject.SetActive(isDenfence);
-            hide.gameObject.SetActive(isHide);
-            dishide.gameObject.SetActive(isDisHide);
-        }
-        
-        #region 主菜单按钮功能
-        public void Button_Attack()
-        {
-            SLGLevel.SLG._sound.Play2DEffect(8);
-            SManage.Transition(new ASMInput(ACTION_STATE.ACTION_SHOWACTIONMENU, (int)ACTION_MENU.SELECTWEAPON));
-            UISet.Panel_ActionState.Show(0, "攻击");
-            UISet.Panel_AttackMenu.Show(SLGLevel.SLG.currentSelectGameChar);
-            UISet.Panel_ActionMenu.Hide();
-        }
-        public void Button_Leave()
-        {
-            SLGLevel.SLG._sound.Play2DEffect(8);
-            Debug.Log("leave");
-        }
-        public void Button_OpenDoor()
-        {
-            Debug.Log("opendoor");
-        }
-        public void Button_Dance()
-        {
-
-        }
-        public void Button_Village()//村庄宝箱压制离开Location事件全部
-        {
-            SLGLevel.SLG._sound.Play2DEffect(8);
-            EventManage.OnLocationEvent(SLGLevel.SLG.currentSelectGameChar.TileCoords.x, SLGLevel.SLG.currentSelectGameChar.TileCoords.y, SLGLevel.SLG.currentSelectGameChar.CharID, delegate
-            {
-                SManage.Transition(new ASMInput(ACTION_STATE.ACTION_SHOWACTIONMENU, (int)ACTION_MENU.WAIT));
-            });
-            Debug.Log("village");
-        }
-        public void Button_Hide()
-        {
-
-        }
-        public void Button_DisHide()
-        {
-
-        }
+       /*
         public void Button_Defence()
         {
             SLGLevel.SLG._sound.Play2DEffect(8);

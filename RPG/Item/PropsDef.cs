@@ -28,6 +28,7 @@ public class PropsDef : ExtendScriptableObject
     public bool ImportantProps;
     public bool NoExchange;
     public bool Sellable=true;
+    
     //添加的额外属性
     public CharacterAttribute AdditionalAttribute;
     //成长率提高
@@ -43,7 +44,13 @@ public class PropsDef : ExtendScriptableObject
         else
             return 0;
     }
-
+    public string Tooltip
+    {
+        get
+        {
+            return CommonProperty.Name + " " +" 耐久 "+UseNumber+"\n" + CommonProperty.Description;
+        }
+    }
     public int GetUsageTime()
     {
         return UseNumber;

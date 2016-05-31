@@ -5,7 +5,6 @@ namespace RPG.UI
 {
     public class ItemTip : IPanel
     {
-
         public Text tTip;
         public float upSpace = 8f;
         public float bottomSpace = 8f;
@@ -22,6 +21,8 @@ namespace RPG.UI
 
         public void Show(Vector3 vector, string s, bool bUp = false)
         {
+            base.Show();
+
             if (bUp) rt.pivot = new Vector2(0.5f, -1.15f);
             else rt.pivot = new Vector2(0.5f, 1.15f);
             transform.position = vector;
@@ -30,7 +31,6 @@ namespace RPG.UI
             float width = rt.sizeDelta.x;
             rt.sizeDelta = new Vector2(width, height);
             tTip.text = s;
-            gameObject.SetActive(true);
         }
     }
 }

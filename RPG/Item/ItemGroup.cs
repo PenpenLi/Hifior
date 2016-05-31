@@ -7,10 +7,14 @@ public class ItemGroup
     public const int MAX_PROPS_COUNT = 5;
     public const int MAX_PASSIVEITEM_COUNT = 2;//鞋子，护甲，饰品，
     private List<WeaponItem> weapons = new List<WeaponItem>();
-    private List<PropsItem> Props = new List<PropsItem>();
+    private List<PropsItem> props = new List<PropsItem>();
     private List<PropsItem> passiveItems = new List<PropsItem>();//被动装备  
     private CharacterAttribute attribute;
     private int _currentEquipItemIndex = -1; //当前装备武器的index
+    public int GetEquipIndex()
+    {
+        return _currentEquipItemIndex;
+    }
     /// <summary>
     /// 在完全获得该道具后执行的事件
     /// </summary>
@@ -26,7 +30,13 @@ public class ItemGroup
             return weapons;
         }
     }
-
+    public List<PropsItem> Props
+    {
+        get
+        {
+            return Props;
+        }
+    }
     public List<PropsItem> PassiveItems
     {
         get
@@ -316,19 +326,19 @@ public class ItemGroup
     {
         AfterSuccessAddItem = AfterAddItem;
 
-        if (Props.Count == MAX_PROPS_COUNT)//装备已满返回false
+        if (props.Count == MAX_PROPS_COUNT)//装备已满返回false
         {
             Debug.Log("物品已达上限");
-            Props.Add(Item);
+            props.Add(Item);
             RPG.UI.SendItemToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendItemToWarehouse>();
             if (AfterSuccessAddItem != null)
                 Sender.RegisterHideEvent(AfterSuccessAddItem);
-            Sender.Show(Props);
+            Sender.Show(props);
             return false;
         }
         else
         {
-            Props.Add(Item);
+            props.Add(Item);
             if (AfterSuccessAddItem != null)
                 AfterSuccessAddItem.Invoke();
             return true;
@@ -343,9 +353,9 @@ public class ItemGroup
             return false;
         }
         if (InsertIndex >= Weapons.Count)
-            Props.Add(Item);
+            props.Add(Item);
         else
-            Props.Insert(InsertIndex, Item);
+            props.Insert(InsertIndex, Item);
         return true;
     }
     public bool EquipProp(int Index)
@@ -355,11 +365,11 @@ public class ItemGroup
             Debug.Log("慢了，无法在进行装备被动物品");
             return false;
         }
-        PropsItem item = Props[Index];
+        PropsItem item = props[Index];
         if (item.GetDefinition().EquipItem)
         {
             passiveItems.Add(item);
-            Props.RemoveAt(Index);
+            props.RemoveAt(Index);
         }
         else
         {
@@ -374,8 +384,8 @@ public class ItemGroup
     {
         if (passiveItems.Count > Index)
         {
-            PropsItem item = Props[Index];
-            Props.Add(item);
+            PropsItem item = props[Index];
+            props.Add(item);
             passiveItems.RemoveAt(Index);
             return true;
         }
@@ -391,7 +401,7 @@ public class ItemGroup
     /// <returns></returns>
     public int GetPropsCount()
     {
-        return Props.Count;
+        return props.Count;
     }
     #endregion
 }

@@ -52,7 +52,7 @@ namespace RPG.UI
         public void InitButton(int index, WeaponItem Weapon)
         {
             WeaponDef def = Weapon.GetDefinition();
-            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, def.IsInifiniteUsage() ? " -- " : Weapon.Usage + "/" + def.UseNumber);
+            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, def.IsInifiniteUsage() ? " -- " : Weapon.Usage + "/" + def.UseNumber,true);
             Elements[index].RegisterClickEvent(() =>
             {
                 GetGameInstance().Ware.AddWeapon(Weapon);
@@ -69,7 +69,7 @@ namespace RPG.UI
         public void InitButton(int index, PropsItem Prop)
         {
             PropsDef def = Prop.GetDefinition();
-            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, PropsThirdText(def, Prop.Usage));
+            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, PropsThirdText(def, Prop.Usage),true);
             Elements[index].RegisterClickEvent(() =>
             {
                 GetGameInstance().Ware.AddProp(Prop);

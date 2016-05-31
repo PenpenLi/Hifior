@@ -7,6 +7,7 @@ public class UIController : MonoBehaviour
 {
     private static UIController instance;
     private static ScreenMask m_screenMask;
+    private static ItemTip m_itemTipPanel;
 
     public static ScreenMask ScreenFade
     {
@@ -17,7 +18,17 @@ public class UIController : MonoBehaviour
             return m_screenMask;
         }
     }
-
+    public static ItemTip ItemTipPanel
+    {
+        get
+        {
+            if (m_itemTipPanel == null)
+            {
+                m_itemTipPanel = GetMonoScript(m_itemTipPanel, "Prefab/UIElement/Panel_ItemTip");
+            }
+            return m_itemTipPanel;
+        }
+    }
     public List<IPanel> UIList;
 
     public T GetUI<T>() where T : IPanel
@@ -61,8 +72,8 @@ public class UIController : MonoBehaviour
         if (!MonoScript)
         {
             MonoScript = Utils.MiscUtil.GetComponentNotNull<T>(Instantiate<GameObject>(Resources.Load<GameObject>(PrefabPath)));
-            MonoScript.gameObject.SetActive(true);
-            MonoScript.transform.SetParent(Instance.transform);
+            MonoScript.gameObject.SetActive(false);
+            MonoScript.transform.SetParent(Instance.transform, false);
         }
         return MonoScript;
     }

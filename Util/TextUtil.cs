@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using UnityEngine;
 namespace Utils
 {
     public class TextUtil
@@ -63,6 +63,26 @@ namespace Utils
             foreach (object s in InList)
                 r += (s.ToString() + "\n");
             return r;
+        }
+        public static string GetColorString(string Content, Color c)
+        {
+            int r = (int)(c.r * 255);
+            int g = (int)(c.g * 255);
+            int b = (int)(c.b * 255);
+            int a = (int)(c.a * 255);
+            return "<color=#" + r.ToString("x2") + g.ToString("x2") + b.ToString("x2") + a.ToString("x2") + ">" + Content + "</color>";
+        }
+        public static string GetBoldString(string Content)
+        {
+            return "<b>" + Content + "</b>";
+        }
+        public static string GetItalicString(string Content)
+        {
+            return "<i>" + Content + "</i>";
+        }
+        public static string GetItalicString(string Content, int Size)
+        {
+            return "<size=" + Size + ">" + Content + "</size>";
         }
     }
 }
