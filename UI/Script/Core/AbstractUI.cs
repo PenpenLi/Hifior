@@ -223,11 +223,11 @@ namespace RPG.UI
         public virtual void OnSubmitKeyDown() { }
         public void FixedUpdate()
         {
-            if (Input.GetButtonDown("Cancel") && UGameInstance.InputModeUI)
+            if (Input.GetButtonDown(InputIDentifier.INPUT_CANCEL) && UGameInstance.InputModeUI)
             {
                 OnCancelKeyDown();
             }
-            if (Input.GetButtonDown("Submit") && UGameInstance.InputModeUI)
+            if (Input.GetButtonDown(InputIDentifier.INPUT_SUBMIT) && UGameInstance.InputModeUI)
             {
                 OnSubmitKeyDown();
             }

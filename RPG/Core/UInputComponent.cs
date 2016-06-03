@@ -1,41 +1,63 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
-
+public class InputIDentifier
+{
+    public const string INPUT_A = "A";
+    public const string INPUT_B = "B";
+    public const string INPUT_START = "Start";
+    public const string INPUT_YES = "Yes";
+    public const string INPUT_NO = "No";
+    public const string INPUT_L1 = "L1";
+    public const string INPUT_R1 = "R1";
+    public const string INPUT_X = "X";
+    public const string INPUT_Y = "Y";
+    public const string INPUT_SUBMIT = "Submit";
+    public const string INPUT_CANCEL = "Cancel";
+    public const string INPUT_UP = "Up";
+    public const string INPUT_DOWN = "Down";
+    public const string INPUT_LEFT = "Left";
+    public const string INPUT_RIGHT = "Right";
+    public const string INPUT_HORIZONTAL = "Horizontal";
+    public const string INPUT_VERTICAL = "Vertical";
+    public const string INPUT_ZOOM_IN = "ZoomIn";
+    public const string INPUT_ZOOM_OUT = "ZoomOut";
+}
 public class UInputComponent
 {
     public static bool A_Clicked
     {
-        get {
-            return Input.GetButton("A");
-    }
+        get
+        {
+            return Input.GetButton(InputIDentifier.INPUT_A);
+        }
     }
     public static bool B_Clicked
     {
         get
         {
-            return Input.GetButton("B");
+            return Input.GetButton(InputIDentifier.INPUT_B);
         }
     }
     public static bool X_Clicked
     {
         get
         {
-            return Input.GetButton("X");
+            return Input.GetButton(InputIDentifier.INPUT_X);
         }
     }
     public static bool Y_Clicked
     {
         get
         {
-            return Input.GetButton("Y");
+            return Input.GetButton(InputIDentifier.INPUT_Y);
         }
     }
     public static bool Start_Clicked
     {
         get
         {
-            return Input.GetButton("Start");
+            return Input.GetButton(InputIDentifier.INPUT_START);
         }
     }
     public string Name

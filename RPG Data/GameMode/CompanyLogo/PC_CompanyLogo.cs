@@ -42,10 +42,10 @@ public class PC_CompanyLogo : UPlayerController
     {
         base.SetupInputComponent();
 
-        BindAction("A", EInputActionType.IE_Released, OnSubmit);
-        BindAction("B", EInputActionType.IE_Released, OnCancel);
-        BindAction("Start", EInputActionType.IE_Released, OnStart);
-        BindAction("L1", EInputActionType.IE_Clicked, OnVertical);
+        BindAction(InputIDentifier.INPUT_A, EInputActionType.IE_Released, OnSubmit);
+        BindAction(InputIDentifier.INPUT_B, EInputActionType.IE_Released, OnCancel);
+        BindAction(InputIDentifier.INPUT_START, EInputActionType.IE_Released, OnStart);
+        BindAction(InputIDentifier.INPUT_L1, EInputActionType.IE_Clicked, OnVertical);
     }
     private void OnSubmit()
     {

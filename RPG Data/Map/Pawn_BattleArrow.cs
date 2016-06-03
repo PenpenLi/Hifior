@@ -132,14 +132,14 @@ public class Pawn_BattleArrow : UPawn
     {
         base.SetupPlayerInputComponent(InInputComponent);
 
-        InInputComponent.BindAction("Down", EInputActionType.IE_Clicked, Down);
-        InInputComponent.BindAction("Up", EInputActionType.IE_Clicked, Up);
-        InInputComponent.BindAction("Left", EInputActionType.IE_Clicked, Left);
-        InInputComponent.BindAction("Right", EInputActionType.IE_Clicked, Right);
-        InInputComponent.BindAction("A", EInputActionType.IE_Pressed, A);
-        InInputComponent.BindAction("B", EInputActionType.IE_Pressed, B);
-        InInputComponent.BindAction("X", EInputActionType.IE_Pressed, X);
-        InInputComponent.BindAction("Y", EInputActionType.IE_Pressed, Y);
+        InInputComponent.BindAction(InputIDentifier.INPUT_DOWN, EInputActionType.IE_Clicked, Down);
+        InInputComponent.BindAction(InputIDentifier.INPUT_UP, EInputActionType.IE_Clicked, Up);
+        InInputComponent.BindAction(InputIDentifier.INPUT_LEFT, EInputActionType.IE_Clicked, Left);
+        InInputComponent.BindAction(InputIDentifier.INPUT_RIGHT, EInputActionType.IE_Clicked, Right);
+        InInputComponent.BindAction(InputIDentifier.INPUT_A, EInputActionType.IE_Pressed, A);
+        InInputComponent.BindAction(InputIDentifier.INPUT_B, EInputActionType.IE_Pressed, B);
+        InInputComponent.BindAction(InputIDentifier.INPUT_X, EInputActionType.IE_Pressed, X);
+        InInputComponent.BindAction(InputIDentifier.INPUT_Y, EInputActionType.IE_Pressed, Y);
     }
     private void Up()
     {

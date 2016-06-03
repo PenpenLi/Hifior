@@ -88,24 +88,11 @@ namespace Sequence
             }
         }
 
-#if UNITY_EDITOR
-        // The user can modify the command list order while playing in the editor,
-        // so we keep the command indices updated every frame. There's no need to
-        // do this in player builds so we compile this bit out for those builds.
         void Update()
         {
-            int index = 0;
-            foreach (SequenceEvent command in commandList)
-            {
-                if (command == null) // Null entry will be deleted automatically later
-                {
-                    continue;
-                }
-
-                command.commandIndex = index++;
-            }
+            if (Input.GetButton(InputIDentifier.INPUT_START))
+                UIController.ScreenNormalToDark(1.0f, true, delegate { Stop(); OnFinish.Invoke(); });
         }
-#endif
 
         public virtual bool IsExecuting()
         {

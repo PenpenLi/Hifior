@@ -26,8 +26,8 @@ public class RPGPlayer : RPGCharacter
     public override void SetupPlayerInputComponent(UInputComponent InInputComponent)
     {
         base.SetupPlayerInputComponent(InInputComponent);
-        InInputComponent.BindAction("A", EInputActionType.IE_Released, A);
-        InInputComponent.BindAction("B", EInputActionType.IE_Released, B);
+        InInputComponent.BindAction(InputIDentifier.INPUT_A, EInputActionType.IE_Released, A);
+        InInputComponent.BindAction(InputIDentifier.INPUT_B, EInputActionType.IE_Released, B);
     }
     private void A()
     {
