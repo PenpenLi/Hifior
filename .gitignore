@@ -29,3 +29,5 @@ LevelAssets.meta
 *.FBX
 *.fbx
 /StreamingAssets
+
+.meta
