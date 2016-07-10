@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 
-class RenameSceneGameObject : EditorWindow
+public class RenameSceneGameObject : EditorWindow
 {
     static string _replace = "";
     static string _replaceWith= "";
