@@ -9,7 +9,8 @@ namespace RPGEditor
         private static bool foldout_AttributeGrow = true;
         private static bool foldout_Attribute = true;
 
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Character/Player";
+        public const string DIRECTORY_PATH = DataBaseConst.DataBase_Player_Folder;
+
         [MenuItem("RPGEditor/Create Character/Player", false, 0)]
         public static PlayerDef CreateProps()
         {
@@ -102,6 +103,51 @@ namespace RPGEditor
             player = target as PlayerDef;
             base.InitTarget(player);
             weaponCount = player.DefaultWeapons.Count;
+        }
+    }
+
+    public class PlayerEditorProp:CharacterEditorProp<PlayerDef>
+    {
+        private static int weaponCount;
+        private static bool foldout_AttributeGrow = true;
+        private static bool foldout_Attribute = true;
+
+        public override string AssetFolder
+        {
+            get
+            {
+                return DataBaseConst.DataBase_Player_Folder;
+            }
+        }
+
+        public override void OnGUI(PlayerDef Data)
+        {
+            base.OnGUI(Data);
+
+            foldout_AttributeGrow = EditorGUILayout.Foldout(foldout_AttributeGrow, "成长率");
+            if (foldout_Attribute)
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginVertical();
+
+                Data.DefaultAttributeGrow.HP = EditorGUILayout.IntSlider("HP", Data.DefaultAttributeGrow.HP, 0, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
+                Data.DefaultAttributeGrow.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", Data.DefaultAttributeGrow.PhysicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", Data.DefaultAttributeGrow.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.Skill = EditorGUILayout.IntSlider("技术", Data.DefaultAttributeGrow.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.Speed = EditorGUILayout.IntSlider("速度", Data.DefaultAttributeGrow.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.Luck = EditorGUILayout.IntSlider("幸运", Data.DefaultAttributeGrow.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", Data.DefaultAttributeGrow.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", Data.DefaultAttributeGrow.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttributeGrow.Movement = EditorGUILayout.IntSlider("移动", Data.DefaultAttributeGrow.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
+
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndHorizontal();
+            }
+            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref Data.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count), 5);
+
+            Data.DeadSpeech = EditorGUILayout.TextField("战败话语", Data.DeadSpeech);
+            Data.LeaveSpeech = EditorGUILayout.TextField("战败话语", Data.LeaveSpeech);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace RPGEditor
         private static int dedicatedCharacterCount;
         private static bool foldout_AdditionalAttribute = true;
         private static bool foldout_AdditionalAttiburteGrow = true;
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Item/Props";
+        public const string DIRECTORY_PATH = DataBaseConst.DataBase_Props_Folder;
         [MenuItem("RPGEditor/Create Items/Props", false, 2)]
         public static PropsDef CreateProps()
         {

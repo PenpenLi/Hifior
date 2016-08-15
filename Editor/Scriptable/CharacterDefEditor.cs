@@ -101,4 +101,67 @@ namespace RPGEditor
             character = def;
         }
     }
+
+
+
+    public abstract class CharacterEditorProp<T> : EditorProp<T> where T:CharacterDef
+    {
+        public const int TALK_PORTRAIT_COUNT = 4;
+        private static bool foldout_Attribute = true;
+
+        public override string ListName(int index)
+        {
+            string Name = scriptableObjects[index].CommonProperty.Name;
+            if (string.IsNullOrEmpty(Name.Trim()))
+                return base.NO_NAME;
+            return Name;
+        }
+
+        public override void OnGUI(T Data)
+        {
+            if (Data.TalkPortrait == null)
+            {
+                Data.TalkPortrait = new System.Collections.Generic.List<Sprite>();
+            }
+            int x = TALK_PORTRAIT_COUNT - Data.TalkPortrait.Count;
+            for (int i = 0; i < x; i++)
+            {
+                Data.TalkPortrait.Add(null);
+            }
+            Data.CommonProperty.ID = EditorGUILayout.IntField("ID", Data.CommonProperty.ID);
+            Data.CommonProperty.Name = EditorGUILayout.TextField("Name", Data.CommonProperty.Name);
+            Data.CommonProperty.Description = EditorGUILayout.TextField("描述", Data.CommonProperty.Description);
+
+            Data.Portrait = (Sprite)EditorGUILayout.ObjectField("图标", Data.Portrait, typeof(Sprite), false);
+            Data.BattleModel = EditorGUILayout.ObjectField("人物模型", Data.BattleModel, typeof(GameObject), true) as GameObject;
+            Data.CharacterImportance = (EnumCharacterImportance)EditorGUILayout.EnumPopup("重要性", Data.CharacterImportance);
+            Data.Career = EditorGUILayout.IntPopup("职业", Data.Career,DataBaseWindow.CareerNameList.ToArray(), EnumTables.GetSequentialArray(DataBaseWindow.CareerNameList.Count));
+            Data.DefaultLevel = EditorGUILayout.IntSlider("初始等级", Data.DefaultLevel, 1, 40);
+
+            foldout_Attribute = EditorGUILayout.Foldout(foldout_Attribute, "初始属性");
+            if (foldout_Attribute)
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginVertical();
+
+                Data.DefaultAttribute.HP = EditorGUILayout.IntSlider("HP", Data.DefaultAttribute.HP, 20, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
+                Data.DefaultAttribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", Data.DefaultAttribute.PhysicalPower, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", Data.DefaultAttribute.MagicalPower, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", Data.DefaultAttribute.Skill, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", Data.DefaultAttribute.Speed, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", Data.DefaultAttribute.Luck, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", Data.DefaultAttribute.PhysicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", Data.DefaultAttribute.MagicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", Data.DefaultAttribute.Movement, 4, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
+
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndHorizontal();
+            }
+            for (int i = 0; i < TALK_PORTRAIT_COUNT; i++)
+            {
+                Data.TalkPortrait[i] = (Sprite)EditorGUILayout.ObjectField("对话头像:" + i, Data.Portrait, typeof(Sprite), false);
+            }
+        }
+    }
 }

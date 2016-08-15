@@ -12,7 +12,7 @@ namespace RPGEditor
             base.InitTarget(enemy);
         }
 
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Character/Enemy";
+        public const string DIRECTORY_PATH = DataBaseConst.DataBase_Enemy_Folder;
         [MenuItem("RPGEditor/Create Character/Enemy", false, 1)]
         public static EnemyDef CreateProps()
         {
@@ -31,7 +31,28 @@ namespace RPGEditor
             base.OnInspectorGUI();
             enemy.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", enemy.ActionAI);
             enemy.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", enemy.AttackInRange);
-            enemy.CureSelf =(EnumEnemyCureSelfCondition) EditorGUILayout.EnumPopup("治疗自身", enemy.CureSelf);
+            enemy.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", enemy.CureSelf);
+        }
+    }
+
+
+    public class EnemyEditorProp : CharacterEditorProp<EnemyDef>
+    {
+        public override string AssetFolder
+        {
+            get
+            {
+                return DataBaseConst.DataBase_Enemy_Folder;
+            }
+        }
+
+        public override void OnGUI(EnemyDef Data)
+        {
+            base.OnGUI(Data);
+
+            Data.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", Data.ActionAI);
+            Data.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", Data.AttackInRange);
+            Data.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", Data.CureSelf);
         }
     }
 }
