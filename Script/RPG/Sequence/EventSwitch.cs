@@ -29,5 +29,9 @@ namespace Sequence
                 Open = true;
             }
         }
+        public bool AlreadyTrigged
+        {
+            get { return Open; }
+        }
     }
 }

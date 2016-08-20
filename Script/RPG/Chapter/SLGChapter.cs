@@ -97,7 +97,7 @@ public class SLGChapter : UActor
         /// <summary>
         /// 触发点
         /// </summary>
-        public Point2D Location = Point2D.InvalidPoint;
+        public VInt2 Location = VInt2.InvalidPoint;
         /// <summary>
         /// 对相关事件设置Enable
         /// </summary>
@@ -203,7 +203,7 @@ public class SLGChapter : UActor
         //StartSequence.OnFinish.AddListener();
         StartSequence.Execute(GetGameMode<GM_Battle>().OnStartSequenceFinished);
     }
-    public LocationEventType GetLocationEvent(Point2D TilePosition, int CharacterID)
+    public LocationEventType GetLocationEvent(VInt2 TilePosition, int CharacterID)
     {
         foreach (LocationEventType Event in LocationEvent)
         {
@@ -226,7 +226,7 @@ public class SLGChapter : UActor
         }
         return null;
     }
-    public RangeEventType GetRangeEvent(Point2D TilePosition)
+    public RangeEventType GetRangeEvent(VInt2 TilePosition)
     {
         foreach (RangeEventType Event in RangeEvent)
         {

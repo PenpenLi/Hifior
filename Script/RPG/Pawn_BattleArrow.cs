@@ -13,11 +13,11 @@ public class Pawn_BattleArrow : UPawn
     /// 当前光标所在位置
     /// </summary>
     [Header("运行变量")]
-    public Point2D Position;
+    public VInt2 Position;
     /// <summary>
     /// 前一个选择的目标位置
     /// </summary>
-    public Point2D OldPosition;
+    public VInt2 OldPosition;
 
     public enum ESelectStatus
     {
@@ -107,12 +107,12 @@ public class Pawn_BattleArrow : UPawn
             fx = Mathf.Clamp(x, 0, SlgMap.MapTileX);
             fy = Mathf.Clamp(y, 0, SlgMap.MapTileY);
         }
-        Position = new Point2D(fx, fy);
+        Position = new VInt2(fx, fy);
         //更新地图信息的显示
         UIController.Instance.GetUI<RPG.UI.BattleTileInfo>().Show(SlgMap.MapTileData.GetTileData(Position.x, Position.y).Type);
 
-        transform.position = Point2D.Point2DToVector3(fx, fy, ArrowHeight + SlgMap.GetTileHeight(fx, fy), true);
-        ArrowOnCharacter = GetGameStatus<GS_Battle>().GetAnyUnitAt(new Point2D(fx, fy));
+        transform.position = VInt2.VInt2ToVector3(fx, fy, ArrowHeight + SlgMap.GetTileHeight(fx, fy), true);
+        ArrowOnCharacter = GetGameStatus<GS_Battle>().GetAnyUnitAt(new VInt2(fx, fy));
         if (HasCharacterOnArrow)
         {
             UIController.Instance.GetUI<RPG.UI.CharStatePanel>().Show(ArrowOnCharacter);
@@ -324,16 +324,16 @@ public class Pawn_BattleArrow : UPawn
     /// </summary>
     /// <param name="Visible"></param>
     /// <param name="NewPosition"></param>
-    public void SetArrowActive(bool Visible, Point2D NewPosition)
+    public void SetArrowActive(bool Visible, VInt2 NewPosition)
     {
         Position = NewPosition;
-        transform.position = Point2D.Point2DToVector3(NewPosition.x, NewPosition.y, ArrowHeight + SlgMap.GetTileHeight(NewPosition.x, NewPosition.y), true);
+        transform.position = VInt2.VInt2ToVector3(NewPosition.x, NewPosition.y, ArrowHeight + SlgMap.GetTileHeight(NewPosition.x, NewPosition.y), true);
         SetArrowActive(Visible);
     }
     public void SetArrowOnDefaultPlayer()
     {
         RPGCharacter FirstPlayer = GetGameStatus<GS_Battle>().GetFirstGamePlayer() as RPGCharacter;
-        Point2D p = FirstPlayer.GetTileCoord();
+        VInt2 p = FirstPlayer.GetTileCoord();
         SetPosition(p.x, p.y);
     }
     /// <summary>
@@ -498,7 +498,7 @@ public class Pawn_BattleArrow : UPawn
     private void Button_TalkTo()
     {
         Debug.Log("选择人物进行对话");
-        List<Point2D> NeighborsPosition = new List<Point2D>();
+        List<VInt2> NeighborsPosition = new List<VInt2>();
         foreach (RPGCharacter Neighbor in Neighbors)
         {
             NeighborsPosition.Add(Neighbor.GetTileCoord());
@@ -552,7 +552,7 @@ public class Pawn_BattleArrow : UPawn
     public void Button_OnWeaponClicked(int ItemIndex)
     {
         SetArrowActive(true);
-        List<Point2D> p = SelectedCharacter.FindAttack(true);
+        List<VInt2> p = SelectedCharacter.FindAttack(true);
         SelectedCharacter.Item.EquipWeaponWithSort(ItemIndex);//点击选择武器则重新排列武器并装备第一个
         int x = SelectedCharacter.GetTileCoord().x;
         int y = SelectedCharacter.GetTileCoord().y;

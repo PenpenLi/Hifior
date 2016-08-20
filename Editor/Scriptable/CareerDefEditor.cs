@@ -124,9 +124,9 @@ namespace RPGEditor
     {
         private static bool foldout_UseableWeapon = true;
         private static bool foldout_MaxAttribute = true;
-        private static string[] weaponLevelNames;
+        private static string[] weaponLevelNames=null;
         private static int weaponLevelCount = 0;
-        private static bool[] WeaponEnableTable;
+        private static bool[] WeaponEnableTable=null;
         public const string DIRECTORY_PATH = DataBaseConst.DataBase_Career_Folder;
 
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "职业的唯一标识符");

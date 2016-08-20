@@ -42,12 +42,12 @@ public class SLGCamera : UActor
 	*/
     //边界最小值  
 
-    public Point2D ArrowPoint
+    public VInt2 ArrowPoint
     {
         get { return GetPlayerPawn<Pawn_BattleArrow>().Position; }
     }
     private Camera m_currentCamera;
-    public Point2D LastArrowPoint;
+    public VInt2 LastArrowPoint;
     public Vector3 ArrowPosition
     {
         get
@@ -134,13 +134,13 @@ public class SLGCamera : UActor
         iTween.Stop();
         iTween.MoveTo(gameObject, TargetPosition, smoothTime);
     }
-    private void SetTargetPosition(Point2D p)
+    private void SetTargetPosition(VInt2 p)
     {
         SetTargetPosition(p.x, p.y);
     }
     private void SetTargetPosition(int x, int y)
     {
-        TargetPosition = Point2D.Point2DToVector3(x, y, true) + Vector3.up * Height + ShiftVector;
+        TargetPosition = VInt2.VInt2ToVector3(x, y, true) + Vector3.up * Height + ShiftVector;
     }
     private void SetTargetPosition(Transform t)
     {

@@ -8,14 +8,14 @@ public class EnemyUnitSetting : MonoBehaviour
     [System.Serializable]
     public struct EnemyUnit
     {
-        public Point2D Coord;
+        public VInt2 Coord;
         public EnemyDef Enemy;
         public EnemyUnit(int x, int y, EnemyDef enemy = null)
         {
-            Coord = new Point2D(x, y);
+            Coord = new VInt2(x, y);
             Enemy = enemy;
         }
-        public EnemyUnit(Point2D p, EnemyDef enemy = null)
+        public EnemyUnit(VInt2 p, EnemyDef enemy = null)
         {
             Coord = p;
             Enemy = enemy;
@@ -25,14 +25,14 @@ public class EnemyUnitSetting : MonoBehaviour
     /// 保存当前物体所包含的地方单位列表
     /// </summary>
     public List<EnemyUnit> Units;
-    public bool Contains(Point2D p)
+    public bool Contains(VInt2 p)
     {
         foreach (EnemyUnit u in Units)
             if (u.Coord == p)
                 return true;
         return false;
     }
-    public int Remove(Point2D p)
+    public int Remove(VInt2 p)
     {
         int at = -1;
         for (int i = 0; i < Units.Count; i++)
@@ -48,9 +48,9 @@ public class EnemyUnitSetting : MonoBehaviour
     }
     public bool Contains(int x, int y)
     {
-        return Contains(new Point2D(x, y));
+        return Contains(new VInt2(x, y));
     }
-    public EnemyUnit GetUnit(Point2D p)
+    public EnemyUnit GetUnit(VInt2 p)
     {
         foreach (EnemyUnit u in Units)
             if (u.Coord == p)
@@ -59,7 +59,7 @@ public class EnemyUnitSetting : MonoBehaviour
     }
     public EnemyUnit GetUnit(int x, int y)
     {
-        return GetUnit(new Point2D(x, y));
+        return GetUnit(new VInt2(x, y));
     }
     public bool IsEmpty(EnemyUnit unit)
     {
@@ -67,7 +67,7 @@ public class EnemyUnitSetting : MonoBehaviour
             return true;
         return false;
     }
-    public EnemyDef GetDef(Point2D p)
+    public EnemyDef GetDef(VInt2 p)
     {
         foreach (EnemyUnit u in Units)
             if (u.Coord == p)
@@ -76,7 +76,7 @@ public class EnemyUnitSetting : MonoBehaviour
     }
     public EnemyDef GetDef(int x, int y)
     {
-        return GetDef(new Point2D(x, y));
+        return GetDef(new VInt2(x, y));
     }
     void OnDrawGizmosSelected()
     {

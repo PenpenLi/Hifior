@@ -64,7 +64,7 @@ namespace RPGEditor
 
                     if (Physics.Raycast(ray, out rayHit))
                     {
-                        Point2D p = Point2D.Vector3ToPoint2D(rayHit.point);
+                        VInt2 p = VInt2.Vector3ToPoint2D(rayHit.point);
 
                         x = Mathf.Clamp(p.x, 0, int.MaxValue);
                         y = Mathf.Clamp(p.y, 0, int.MaxValue);
@@ -116,11 +116,11 @@ namespace RPGEditor
         void OnCut()
         {
             unitMirror = unitSetting.GetUnit(x, y);
-            unitSetting.Remove(new Point2D(x, y));
+            unitSetting.Remove(new VInt2(x, y));
         }
         void OnDelete()
         {
-            unitSetting.Remove(new Point2D(x, y));
+            unitSetting.Remove(new VInt2(x, y));
         }
     }
 }

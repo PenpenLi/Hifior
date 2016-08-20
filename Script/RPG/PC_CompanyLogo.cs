@@ -81,7 +81,7 @@ public class PC_CompanyLogo : UPlayerController
     private void OnVertical()
     {
 
-        Utils.Log.Write("axis>0");
+        Log.Write("axis>0");
     }
     public const float TimeToAutoPlayMovie = 10f;
     public override void Tick(float DeltaSeconds)

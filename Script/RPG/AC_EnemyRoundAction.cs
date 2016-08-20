@@ -59,7 +59,7 @@ public class AC_EnemyRoundAction : UAIController
     public List<RPGCharacter> InAtkRangeEnemyList;
     RPGCharacter NearestEnemy;
     RPGCharacter Leader;
-    private Point2D AIPawnTilePos
+    private VInt2 AIPawnTilePos
     {
         get { return CurrentControledPawn.GetTileCoord(); }
     }
@@ -213,7 +213,7 @@ public class AC_EnemyRoundAction : UAIController
         for (int i = 0; i < _GS.GetNumLocalPlayers(); i++)
         {
             RPGCharacter Character = _GS.GetLocalPlayerByIndex(i) as RPGCharacter;
-            Point2D TilePos = Character.GetTileCoord();
+            VInt2 TilePos = Character.GetTileCoord();
             if (_Map.IsCoordsAccessable(TilePos.x, TilePos.y))
             {
                 InAtkRangeEnemyList.Add(Character);//将可以攻击到的角色添加到敌人可攻击列表
@@ -228,13 +228,13 @@ public class AC_EnemyRoundAction : UAIController
     private int CheckEnemyInAtkRange()
     {
         InAtkRangeEnemyList.Clear();
-        List<Point2D> _attackRange = _Map.FindAttackRangeWithoutShow(CurrentControledPawn);
+        List<VInt2> _attackRange = _Map.FindAttackRangeWithoutShow(CurrentControledPawn);
         GS_Battle _GS = GetGameStatus<GS_Battle>();
         for (int i = 0; i < _GS.GetNumLocalPlayers(); i++)
         {
             RPGCharacter Character = _GS.GetLocalPlayerByIndex(i) as RPGCharacter;
-            Point2D TilePos = Character.GetTileCoord();
-            if (_attackRange.Contains(new Point2D(TilePos.x, TilePos.y)))
+            VInt2 TilePos = Character.GetTileCoord();
+            if (_attackRange.Contains(new VInt2(TilePos.x, TilePos.y)))
             {
                 InAtkRangeEnemyList.Add(Character);//将可以攻击到的角色添加到敌人可攻击列表
             }
@@ -252,10 +252,10 @@ public class AC_EnemyRoundAction : UAIController
     {
         Debug.Log("Find Move");
         RPGCharacter Character = CurrentControledPawn;
-        Point2D AIPawnPos = Character.GetTileCoord();
+        VInt2 AIPawnPos = Character.GetTileCoord();
         RPGCharacter enemy = SelectEnemyToAttack(Character);
         if (enemy == null) return;
-        Point2D TileXY = GetSuitableTile(Character, enemy);
+        VInt2 TileXY = GetSuitableTile(Character, enemy);
         if (TileXY == AIPawnTilePos)
         {//原地不用移动则直接攻击
             Debug.Log("不用移动,直接攻击");
@@ -277,8 +277,8 @@ public class AC_EnemyRoundAction : UAIController
         for (int i = 0; i < _GS.GetNumLocalPlayers(); i++)
         {
             RPGCharacter Character = _GS.GetLocalPlayerByIndex(i) as RPGCharacter;
-            Point2D TilePos = Character.GetTileCoord();
-            int tempDistance = Point2D.GetDistance(Character.GetTileCoord(), CurrentControledPawn.GetTileCoord());
+            VInt2 TilePos = Character.GetTileCoord();
+            int tempDistance = VInt2.GetDistance(Character.GetTileCoord(), CurrentControledPawn.GetTileCoord());
             if (tempDistance < minDistance)
             {
                 minDistance = tempDistance;
@@ -289,10 +289,10 @@ public class AC_EnemyRoundAction : UAIController
         {
             _Map.InitActionScope(CurrentControledPawn, false);
             minDistance = 100;
-            Point2D Destine = new Point2D(0, 0);
-            foreach (Point2D p in _Map.GetRealMoveableTiles())//Plist里记录的是真实可以移动到达的区域部分
+            VInt2 Destine = new VInt2(0, 0);
+            foreach (VInt2 p in _Map.GetRealMoveableTiles())//Plist里记录的是真实可以移动到达的区域部分
             {
-                int tempDistance = Point2D.GetDistance(p, NearestEnemy.GetTileCoord());
+                int tempDistance = VInt2.GetDistance(p, NearestEnemy.GetTileCoord());
                 if (tempDistance < minDistance)
                 {
                     minDistance = tempDistance;
@@ -337,7 +337,7 @@ public class AC_EnemyRoundAction : UAIController
         RPGCharacter enemy = SelectEnemyToAttack(input);//获得需要攻击的角色,若为null则表明虽然范围内有符合范围的，但是因己方单位占用导致人物无法移动到那里
         //进行移动到这个角色周围，先获取可以攻击到该人物的所有可到达图块，然后找到最有利的图块，进行攻击
         if (enemy == null) return;
-        Point2D TileXY = GetSuitableTile(input, enemy);
+        VInt2 TileXY = GetSuitableTile(input, enemy);
         if (TileXY == input.GetTileCoord())//原地不用移动则直接攻击                      
         { //SLG.EnterBattle();
         }
@@ -426,7 +426,7 @@ public class AC_EnemyRoundAction : UAIController
             int tempDistance = 0;
             foreach (RPGCharacter ch in InAtkRangeEnemyList)
             {
-                tempDistance = Point2D.GetDistance(ch.GetTileCoord(), input.GetTileCoord());
+                tempDistance = VInt2.GetDistance(ch.GetTileCoord(), input.GetTileCoord());
                 if (tempDistance < minDistance)
                 {
                     minDistance = tempDistance;
@@ -450,15 +450,15 @@ public class AC_EnemyRoundAction : UAIController
             return 0;
         return attacker.GetAttack() - (defender.GetPhysicalDefense() + defender.GetMagicalDefense()) / 2;
     }
-    public Point2D GetSuitableTile(RPGCharacter attacker, RPGCharacter defender)//得到最适合的图块
+    public VInt2 GetSuitableTile(RPGCharacter attacker, RPGCharacter defender)//得到最适合的图块
     {
         //获取Map中可到达的图块数组，得到Gamechar周围的坐标，以自己的武器范围扩展在此范围内寻找回避+防御*10最大的图块
         int ex = defender.GetTileCoord().x;
         int ey = defender.GetTileCoord().y;
         _Map.FindAttackRange(ex, ey, attacker.Item.GetEquipWeapon().GetDefinition(), false);
-        List<Point2D> AttackRangeList = _Map.GetAttackRangeData();//得到敌方人物在我方武器的范围，存储在_AttackRangeData
+        List<VInt2> AttackRangeList = _Map.GetAttackRangeData();//得到敌方人物在我方武器的范围，存储在_AttackRangeData
         int tileValue = 0, tempTileValue = 0;
-        Point2D xy = new Point2D(-1, -1);
+        VInt2 xy = new VInt2(-1, -1);
         for (int i = 0; i < AttackRangeList.Count; i++)//在人物可攻击的坐标内
         {
             if (_Map.CanMoveTo(AttackRangeList[i]))//如果可攻击的坐标在人物的移动范围内
@@ -477,9 +477,9 @@ public class AC_EnemyRoundAction : UAIController
     }
     public int getCanAtkWeaponId(RPGCharacter attacker, RPGCharacter defender)//通过计算两个人物的距离获取可使用的武器ID
     {
-        Point2D Tile1 = attacker.GetTileCoord();
-        Point2D Tile2 = defender.GetTileCoord();
-        int i = Point2D.GetDistance(Tile1, Tile2);
+        VInt2 Tile1 = attacker.GetTileCoord();
+        VInt2 Tile2 = defender.GetTileCoord();
+        int i = VInt2.GetDistance(Tile1, Tile2);
         List<WeaponItem> attackItems = attacker.Item.GetAttackWeapon();
         for (int j = 0; j < attackItems.Count; j++)
         {

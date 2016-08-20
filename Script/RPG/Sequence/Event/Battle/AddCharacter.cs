@@ -14,7 +14,7 @@ namespace Sequence
         }
         public ECamp Camp;
         public int ID;
-        public Point2D Coord;
+        public VInt2 Coord;
         public bool UseDefaultAttribute = true;
         public CharacterAttribute Attribute;
         public List<int> Items;

@@ -13,7 +13,7 @@ namespace Sequence
         public RPGCharacter Character;
         public AddCharacter.ECamp Camp;
         public int CharacterID;
-        public Point2D[] TileCoords;
+        public VInt2[] TileCoords;
         public override void OnEnter()
         {
             if (Character == null)

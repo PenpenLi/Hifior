@@ -1,0 +1,19 @@
+﻿using UnityEditor;
+using UnityEngine;
+ 
+[CustomEditor(typeof(#SCRIPTNAME#))] 
+[ExecuteInEditMode]
+
+public class #SCRIPTNAME# : Editor {
+
+	public override void OnInspectorGUI() 
+	{
+
+	}
+	void OnSceneGUI()
+    {
+	}
+	void OnEnable()
+    {
+	}
+}

@@ -34,8 +34,8 @@ public class RPGCharacter : RPGCharacterBase
     protected bool bAttacking = false;
     protected int damageCount = 0;//收到伤害和造成伤害的次数
     [SerializeField]
-    protected Point2D tileCoords = Point2D.InvalidPoint;
-    protected Point2D oldTileCoords = Point2D.InvalidPoint;
+    protected VInt2 tileCoords = VInt2.InvalidPoint;
+    protected VInt2 oldTileCoords = VInt2.InvalidPoint;
     protected UnityAction Event_OnAttackFinish;
     public RPGCharacter()
     {
@@ -55,7 +55,7 @@ public class RPGCharacter : RPGCharacterBase
     {
         bEnableAction = true;
     }
-    public Point2D GetTileCoord()
+    public VInt2 GetTileCoord()
     {
         return tileCoords;
     }
@@ -74,7 +74,7 @@ public class RPGCharacter : RPGCharacterBase
         tileCoords.y = y;
         if (ChangeWorldPosition)
         {
-            transform.position = Point2D.Point2DToVector3(x, y, true);
+            transform.position = VInt2.VInt2ToVector3(x, y, true);
         }
         if (GetCamp() == EnumCharacterCamp.Player)
         {
@@ -170,7 +170,7 @@ public class RPGCharacter : RPGCharacterBase
     {
         GetGameMode<GM_Battle>().GetSLGMap().InitActionScope(this);
     }
-    public void MoveTo(Point2D Point, UnityAction Start = null, UnityAction End = null)
+    public void MoveTo(VInt2 Point, UnityAction Start = null, UnityAction End = null)
     {
         if (Point == GetTileCoord())
         {
@@ -194,10 +194,10 @@ public class RPGCharacter : RPGCharacterBase
     /// </summary>
     /// <param name="ShowRange">在战场上显示出范围</param>
     /// <returns></returns>
-    public List<Point2D> FindAttack(bool ShowRange)
+    public List<VInt2> FindAttack(bool ShowRange)
     {
         SLGMap m_slgmap = GetGameMode<GM_Battle>().GetSLGMap();
-        List<Point2D> p = ShowRange ? m_slgmap.FindAttackRange(tileCoords.x, tileCoords.y, Item.GetEquipWeapon().GetDefinition()) : m_slgmap.FindAttackRangeWithoutShow(this);
+        List<VInt2> p = ShowRange ? m_slgmap.FindAttackRange(tileCoords.x, tileCoords.y, Item.GetEquipWeapon().GetDefinition()) : m_slgmap.FindAttackRangeWithoutShow(this);
         return p;
     }
     /// <summary>

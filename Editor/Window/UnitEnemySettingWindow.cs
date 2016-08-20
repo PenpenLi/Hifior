@@ -220,7 +220,7 @@ namespace RPGEditor
             }
             else
             {
-                if (unit.Coord != new Point2D(previousX, previousY))
+                if (unit.Coord != new VInt2(previousX, previousY))
                 {
                     if (UnitSetting.Contains(unit.Coord))
                         return false;

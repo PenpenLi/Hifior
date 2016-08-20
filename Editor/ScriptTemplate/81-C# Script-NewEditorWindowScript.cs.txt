@@ -1,0 +1,96 @@
+﻿using UnityEngine;
+using UnityEditor;
+
+public class WindowEditor : EditorWindow {
+
+[MenuItem("Window/Liu")]
+static void Window()
+    {
+        Rect wr = new Rect(0, 0, 500, 500);
+        WindowEditor window = (WindowEditor)EditorWindow.GetWindowWithRect(typeof(WindowEditor), wr, true, "Liu");
+//普通的显示窗口
+window.Show();
+//作为一个工具窗口，始终显示在最上层，即使失去焦点
+window.ShowUtility();
+//如果失去焦点，则隐藏窗口
+window.ShowAsDropDown();
+//作为辅助窗口
+window.ShowAuxWindow();
+//显示一个窗口，并显示一个透明的弹窗
+ window.ShowNotification(new GUIContent("fdsaf", "haoa"));
+        window.Focus();
+    }   //输入文字的内容
+    private string text;
+    //选择贴图的对象
+    private Texture texture;
+
+    public void Awake()
+    {
+
+    }
+
+    void OnGUI()
+    {
+     
+        text = EditorGUILayout.TextField("输入文字:", text);
+
+        if (GUILayout.Button("打开通知", GUILayout.Width(200)))
+        {
+            this.ShowNotification(new GUIContent("This is a Notification"));
+        }
+
+        if (GUILayout.Button("关闭通知", GUILayout.Width(200)))
+        {
+            this.RemoveNotification();
+        }
+        EditorGUILayout.LabelField("鼠标在窗口的位置", Event.current.mousePosition.ToString());
+        texture = EditorGUILayout.ObjectField("添加贴图", texture, typeof(Texture), true) as Texture;
+
+        if (GUILayout.Button("关闭窗口", GUILayout.Width(200)))
+        {
+            this.Close();
+        }
+    }
+
+    void Update()
+    {
+
+    }
+
+    void OnFocus()
+    {
+        Debug.Log("当窗口获得焦点时调用一次");
+    }
+
+    void OnLostFocus()
+    {
+        Debug.Log("当窗口丢失焦点时调用一次");
+    }
+
+    void OnHierarchyChange()
+    {
+        Debug.Log("当Hierarchy视图中的任何对象发生改变时调用一次");
+    }
+
+    void OnProjectChange()
+    {
+        Debug.Log("当Project视图中的资源发生改变时调用一次");
+    }
+
+    void OnInspectorUpdate()
+    {
+        this.Repaint();
+    }
+
+    void OnSelectionChange()
+    {
+        foreach (Transform t in Selection.transforms)
+        {
+            Debug.Log("OnSelectionChange" + t.name);
+        }
+    }
+    void OnDestroy()
+    {
+        Debug.Log("当窗口关闭时调用");
+    }
+}

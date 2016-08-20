@@ -246,7 +246,7 @@ public class TerrainFoW : MonoBehaviour
 						alphasBkp [i, j, layerCount] = alphas [i, j, layerCount];
 						alphas [i, j, layerCount] = -0.1f;
 					} catch (Exception ex) {
-						//Empty Catch not to stop the processing of other positions in the array.
+                        throw ex;	//Empty Catch not to stop the processing of other positions in the array.
 					}	
 				}
 			}			
@@ -272,7 +272,7 @@ public class TerrainFoW : MonoBehaviour
 					try {	
 						alphas [i, j, layerCount] = alphasBkp [alphaMapStartPosZ + i, alphaMapStartPosX + j, layerCount];
 					} catch (Exception ex) {
-						//Empty Catch not to stop the processing of other positions in the array.
+                        throw ex;//Empty Catch not to stop the processing of other positions in the array.
 					}
 				}
 			}
@@ -327,7 +327,7 @@ public class TerrainFoW : MonoBehaviour
 				}
 			}
 		} catch (Exception ex) {
-			//Empty Catch not to stop the processing of other positions in the array.
+            throw ex;	//Empty Catch not to stop the processing of other positions in the array.
 		}
 		terr.terrainData.SetAlphamaps (alphaMapStartPosX, alphaMapStartPosZ, alphas);
 		

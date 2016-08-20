@@ -13,7 +13,7 @@ public class GameChar : MonoBehaviour//保存运行时的状态
 
     protected int DamageCount = 0;//收到伤害和造成伤害的次数
 
-    protected Point2D tileCoords;
+    protected VInt2 tileCoords;
 
     public bool Running
     {

@@ -20,7 +20,7 @@ public class GS_Battle : UGameStatus
         }
         return null;
     }
-    private T GetCharacterByPosition<T>(List<RPGCharacter> CharacterList, Point2D TilePosition) where T : RPGCharacter
+    private T GetCharacterByPosition<T>(List<RPGCharacter> CharacterList, VInt2 TilePosition) where T : RPGCharacter
     {
         for (int i = 0; i < CharacterList.Count; i++)
         {
@@ -42,7 +42,7 @@ public class GS_Battle : UGameStatus
     /// </summary>
     /// <param name="TilePosition"></param>
     /// <returns></returns>
-    public RPGPlayer GetPlayerAt(Point2D TilePosition)
+    public RPGPlayer GetPlayerAt(VInt2 TilePosition)
     {
         return GetCharacterByPosition<RPGPlayer>(LocalPlayers, TilePosition);
     }
@@ -55,7 +55,7 @@ public class GS_Battle : UGameStatus
     /// </summary>
     /// <param name="TilePosition"></param>
     /// <returns></returns>
-    public RPGEnemy GetEnemyAt(Point2D TilePosition)
+    public RPGEnemy GetEnemyAt(VInt2 TilePosition)
     {
         return GetCharacterByPosition<RPGEnemy>(LocalEnemies, TilePosition);
     }
@@ -64,7 +64,7 @@ public class GS_Battle : UGameStatus
     /// </summary>
     /// <param name="TilePosition"></param>
     /// <returns></returns>
-    public RPGCharacter GetAnyUnitAt(Point2D TilePosition)
+    public RPGCharacter GetAnyUnitAt(VInt2 TilePosition)
     {
         RPGCharacter Character = GetPlayerAt(TilePosition);
         if (Character == null)
@@ -86,19 +86,19 @@ public class GS_Battle : UGameStatus
     /// <summary>
     /// 获取相邻单位的角色
     /// </summary>
-    public List<RPGCharacter> GetNeighbors(Point2D TilePosition)
+    public List<RPGCharacter> GetNeighbors(VInt2 TilePosition)
     {
         List<RPGCharacter> Temp = new List<RPGCharacter>();
         for (int i = 0; i < LocalPlayers.Count; i++)
         {
-            if (Point2D.GetDistance(LocalPlayers[i].GetTileCoord(), TilePosition) == 1)
+            if (VInt2.GetDistance(LocalPlayers[i].GetTileCoord(), TilePosition) == 1)
             {
                 Temp.Add(LocalPlayers[i]);
             }
         }
         for (int i = 0; i < LocalEnemies.Count; i++)
         {
-            if (Point2D.GetDistance(LocalEnemies[i].GetTileCoord(), TilePosition) == 1)
+            if (VInt2.GetDistance(LocalEnemies[i].GetTileCoord(), TilePosition) == 1)
             {
                 Temp.Add(LocalEnemies[i]);
             }
