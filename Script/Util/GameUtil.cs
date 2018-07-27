@@ -52,7 +52,7 @@ namespace Utils
 
         public static void ScreenShot(string name)
         {
-            Application.CaptureScreenshot(name + ".png");
+            ScreenCapture.CaptureScreenshot(name + ".png");
         }
     }
 }

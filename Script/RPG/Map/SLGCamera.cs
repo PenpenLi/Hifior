@@ -8,7 +8,7 @@ public enum CameraControlMode
     FollowCharacter,
     FreeMove
 }
-public class SLGCamera : UActor
+public class SLGCamera:MonoBehaviour
 {
     private const float DEFAULT_CAMERA_HEIGHT = 180f;
     public float smoothTime = 1.5f;                // how smooth the camera movement is
@@ -42,17 +42,18 @@ public class SLGCamera : UActor
 	*/
     //边界最小值  
 
-    public VInt2 ArrowPoint
-    {
-        get { return GetPlayerPawn<Pawn_BattleArrow>().Position; }
-    }
+    //public VInt2 ArrowPoint
+    //{
+        //get { return GetPlayerPawn<Pawn_BattleArrow>().Position; }
+    //}
     private Camera m_currentCamera;
     public VInt2 LastArrowPoint;
     public Vector3 ArrowPosition
     {
         get
         {
-            return GetPlayerPawn<Pawn_BattleArrow>().transform.position;
+            return new Vector3();
+           // return GetPlayerPawn<Pawn_BattleArrow>().transform.position;
         }
     }
     private float widthBorder = Screen.width / 10;
@@ -65,12 +66,12 @@ public class SLGCamera : UActor
     {
         if (ControlMode == CameraControlMode.DisableControl)
             return;
-        if (LastArrowPoint != ArrowPoint)
+        //if (LastArrowPoint != ArrowPoint)
         {
-            LastArrowPoint = ArrowPoint;
+            //LastArrowPoint = ArrowPoint;
             if (ControlMode == CameraControlMode.FollowArrowCenter)
             {
-                SetTargetPosition(ArrowPoint);
+            //    SetTargetPosition(ArrowPoint);
                 MoveCameraToTargetPosition();
             }
             if (ControlMode == CameraControlMode.FollowArrowEdge)

@@ -29,11 +29,10 @@ namespace RPG.UI
             interrupt.onClick.AddListener(Button_Interrpt);
             endturn.onClick.AddListener(Button_EndTurn);
         }
-        public override void BeginPlay()
+        public void Start()
         {
-            base.BeginPlay();
             OnEndPlayerTurnClick = new UnityEvent();
-            OnEndPlayerTurnClick.AddListener(GetPlayerPawn<Pawn_BattleArrow>().EndPlayerTurn);
+           // OnEndPlayerTurnClick.AddListener(GetPlayerPawn<Pawn_BattleArrow>().EndPlayerTurn);
         }
         public override void Show()
         {
@@ -51,7 +50,7 @@ namespace RPG.UI
             AvailablePlayer.Add(2);
             ChapterRecord.AvailablePlayers = AvailablePlayer;
             ChapterRecord.Ware.Money = 10000;
-            ChapterRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+           // ChapterRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
             ChapterRecord.SaveBinary();
         }
         void Button_Army()
@@ -105,7 +104,7 @@ namespace RPG.UI
         public override void OnCancelKeyDown()
         {
             base.Hide();
-            Utils.GameUtil.DelayFunc(() => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
+           // Utils.GameUtil.DelayFunc(() => GetPlayerPawn<Pawn_BattleArrow>().SetArrowActive(true), 0.1f);
         }
     }
 }

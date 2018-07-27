@@ -5,18 +5,11 @@ using UnityEngine.Events;
 /// </summary>
 public class UPawn : UActor
 {
-    [Header("Pawn基类参数")]
-    public UController Controller;
-    UPlayerStatus PlayerState;
     public string PawnName;
 
     public UPawn()
     {
         CreatePlayerInputComponent();
-    }
-    public void SetPlayerState(UPlayerStatus PlayerState)
-    {
-        this.PlayerState = PlayerState;
     }
     public override void BeginPlay()
     {
@@ -53,64 +46,6 @@ public class UPawn : UActor
         {
             InputComponent.ClearBindingValues();
             InputComponent = null;
-        }
-    }
-
-    public void PossessedBy(UController NewController)
-    {
-        Controller = NewController;
-        this.enabled = true;
-        NewController.Possess(this);
-        if (Controller.PlayerState != null)
-        {
-            PlayerState = Controller.PlayerState;
-        }
-    }
-    public void UnPossessed()
-    {
-        UController OldController = Controller;
-        OldController.Possess(null);
-        PlayerState = null;
-        transform.SetParent(null);
-        Controller = null;
-        this.enabled = false;
-        // Unregister input component if we created one
-        DestroyPlayerInputComponent();
-    }
-    public bool IsControlled()
-    {
-        UPlayerController PC = (UPlayerController)(Controller);
-        return (PC != null);
-    }
-    /// <summary>
-    /// 获取Controller
-    /// </summary>
-    /// <returns></returns>
-    public UController GetController()
-    {
-        return Controller;
-    }
-    public override void EnableInput(UPlayerController PlayerController = null)
-    {
-        if (PlayerController == Controller || PlayerController == null)
-        {
-            InputComponent.bBlockInput = false;
-        }
-        else
-        {
-            Debug.LogError("EnableInput can only be specified on a Pawn for its Controller");
-        }
-    }
-
-    public override void DisableInput(UPlayerController PlayerController = null)
-    {
-        if (PlayerController == Controller || PlayerController == null)
-        {
-            InputComponent.bBlockInput = true;
-        }
-        else
-        {
-            Debug.LogError("DisableInput can only be specified on a Pawn for its Controller");
         }
     }
 

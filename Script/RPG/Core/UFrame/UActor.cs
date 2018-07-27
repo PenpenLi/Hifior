@@ -15,29 +15,9 @@ public class UActor : MonoBehaviour
     {
         return UGameInstance.Instance;
     }
-    public T GetGameMode<T>() where T : UGameMode
-    {
-        return GetGameInstance().GetGameMode<T>();
-    }
     public T GetPlayerPawn<T>() where T : UPawn
     {
         return GetGameInstance().GetPlayerPawn<T>();
-    }
-    public T GetPlayerController<T>() where T : UPlayerController
-    {
-        return GetGameInstance().GetPlayerController<T>();
-    }
-    public T GetGameStatus<T>() where T : UGameStatus
-    {
-        return GetGameInstance().GetGameState<T>();
-    }
-    public T GetHUD<T>() where T : UHUD
-    {
-        return GetGameInstance().GetHUD<T>();
-    }
-    public T GetPlayerState<T>() where T : UPlayerStatus
-    {
-        return GetGameInstance().GetPlayerState<T>();
     }
     public virtual string GetHumanReadableName()
     {
@@ -59,40 +39,7 @@ public class UActor : MonoBehaviour
     {
         InputComponent.BindAxis(KeyName, ActionDelegate);
     }
-    public virtual void EnableInput(UPlayerController PlayerController)
-    {
-        if (InputComponent == null)
-        {
-            InputComponent = new UInputComponent(this, transform.name + "_Input");
-            InputComponent.Priority = InputPriority;
-            InputComponent.bBlockInput = bBlockInput;
-        }
-        else
-        {
-            // Make sure we only have one instance of the InputComponent on the stack
-            PlayerController.PopInputComponent(InputComponent);
-        }
 
-        PlayerController.PushInputComponent(InputComponent);
-    }
-    public virtual void DisableInput(UPlayerController PlayerController)
-    {
-        if (InputComponent != null)
-        {
-            if (PlayerController)
-            {
-                PlayerController.PopInputComponent(InputComponent);
-            }
-            else
-            {
-                /*将所有的PlayerControllerPop下
-                for (FConstPlayerControllerIterator PCIt = GetWorld()->GetPlayerControllerIterator(); PCIt; ++PCIt)
-                {
-                    (*PCIt)->PopInputComponent(InputComponent);
-                }*/
-            }
-        }
-    }
     public void EnableTick()
     {
         bCanEverTick = true;

@@ -27,8 +27,8 @@ namespace RPG.UI
         public override void Show()
         {
             base.Show();
-            ChapterSettingDef def = GetGameMode<GM_Battle>().GetSLGChapter().ChapterSetting;
-            Init(GetGameInstance().GetAvailablePlayersInfo(), def.MaxPlayerCount, def.ForceInvolve, new List<int>());
+           // ChapterSettingDef def = GetGameMode<GM_Battle>().GetSLGChapter().ChapterSetting;
+          //  Init(GetGameInstance().GetAvailablePlayersInfo(), def.MaxPlayerCount, def.ForceInvolve, new List<int>());
         }
         public void Init(List<CharacterInfo> PlayerList, int PlayersLimit, List<int> ForceInvolve, List<int> ForceDontInvolve)
         {

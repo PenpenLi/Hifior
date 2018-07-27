@@ -5,7 +5,7 @@ using UnityEngine.Events;
 /// 用于战斗场景章节初始化，和SLGMap一起
 /// </summary>
 [RequireComponent(typeof(SLGMap))]
-public class SLGChapter : UActor
+public class SLGChapter : MonoBehaviour
 {
     #region 事件结构
     [System.Serializable]
@@ -201,7 +201,7 @@ public class SLGChapter : UActor
     {
         //播放完开始剧情后再OnFinish里添加结束后的事件，显示章节第一回合开始或者弹出准备画面
         //StartSequence.OnFinish.AddListener();
-        StartSequence.Execute(GetGameMode<GM_Battle>().OnStartSequenceFinished);
+       // StartSequence.Execute(GetGameMode<GM_Battle>().OnStartSequenceFinished);
     }
     public LocationEventType GetLocationEvent(VInt2 TilePosition, int CharacterID)
     {
@@ -289,7 +289,7 @@ public class SLGChapter : UActor
     public int WinX, WinY;
     public bool CheckWin_KillAllEnemy()
     {
-        if (HasWinCondition(EnumWinCondition.全灭敌人) && GetGameStatus<GS_Battle>().GetNumLocalEnemies() == 0)
+        if (HasWinCondition(EnumWinCondition.全灭敌人))// && GetGameStatus<GS_Battle>().GetNumLocalEnemies() == 0
             return true;
         else
             return false;

@@ -35,11 +35,7 @@ namespace Sequence
          */
         [NonSerialized]
         public Sequence RootSequence;
-
-        public T GetGameMode<T>()where T:UGameMode
-        {
-            return UGameInstance.Instance.GetGameMode<T>();
-        }
+        
         public virtual void Execute()
         {
             OnEnter();

@@ -588,8 +588,8 @@ namespace RPGEditor
                 tImporter.filterMode = FilterMode.Point;
                 tImporter.wrapMode = TextureWrapMode.Clamp;
                 tImporter.maxTextureSize = 64;
-                tImporter.textureFormat = TextureImporterFormat.AutomaticTruecolor;
-                EditorApplication.SaveAssets();
+                tImporter.textureCompression =  TextureImporterCompression.Compressed;
+                AssetDatabase.SaveAssets();
             }
             return tx;
         }
@@ -870,9 +870,9 @@ namespace RPGEditor
             EditorGUIUtility.labelWidth = 0;
             EditorGUIUtility.fieldWidth = 0;
         }
-        #region ×Ô¶¨ÒåÃæ°å
+        #region ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// <summary>
-        /// ½«List<int>×Ô¶¨ÒåÏÔÊ¾,ÐèÒªÔÚOnEnableÀï³õÊ¼»¯size
+        /// ï¿½ï¿½List<int>ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾,ï¿½ï¿½Òªï¿½ï¿½OnEnableï¿½ï¿½ï¿½Ê¼ï¿½ï¿½size
         /// </summary>
         /// <param name="size"></param>
         /// <param name="IDlist"></param>
@@ -905,7 +905,7 @@ namespace RPGEditor
             EditorGUILayout.EndHorizontal();
         }
         /// <summary>
-        /// ½«List<int> ×Ô¶¨ÒåÏÔÊ¾,²¢¿ÉÒÔÍ¨¹ýÏÂÀ­Ñ¡Ôñ,ÐèÒªÔÚOnEnableÀï³õÊ¼»¯size
+        /// ï¿½ï¿½List<int> ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½,ï¿½ï¿½Òªï¿½ï¿½OnEnableï¿½ï¿½ï¿½Ê¼ï¿½ï¿½size
         /// </summary>
         /// <param name="size"></param>
         /// <param name="IDlist"></param>

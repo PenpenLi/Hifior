@@ -20,7 +20,7 @@ namespace Sequence
         public List<int> Items;
         public override void OnEnter()
         {
-            GM_Battle GameMode = GetGameMode<GM_Battle>();
+            /*GM_Battle GameMode = GetGameMode<GM_Battle>();
             if (Camp == ECamp.我方)
             {
                 if (UseDefaultAttribute)
@@ -42,7 +42,7 @@ namespace Sequence
                 {
                     GameMode.AddEnemy(ID, Coord.x, Coord.y, Items, Attribute);
                 }
-            }
+            }*/
             Continue();
         }
     }

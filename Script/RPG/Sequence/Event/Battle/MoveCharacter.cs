@@ -16,19 +16,19 @@ namespace Sequence
         public VInt2[] TileCoords;
         public override void OnEnter()
         {
-            if (Character == null)
-            {
-                if (Camp == AddCharacter.ECamp.我方)
-                    Character = GetGameMode<GM_Battle>().GetGameStatus<GS_Battle>().GetPlayer(CharacterID);
-                else
-                    Character = GetGameMode<GM_Battle>().GetGameStatus<GS_Battle>().GetEnemy(CharacterID);
-            }
-            if (Character == null)
-            {
-                Continue();
-                Debug.LogError("没有找到该角色", gameObject);
-            }
-            GetGameMode<GM_Battle>().GetSLGMap().MoveByRoutine(Character, TileCoords, null, Continue);
+            //if (Character == null)
+            //{
+            //    if (Camp == AddCharacter.ECamp.我方)
+            //        Character = GetGameMode<GM_Battle>().GetGameStatus<GS_Battle>().GetPlayer(CharacterID);
+            //    else
+            //        Character = GetGameMode<GM_Battle>().GetGameStatus<GS_Battle>().GetEnemy(CharacterID);
+            //}
+            //if (Character == null)
+            //{
+            //    Continue();
+            //    Debug.LogError("没有找到该角色", gameObject);
+            //}
+            //GetGameMode<GM_Battle>().GetSLGMap().MoveByRoutine(Character, TileCoords, null, Continue);
         }
     }
 }

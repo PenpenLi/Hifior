@@ -27,25 +27,25 @@ namespace Sequence
         }
         public void LogicGetProps()
         {
-            UIController.Instance.GetUI<RPG.UI.GetItemOrMoney>().Hide();
-            if (PlayerID == -1)
-            {
-                RPGCharacter Character = GetGameMode<UGameMode>().GetPlayerPawn<Pawn_BattleArrow>().SelectedCharacter;
-                if (Character != null)
-                {
-                    Character.Item.AddProp(PropID, WaitSecondsToContinue);
-                }
-                else
-                {
-                    Debug.LogError("无法获取当前行动人物");
-                    Continue();
-                }
-            }
-            else
-            {
-                UGameInstance.Instance.GetGameState<GS_Battle>().GetPlayer(PlayerID).Item.AddProp(PropID, WaitSecondsToContinue);
-            }
-            Debug.Log(GetSummary());
+            //UIController.Instance.GetUI<RPG.UI.GetItemOrMoney>().Hide();
+            //if (PlayerID == -1)
+            //{
+            //    RPGCharacter Character = GetGameMode<UGameMode>().GetPlayerPawn<Pawn_BattleArrow>().SelectedCharacter;
+            //    if (Character != null)
+            //    {
+            //        Character.Item.AddProp(PropID, WaitSecondsToContinue);
+            //    }
+            //    else
+            //    {
+            //        Debug.LogError("无法获取当前行动人物");
+            //        Continue();
+            //    }
+            //}
+            //else
+            //{
+            //    UGameInstance.Instance.GetGameState<GS_Battle>().GetPlayer(PlayerID).Item.AddProp(PropID, WaitSecondsToContinue);
+            //}
+            //Debug.Log(GetSummary());
         }
 
     }

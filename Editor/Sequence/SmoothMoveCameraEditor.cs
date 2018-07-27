@@ -264,7 +264,7 @@ namespace Sequence
                         q.cutsceneCameraPoints[i].position = Handles.FreeMoveHandle(q.cutsceneCameraPoints[i].position, Quaternion.identity,
                                                                                     gizmoSize,
                                                                                     Vector3.zero,
-                                                                                    Handles.SphereCap);
+                                                                                    Handles.SphereHandleCap);
                     }
 
                     //Draw for each mid point
@@ -278,7 +278,7 @@ namespace Sequence
                             q.cutsceneMidPoints[i + 1].position = Handles.FreeMoveHandle(q.cutsceneMidPoints[i + 1].position, Quaternion.identity,
                                                                                        gizmoSize * 0.9f,
                                                                                        Vector3.zero,
-                                                                                       Handles.SphereCap);
+                                                                                       Handles.SphereHandleCap);
                         }
                     }
 
@@ -293,7 +293,7 @@ namespace Sequence
                             q.cutsceneCubicMidPoints[i + 1].position = Handles.FreeMoveHandle(q.cutsceneCubicMidPoints[i + 1].position, Quaternion.identity,
                                                                                             gizmoSize * 0.8f,
                                                                                             Vector3.zero,
-                                                                                            Handles.SphereCap);
+                                                                                            Handles.SphereHandleCap);
                         }
 
                         Handles.color = Color.green;

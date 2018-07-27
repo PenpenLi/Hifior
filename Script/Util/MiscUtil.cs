@@ -17,7 +17,7 @@ namespace Utils
             {
                 return null;
             }
-            Transform transform = ParentObject.transform.FindChild(Name);
+            Transform transform = ParentObject.transform.Find(Name);
             if (transform == null)
             {
                 return null;

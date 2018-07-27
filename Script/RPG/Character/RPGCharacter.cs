@@ -78,13 +78,13 @@ public class RPGCharacter : RPGCharacterBase
         }
         if (GetCamp() == EnumCharacterCamp.Player)
         {
-            GetGameMode<GM_Battle>().GetSLGMap().SetTilePlayerOccupied(tileCoords.x, tileCoords.y);
+           // GetGameMode<GM_Battle>().GetSLGMap().SetTilePlayerOccupied(tileCoords.x, tileCoords.y);
         }
         else
         {
-            GetGameMode<GM_Battle>().GetSLGMap().SetTileEnemyOccupied(tileCoords.x, tileCoords.y);
+          //  GetGameMode<GM_Battle>().GetSLGMap().SetTileEnemyOccupied(tileCoords.x, tileCoords.y);
         }
-        GetGameMode<GM_Battle>().GetSLGMap().ResetTileOccupyStatus(oldTileCoords.x, oldTileCoords.y);
+      //  GetGameMode<GM_Battle>().GetSLGMap().ResetTileOccupyStatus(oldTileCoords.x, oldTileCoords.y);
     }
     public void SetOldTileCoord(bool ChangeWorldPosition)
     {
@@ -97,7 +97,7 @@ public class RPGCharacter : RPGCharacterBase
     public virtual void StopRun()
     {
         bRunning = false;
-        GetGameMode<GM_Battle>().GetSLGMap().StopMoveImmediate();
+        //GetGameMode<GM_Battle>().GetSLGMap().StopMoveImmediate();
     }
     public int GetCareer()
     {
@@ -168,7 +168,7 @@ public class RPGCharacter : RPGCharacterBase
 
     public void ShowMovement()
     {
-        GetGameMode<GM_Battle>().GetSLGMap().InitActionScope(this);
+        //GetGameMode<GM_Battle>().GetSLGMap().InitActionScope(this);
     }
     public void MoveTo(VInt2 Point, UnityAction Start = null, UnityAction End = null)
     {
@@ -177,14 +177,14 @@ public class RPGCharacter : RPGCharacterBase
             End();
             return;
         }
-        SLGMap slgmap = GetGameMode<GM_Battle>().GetSLGMap();
-        if (slgmap.CanMoveTo(Point))
+       // SLGMap slgmap = GetGameMode<GM_Battle>().GetSLGMap();
+      //  if (slgmap.CanMoveTo(Point))
         {
             bRunning = true;
-            slgmap.Move(this, Start, () => { bRunning = false; End(); });
+       //     slgmap.Move(this, Start, () => { bRunning = false; End(); });
             SetTileCoord(Point.x, Point.y, false);
         }
-        else
+       // else
         {
             Debug.LogError("无法移动到目标点，SLGMap中CanMoveTo 返回False");
         }
@@ -196,9 +196,9 @@ public class RPGCharacter : RPGCharacterBase
     /// <returns></returns>
     public List<VInt2> FindAttack(bool ShowRange)
     {
-        SLGMap m_slgmap = GetGameMode<GM_Battle>().GetSLGMap();
-        List<VInt2> p = ShowRange ? m_slgmap.FindAttackRange(tileCoords.x, tileCoords.y, Item.GetEquipWeapon().GetDefinition()) : m_slgmap.FindAttackRangeWithoutShow(this);
-        return p;
+       // SLGMap m_slgmap = GetGameMode<GM_Battle>().GetSLGMap();
+       // List<VInt2> p = ShowRange ? m_slgmap.FindAttackRange(tileCoords.x, tileCoords.y, Item.GetEquipWeapon().GetDefinition()) : m_slgmap.FindAttackRangeWithoutShow(this);
+        return new List<VInt2>();
     }
     /// <summary>
     /// 是否已经完成攻击的过程了

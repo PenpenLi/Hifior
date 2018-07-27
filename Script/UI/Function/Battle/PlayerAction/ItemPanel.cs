@@ -98,7 +98,6 @@ namespace RPG.UI
         }
         public override void Tick(float DeltaTime)
         {
-            base.Tick(DeltaTime);
             if (Input.GetButtonDown("X"))
             {
                 if (currentSelectIndex < 0)

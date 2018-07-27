@@ -19,30 +19,6 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     /// 章节结束记录场景
     /// </summary>
     public const int SCENEINDEX_CHAPTER_ENDSAVE = 4;
-    private UGameMode ActiveGameMode;
-    #region UE4
-    public new T GetGameMode<T>() where T : UGameMode
-    {
-        if (ActiveGameMode == null)
-            ActiveGameMode = GameObject.FindObjectOfType<UGameMode>();
-        return (T)ActiveGameMode;
-    }
-    public new T GetPlayerPawn<T>() where T : UPawn
-    {
-        return ActiveGameMode.GetPlayerPawn<T>();
-    }
-    public new T GetPlayerController<T>() where T : UPlayerController
-    {
-        return ActiveGameMode.GetPlayerController<T>();
-    }
-    public new T GetPlayerState<T>() where T : UPlayerStatus
-    {
-        return ActiveGameMode.GetPlayerState<T>();
-    }
-    public T GetGameState<T>() where T : UGameStatus
-    {
-        return ActiveGameMode.GetGameStatus<T>();
-    }
 
     /** virtual function to allow custom GameInstances an opportunity to set up what it needs */
     public virtual void Initiate() { }
@@ -81,12 +57,6 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         InputModeUI = true;
         InputModeGame = true;
     }
-    public void SetGameMode(UGameMode GameMode)
-    {
-        UnityEngine.Assertions.Assert.IsNotNull<UGameMode>(GameMode, "The GameMode you assign is null");
-        ActiveGameMode = GameMode;
-    }
-    #endregion
 
     #region AssetBundle
     protected string BundleURL;
@@ -165,13 +135,13 @@ public class UGameInstance : MonoSingleton<UGameInstance>
     /// <param name="AfterStartSequence">是否是开始剧情播放完记录的</param>
     public void SaveChapter(bool AfterStartSequence)
     {
-        GM_Battle GameMode = GetGameMode<GM_Battle>();
+       // GM_Battle GameMode = GetGameMode<GM_Battle>();
         TempChapterEndRecord = new ChapterRecordCollection();
         TempChapterEndRecord.Chapter = ChapterID;
         TempChapterEndRecord.AfterStartSequence = AfterStartSequence;
         TempChapterEndRecord.AvailablePlayers = AvailablePlayers;
         TempChapterEndRecord.Ware = Ware;
-        TempChapterEndRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+        //TempChapterEndRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
     }
 
     public void SaveChapterToDisk(int Index)
@@ -228,7 +198,6 @@ public class UGameInstance : MonoSingleton<UGameInstance>
         base.Awake();
 
         SetInputModeGameAndUI();
-        ActiveGameMode = GameObject.FindObjectOfType<UGameMode>();
         Initiate();
     }
     /// <summary>

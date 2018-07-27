@@ -23,12 +23,7 @@ public class RPGPlayer : RPGCharacter
         PlayerDefinition = (PlayerDef)DefaultData;
         Item.AddWeapons(PlayerDefinition.DefaultWeapons);
     }
-    public override void SetupPlayerInputComponent(UInputComponent InInputComponent)
-    {
-        base.SetupPlayerInputComponent(InInputComponent);
-        InInputComponent.BindAction(InputIDentifier.INPUT_A, EInputActionType.IE_Released, A);
-        InInputComponent.BindAction(InputIDentifier.INPUT_B, EInputActionType.IE_Released, B);
-    }
+
     private void A()
     {
 

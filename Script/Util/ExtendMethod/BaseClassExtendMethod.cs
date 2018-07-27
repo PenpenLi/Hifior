@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using DG.Tweening;
 public static class BaseClassExtendMethod
 {
     public static void SetPositionX(this Transform tran, float x)
