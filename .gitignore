@@ -14,20 +14,15 @@
 *.pidb
 *.booproj
 
-# Unity3D generated meta files
 *.pidb.meta
+*.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
-/LevelAssets
-LevelAssets.meta
 *.tiff
 *.psd
-*.mp3
 *.ogg
+*.mp3
 *.ogv
-*.FBX
-*.fbx
 /StreamingAssets
 
-.meta

@@ -56,18 +56,6 @@ public class AssetbundlesMenuItems
 		//BuildAvatar.Export();
 	}
 
-	[MenuItem("Scene/StaticBatch")]
-	public static void StaticBatch()
-	{
-		BuildScript.StaticBatch();
-	}
-
-	[MenuItem("Scene/OutPutShelter")]
-	public static void OutPutShelter()
-	{
-		BuildScript.OutPutShelter();
-    }
-
     [MenuItem("Assets/Log Resources Relative Path")]
     public static void GetResourcesRelativePath()
     {
