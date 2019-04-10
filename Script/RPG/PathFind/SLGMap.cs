@@ -108,17 +108,17 @@ public class SLGMap : MonoBehaviour
     private EnumOccupyStatus[,] Tile_occupy;
     [Header("图块坐标详情")]
     [SerializeField]
-    private VInt2 CharacterCenter;//角色坐标
+    private Vector2Int CharacterCenter;//角色坐标
     [SerializeField]
-    private VInt2 MouseTileXY;
+    private Vector2Int MouseTileXY;
     [SerializeField]
-    private List<VInt2> PList;//Plist里记录的是真实可以移动到达的区域部分
-    private Dictionary<VInt2, VInt2> _FootData;//存储指定坐标处的剩余路径
-    private Dictionary<VInt2, int> _TempFootData = new Dictionary<VInt2, int>();//int表示剩余的移动范围消耗点
+    private List<Vector2Int> PList;//Plist里记录的是真实可以移动到达的区域部分
+    private Dictionary<Vector2Int, Vector2Int> _FootData;//存储指定坐标处的剩余路径
+    private Dictionary<Vector2Int, int> _TempFootData = new Dictionary<Vector2Int, int>();//int表示剩余的移动范围消耗点
     [SerializeField]
-    private List<VInt2> _AttackRangeData = new List<VInt2>();//int表示剩余的攻击范围消耗点
+    private List<Vector2Int> _AttackRangeData = new List<Vector2Int>();//int表示剩余的攻击范围消耗点
     [SerializeField]
-    private List<VInt2> _MoveRoute = new List<VInt2>();//存储移动路径
+    private List<Vector2Int> _MoveRoute = new List<Vector2Int>();//存储移动路径
     [Header("人物信息")]
     [SerializeField]
     private int _ItemRangeMin;//所有可用装备的最小范围
@@ -172,15 +172,15 @@ public class SLGMap : MonoBehaviour
     private MeshRenderer[] tileMeshRenders;
     [Header("范围数据")]
     [SerializeField]
-    private List<VInt2> m_AttackRangeList = new List<VInt2>();
+    private List<Vector2Int> m_AttackRangeList = new List<Vector2Int>();
     [SerializeField]
-    private List<VInt2> m_MoveRangeList = new List<VInt2>();
+    private List<Vector2Int> m_MoveRangeList = new List<Vector2Int>();
     [SerializeField]
-    private List<VInt2> m_SkillSelectRangeList = new List<VInt2>();
+    private List<Vector2Int> m_SkillSelectRangeList = new List<Vector2Int>();
     [SerializeField]
-    private List<VInt2> m_SkillEffectRangeList = new List<VInt2>();
+    private List<Vector2Int> m_SkillEffectRangeList = new List<Vector2Int>();
     [SerializeField]
-    private List<VInt2> m_CompanionRange = new List<VInt2>();
+    private List<Vector2Int> m_CompanionRange = new List<Vector2Int>();
     ////////////////////////////////////////////////////////////////////////////////
 
     void Awake()
@@ -197,8 +197,8 @@ public class SLGMap : MonoBehaviour
             tileMeshRenders[i] = transform.GetChild(i).GetComponent<MeshRenderer>();
         }
 
-        PList = new List<VInt2>();
-        _FootData = new Dictionary<VInt2, VInt2>();
+        PList = new List<Vector2Int>();
+        _FootData = new Dictionary<Vector2Int, Vector2Int>();
         Tile_type_prev = new int[TileWidth, TileHeight];
         Tile_occupy = new EnumOccupyStatus[TileWidth, TileHeight];
         bMoveAcessList = new bool[TileWidth, TileHeight];
@@ -337,12 +337,12 @@ public class SLGMap : MonoBehaviour
          if (Gamechar.SkillGroup.isHaveStaticSkill(19))
              _Mov += 2;*/
         _Career = Gamechar.GetCareer();
-        CharacterCenter = Gamechar.GetTileCoord();
+        CharacterCenter = new Vector2Int(Gamechar.GetTileCoord().x, Gamechar.GetTileCoord().x);
 
         ResetMoveAcessList();
         bMoveAcessList[CharacterCenter.x, CharacterCenter.y] = true;
         bMoveAcessListExcluded[CharacterCenter.x, CharacterCenter.y] = true;
-        _FootData.Add(CharacterCenter, VInt2.InvalidPoint);
+        _FootData.Add(CharacterCenter, new Vector2Int(-1, -1));
         _TempFootData.Add(CharacterCenter, _Mov);
 
         int countPoint = 0;
@@ -379,17 +379,17 @@ public class SLGMap : MonoBehaviour
 
     private void _FindDistance(int job, int movement)
     {
-        List<VInt2> buffer = new List<VInt2>(_TempFootData.Keys);
-        foreach (VInt2 key in buffer)
+        List<Vector2Int> buffer = new List<Vector2Int>(_TempFootData.Keys);
+        foreach (Vector2Int key in buffer)
         {
-            DirectionScan(key, new VInt2(key.x, key.y - 1), _TempFootData[key]); //北
-            DirectionScan(key, new VInt2(key.x, key.y + 1), _TempFootData[key]); //南
-            DirectionScan(key, new VInt2(key.x - 1, key.y), _TempFootData[key]); //西
-            DirectionScan(key, new VInt2(key.x + 1, key.y), _TempFootData[key]); //东
+            DirectionScan(key, new Vector2Int(key.x, key.y - 1), _TempFootData[key]); //北
+            DirectionScan(key, new Vector2Int(key.x, key.y + 1), _TempFootData[key]); //南
+            DirectionScan(key, new Vector2Int(key.x - 1, key.y), _TempFootData[key]); //西
+            DirectionScan(key, new Vector2Int(key.x + 1, key.y), _TempFootData[key]); //东
         }
     }
 
-    private void DirectionScan(VInt2 lastcord, VInt2 cord, int surplusConsum)
+    private void DirectionScan(Vector2Int lastcord, Vector2Int cord, int surplusConsum)
     {
         if (IsEffectivelyCoordinate(cord))
         {
@@ -401,7 +401,7 @@ public class SLGMap : MonoBehaviour
                     bMoveAcessList[cord.x, cord.y] = true;
                     if (!IsOccupiedBySameParty(cord.x, cord.y))//被相同方占用此处可以继续查找，但是不可以到达此处
                     {
-                        PList.Add(new VInt2(cord.x, cord.y));
+                        PList.Add(new Vector2Int(cord.x, cord.y));
                         bMoveAcessListExcluded[cord.x, cord.y] = true;
                     }
                     _TempFootData.Add(cord, value);
@@ -419,7 +419,7 @@ public class SLGMap : MonoBehaviour
         }
     }
 
-    private void AttackScan(VInt2 MoveablePoint)//输入的是需要遍历的边缘路径,攻击最小和最大范围
+    private void AttackScan(Vector2Int MoveablePoint)//输入的是需要遍历的边缘路径,攻击最小和最大范围
     {
         //查找四个方向的可用攻击范围坐标
         int x = MoveablePoint.x;
@@ -442,7 +442,7 @@ public class SLGMap : MonoBehaviour
                     else
                     {
                         bMoveAcessList[i, j] = true;
-                        VInt2 p = new VInt2(i, j);
+                        Vector2Int p = new Vector2Int(i, j);
                         _AttackRangeData.Add(p);
                     }
                 }
@@ -460,7 +460,7 @@ public class SLGMap : MonoBehaviour
                 else
                 {
                     bMoveAcessList[i, y] = true;
-                    VInt2 p = new VInt2(i, y);
+                    Vector2Int p = new Vector2Int(i, y);
                     _AttackRangeData.Add(p);
                 }
 
@@ -475,21 +475,21 @@ public class SLGMap : MonoBehaviour
                 else
                 {
                     bMoveAcessList[x, i] = true;
-                    VInt2 p = new VInt2(x, i);
+                    Vector2Int p = new Vector2Int(x, i);
                     _AttackRangeData.Add(p);
                 }
             }
         }
     }
     #region 范围显示
-    public void ShowRange(List<VInt2> Range, Color color)
+    public void ShowRange(List<Vector2Int> Range, Color color)
     {
-        foreach (VInt2 p in Range)
+        foreach (Vector2Int p in Range)
         {
             ShowRange(p, color);
         }
     }
-    public void ShowRange(VInt2 Point, Color color)
+    public void ShowRange(Vector2Int Point, Color color)
     {
         MeshRenderer mr = GetTileMeshRender(Point.x, Point.y);
         mr.material.SetColor("_Color", color);
@@ -508,29 +508,29 @@ public class SLGMap : MonoBehaviour
         m_AttackRangeList.AddRange(_AttackRangeData);
     }
 
-    public void ShowCompanionSprite(List<VInt2> Points)
+    public void ShowCompanionSprite(List<Vector2Int> Points)
     {
         ShowRange(Points, new Color(0.2f, 0.8f, 1, 0.5f));
         m_CompanionRange.AddRange(Points);
     }
 
-    public void ShowSkillPlayer(List<VInt2> Points)
+    public void ShowSkillPlayer(List<Vector2Int> Points)
     {
         ShowRange(Points, Color.green);
         m_SkillSelectRangeList.AddRange(Points);
     }
-    public void ShowSkillEnemy(List<VInt2> Points)
+    public void ShowSkillEnemy(List<Vector2Int> Points)
     {
         ShowRange(Points, Color.red);
         m_SkillSelectRangeList.AddRange(Points);
     }
-    public void ShowSkillBoth(List<VInt2> Points)
+    public void ShowSkillBoth(List<Vector2Int> Points)
     {
         ShowRange(Points, Color.black);
         m_SkillSelectRangeList.AddRange(Points);
     }
 
-    public void ShowSkillEffectRange(List<VInt2> selectPoints, List<VInt2> effectPoints, int effectType)
+    public void ShowSkillEffectRange(List<Vector2Int> selectPoints, List<Vector2Int> effectPoints, int effectType)
     {
         HideSkillEffect();
 
@@ -567,7 +567,7 @@ public class SLGMap : MonoBehaviour
 
     public void HideRoutine()
     {
-        foreach (VInt2 child in _MoveRoute)
+        foreach (Vector2Int child in _MoveRoute)
         {
             SetTileMaterialTexture(child.x, child.y, null);
         }
@@ -580,7 +580,7 @@ public class SLGMap : MonoBehaviour
     }
     public void HideAttackRange()
     {
-        foreach (VInt2 p in m_AttackRangeList)
+        foreach (Vector2Int p in m_AttackRangeList)
         {
             SetTileActive(p.x, p.y, false);
         }
@@ -588,7 +588,7 @@ public class SLGMap : MonoBehaviour
     }
     public void HideMoveRange()
     {
-        foreach (VInt2 p in m_MoveRangeList)
+        foreach (Vector2Int p in m_MoveRangeList)
         {
             SetTileActive(p.x, p.y, false);
         }
@@ -599,7 +599,7 @@ public class SLGMap : MonoBehaviour
     /// </summary>
     public void HideCompanionRange()
     {
-        foreach (VInt2 p in m_CompanionRange)
+        foreach (Vector2Int p in m_CompanionRange)
         {
             SetTileActive(p.x, p.y, false);
         }
@@ -607,7 +607,7 @@ public class SLGMap : MonoBehaviour
     }
     public void HideSkillSelect()
     {
-        foreach (VInt2 p in m_SkillSelectRangeList)
+        foreach (Vector2Int p in m_SkillSelectRangeList)
         {
             SetTileActive(p.x, p.y, false);
         }
@@ -615,7 +615,7 @@ public class SLGMap : MonoBehaviour
     }
     public void HideSkillEffect()
     {
-        foreach (VInt2 p in m_SkillEffectRangeList)
+        foreach (Vector2Int p in m_SkillEffectRangeList)
         {
             SetTileActive(p.x, p.y, false);
         }
@@ -626,7 +626,7 @@ public class SLGMap : MonoBehaviour
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public bool CanMoveTo(VInt2 point)
+    public bool CanMoveTo(Vector2Int point)
     {
         return _FootData.ContainsKey(point);
     }
@@ -634,7 +634,7 @@ public class SLGMap : MonoBehaviour
     public bool ShowMoveRoutine(int x, int y)
     {
         HideRoutine();
-        VInt2 point = new VInt2(x, y);
+        Vector2Int point = new Vector2Int(x, y);
         if (CanMoveTo(point))
         {
             buildMoveRoutine(x, y);
@@ -726,7 +726,7 @@ public class SLGMap : MonoBehaviour
     /// <param name="pFirst"></param>
     /// <param name="pSecond"></param>
     /// <returns></returns>
-    private int GetDirByPoint(VInt2 pFirst, VInt2 pSecond)
+    private int GetDirByPoint(Vector2Int pFirst, Vector2Int pSecond)
     {
         int dir;
         if (pSecond.x == pFirst.x)
@@ -749,7 +749,7 @@ public class SLGMap : MonoBehaviour
     public bool MoveWithOutShowRoutine(RPGCharacter Gamechar, int x, int y, UnityAction OnMoveFinish)
     {
         Gamechar.SetTileCoord(x, y, false);
-        VInt2 point = new VInt2(x, y);
+        Vector2Int point = new Vector2Int(x, y);
         if (_FootData.ContainsKey(point))
         {
             buildMoveRoutine(x, y);
@@ -762,8 +762,8 @@ public class SLGMap : MonoBehaviour
     private void buildMoveRoutine(int x, int y)//将存储在_FootData中的节点转换为实际移动路径
     {
         _MoveRoute.Clear();
-        VInt2 parentPoint = new VInt2(x, y);
-        while (parentPoint != VInt2.InvalidPoint) //当父节点存在时，不存在时为Point2D(-1,-1);
+        Vector2Int parentPoint = new Vector2Int(x, y);
+        while (parentPoint != new Vector2Int(-1, -1)) //当父节点存在时，不存在时为Point2D(-1,-1);
         {
             _MoveRoute.Add(parentPoint);
             parentPoint = _FootData[parentPoint];
@@ -815,7 +815,7 @@ public class SLGMap : MonoBehaviour
                 int c = 0;
                 for (int i = 0; i < _MoveRoute.Count; i++)//将动画数组复制到空间坐标
                 {
-                    paths[c] = VInt2.VInt2ToVector3(_MoveRoute[i].x, _MoveRoute[i].y, true);
+                    paths[c] = new Vector3(_MoveRoute[i].x, _MoveRoute[i].y, 0);
                     c++;
                 }
                 iTweenGameCharMove(Gamechar, paths, callStart, callEnd);
@@ -832,7 +832,7 @@ public class SLGMap : MonoBehaviour
     public void MoveThenAttack(RPGCharacter Gamechar, int x, int y, UnityAction callStart = null, UnityAction callEnd = null)  //直接移动到指定的地点,用于自动攻击的单位
     {
         Gamechar.SetTileCoord(x, y, false);
-        VInt2 point = new VInt2(x, y);
+        Vector2Int point = new Vector2Int(x, y);
         if (_FootData.ContainsKey(point))
         {
             buildMoveRoutine(x, y);
@@ -845,7 +845,7 @@ public class SLGMap : MonoBehaviour
                 int c = 0;
                 for (int i = 0; i < _MoveRoute.Count; i++)//将动画数组复制到空间坐标
                 {
-                    paths[c] = VInt2.VInt2ToVector3(_MoveRoute[i].x, _MoveRoute[i].y, true);
+                    //paths[c] = Vector2Int.Vector2IntToVector3(_MoveRoute[i].x, _MoveRoute[i].y, true);
                     c++;
                 }
                 iTweenGameCharMove(Gamechar, paths, callStart, callEnd);
@@ -856,7 +856,7 @@ public class SLGMap : MonoBehaviour
             }
         }
     }
-    public void MoveByRoutine(RPGCharacter Gamechar, VInt2[] p, UnityAction callStart = null, UnityAction callEnd = null)
+    public void MoveByRoutine(RPGCharacter Gamechar, Vector2Int[] p, UnityAction callStart = null, UnityAction callEnd = null)
     {
         Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y, true);
         _FootData.Clear();//存储指定坐标处的剩余路径
@@ -873,7 +873,7 @@ public class SLGMap : MonoBehaviour
                 int c = 0;
                 for (int i = 0; i < p.Length; i++)//将动画数组复制到空间坐标
                 {
-                    paths[c] = VInt2.VInt2ToVector3(p[i].x, p[i].y, true);
+                    //paths[c] = Vector2Int.Vector2IntToVector3(p[i].x, p[i].y, true);
                     c++;
                 }
                 iTweenGameCharMove(Gamechar, paths, callStart, callEnd);
@@ -966,7 +966,7 @@ public class SLGMap : MonoBehaviour
         AStarNode temp = endNode;
         while (temp != startNode)
         {
-            _MoveRoute.Add(new VInt2(temp._gridX, temp._gridY));
+            _MoveRoute.Add(new Vector2Int(temp._gridX, temp._gridY));
             temp = temp.parent;
         }
         _MoveRoute.Reverse();
@@ -1010,7 +1010,7 @@ public class SLGMap : MonoBehaviour
         iTween.Stop();
     }
 
-    private bool IsEffectivelyCoordinate(VInt2 p)
+    private bool IsEffectivelyCoordinate(Vector2Int p)
     {
         return p.x >= 0 && p.y >= 0 && p.x < TileWidth && p.y < TileHeight ? true : false;
     }
@@ -1023,7 +1023,7 @@ public class SLGMap : MonoBehaviour
         }
         else
         {
-            Debug.LogError("输入的坐标不是有效的坐标" + new VInt2(x, y));
+            Debug.LogError("输入的坐标不是有效的坐标" + new Vector2Int(x, y));
             return false;
         }
     }
@@ -1056,7 +1056,7 @@ public class SLGMap : MonoBehaviour
         return ResourceManager.GetMapDef().GetAvoid(mapData);
     }
 
-    public List<VInt2> FindAttackRangeWithoutShow(RPGCharacter Gamechar)//查找所有的武器所能攻击的范围
+    public List<Vector2Int> FindAttackRangeWithoutShow(RPGCharacter Gamechar)//查找所有的武器所能攻击的范围
     {
         _AttackRangeData.Clear();
         int x = Gamechar.GetTileCoord().x;
@@ -1081,7 +1081,7 @@ public class SLGMap : MonoBehaviour
                         int absLen = Mathf.Abs(i - x) + Mathf.Abs(j - y);
                         if (absLen < _ItemRangeMin || absLen > _ItemRangeMax)
                             continue;
-                        VInt2 p = new VInt2(i, j);
+                        Vector2Int p = new Vector2Int(i, j);
                         if (_AttackRangeData.Contains(p))
                             continue;
                         _AttackRangeData.Add(p);
@@ -1096,7 +1096,7 @@ public class SLGMap : MonoBehaviour
 
                     if (absLen < _ItemRangeMin || absLen > _ItemRangeMax)
                         continue;
-                    VInt2 p = new VInt2(i, y);
+                    Vector2Int p = new Vector2Int(i, y);
                     if (_AttackRangeData.Contains(p))
                         continue;
                     _AttackRangeData.Add(p);
@@ -1108,7 +1108,7 @@ public class SLGMap : MonoBehaviour
 
                     if (absLen < _ItemRangeMin || absLen > _ItemRangeMax)
                         continue;
-                    VInt2 p = new VInt2(x, i);
+                    Vector2Int p = new Vector2Int(x, i);
                     if (_AttackRangeData.Contains(p))
                         continue;
                     _AttackRangeData.Add(p);
@@ -1119,7 +1119,7 @@ public class SLGMap : MonoBehaviour
 
     }
 
-    public List<VInt2> FindAttackRange(int x, int y, WeaponDef EquipItem, bool bShow = true)//指定的坐标
+    public List<Vector2Int> FindAttackRange(int x, int y, WeaponDef EquipItem, bool bShow = true)//指定的坐标
     {
         _AttackRangeData.Clear();
         _ItemRangeMax = EquipItem.RangeType.MaxSelectRange;
@@ -1139,9 +1139,9 @@ public class SLGMap : MonoBehaviour
                     for (int j = up; j <= bottom; j++)
                     {
                         int absLen = Mathf.Abs(i - x) + Mathf.Abs(j - y);
-                        if (absLen < _ItemRangeMin || absLen > _ItemRangeMax || _AttackRangeData.Contains(new VInt2(i, j)))
+                        if (absLen < _ItemRangeMin || absLen > _ItemRangeMax || _AttackRangeData.Contains(new Vector2Int(i, j)))
                             continue;
-                        _AttackRangeData.Add(new VInt2(i, j));
+                        _AttackRangeData.Add(new Vector2Int(i, j));
                     }
                 }
             }
@@ -1150,17 +1150,17 @@ public class SLGMap : MonoBehaviour
                 for (int i = left; i <= right; i++)//得到x轴上所有的范围
                 {
                     int absLen = Mathf.Abs(i - x);
-                    if (absLen < _ItemRangeMin || absLen > _ItemRangeMax || _AttackRangeData.Contains(new VInt2(i, y)))
+                    if (absLen < _ItemRangeMin || absLen > _ItemRangeMax || _AttackRangeData.Contains(new Vector2Int(i, y)))
                         continue;
-                    _AttackRangeData.Add(new VInt2(i, y));
+                    _AttackRangeData.Add(new Vector2Int(i, y));
 
                 }
                 for (int i = up; i <= bottom; i++)//得到y轴上所有的范围
                 {
                     int absLen = Mathf.Abs(i - y);
-                    if (absLen < _ItemRangeMin || absLen > _ItemRangeMax || _AttackRangeData.Contains(new VInt2(x, i)))
+                    if (absLen < _ItemRangeMin || absLen > _ItemRangeMax || _AttackRangeData.Contains(new Vector2Int(x, i)))
                         continue;
-                    _AttackRangeData.Add(new VInt2(x, i));
+                    _AttackRangeData.Add(new Vector2Int(x, i));
                 }
             }
             if (rangeType == EnumWeaponRangeType.正方形)//为2矩形攻击范围
@@ -1173,7 +1173,7 @@ public class SLGMap : MonoBehaviour
                         int absY = Mathf.Abs(j - y);
                         if (absX < _ItemRangeMin && absY < _ItemRangeMin)//在其中xy均小于最小坐标的不符合，直接进行下一个循环
                             continue;
-                        _AttackRangeData.Add(new VInt2(i, j));
+                        _AttackRangeData.Add(new Vector2Int(i, j));
                     }
                 }
             }
@@ -1206,10 +1206,10 @@ public class SLGMap : MonoBehaviour
                         case EnumWeaponRangeType.正方形:
                             break;
                     }
-                    _AttackRangeData.Add(new VInt2(i + x, j + y));
+                    _AttackRangeData.Add(new Vector2Int(i + x, j + y));
                 }
             }
-            _AttackRangeData.Remove(new VInt2(x, y));
+            _AttackRangeData.Remove(new Vector2Int(x, y));
         }
         if (bShow)
         {
@@ -1221,7 +1221,7 @@ public class SLGMap : MonoBehaviour
     {
         return bMoveAcessList;
     }
-    public List<VInt2> GetAttackRangeData()
+    public List<Vector2Int> GetAttackRangeData()
     {
         return _AttackRangeData;
     }
@@ -1256,7 +1256,7 @@ public class SLGMap : MonoBehaviour
             child.gameObject.SetActive(true);
         }*/
     }
-    public List<VInt2> GetRealMoveableTiles()
+    public List<Vector2Int> GetRealMoveableTiles()
     {
         return PList;
     }

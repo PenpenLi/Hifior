@@ -6,7 +6,7 @@ namespace RPGEditor
     public class CombatBuffDefEditor : Editor
     {
 
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Combat Buff";
+        public const string DIRECTORY_PATH = DataBaseConst.DataBase_CombatBuff_Folder;
         [MenuItem("RPGEditor/Create Combat Buff", false, 0)]
         public static CombatBuffDef CreateCombatBuff()
         {

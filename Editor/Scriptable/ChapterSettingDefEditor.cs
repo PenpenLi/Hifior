@@ -13,7 +13,7 @@ namespace RPGEditor
         private static int weaponRoomCount = 0;
         private static int propRoomCount = 0;
 
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Chapter Setting";
+        public const string DIRECTORY_PATH =DataBaseConst.DataBase_ChapterSetting_Folder;
 
         [MenuItem("RPGEditor/Create ChapterSetting", false)]
         public static ChapterSettingDef CreateWeapon()

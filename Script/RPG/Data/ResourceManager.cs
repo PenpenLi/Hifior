@@ -58,11 +58,7 @@ public static class ResourceManager
         ChapterSettingDef def = UGameInstance.LoadAssetFromBundle<ChapterSettingDef>(Path.Combine(Application.streamingAssetsPath, ASSET_CHAPTERSETTING), ChapterIndex.ToString());
         return def.CommonProperty.Name;
     }
-    [RuntimeInitializeOnLoadMethod]
-    static void Run()
-    {
-        Debug.Log(GetChapterName(0));
-    }
+
     public static PropsDef GetPropsDef(int ID)
     {
         return GetDef(propsDefTable, ASSET_PROPS, ID);

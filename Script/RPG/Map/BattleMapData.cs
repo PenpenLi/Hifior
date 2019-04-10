@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [CreateAssetMenu]
 public class BattleMapData : ExtendScriptableObject
 {
-    public TileData[] Data;
+    public TileDataOld[] Data;
     public int MapWidth;
     public int MapHeight;
     public void InitMapData(int width, int height, float[,] TerrainHeights, int[,] type)
@@ -18,18 +18,18 @@ public class BattleMapData : ExtendScriptableObject
         }
         MapWidth = width;
         MapHeight = height;
-        Data = new TileData[width * height];
+        Data = new TileDataOld[width * height];
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
                 int index = y * MapWidth + x;
-                Data[index] = new TileData(x, y, type[x, y], TerrainHeights[x, y]);
+                Data[index] = new TileDataOld(x, y, type[x, y], TerrainHeights[x, y]);
 
             }
         }
     }
-    public TileData GetTileData(int x, int y)
+    public TileDataOld GetTileData(int x, int y)
     {
         return Data[y * MapWidth + x];
     }

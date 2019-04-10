@@ -8,13 +8,13 @@ public enum CameraControlMode
     FollowCharacter,
     FreeMove
 }
-public class SLGCamera:MonoBehaviour
+public class SLGCamera : MonoBehaviour
 {
     private const float DEFAULT_CAMERA_HEIGHT = 180f;
     public float smoothTime = 1.5f;                // how smooth the camera movement is
 
     public float moveSpeed = 7.0f;
-
+    public Vector2Int maxMoveable;
 
     public CameraControlMode ControlMode;
 
@@ -22,41 +22,11 @@ public class SLGCamera:MonoBehaviour
     private Transform TargetTransform;
     public float Height = 180;
     public Vector3 ShiftVector = Vector3.zero;
-    /*
-    public float maxDistance = 30f;
-    public float minDistance = 10f;
-    private int zoomRate = 40;
-    private float panSpeed = 0.3f;
-    private float zoomDampening = 5.0f;
-     private float autoRotate = 1f;
-     private float autoRotateSpeed = 0.1f;
 
-    private float currentDistance;
-    private float desiredDistance;
-    private Quaternion currentRotation;
-    private Quaternion desiredRotation;
-    private Quaternion rotation;
-    private Vector3 position;
-    // private float idleTimer = 0.0f;
-    // private float idleSmooth = 0.0f;
-	*/
-    //边界最小值  
-
-    //public VInt2 ArrowPoint
-    //{
-        //get { return GetPlayerPawn<Pawn_BattleArrow>().Position; }
-    //}
     private Camera m_currentCamera;
     public VInt2 LastArrowPoint;
-    public Vector3 ArrowPosition
-    {
-        get
-        {
-            return new Vector3();
-           // return GetPlayerPawn<Pawn_BattleArrow>().transform.position;
-        }
-    }
-    private float widthBorder = Screen.width / 10;
+
+    private float widthBorder = Screen.height / 10;
     private float heightBorder = Screen.height / 10;
     void Awake()
     {
@@ -71,7 +41,7 @@ public class SLGCamera:MonoBehaviour
             //LastArrowPoint = ArrowPoint;
             if (ControlMode == CameraControlMode.FollowArrowCenter)
             {
-            //    SetTargetPosition(ArrowPoint);
+                //    SetTargetPosition(ArrowPoint);
                 MoveCameraToTargetPosition();
             }
             if (ControlMode == CameraControlMode.FollowArrowEdge)
@@ -89,7 +59,7 @@ public class SLGCamera:MonoBehaviour
     /// <returns></returns>
     private bool ShouldMoveCamera()
     {
-        Vector3 subPos = transform.position - ArrowPosition;
+        Vector3 subPos = transform.position;
         bool shouldMove = false;
         float left = subPos.x - 40;
         if (left > 0)
@@ -119,97 +89,26 @@ public class SLGCamera:MonoBehaviour
         if (!shouldMove)
             TargetPosition = transform.position;
         return shouldMove;
-        /* Vector3 ve= m_currentCamera.ViewportToScreenPoint(ArrowPosition);
-             float perX = ve.x / Screen.width;
-             if ( perX< 0.2f)
-             {
-                start transform.TransformVector(Vector3.left);
-             }
-         if (perX > 0.8f)
-         {
-             transform.TransformVector(Vector3.left);
-         }*/
     }
     public void MoveCameraToTargetPosition()
     {
         iTween.Stop();
         iTween.MoveTo(gameObject, TargetPosition, smoothTime);
     }
-    private void SetTargetPosition(VInt2 p)
-    {
-        SetTargetPosition(p.x, p.y);
-    }
-    private void SetTargetPosition(int x, int y)
-    {
-        TargetPosition = VInt2.VInt2ToVector3(x, y, true) + Vector3.up * Height + ShiftVector;
-    }
-    private void SetTargetPosition(Transform t)
-    {
-        TargetPosition = t.position + Vector3.up * Height + ShiftVector;
-    }
-    void HandleZoom()
-    {
-        if (Input.GetAxis("Mouse ScrollWheel") < 0)
-        {
-            if (Camera.main.fieldOfView <= 85.0f)
-                Camera.main.fieldOfView += 3.0f;
-            if (Camera.main.orthographicSize <= 50.0f)
-                Camera.main.orthographicSize += 0.5f;
-        }
-        //Zoom in
-        if (Input.GetAxis("Mouse ScrollWheel") > 0)
-        {
-            if (Camera.main.fieldOfView > 15.0f)
-                Camera.main.fieldOfView -= 3.0f;
-            if (Camera.main.orthographicSize >= 20f)
-                Camera.main.orthographicSize -= 0.5f;
-        }
-    }
+
+
     void LateUpdate()
     {
-
-        /* if (Input.GetKeyUp(KeyCode.E))//绕镜头旋转
-         {
-             if (currentDirection == 0 || currentDirection == -1)
-             {
-                 currentDirection++;
-                 RotateCamera(1);
-             }
-         }
-         if (Input.GetKeyUp(KeyCode.Q))//绕镜头旋转
-         {
-             if (currentDirection == 0 || currentDirection == 1)
-             {
-                 currentDirection--;
-                 RotateCamera(-1);
-             }
-         }*/
-
-        if (Input.GetKey(KeyCode.W) && transform.rotation.eulerAngles.x > 45f)
-        {
-            transform.Rotate(Vector3.left, 0.1f);
-        }
-        if (Input.GetKey(KeyCode.S) && transform.rotation.eulerAngles.x < 70f)
-        {
-            transform.Rotate(Vector3.right, 0.1f);
-        }
-        /*if (Input.GetKey(KeyCode.Q))
-        {
-            transform.Rotate(Vector3.forward, 0.2f);
-        }
-        if (Input.GetKey(KeyCode.E))
-        {
-            transform.Rotate(Vector3.back, 0.2f);
-        }*/
         Vector3 mousePos = Input.mousePosition;
-        if (mousePos.y > Screen.height - heightBorder)
-            transform.Translate(Vector3.up * 10 * Time.deltaTime, Space.Self);
-        if (mousePos.x < widthBorder)
-            transform.Translate(Vector3.left * 10 * Time.deltaTime, Space.Self);
-        if (mousePos.y < heightBorder)
-            transform.Translate(Vector3.down * 10 * Time.deltaTime, Space.Self);
-        if (mousePos.x > Screen.width - widthBorder)
-            transform.Translate(Vector3.right * 10 * Time.deltaTime, Space.Self);
+        var localPos = PositionMath.TilePositionToLocalPosition(maxMoveable);
+        if (mousePos.x > Screen.height - widthBorder && transform.localPosition.x < localPos.x)
+            transform.Translate(Vector3.right * PositionMath.TileLength, Space.Self);
+        if (mousePos.y > Screen.height - heightBorder  && transform.localPosition.y < 0)
+            transform.Translate(Vector3.up * PositionMath.TileLength, Space.Self);
+        if (mousePos.x < widthBorder && transform.localPosition.x > 0)
+            transform.Translate(Vector3.left * PositionMath.TileLength, Space.Self);
+        if (mousePos.y < heightBorder&& transform.localPosition.y >= localPos.y)
+            transform.Translate(Vector3.down * PositionMath.TileLength, Space.Self);
     }
 }
 

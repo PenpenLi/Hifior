@@ -1,5 +1,5 @@
 ﻿[System.Serializable]
-public struct TileData
+public struct TileDataOld
 {
     public int X;
     public int Y;
@@ -12,7 +12,7 @@ public struct TileData
     /// </summary>
     public float Height;
 
-    public TileData(int x, int y, int type, float height = 0f)
+    public TileDataOld(int x, int y, int type, float height = 0f)
     {
         X = x;
         Y = y;

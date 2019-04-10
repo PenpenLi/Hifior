@@ -12,9 +12,14 @@ namespace RPGEditor
 
         public const string DataBase_Career_Folder = DataBaseConst.ScriptableObjectBasePath + "Career";
 
+        public const string DataBase_CombatBuff_Folder = DataBaseConst.ScriptableObjectBasePath + "Combat Buffer";
+
         public const string DataBase_Player_Folder = DataBaseConst.ScriptableObjectBasePath + "Character/Player";
         public const string DataBase_Enemy_Folder = DataBaseConst.ScriptableObjectBasePath + "Character/Enemy";
-        
+
+        public const string DataBase_ChapterSetting_Folder = DataBaseConst.ScriptableObjectBasePath + "Chapter Setting";
+        public const string DataBase_PassiveSkill_Folder = DataBaseConst.ScriptableObjectBasePath + "Passive Skill";
+
         public const string DataBase_GameSetting_File = DataBaseConst.ScriptableObjectBasePath + "Misc/MiscCoefficientSetting.asset";
     }
 }

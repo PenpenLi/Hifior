@@ -4,9 +4,10 @@ using UnityEngine.Events;
 /// <summary>
 /// 用于战斗场景章节初始化，和SLGMap一起
 /// </summary>
-[RequireComponent(typeof(SLGMap))]
+//[RequireComponent(typeof(SLGMap))]
 public class SLGChapter : MonoBehaviour
 {
+    Grid grid;
     #region 事件结构
     [System.Serializable]
     public class EventTypeBase
@@ -199,9 +200,10 @@ public class SLGChapter : MonoBehaviour
 
     public void Start()
     {
+        grid = GetComponent<Grid>();
         //播放完开始剧情后再OnFinish里添加结束后的事件，显示章节第一回合开始或者弹出准备画面
         //StartSequence.OnFinish.AddListener();
-       // StartSequence.Execute(GetGameMode<GM_Battle>().OnStartSequenceFinished);
+        // StartSequence.Execute(GetGameMode<GM_Battle>().OnStartSequenceFinished);
     }
     public LocationEventType GetLocationEvent(VInt2 TilePosition, int CharacterID)
     {
@@ -365,4 +367,17 @@ public class SLGChapter : MonoBehaviour
         return EnumTables.MaskFieldIdentify(ChapterSetting.WinCondition.Condition, (int)Condition);
     }
     #endregion
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
+            Vector3Int position = grid.WorldToCell(worldPoint);
+            Debug.Log(PositionMath.GridPositionToTilePosition(position));
+        }
+    }
+#endif
 }

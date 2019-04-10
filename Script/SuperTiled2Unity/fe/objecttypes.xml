@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="Forest" color="#26a410">
+  <property name="Atk" type="int" default="1"/>
+  <property name="Avoid" type="int" default="2"/>
+ </objecttype>
+ <objecttype name="Ocean" color="#666ea4">
+  <property name="Avoid" type="int" default="2"/>
+  <property name="Def" type="int" default="1"/>
+ </objecttype>
+</objecttypes>

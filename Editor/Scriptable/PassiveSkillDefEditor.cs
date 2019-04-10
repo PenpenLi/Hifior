@@ -7,7 +7,7 @@ namespace RPGEditor
     public class PassiveSkillDefEditor : Editor
     {
         PassiveSkillDef passiveSkill;
-        public const string DIRECTORY_PATH = "Assets/RPG Data/Passive Skill";
+        public const string DIRECTORY_PATH =DataBaseConst.DataBase_PassiveSkill_Folder;
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "技能的唯一标识符");
         private readonly GUIContent guiContent_Name = new GUIContent("技能名称", "技能的名称");
         private readonly GUIContent guiContent_Desc = new GUIContent("技能描述", "技能的详细描述介绍");
