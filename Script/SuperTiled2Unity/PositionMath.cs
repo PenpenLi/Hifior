@@ -13,49 +13,42 @@ public static class PositionMath
     {
         return new Vector2Int(pos.x, -pos.y - 1);
     }
-
+    public static Vector3Int TilePositionToGridPosition(Vector2Int pos)
+    {
+        return new Vector3Int(pos.x, -1 - pos.y, 0);
+    }
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y
     /// <summary>
-    /// 前一个图块类型
+    /// 图块类型
     /// </summary>
-    private static int[,] Tile_type_prev;
+    public static ETileType[,] _MapTileType;
     /// <summary>
     /// 图块占用
     /// </summary>
     private static EnumOccupyStatus[,] _Tile_occupy;
     private static Vector2Int _CharacterCenter;//角色坐标
     private static Vector2Int _MouseTileXY;
-    private static List<Vector2Int> _PList;//Plist里记录的是真实可以移动到达的区域部分
-    private static Dictionary<Vector2Int, Vector2Int> _FootData;//存储指定坐标处的剩余路径
+    private static List<Vector2Int> _PList = new List<Vector2Int>();//Plist里记录的是真实可以移动到达的区域部分
+    public static List<Vector2Int> MoveableAreaPoints { get { return _PList; } }
+    private static Dictionary<Vector2Int, Vector2Int> _FootData = new Dictionary<Vector2Int, Vector2Int>();//存储指定坐标处的剩余路径
     private static Dictionary<Vector2Int, int> _TempFootData = new Dictionary<Vector2Int, int>();//int表示剩余的移动范围消耗点
     private static List<Vector2Int> _AttackRangeData = new List<Vector2Int>();//int表示剩余的攻击范围消耗点
-    private static List<Vector2Int> _MoveRoute = new List<Vector2Int>();//存储移动路径
+    public static List<Vector2Int> AttackAreaPoints { get { return _AttackRangeData; } }
     private static int _ItemRangeMin;//所有可用装备的最小范围
     private static int _ItemRangeMax; //所有可用装备的最大范围
     private static int _Mov; //移动力
-    private static int _Career;
+    private static EMoveClassType _MoveClass;//移动分类
     private static EnumWeaponRangeType _WeaponRangeType;
     /// <summary>
-                                                        /// 包含己方单位的可用坐标
-                                                        /// </summary>
+    /// 包含己方单位的可用坐标
+    /// </summary>
     private static bool[,] _bMoveAcessList;
     /// <summary>
     /// 排除了己方单位的可用坐标,也就是未被占用的坐标
     /// </summary>
     private static bool[,] _bMoveAcessListExcluded;
     private static bool _bPlayer;
-    private static MeshRenderer[] _tileMeshRenders;
-
-    private static List<Vector2Int> m_AttackRangeList = new List<Vector2Int>();
-
-    private static List<Vector2Int> m_MoveRangeList = new List<Vector2Int>();
-
-    private static List<Vector2Int> m_SkillSelectRangeList = new List<Vector2Int>();
-
-    private static List<Vector2Int> m_SkillEffectRangeList = new List<Vector2Int>();
-
-    private static List<Vector2Int> m_CompanionRange = new List<Vector2Int>();
 
     private static void ResetMoveAcessList()
     {
@@ -74,6 +67,24 @@ public static class PositionMath
     }
 
     #region 图块占用处理函数
+    public static void ClearPathHistory()
+    {
+        _Tile_occupy = null;
+        _bMoveAcessList = null;
+        _bMoveAcessListExcluded = null;
+    }
+    public static void SetTileTypeData(ETileType[,] data)
+    {
+        _MapTileType = data;
+        TileWidth = data.GetLength(0);
+        TileHeight = data.GetLength(1);
+        if (_Tile_occupy == null || _bMoveAcessList == null || _bMoveAcessListExcluded == null)
+        {
+            _Tile_occupy = new EnumOccupyStatus[TileWidth, TileHeight];
+            _bMoveAcessList = new bool[TileWidth, TileHeight];
+            _bMoveAcessListExcluded = new bool[TileWidth, TileHeight];
+        }
+    }
     public static void SetTileEnemyOccupied(int x, int y)
     {
         if (IsEffectivelyCoordinateWithWarning(x, y))
@@ -160,16 +171,16 @@ public static class PositionMath
     {
         return x >= 0 && y >= 0 && x < TileWidth && y < TileHeight;
     }
-    public static int GetMapPassValue(int job, int x, int y)//得到此处的人物通过消耗
+    public static int GetMapPassValue(EMoveClassType moveClass, int x, int y)//得到此处的人物通过消耗
     {
         if (IsOccupiedByDiffentParty(x, y))//图块被敌方占用，则我方不可通过,敌方按正常计算
         {
             return 100;
         }
         else
-            return 1;
+            return FeTileData.TileInfos[_MapTileType[x, y]].GetMoveCost(moveClass);
     }
-    private static void _FindDistance(int job, int movement)
+    private static void _FindDistance(int movement)
     {
         List<Vector2Int> buffer = new List<Vector2Int>(_TempFootData.Keys);
         foreach (Vector2Int key in buffer)
@@ -185,7 +196,7 @@ public static class PositionMath
     {
         if (IsEffectivelyCoordinate(cord))
         {
-            int value = surplusConsum - GetMapPassValue(_Career, cord.x, cord.y);//该坐标处剩余可行步数
+            int value = surplusConsum - GetMapPassValue(_MoveClass, cord.x, cord.y);//该坐标处剩余可行步数
             if (value >= 0)
             {
                 if (!_bMoveAcessList[cord.x, cord.y])
@@ -273,7 +284,7 @@ public static class PositionMath
             }
         }
     }
-    public static void InitActionScope(EnumCharacterCamp camp, int career, int Movement,Vector2Int pos, EnumWeaponType weaponRangeType, Vector2Int atkRange)
+    public static void InitActionScope(EnumCharacterCamp camp, EMoveClassType moveClass, int Movement, Vector2Int pos, EnumWeaponType weaponRangeType, Vector2Int atkRange)
     {
         _bPlayer = (camp == EnumCharacterCamp.Player);//0,2为我方的单位
 
@@ -282,7 +293,7 @@ public static class PositionMath
              _Job = 15;//medifyneed
          if (Gamechar.SkillGroup.isHaveStaticSkill(19))
              _Mov += 2;*/
-        _Career = 1;
+        _MoveClass = moveClass;
         _CharacterCenter = pos;
 
         ResetMoveAcessList();
@@ -295,11 +306,11 @@ public static class PositionMath
 
         while (countPoint < _Mov)
         {
-            _FindDistance(_Career, _Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
+            _FindDistance(_Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
             countPoint++;
         }
 
-        if (atkRange.x>0&& atkRange.y>0)//装备武器不为空
+        if (atkRange.x > 0 && atkRange.y > 0)//装备武器不为空
         {
             _AttackRangeData.Clear();
             _ItemRangeMin = atkRange.x;

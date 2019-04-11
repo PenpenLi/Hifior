@@ -81,7 +81,6 @@ public class SLGMap : MonoBehaviour
                 g.transform.localPosition = new Vector3(x * CELLSIZE, HEIGHTOFFSET, y * CELLSIZE);
                 PositionGrid pg = g.GetComponent<PositionGrid>();
                 pg.Init(CELLSIZE, x, y);
-                g.AddComponent<TileType>();
                 DestroyImmediate(pg);
             }
         }

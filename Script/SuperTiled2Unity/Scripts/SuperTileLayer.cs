@@ -7,6 +7,10 @@ namespace SuperTiled2Unity
 {
     public class SuperTileLayer : SuperLayer
     {
+        TilemapData data;
+        private void Start()
+        {
+        }
     }
 }
  

@@ -11,21 +11,22 @@ public class PathShower : MonoBehaviour
         Heal,
         Both
     }
+    [Tooltip("将所有的SpriteRenderer的SortOrder设置为255")]
     public Transform[] ShowerTransform;
     Transform GetTransformRoot(EPathShowerType t) { return ShowerTransform[(int)t]; }
     GameObject GetFirstPathShower(EPathShowerType t) { return GetTransformRoot(t).GetChild(0).gameObject; }
-    void SetVisible(EPathShowerType t, bool show)
+    public void SetVisible(EPathShowerType t, bool show)
     {
         GetTransformRoot(t).gameObject.SetActive(show);
     }
-    void HideAll()
+    public void HideAll()
     {
-        foreach(Transform v in ShowerTransform)
+        foreach (Transform v in ShowerTransform)
         {
             v.gameObject.SetActive(false);
         }
     }
-    void ShowTiles(EPathShowerType t, List<Vector2Int> pos, bool showNow = true,bool hideOther = true)
+    public void ShowTiles(EPathShowerType t, List<Vector2Int> pos, bool showNow = true, bool hideOther = true)
     {
         var transRoot = GetTransformRoot(t);
         int tileCount = transRoot.childCount;
@@ -36,7 +37,7 @@ public class PathShower : MonoBehaviour
             for (int i = 0; i < needCount; i++)
             {
                 GameObject newObj = GameObject.Instantiate(GetFirstPathShower(t));
-                newObj.transform.SetParent(transRoot,false);
+                newObj.transform.SetParent(transRoot, false);
             }
         }
         int iter = 0;
@@ -48,7 +49,7 @@ public class PathShower : MonoBehaviour
             }
             else
             {
-                v.localPosition =PositionMath.TilePositionToLocalPosition(pos[iter]);
+                v.localPosition = PositionMath.TilePositionToLocalPosition(pos[iter]);
                 v.gameObject.SetActive(true);
             }
             iter++;
@@ -64,7 +65,7 @@ public class PathShower : MonoBehaviour
     }
     void Start()
     {
-        ShowTiles(EPathShowerType.Damage, new List<Vector2Int> { new Vector2Int(0, 1), new Vector2Int(6, 5),new Vector2Int(1,2),new Vector2Int(2,2) });
+        ShowTiles(EPathShowerType.Damage, new List<Vector2Int> { new Vector2Int(0, 1), new Vector2Int(6, 5), new Vector2Int(1, 2), new Vector2Int(2, 2) });
     }
 
     // Update is called once per frame

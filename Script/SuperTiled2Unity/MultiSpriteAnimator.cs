@@ -12,6 +12,7 @@ public class MultiSpriteAnimator : MonoBehaviour
     {
         sizeOfSprites = sprites.Length;
         render = GetComponent<SpriteRenderer>();
+        if (switchTime < 0.001f) switchTime = 0.1f;
     }
 
     // Update is called once per frame

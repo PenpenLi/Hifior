@@ -44,11 +44,12 @@ public class GetGridTileData : MonoBehaviour
             Debug.Log("id=" + t.m_TileId + " tile=" + tileType.ToString() + "cost=" + moveCost);
 
             PositionMath.SetTileTypeData(mapTileType);
-            PositionMath.InitActionScope(EnumCharacterCamp.Player, EMoveClassType.Savege, 6, tilePos, EnumWeaponType.光明, Vector2Int.zero);
             PositionMath.SetTileEnemyOccupied(3, 1);
             PositionMath.SetTileEnemyOccupied(3, 0);
             PositionMath.SetTilePlayerOccupied(6, 0);
+            PositionMath.InitActionScope(EnumCharacterCamp.Player, EMoveClassType.Savege, 6, tilePos, EnumWeaponType.光明, Vector2Int.one);
             moveShower.ShowTiles(PathShower.EPathShowerType.Move, PositionMath.MoveableAreaPoints);
+            moveShower.ShowTiles(PathShower.EPathShowerType.Damage, PositionMath.AttackAreaPoints, true, false);
         }
 
     }
