@@ -11,7 +11,7 @@ public class CharacterInfo : SerializableBase
     public int Exp;
     public int Career;
     public CharacterAttribute Attribute;
-    public List<WeaponItem> Items;
+    public ItemGroup Items;
     public override string GetKey()
     {
         return ID.ToString();
@@ -23,7 +23,6 @@ public class CharacterInfo : SerializableBase
         Exp = Character.GetLevel();
         Career = Character.GetCareer();
         Attribute = Character.GetAttribute();
-        Items = Character.Item.Weapons;
     }
     public override string ToString()
     {

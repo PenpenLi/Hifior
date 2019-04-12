@@ -7,6 +7,7 @@ public class FeTileInfo
     public ETileType type;
     public string name;
     public int avoid;
+    public int recover;
     public int phyDef;
     public int fireDef;
     public int iceDef;
@@ -16,7 +17,7 @@ public class FeTileInfo
     {
         type = _type;
         name = type.ToString();
-        avoid = phyDef = fireDef = iceDef = thunderDef = 0;
+        avoid = recover = phyDef = fireDef = iceDef = thunderDef = 0;
         moveCost = new int[(int)EMoveClassType.Count] { 1, 1, 1, 1, 1, 1 };
 
     }
@@ -100,7 +101,7 @@ public static class FeTileData
         TileInfos.Add(ETileType.Door, CreateTileInfo(ETileType.Door).DenyMove());
         TileInfos.Add(ETileType.Gate, CreateTileInfo(ETileType.Gate, 30, 3, 3, 3, 3));
         TileInfos.Add(ETileType.Throne, CreateTileInfo(ETileType.Throne, 30, 3, 3, 3, 3));
-        TileInfos.Add(ETileType.Village, CreateTileInfo(ETileType.Village, 20, 1,1,1,1));
+        TileInfos.Add(ETileType.Village, CreateTileInfo(ETileType.Village, 20, 1, 1, 1, 1));
         TileInfos.Add(ETileType.House, CreateTileInfo(ETileType.House, 10, 1, 1, 1, 1));
         TileInfos.Add(ETileType.WeaponShop, CreateTileInfo(ETileType.WeaponShop, 10, 1, 1, 1, 1));
         TileInfos.Add(ETileType.ItemShop, CreateTileInfo(ETileType.ItemShop, 10, 1, 1, 1, 1));

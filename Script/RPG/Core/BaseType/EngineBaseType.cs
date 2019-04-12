@@ -28,13 +28,3 @@ public enum ESceneState
     Battle,
     GameOver
 }
-public enum EBattleStatus
-{
-    剧情,
-    回合动画, 
-    选择角色,
-    选定移动,
-    选定动作,
-    攻击过程,
-
-}
