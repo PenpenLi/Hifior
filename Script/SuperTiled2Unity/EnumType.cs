@@ -1,10 +1,4 @@
-﻿public enum EUnitType
-{
-    Player,
-    Enemy,
-    Ally,
-    NPC
-}
+﻿
 public enum ETileType
 {
     Unreachable,

@@ -8,7 +8,8 @@ namespace RPG.UI
         public ItemElement[] Elements;
         List<WeaponItem> WeaponItems;
         List<PropsItem> PropsItems;
-
+        public UnityAction<WeaponItem> AddWeaponToWarehouseAction;
+        public UnityAction<PropsItem> AddPropToWarehouseAction;
         /// <summary>
         /// 显示所有武器，选择一个武器送到运输队里去
         /// </summary>
@@ -52,10 +53,10 @@ namespace RPG.UI
         public void InitButton(int index, WeaponItem Weapon)
         {
             WeaponDef def = Weapon.GetDefinition();
-            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, def.IsInifiniteUsage() ? " -- " : Weapon.Usage + "/" + def.UseNumber,true);
+            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, def.IsInifiniteUsage() ? " -- " : Weapon.Usage + "/" + def.UseNumber, true);
             Elements[index].RegisterClickEvent(() =>
             {
-                GetGameInstance().Ware.AddWeapon(Weapon);
+                AddWeaponToWarehouseAction(Weapon);
                 WeaponItems.RemoveAt(index);
                 Hide();
             });
@@ -69,10 +70,10 @@ namespace RPG.UI
         public void InitButton(int index, PropsItem Prop)
         {
             PropsDef def = Prop.GetDefinition();
-            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, PropsThirdText(def, Prop.Usage),true);
+            Elements[index].Show(index, def.Icon, def.CommonProperty.Name, PropsThirdText(def, Prop.Usage), true);
             Elements[index].RegisterClickEvent(() =>
             {
-                GetGameInstance().Ware.AddProp(Prop);
+                AddPropToWarehouseAction(Prop);
                 PropsItems.RemoveAt(index);
                 Hide();
             });

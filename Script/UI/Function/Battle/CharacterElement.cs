@@ -15,7 +15,7 @@ namespace RPG.UI
         {
             CharIndex = index;
             gameChar = ch;
-            textName.text = ch.PawnName;
+            textName.text = ch.GetCharacterName();
             imageIcon.sprite = ch.GetPortrait();
         }
 

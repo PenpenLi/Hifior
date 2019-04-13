@@ -9,7 +9,8 @@ public class PathShower : MonoBehaviour
         Damage,
         Move,
         Heal,
-        Both
+        Both,
+        HighLight
     }
     [Tooltip("将所有的SpriteRenderer的SortOrder设置为255")]
     public Transform[] ShowerTransform;
@@ -18,6 +19,12 @@ public class PathShower : MonoBehaviour
     public void SetVisible(EPathShowerType t, bool show)
     {
         GetTransformRoot(t).gameObject.SetActive(show);
+        bVisible = true;
+    }
+    bool bVisible = false;
+    public bool IsRangeVisible()
+    {
+        return bVisible;
     }
     public void HideAll()
     {
@@ -25,6 +32,16 @@ public class PathShower : MonoBehaviour
         {
             v.gameObject.SetActive(false);
         }
+        bVisible = false;
+    }
+    public void HidePath(EPathShowerType t)
+    {
+        ShowerTransform[(int)t].gameObject.SetActive(false);
+    }
+    public void ShowHighLightTiles(List<Vector2Int> pos)
+    {
+        HidePath(EPathShowerType.HighLight);
+        ShowTiles(EPathShowerType.HighLight, pos, true, false);
     }
     public void ShowTiles(EPathShowerType t, List<Vector2Int> pos, bool showNow = true, bool hideOther = true)
     {
@@ -49,7 +66,7 @@ public class PathShower : MonoBehaviour
             }
             else
             {
-                v.localPosition = PositionMath.TilePositionToLocalPosition(pos[iter]);
+                v.localPosition = PositionMath.TilePositionToTileLocalPosition(pos[iter]);
                 v.gameObject.SetActive(true);
             }
             iter++;
@@ -63,7 +80,7 @@ public class PathShower : MonoBehaviour
             SetVisible(t, true);
         }
     }
-    void Start()
+    /*void Start()
     {
         ShowTiles(EPathShowerType.Damage, new List<Vector2Int> { new Vector2Int(0, 1), new Vector2Int(6, 5), new Vector2Int(1, 2), new Vector2Int(2, 2) });
     }
@@ -85,5 +102,5 @@ public class PathShower : MonoBehaviour
                 new Vector2Int(0, 1)
             });
         }
-    }
+    }*/
 }

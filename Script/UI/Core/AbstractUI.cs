@@ -7,7 +7,7 @@ using System;
 
 namespace RPG.UI
 {
-    public class AbstractUI : UActor, IComparable<AbstractUI>
+    public class AbstractUI : MonoBehaviour, IComparable<AbstractUI>
     {
 
         [Header("AbstructUI 基类参数")]
@@ -19,6 +19,19 @@ namespace RPG.UI
         {
             Init();
         }
+        void Start()
+        {
+            BeginPlay();
+        }
+        public virtual void BeginPlay()
+        {
+
+        }
+        void Update()
+        {
+            Tick(Time.deltaTime);
+        }
+        public virtual void Tick(float DeltaTime) { }
         protected virtual void OnEnable()
         {
             SortUIPosition();
@@ -221,16 +234,5 @@ namespace RPG.UI
         #endregion
         public virtual void OnCancelKeyDown() { }
         public virtual void OnSubmitKeyDown() { }
-        public void FixedUpdate()
-        {
-            if (Input.GetButtonDown(InputIDentifier.INPUT_CANCEL) && UGameInstance.InputModeUI)
-            {
-                OnCancelKeyDown();
-            }
-            if (Input.GetButtonDown(InputIDentifier.INPUT_SUBMIT) && UGameInstance.InputModeUI)
-            {
-                OnSubmitKeyDown();
-            }
-        }
     }
 }

@@ -4,6 +4,12 @@ namespace Utils
 {
     public class GameUtil
     {
+        public static GameMode gameMode;
+        [RuntimeInitializeOnLoadMethod]
+        public static void RunOnStart()
+        {
+            gameMode = GameMode.Instance;
+        }
         private static IEnumerator IEnumDelayFunc(UnityEngine.Events.UnityAction Action, float Time)
         {
             yield return new WaitForSeconds(Time);
@@ -11,8 +17,8 @@ namespace Utils
         }
         public static void DelayFunc(UnityEngine.Events.UnityAction Action, float Time)
         {
-            UnityEngine.Assertions.Assert.IsNotNull(UGameInstance.Instance,"GameInstance 是Null，请确保GameInstance 存在于场景中且Active");
-            UGameInstance.Instance.StartCoroutine(IEnumDelayFunc(Action, Time));
+            UnityEngine.Assertions.Assert.IsNotNull(gameMode, "GameMode 是Null，请确保存在于场景中且Active");
+            gameMode.StartCoroutine(IEnumDelayFunc(Action, Time));
         }
         public static void DelayFunc(MonoBehaviour Mono, UnityEngine.Events.UnityAction Action, float Time)
         {
@@ -40,7 +46,7 @@ namespace Utils
         {
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
         }
-        
+
         public static void Quit()
         {
 #if (UNITY_EDITOR)

@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
-/// <summary>
-/// 用于战斗场景章节初始化，和SLGMap一起
-/// </summary>
-//[RequireComponent(typeof(SLGMap))]
+
 public class SLGChapter : MonoBehaviour
 {
     Grid grid;
@@ -284,11 +281,6 @@ public class SLGChapter : MonoBehaviour
     #endregion
 
     #region 章节设置
-    public int Condition;
-    public int BossID;
-    public int CityID;
-    public int Round;
-    public int WinX, WinY;
     public bool CheckWin_KillAllEnemy()
     {
         if (HasWinCondition(EnumWinCondition.全灭敌人))// && GetGameStatus<GS_Battle>().GetNumLocalEnemies() == 0
@@ -367,17 +359,4 @@ public class SLGChapter : MonoBehaviour
         return EnumTables.MaskFieldIdentify(ChapterSetting.WinCondition.Condition, (int)Condition);
     }
     #endregion
-
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
-            Vector3Int position = grid.WorldToCell(worldPoint);
-            Debug.Log(PositionMath.GridPositionToTilePosition(position));
-        }
-    }
-#endif
 }

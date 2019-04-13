@@ -58,22 +58,23 @@ namespace RPG.UI
             {
                 ItemsBG.sprite = ch.GetPortrait();
             }
+            var item = ch.Logic().Item;
             if (ShowMode <= Mode.选择装备的武器)
             {
-                int itemCount = ch.Item.GetWeaponCount();
-                weaponItems = ch.Item.Weapons.ToArray();
-                int EquipIndex = ch.Item.GetEquipIndex();
+                int itemCount = item.GetWeaponCount();
+                weaponItems = item.Weapons.ToArray();
+                int EquipIndex = item.GetEquipIndex();
                 for (int i = 0; i < itemCount; i++)
                 {
                     WeaponDef def = weaponItems[i].GetDefinition();
                     string ShowName = EquipIndex == i ? def.CommonProperty.Name + Utils.TextUtil.GetColorString("  E", Color.yellow) : def.CommonProperty.Name;
-                    Elements[i].Show(i, def.Icon, ShowName, weaponItems[i].Usage + "/" + Utils.TextUtil.GetColorString(weaponItems[i].GetMaxUsage().ToString(), Color.green), ch.Item.IsWeaponEnabled(weaponItems[i].ID), def.Tooltip);
+                    Elements[i].Show(i, def.Icon, ShowName, weaponItems[i].Usage + "/" + Utils.TextUtil.GetColorString(weaponItems[i].GetMaxUsage().ToString(), Color.green), item.IsWeaponEnabled(weaponItems[i].ID), def.Tooltip);
                 }
             }
             else
             {
-                int propsCount = ch.Item.GetPropsCount();
-                propsItems = ch.Item.Props.ToArray();
+                int propsCount = item.GetPropsCount();
+                propsItems = item.Props.ToArray();
 
                 for (int i = 0; i < propsCount; i++)
                 {

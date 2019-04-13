@@ -24,8 +24,11 @@ namespace RPGEditor
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "职业的唯一标识符");
         private readonly GUIContent guiContent_Name = new GUIContent("职业名称", "职业的名称");
         private readonly GUIContent guiContent_Desc = new GUIContent("职业描述", "职业的详细描述介绍");
+        private readonly GUIContent guiContent_WaitAnim = new GUIContent("等待图标", "等待时显示的图标");
+        private readonly GUIContent guiContent_MoveAnim = new GUIContent("移动图标", "移动时显示的图标");
 
         CareerDef career;
+        SerializedProperty staysp, movesp;
         public override void OnInspectorGUI()
         {
             //在最开始写Label会显示在最上面
@@ -39,6 +42,13 @@ namespace RPGEditor
             career.CommonProperty.Description = EditorGUILayout.TextField(guiContent_Desc, career.CommonProperty.Description);
 
             career.Icon = (Sprite)EditorGUILayout.ObjectField("图标", career.Icon, typeof(Sprite), false);
+
+            serializedObject.Update();
+            EditorGUILayout.PropertyField(staysp, guiContent_WaitAnim, true);
+
+            EditorGUILayout.PropertyField(movesp, guiContent_MoveAnim, true);
+            serializedObject.ApplyModifiedProperties();
+
             career.Level = (EnumCareerLevel)EditorGUILayout.EnumPopup("职业等级", career.Level);
             career.Series = (EnumCareerSeries)EditorGUILayout.EnumPopup("职业系", career.Series);
 
@@ -102,6 +112,8 @@ namespace RPGEditor
         public void OnEnable()
         {
             career = target as CareerDef;
+            staysp = serializedObject.FindProperty("Stay");
+            movesp = serializedObject.FindProperty("Move");
             weaponLevelNames = System.Enum.GetNames(typeof(EnumWeaponType));
             weaponLevelCount = weaponLevelNames.Length;
             if (career.UseWeaponTypeLevel == null)
@@ -124,9 +136,9 @@ namespace RPGEditor
     {
         private static bool foldout_UseableWeapon = true;
         private static bool foldout_MaxAttribute = true;
-        private static string[] weaponLevelNames=null;
+        private static string[] weaponLevelNames = null;
         private static int weaponLevelCount = 0;
-        private static bool[] WeaponEnableTable=null;
+        private static bool[] WeaponEnableTable = null;
         public const string DIRECTORY_PATH = DataBaseConst.DataBase_Career_Folder;
 
         private readonly GUIContent guiContent_ID = new GUIContent("ID", "职业的唯一标识符");

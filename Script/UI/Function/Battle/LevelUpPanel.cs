@@ -29,16 +29,16 @@ namespace RPG.UI
             bShowFinish = false;
             gameObject.SetActive(true);
             PanelJobAndLevel.SetActive(true);
-
-            tAbilityValue[0].text = ch.GetLevel().ToString();
-            tAbilityValue[1].text = ch.GetMaxHP().ToString();
-            tAbilityValue[2].text = ch.GetPhysicalPower().ToString();
-            tAbilityValue[3].text = ch.GetMagicalPower().ToString();
-            tAbilityValue[4].text = ch.GetSkill().ToString();
-            tAbilityValue[5].text = ch.GetSpeed().ToString();
-            tAbilityValue[6].text = ch.GetLuck().ToString();
-            tAbilityValue[7].text = ch.GetPhysicalDefense().ToString();
-            tAbilityValue[8].text = ch.GetMagicalDefense().ToString();
+            var logic = ch.Logic();
+            tAbilityValue[0].text = logic.GetLevel().ToString();
+            tAbilityValue[1].text = logic.GetMaxHP().ToString();
+            tAbilityValue[2].text = logic.GetPhysicalPower().ToString();
+            tAbilityValue[3].text = logic.GetMagicalPower().ToString();
+            tAbilityValue[4].text = logic.GetSkill().ToString();
+            tAbilityValue[5].text = logic.GetSpeed().ToString();
+            tAbilityValue[6].text = logic.GetLuck().ToString();
+            tAbilityValue[7].text = logic.GetPhysicalDefense().ToString();
+            tAbilityValue[8].text = logic.GetMagicalDefense().ToString();
 
             for (int i = 0; i < 8; i++)
             {

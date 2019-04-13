@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,13 +14,12 @@ public class BattleManager : ManagerBase
         Lock,
     }
     /// <summary>
-    /// UI 撤销操作
-    /// </summary>
-    public System.Action MenuUndoAction;
-    /// <summary>
     /// 显示攻击范围
     /// </summary>
-    public System.Action<CharacterLogic> ShowMoveRangeAction;
+    public UnityAction<CharacterLogic> ShowMoveRangeAction;
+    public UnityAction<List<Vector2Int>> ShowHighlightRangeAction;
+    public UnityAction ClearRangeAction;
+    public System.Func<bool> IsRangeVisible;
 
     public bool IsDesktopNo()
     {
@@ -42,13 +41,13 @@ public class BattleManager : ManagerBase
 
     public CharacterLogic GetCharacterLogic(Vector2Int tilePos)
     {
-        var v = new CharacterLogic();
-
-        return v;
+        var ch = chapterManager.GetCharacterFromCoord(tilePos);
+        if (ch == null) return null;
+        return ch.Logic();
     }
     public ETileType GetTileType(Vector2Int tilePos)
     {
-        return gameMode.grid.GetTileType(tilePos);
+        return gameMode.GridTileManager.GetTileType(tilePos);
     }
     public void UpdateTileInfo(Vector2Int tilePos)
     {
@@ -87,15 +86,13 @@ public class BattleManager : ManagerBase
         var vMouseInputState = inputManager.GetMouseInput();
         var tilePos = vMouseInputState.tilePos;
         UpdateTileInfo(tilePos);
-        if (vMouseInputState.active)
+        if (vMouseInputState.IsClickedTile())
         {
             if (vMouseInputState.key == InputManager.EMouseKey.Left)
             {
                 currentCharacterLogic = GetCharacterLogic(tilePos);
-                if (currentCharacterLogic == null) { }
-                else
+                if (currentCharacterLogic != null)
                 {
-                    currentCharacterLogic.SetTileCoords(tilePos);
                     SelectTarget();
                 }
             }
@@ -114,14 +111,35 @@ public class BattleManager : ManagerBase
     {
         if (IsDesktopNo())
         {
-            HideTargetMoveRange();
+            ClearRangeAction();
+        }
+        var vMouseInputState = inputManager.GetMouseInput();
+        if (PositionMath.MoveableAreaPoints.Contains(vMouseInputState.tilePos))
+        {
+            ShowHighlightRangeAction(new List<Vector2Int> { vMouseInputState.tilePos });
+        }
+        if (inputManager.GetNoInput())
+        {
+            CancelMove();
+        }
+        if (vMouseInputState.IsClickedTile())
+        {
+            if (PositionMath.MoveableAreaPoints.Contains(vMouseInputState.tilePos))
+            {
+                if (chapterManager.HasCharacterFromCoord(vMouseInputState.tilePos) == false)
+                    ExecuteMove(vMouseInputState.tilePos);
+            }
+            else
+            {
+                CancelMove();
+            }
         }
     }
     public void HandleSelectTarget()
     {
         if (IsDesktopNo())
         {
-            HideTargetAttackRange();
+
         }
     }
 
@@ -139,28 +157,24 @@ public class BattleManager : ManagerBase
         if (ShowMoveRangeAction == null) Debug.LogError("ShowMoveRangeAction is not binded");
         else
         {
+            if (currentCharacterLogic.Controllable)
+            {
+                OpenMenu();
+            }
             ShowMoveRangeAction(currentCharacterLogic);
         }
     }
-    public void ShowTargetMoveRange()
+    public void ExecuteMove(Vector2Int destPos)
     {
-
+        Vector2Int srcPos = currentCharacterLogic.GetTileCoord();
+        currentCharacterLogic.SetTileCoord(destPos);
+        ChangeState(EBattleState.Lock);
+        ClearRangeAction();
+        gameMode.MoveUnit(srcPos, destPos,OpenMenu);
     }
-    public void HideTargetMoveRange()
+    public void CancelMove()
     {
-
-    }
-    public void ShowTargetAttackRange()
-    {
-
-    }
-    public void HideTargetAttackRange()
-    {
-
-    }
-    public void ExecuteMove()
-    {
-
+        OpenMenu();
     }
     public void ExecuteAttack()
     {
@@ -180,7 +194,8 @@ public class BattleManager : ManagerBase
     }
     public void OpenMenu()
     {
-
+        ChangeState(EBattleState.Menu);
+        uiManager.ShowBattleActionMenu(UIManager.EActionMenuState.Main, currentCharacterLogic);
     }
     public void UpdateScene()
     {

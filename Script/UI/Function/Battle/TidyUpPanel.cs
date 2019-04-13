@@ -106,21 +106,21 @@ namespace RPG.UI
         {
             RPGCharacter ch0 = _gameCharList[char_Index0];
             RPGCharacter ch1 = _gameCharList[char_Index1];
-            WeaponItem item0 = ch0.Item.GetWeaponByIndex(item_Index0);
-            WeaponItem item1 = ch1.Item.GetWeaponByIndex(item_Index1);
+            WeaponItem item0 = ch0.Logic().Item.GetWeaponByIndex(item_Index0);
+            WeaponItem item1 = ch1.Logic().Item.GetWeaponByIndex(item_Index1);
             if (item0 == null)
                 return;
             if (item1 == null)
             {
-                ch0.Item.RemoveWeaponByIndex(item_Index0);
-                ch1.Item.AddWeapon(item0,null);
+                ch0.Logic().Item.RemoveWeaponByIndex(item_Index0);
+                ch1.Logic().Item.AddWeapon(item0,null);
             }
             else
             {
-                ch0.Item.RemoveWeaponByIndex(item_Index0);
-                ch1.Item.RemoveWeaponByIndex(item_Index1);
-                ch0.Item.AddWeapon(item1, item_Index0);
-                ch1.Item.AddWeapon(item0, item_Index1);
+                ch0.Logic().Item.RemoveWeaponByIndex(item_Index0);
+                ch1.Logic().Item.RemoveWeaponByIndex(item_Index1);
+                ch0.Logic().Item.AddWeapon(item1, item_Index0);
+                ch1.Logic().Item.AddWeapon(item0, item_Index1);
             }
             ipBottom.Init(_gameCharList[selectedCharIndex]);
             ipTop.Init(_gameCharList[exchangeCharIndex]);

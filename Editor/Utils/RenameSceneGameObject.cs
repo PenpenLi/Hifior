@@ -161,11 +161,9 @@ void SavePrefabs()
     }
 }
 
-static
-void CreateNew( GameObject obj,string localPath)
-{
-    Object prefab= PrefabUtility.CreateEmptyPrefab(localPath);
-    PrefabUtility.ReplacePrefab(obj, prefab, ReplacePrefabOptions.ConnectToPrefab);
+static void CreateNew( GameObject obj,string localPath)
+{  
+    Object prefab= PrefabUtility.SaveAsPrefabAsset(obj,localPath);
 }
 
 void OnGUI()

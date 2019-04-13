@@ -4,7 +4,7 @@ namespace RPGEditor
 {
     public static class DataBaseConst
     {
-        public const string ScriptableObjectBasePath = "Assets/Data/ScriptableObject/";
+        public const string ScriptableObjectBasePath = "Assets/Resources/rpgdata/";
 
         public const string DataBase_Props_Folder = DataBaseConst.ScriptableObjectBasePath + "Item/Props";
 

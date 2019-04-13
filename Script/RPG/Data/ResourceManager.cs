@@ -8,16 +8,14 @@ public static class ResourceManager
     private const string ASSET_WEAPON = "rpgdata/item/weapon";
     private const string ASSET_MAP = "rpgdata/map";
     private const string ASSET_CHAPTERSETTING = "rpgdata/chaptersetting";
+    private const string ASSET_CAREER = "rpgdata/career";
     private const string ASSET_PASSIVESKILL = "rpgdata/passiveskill";
     private const string ASSET_PLAYER = "rpgdata/character/player";
     private const string ASSET_ENEMY = "rpgdata/character/enemy";
-    private const string ASSET_PREFAB_PLAYER = "prefab/player";
-    private const string ASSET_PREFAB_ENEMY = "prefab/enemy";
-    private const string ASSET_TALKBACKGROUND = "talkbackground";
-    private static AssetBundle playerPrefabBundle;
-    private static AssetBundle enemyPrefabBundle;
+    private const string ASSET_BG = "bg";
     private static Dictionary<int, WeaponDef> weaponDefTable;
     private static Dictionary<int, PropsDef> propsDefTable;
+    private static Dictionary<int, CareerDef> careerDefTable;
     private static Dictionary<int, PlayerDef> playerDefTable;
     private static Dictionary<int, EnemyDef> enemyDefTable;
 
@@ -25,37 +23,19 @@ public static class ResourceManager
     private static Dictionary<int, PassiveSkillDef> passiveSkillDefTable;
     public static PlayerDef GetPlayerDef(int ID)
     {
-        //需加载下Prefab的Bundle，否则取不到模型
-        if (playerPrefabBundle == null)
-            playerPrefabBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, ASSET_PREFAB_PLAYER));
-        return GetDef(playerDefTable, ASSET_PLAYER, ID);
+        return Resources.Load<PlayerDef>(Path.Combine(ASSET_PLAYER, ID.ToString()));
     }
     public static Sprite GetTalkBackground(int ID)
     {
-        return UGameInstance.LoadAssetFromBundle<Sprite>(Path.Combine(Application.streamingAssetsPath, ASSET_TALKBACKGROUND), ID.ToString());
+        return Resources.Load<Sprite>(Path.Combine(ASSET_BG, ID.ToString())); ;
     }
     public static EnemyDef GetEnemyDef(int ID)
     {
-        if (enemyPrefabBundle == null)
-            enemyPrefabBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, ASSET_PREFAB_ENEMY));
-        return GetDef(enemyDefTable, ASSET_ENEMY, ID);
-    }
-    public static void UnLoadAllPrefabBundle()
-    {
-        if (playerPrefabBundle != null)
-        {
-            playerPrefabBundle.Unload(true);
-            playerPrefabBundle = null;
-        }
-        if (enemyPrefabBundle != null)
-        {
-            enemyPrefabBundle.Unload(true);
-            enemyPrefabBundle = null;
-        }
+        return Resources.Load<EnemyDef>(Path.Combine(ASSET_ENEMY, ID.ToString()));
     }
     public static string GetChapterName(int ChapterIndex)
     {
-        ChapterSettingDef def = UGameInstance.LoadAssetFromBundle<ChapterSettingDef>(Path.Combine(Application.streamingAssetsPath, ASSET_CHAPTERSETTING), ChapterIndex.ToString());
+        ChapterSettingDef def = Resources.Load<ChapterSettingDef>(Path.Combine(ASSET_CHAPTERSETTING, ChapterIndex.ToString()));
         return def.CommonProperty.Name;
     }
 
@@ -67,17 +47,9 @@ public static class ResourceManager
     {
         return GetDef(weaponDefTable, ASSET_WEAPON, ID);
     }
-    public static MapTileDef GetMapDef()
+    public static CareerDef GetCareerDef(int ID)
     {
-        if (mapDef == null)
-        {
-            mapDef = UGameInstance.LoadAssetFromBundle<MapTileDef>(Path.Combine(Application.streamingAssetsPath, ASSET_MAP), "TileProperty");
-        }
-        return mapDef;
-    }
-    public static PassiveSkillDef GetPassiveSkillDef(int ID)
-    {
-        return GetDef<PassiveSkillDef>(passiveSkillDefTable, ASSET_PASSIVESKILL, ID);
+        return GetDef(careerDefTable, ASSET_CAREER, ID);
     }
     private static T GetDef<T>(Dictionary<int, T> TargetDictionary, string AssetBundleURL, int ID) where T : ScriptableObject
     {
@@ -91,7 +63,9 @@ public static class ResourceManager
         }
         else
         {
-            TargetDictionary.Add(ID, UGameInstance.LoadAssetFromBundle<T>(Path.Combine(Application.streamingAssetsPath, AssetBundleURL), ID.ToString()));
+            var res = Resources.Load<T>(Path.Combine(AssetBundleURL, ID.ToString()));
+            if (res == null) { Debug.LogError("the res is null" + AssetBundleURL + " :" + ID); return null; }
+            TargetDictionary.Add(ID, res);
             return TargetDictionary[ID];
         }
     }
@@ -103,7 +77,7 @@ public static class ResourceManager
 
     [RuntimeInitializeOnLoadMethod]
     public static void Initialize()
-    { 
+    {
 
     }
 }

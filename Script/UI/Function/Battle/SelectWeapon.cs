@@ -54,7 +54,7 @@ namespace RPG.UI
             m_CurCharacter = ch;
             disable();
             attackableItems.Clear();
-            attackableItems = ch.Item.GetAttackWeapon();
+            attackableItems = ch.Logic().Item.GetAttackWeapon();
 
             for (int i = 0; i < attackableItems.Count; i++)
             {
@@ -74,11 +74,6 @@ namespace RPG.UI
 
             Event_OnWeaponClicked.Invoke(ItemIndex);
         }
-        void OnDisable()
-        {
-            /*if (slg == null) return;
-            if (slg.getCurrentSelectGameChar() != null)
-                slg.getCurrentSelectGameChar().ItemGroup.EquipItem(0);*/
-        }
+
     }
 }

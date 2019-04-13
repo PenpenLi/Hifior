@@ -18,9 +18,9 @@ namespace RPG.UI
         {
             Show();
             if (ch.GetCamp() == EnumCharacterCamp.Player)
-                Player.Show(ch.PawnName, ch.GetCurrentHP(), ch.GetMaxHP());
+                Player.Show(ch.GetCharacterName(), ch.Logic().GetCurrentHP(), ch.Logic().GetMaxHP());
             else
-                Enemy.Show(ch.PawnName, ch.GetCurrentHP(), ch.GetMaxHP());
+                Enemy.Show(ch.GetCharacterName(), ch.Logic().GetCurrentHP(), ch.Logic().GetMaxHP());
         }
         public void Change(RPGCharacter ch, int ChangedHP, float delayTime = 0.0f)
         {

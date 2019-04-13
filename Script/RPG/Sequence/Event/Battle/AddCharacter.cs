@@ -7,42 +7,21 @@ namespace Sequence
     [AddComponentMenu("Sequence/Add Character")]
     public class AddCharacter : SequenceEvent
     {
-        public enum ECamp
-        {
-            我方,
-            敌方
-        }
-        public ECamp Camp;
+        public EnumCharacterCamp Camp;
         public int ID;
-        public VInt2 Coord;
+        public Vector2Int Coord;
         public bool UseDefaultAttribute = true;
         public CharacterAttribute Attribute;
         public List<int> Items;
         public override void OnEnter()
         {
-            /*GM_Battle GameMode = GetGameMode<GM_Battle>();
-            if (Camp == ECamp.我方)
+           if(Camp== EnumCharacterCamp.Player)
             {
-                if (UseDefaultAttribute)
-                {
-                    GameMode.AddPlayer(ID, Coord.x, Coord.y);
-                }
-                else
-                {
-                    GameMode.AddPlayer(ID, Coord.x, Coord.y, false, Attribute);
-                }
+                if (UseDefaultAttribute) Attribute = null;
+                RPGCharacter ch = RPGPlayer.Create(ID,Attribute);
+                GameMode.Instance.AddUnitToMap(ch,Coord);
             }
-            else
-            {
-                if (UseDefaultAttribute)
-                {
-                    GameMode.AddEnemy(ID, Coord.x, Coord.y,Items);
-                }
-                else
-                {
-                    GameMode.AddEnemy(ID, Coord.x, Coord.y, Items, Attribute);
-                }
-            }*/
+
             Continue();
         }
     }

@@ -4,8 +4,9 @@ using UnityEngine;
 public static class PositionMath
 {
     public const float TileLength = 1.6f;
+    public static readonly Vector2Int MapViewSize = new Vector2Int(15, 15);
     public static readonly Vector2Int CameraViewSize = new Vector2Int(15, 15);
-    public static Vector3 TilePositionToLocalPosition(Vector2Int pos)
+    public static Vector3 TilePositionToTileLocalPosition(Vector2Int pos)
     {
         return new Vector3(pos.x * TileLength, pos.y * -TileLength, 0);
     }
@@ -16,6 +17,14 @@ public static class PositionMath
     public static Vector3Int TilePositionToGridPosition(Vector2Int pos)
     {
         return new Vector3Int(pos.x, -1 - pos.y, 0);
+    }
+    public static Vector3 TilePositionToUnitLocalPosition(Vector2Int pos)
+    {
+        return new Vector3(pos.x, -pos.y,0);
+    }
+    public static void SetUnitLocalPosition(Transform t,Vector2Int pos)
+    {
+        t.localPosition = TilePositionToUnitLocalPosition(pos);
     }
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y
@@ -35,6 +44,7 @@ public static class PositionMath
     private static Dictionary<Vector2Int, int> _TempFootData = new Dictionary<Vector2Int, int>();//int表示剩余的移动范围消耗点
     private static List<Vector2Int> _AttackRangeData = new List<Vector2Int>();//int表示剩余的攻击范围消耗点
     public static List<Vector2Int> AttackAreaPoints { get { return _AttackRangeData; } }
+    private static List<Vector2Int> _MoveRoute = new List<Vector2Int>();//存储移动路径
     private static int _ItemRangeMin;//所有可用装备的最小范围
     private static int _ItemRangeMax; //所有可用装备的最大范围
     private static int _Mov; //移动力
@@ -323,6 +333,26 @@ public static class PositionMath
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 将存储在_FootData中的节点转换为实际移动路径
+    /// </summary>
+    /// <param name="parentPoint"></param>
+    private static void buildMoveRoutine(Vector2Int parentPoint)
+    {
+        _MoveRoute.Clear();
+        while (parentPoint != new Vector2Int(-1, -1)) //当父节点存在时，不存在时为Point2D(-1,-1);
+        {
+            _MoveRoute.Add(parentPoint);
+            parentPoint = _FootData[parentPoint];
+        }
+        _MoveRoute.Reverse();
+    }
+    public static List<Vector2Int> GetMoveRoutine(Vector2Int destPos)
+    {
+        buildMoveRoutine(destPos);
+        return _MoveRoute;
     }
     #endregion
 }

@@ -176,7 +176,7 @@ namespace RPGEditor
 
 						r.Add(new Info() 
 						{ 
-							mainObj = PrefabUtility.FindPrefabRoot(g),
+							mainObj = PrefabUtility.GetOutermostPrefabInstanceRoot(g),
 							obj = g,
 							objName = path + g.name,
 							path = fn + ": " + path + g.name,

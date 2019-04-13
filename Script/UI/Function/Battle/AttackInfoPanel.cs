@@ -23,21 +23,21 @@ namespace RPG.UI
         public void Init(RPGCharacter ch, int index = -1)//数值在GameChar里面有函数计算
         {
             m_curGamechar = ch;
-            Text_Attack.text = ch.GetAttack().ToString();
-            Text_Hit.text = ch.GetHit().ToString();
-            Text_Critical.text = ch.GetCritical().ToString();
-            Text_Range.text = ch.GetRangeMin() + "-" + ch.GetRangeMax();
-            Text_Anger.text = ch.GetAnger().ToString();
-            Text_AttackSpeed.text = ch.GetAttackSpeed().ToString();
+            Text_Attack.text = ch.Logic().GetAttack().ToString();
+            Text_Hit.text = ch.Logic().GetHit().ToString();
+            Text_Critical.text = ch.Logic().GetCritical().ToString();
+            Text_Range.text = ch.Logic().GetRangeMin() + "-" + ch.Logic().GetRangeMax();
+            Text_Anger.text = ch.Logic().GetAnger().ToString();
+            Text_AttackSpeed.text = ch.Logic().GetAttackSpeed().ToString();
             Text_AttackEffect.text = "攻击特效显示";//medifyneed
-            Text_Avoid.text = ch.GetAvoid().ToString();
-            Text_critAvoid.text = ch.GetCriticalAvoid().ToString();
-            Text_Movement.text = ch.GetMovement().ToString();
+            Text_Avoid.text = ch.Logic().GetAvoid().ToString();
+            Text_critAvoid.text = ch.Logic().GetCriticalAvoid().ToString();
+            Text_Movement.text = ch.Logic().GetMovement().ToString();
         }
         public void OnWeaponSelectChange(int index)
         {
             SoundController.Instance.PlaySound(WeaponSelectChange);
-            m_curGamechar.Item.EquipWeapon(index);//只改变当前选择的装备标识
+            m_curGamechar.Logic().Item.EquipWeapon(index);//只改变当前选择的装备标识
             Init(m_curGamechar);
         }
     }

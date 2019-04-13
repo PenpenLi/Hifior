@@ -19,12 +19,16 @@ namespace RPG.UI
         {
             base.Awake();
             buttonsInfo = new List<UIActionButtonInfo>();
-            AddAction(new UIActionButtonInfo("open", () => { Debug.Log("click Open"); }));
+            //AddAction(new UIActionButtonInfo("open", () => { Debug.Log("click Open"); }));
         }
         public override void BeginPlay()
         {
             base.BeginPlay();
             RefreshUI();
+        }
+        public void Clear()
+        {
+            buttonsInfo.Clear();
         }
         public void AddAction(UIActionButtonInfo info)
         {
@@ -57,13 +61,13 @@ namespace RPG.UI
                 }
             }
         }
-        public void SetAction(Transform t, UIActionButtonInfo info)
+        private void SetAction(Transform t, UIActionButtonInfo info)
         {
             t.GetComponent<Button>().onClick.AddListener(info.action);
             t.name = info.name;
             t.GetComponentInChildren<Text>().text = info.name;
         }
-        public void ClearAction(Transform t)
+        private void ClearAction(Transform t)
         {
             t.GetComponent<Button>().onClick.RemoveAllListeners();
             t.gameObject.SetActive(false);

@@ -323,7 +323,7 @@ public class SLGMap : MonoBehaviour
     #endregion
     public void InitActionScope(RPGCharacter Gamechar, bool Show = true)
     {
-        InitActionScope(Gamechar, Gamechar.GetMovement(), Show);
+        InitActionScope(Gamechar, Gamechar.Logic().GetMovement(), Show);
     }
     public void InitActionScope(RPGCharacter Gamechar, int Movement, bool Show = true)
     {
@@ -335,7 +335,7 @@ public class SLGMap : MonoBehaviour
              _Job = 15;//medifyneed
          if (Gamechar.SkillGroup.isHaveStaticSkill(19))
              _Mov += 2;*/
-        _Career = Gamechar.GetCareer();
+        _Career = Gamechar.Logic().GetCareer();
         CharacterCenter = new Vector2Int(Gamechar.GetTileCoord().x, Gamechar.GetTileCoord().x);
 
         ResetMoveAcessList();
@@ -348,11 +348,11 @@ public class SLGMap : MonoBehaviour
 
         while (countPoint < _Mov)
         {
-            _FindDistance(Gamechar.GetCareer(), _Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
+            _FindDistance(Gamechar.Logic().GetCareer(), _Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
             countPoint++;
         }
 
-        WeaponItem item = Gamechar.Item.GetEquipWeapon();
+        WeaponItem item = Gamechar.Logic().Item.GetEquipWeapon();
         item = new WeaponItem(1);
         if (item != null)//装备武器不为空
         {
@@ -747,8 +747,8 @@ public class SLGMap : MonoBehaviour
 
     public bool MoveWithOutShowRoutine(RPGCharacter Gamechar, int x, int y, UnityAction OnMoveFinish)
     {
-        Gamechar.SetTileCoord(x, y, false);
         Vector2Int point = new Vector2Int(x, y);
+        Gamechar.Logic().SetTileCoord(point);
         if (_FootData.ContainsKey(point))
         {
             buildMoveRoutine(x, y);
@@ -796,7 +796,7 @@ public class SLGMap : MonoBehaviour
         args.Add("oncomplete", "OnMoveEnd");
         args.Add("oncompleteparams", Gamechar);
         args.Add("oncompletetarget", gameObject);
-        iTween.MoveTo(Gamechar.gameObject, args);
+        iTween.MoveTo(Gamechar.GetGameObject(), args);
     }
     /// <summary>
     /// 按照当前的路径进行移动
@@ -830,7 +830,7 @@ public class SLGMap : MonoBehaviour
     /// </summary>
     public void MoveThenAttack(RPGCharacter Gamechar, int x, int y, UnityAction callStart = null, UnityAction callEnd = null)  //直接移动到指定的地点,用于自动攻击的单位
     {
-        Gamechar.SetTileCoord(x, y, false);
+        //Gamechar.SetTileCoord(x, y, false);
         Vector2Int point = new Vector2Int(x, y);
         if (_FootData.ContainsKey(point))
         {
@@ -857,7 +857,7 @@ public class SLGMap : MonoBehaviour
     }
     public void MoveByRoutine(RPGCharacter Gamechar, Vector2Int[] p, UnityAction callStart = null, UnityAction callEnd = null)
     {
-        Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y, true);
+        //Gamechar.SetTileCoord(p[p.Length - 1].x, p[p.Length - 1].y, true);
         _FootData.Clear();//存储指定坐标处的剩余路径
         _TempFootData.Clear();//int表示剩余的移动范围消耗点
         _AttackRangeData.Clear();//int表示剩余的攻击范围消耗点
@@ -909,7 +909,7 @@ public class SLGMap : MonoBehaviour
         {
             for (int j = 0; j < TileHeight; j++)
             {
-                if (GetMapPassValue(Gamechar.GetCareer(), i, j) > 10 || IsOccupiedByDiffentParty(i, j))
+                if (GetMapPassValue(Gamechar.Logic().GetCareer(), i, j) > 10 || IsOccupiedByDiffentParty(i, j))
                     bWalkable = false;
                 else if (IsOccupiedBySameParty(i, j))
                     bWalkable = true;
@@ -1037,22 +1037,22 @@ public class SLGMap : MonoBehaviour
             return 100;
         }
         else
-            return ResourceManager.GetMapDef().GetMovementConsume(MapTileData.GetTileData(x, y).Type, job);
+            return 1;
     }
     public int GetMapPhysicalDefenseValue(int x, int y)//得到此处的人物通过消耗
     {
         int mapData = MapTileData.GetTileData(x, y).Type;
-        return ResourceManager.GetMapDef().GetPhysicalDefense(mapData);
+        return 1;
     }
     public int GetMapMagicalDefenseValue(int x, int y)//得到此处的人物通过消耗
     {
         int mapData = MapTileData.GetTileData(x, y).Type;
-        return ResourceManager.GetMapDef().GetMagicalDefense(mapData);
+        return 1;
     }
     public int GetMapAvoidValue(int x, int y)//得到此处的人物通过消耗
     {
         int mapData = MapTileData.GetTileData(x, y).Type;
-        return ResourceManager.GetMapDef().GetAvoid(mapData);
+        return 1;
     }
 
     public List<Vector2Int> FindAttackRangeWithoutShow(RPGCharacter Gamechar)//查找所有的武器所能攻击的范围
@@ -1060,7 +1060,7 @@ public class SLGMap : MonoBehaviour
         _AttackRangeData.Clear();
         int x = Gamechar.GetTileCoord().x;
         int y = Gamechar.GetTileCoord().y;
-        List<WeaponItem> items = Gamechar.Item.GetAttackWeapon();
+        List<WeaponItem> items = Gamechar.Logic().Item.GetAttackWeapon();
         foreach (WeaponItem item in items)
         {
             _ItemRangeMax = item.GetDefinition().RangeType.MaxSelectRange;

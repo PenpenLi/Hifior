@@ -24,9 +24,9 @@ namespace RPG.UI
         }
         private void InitUseProps(RPGCharacter Character)
         {
-            for (int i = 0; i < Character.Item.Props.Count; i++)
+            for (int i = 0; i < Character.Logic().Item.Props.Count; i++)
             {
-                PropsItem item = Character.Item.Props[i];
+                PropsItem item = Character.Logic().Item.Props[i];
 
             }
         }

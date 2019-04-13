@@ -23,9 +23,9 @@ namespace RPG.UI
             {
                 charIcon.sprite = ch.GetPortrait();
                 charName.text = ch.GetCharacterName();
-                hp.text = ch.GetCurrentHP() + "/" + ch.GetMaxHP();
-                lv.text = ch.GetLevel().ToString();
-                WeaponItem item = ch.Item.GetEquipWeapon();
+                hp.text = ch.Logic().GetCurrentHP() + "/" + ch.Logic().GetMaxHP();
+                lv.text = ch.Logic().GetLevel().ToString();
+                WeaponItem item = ch.Logic().Item.GetEquipWeapon();
                 if (item != null)
                 {
                     weaponIcon.gameObject.SetActive(true);

@@ -11,7 +11,7 @@ namespace Sequence
     public class MoveCharacter : SequenceEvent
     {
         public RPGCharacter Character;
-        public AddCharacter.ECamp Camp;
+        public EnumCharacterCamp Camp;
         public int CharacterID;
         public VInt2[] TileCoords;
         public override void OnEnter()

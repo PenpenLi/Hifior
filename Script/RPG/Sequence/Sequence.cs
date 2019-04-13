@@ -24,6 +24,7 @@ namespace Sequence
         /// OnEnable时开始执行
         /// </summary>
         public bool ExecuteOnEnable = false;
+        public bool Skipable = true;
         [HideInInspector]
         public int ItemId = -1;
         [Tooltip("The name of the Sequence")]
@@ -90,7 +91,7 @@ namespace Sequence
 
         void Update()
         {
-            if (Input.GetButton(InputIDentifier.INPUT_START))
+            if (Skipable && GameMode.Instance.InputManager.GetStartInput())
                 UIController.ScreenNormalToDark(1.0f, true, delegate { Stop(); OnFinish.Invoke(); });
         }
 

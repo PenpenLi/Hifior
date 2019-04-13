@@ -100,7 +100,7 @@ public class SLGCamera : MonoBehaviour
     void LateUpdate()
     {
         Vector3 mousePos = Input.mousePosition;
-        var localPos = PositionMath.TilePositionToLocalPosition(maxMoveable);
+        var localPos = PositionMath.TilePositionToTileLocalPosition(maxMoveable);
         if (mousePos.x > Screen.height - widthBorder && transform.localPosition.x < localPos.x)
             transform.Translate(Vector3.right * PositionMath.TileLength, Space.Self);
         if (mousePos.y > Screen.height - heightBorder  && transform.localPosition.y < 0)

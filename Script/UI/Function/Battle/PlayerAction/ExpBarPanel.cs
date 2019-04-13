@@ -33,10 +33,10 @@ namespace RPG.UI
         {
             bExpShowFinish = false;
             gameObject.SetActive(true);
-            this.curLV = ch.GetLevel();
-            rt.sizeDelta = new Vector2((ch.GetExp() / 100.0f) * BarWidth, rt.sizeDelta.y);
+            this.curLV = ch.Logic().GetLevel();
+            rt.sizeDelta = new Vector2((ch.Logic().GetExp() / 100.0f) * BarWidth, rt.sizeDelta.y);
             tLV.text = curLV.ToString();
-            StartCoroutine(BarFadeAdd(ch.GetExp(), boostExp));
+            StartCoroutine(BarFadeAdd(ch.Logic().GetExp(), boostExp));
         }
         IEnumerator BarFadeAdd(int start, int boost)
         {

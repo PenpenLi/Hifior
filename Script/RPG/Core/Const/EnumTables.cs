@@ -10,6 +10,7 @@ public enum EnumCharacterCamp
 {
     Player,
     Enemy,
+    Ally,
     NPC
 }
 public enum EnumItemType

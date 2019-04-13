@@ -7,7 +7,7 @@ using System;
 /// <typeparam name="T"></typeparam>
 
 [AutoSingleton(true)]
-public class MonoSingleton<T> : UActor where T : Component
+public class MonoSingleton<T> :MonoBehaviour where T : Component
 {
     private static bool _destroyed;
     private static T _instance;
@@ -18,7 +18,7 @@ public class MonoSingleton<T> : UActor where T : Component
         {
             if (Application.isPlaying)
             {
-                UnityEngine.Object.Destroy(base.gameObject);
+                UnityEngine.Object.Destroy(gameObject);
             }
             else
             {

@@ -19,12 +19,5 @@ namespace RPG.UI
                 Hide();
         }
 
-        public virtual void SetupUIInputComponent()
-        {
-            if (InputComponent == null)
-            {
-                InputComponent = new UInputComponent(this, "UI_InputComponent0");
-            }
-        }
     }
 }

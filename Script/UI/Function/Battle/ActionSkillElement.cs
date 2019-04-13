@@ -22,8 +22,8 @@ namespace RPG.UI
         {
             this.Index = Index;
             this.Key = Key;
-            this.SkillName.text = ResourceManager.GetPassiveSkillDef(Key).CommonProperty.Name;
-            this.Descrpition = ResourceManager.GetPassiveSkillDef(Key).CommonProperty.Description;
+            //this.SkillName.text = ResourceManager.GetPassiveSkillDef(Key).CommonProperty.Name;
+            //this.Descrpition = ResourceManager.GetPassiveSkillDef(Key).CommonProperty.Description;
             if (Index == 0)
                 UIController.Instance.GetUI<RPG.UI.SkillMenu> ().SetDescription(Descrpition);
         }
