@@ -1,25 +1,156 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+public class CharacterBattleInfo
+{
+    public enum EBattleState
+    {
+        Normal,
+        Frozen,
+        Poison
+    }
+    public EBattleState battleState;
+    /// <summary>
+    /// 是否已经选择了目标Tile
+    /// </summary>
+    bool hasChooseTargetPos;
+    /// <summary>
+    /// 有没有可以生效的单位在范围内
+    /// </summary>
+    bool hasTargetInRange;
+    /// <summary>
+    /// 生效的对象
+    /// </summary>
+    int effectSide;
+    /// <summary>
+    /// 选择的目标Tile位置
+    /// </summary>
+    Vector2Int targetPos;
+    /// <summary>
+    /// 目标位置处可以被选择的范围
+    /// </summary>
+    List<Vector2Int> targetChooseRange;
+    /// <summary>
+    /// 目标位置处可以作用的范围
+    /// </summary>
+    List<Vector2Int> targetEffectRange;
+    public static List<Vector2Int> GetTargetChooseRange(Vector2Int pos, EnumWeaponRangeType rangeType, Vector2Int range)
+    {
+        int x = pos.x;
+        int y = pos.y;
+        int TileWidth = PositionMath.TileWidth;
+        int TileHeight = PositionMath.TileHeight;
+        PositionMath.AttackAreaPoints.Clear();
 
+        var RangeMax = range.y;
+        var RangeMin = range.x;
+        UnityEngine.Assertions.Assert.IsTrue(RangeMax >= RangeMin);
+
+        if (RangeMin > 1)
+        {
+            int left = (x - RangeMax) < 0 ? 0 : x - RangeMax;
+            int right = (x + RangeMax) > TileWidth - 1 ? TileWidth - 1 : x + RangeMax;
+            int up = (y - RangeMax < 0) ? 0 : y - RangeMax;
+            int bottom = (y + RangeMax) > TileHeight - 1 ? TileHeight - 1 : y + RangeMax;
+            if (rangeType == 0)
+            {
+                for (int i = left; i <= right; i++)
+                {
+                    for (int j = up; j <= bottom; j++)
+                    {
+                        int absLen = Mathf.Abs(i - x) + Mathf.Abs(j - y);
+                        if (absLen < RangeMin || absLen > RangeMax || PositionMath.AttackAreaPoints.Contains(new Vector2Int(i, j)))
+                            continue;
+                        PositionMath.AttackAreaPoints.Add(new Vector2Int(i, j));
+                    }
+                }
+            }
+            if (rangeType == EnumWeaponRangeType.十字形)//为1则是只能上下左右寻找目标
+            {
+                for (int i = left; i <= right; i++)//得到x轴上所有的范围
+                {
+                    int absLen = Mathf.Abs(i - x);
+                    if (absLen < RangeMin || absLen > RangeMax || PositionMath.AttackAreaPoints.Contains(new Vector2Int(i, y)))
+                        continue;
+                    PositionMath.AttackAreaPoints.Add(new Vector2Int(i, y));
+
+                }
+                for (int i = up; i <= bottom; i++)//得到y轴上所有的范围
+                {
+                    int absLen = Mathf.Abs(i - y);
+                    if (absLen < RangeMin || absLen > RangeMax || PositionMath.AttackAreaPoints.Contains(new Vector2Int(x, i)))
+                        continue;
+                    PositionMath.AttackAreaPoints.Add(new Vector2Int(x, i));
+                }
+            }
+            if (rangeType == EnumWeaponRangeType.正方形)//为2矩形攻击范围
+            {
+                for (int i = left; i <= right; i++)
+                {
+                    for (int j = up; j <= bottom; j++)
+                    {
+                        int absX = Mathf.Abs(i - x);
+                        int absY = Mathf.Abs(j - y);
+                        if (absX < RangeMin && absY < RangeMin)//在其中xy均小于最小坐标的不符合，直接进行下一个循环
+                            continue;
+                        PositionMath.AttackAreaPoints.Add(new Vector2Int(i, j));
+                    }
+                }
+            }
+            /* if (rangeType == 3)//全屏攻击。放到外面单独处理，暂时用不到
+             {
+                 for (int i = 0; i < mapTileX; i++)
+                 {
+                     for (int j = 0; j < mapTileX; j++)
+                     {
+                         PositionMath.AttackAreaPoints.Add(new Point2D(i, j));
+                     }
+                 }
+             }*/
+        }
+        else //如果是最小攻击距离从1开始
+        {
+
+            for (int i = -RangeMax; i <= RangeMax; i++)
+            {
+                for (int j = -RangeMax; j <= RangeMax; j++)
+                {
+                    switch (rangeType)
+                    {
+                        case EnumWeaponRangeType.菱形菱形:
+                            if (Mathf.Abs(i) + Mathf.Abs(j) > RangeMax) { continue; }
+                            break;
+                        case EnumWeaponRangeType.十字形:
+                            if (Mathf.Abs(i) != 0 && Mathf.Abs(j) != 0) { continue; }
+                            break;
+                        case EnumWeaponRangeType.正方形:
+                            break;
+                    }
+                    PositionMath.AttackAreaPoints.Add(new Vector2Int(i + x, j + y));
+                }
+            }
+            PositionMath.AttackAreaPoints.Remove(new Vector2Int(x, y));
+        }
+        return PositionMath.AttackAreaPoints;
+    }
+}
 public class CharacterLogic
 {
     public CharacterLogic(CharacterDef def)
     {
+        characterDef = def;
         Info = new CharacterInfo(def);
         Item = new ItemGroup(GetAttribute());
+        BattleInfo = new CharacterBattleInfo();
     }
-    public CharacterLogic() { }
     /// <summary>
     /// 包含需要被序列化记录的数据
     /// </summary>
     public CharacterInfo Info { private set; get; }
-
     public CharacterDef characterDef;
     public CareerDef careerDef;
     public ItemGroup Item { private set; get; }
-
+    public CharacterBattleInfo BattleInfo { private set; get; }
+    public bool hasFinishAction { private set; get; }
     /// <summary>
     /// 是否可以操控行动，行动完毕或者被石化，冻住等则为False
     /// </summary>
@@ -70,6 +201,10 @@ public class CharacterLogic
         {
             return characterDef.CharacterImportance;
         }
+    }
+    public string GetCharacterName()
+    {
+        return characterDef.CommonProperty.Name;
     }
     public int GetDefaultCareer()
     {
@@ -159,6 +294,19 @@ public class CharacterLogic
     {
         Info.Level = level;
     }
+    public void SetBattleState(CharacterBattleInfo.EBattleState state)
+    {
+        BattleInfo.battleState = state;
+    }
+    public void EndAction()
+    {
+        hasFinishAction = true;
+    }
+    public void StartAction()
+    {
+        hasFinishAction = false;
+    }
+
     #endregion
 
 

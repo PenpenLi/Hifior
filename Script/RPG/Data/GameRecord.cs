@@ -18,6 +18,7 @@ public class CharacterInfo : SerializableBase
     {
         return ID.ToString();
     }
+    public CharacterInfo() { }
     public CharacterInfo(RPGCharacter Character)
     {
         ID = Character.GetCharacterID();

@@ -6,9 +6,8 @@ namespace RPG.UI
 {
     public class SelectWeapon : AbstractUI
     {
-
         public GameObject AttackMenu;
-        public RPGCharacter m_CurCharacter;
+        public CharacterLogic m_CurCharacter;
         public UnityEngine.UI.Button[] Buttons;
         public Text[] Text_Usage;
         public Text[] Text_WeaponName;
@@ -46,7 +45,7 @@ namespace RPG.UI
                 image.enabled = false;
             }
         }
-        public void Init(RPGCharacter ch, UnityAction<int> OnWeaponClicked)
+        public void Init(CharacterLogic ch, UnityAction<int> OnWeaponClicked)
         {
             if (Event_OnWeaponClicked == null)
                 Event_OnWeaponClicked = OnWeaponClicked;
@@ -54,7 +53,7 @@ namespace RPG.UI
             m_CurCharacter = ch;
             disable();
             attackableItems.Clear();
-            attackableItems = ch.Logic().Item.GetAttackWeapon();
+            attackableItems = ch.Item.GetAttackWeapon();
 
             for (int i = 0; i < attackableItems.Count; i++)
             {

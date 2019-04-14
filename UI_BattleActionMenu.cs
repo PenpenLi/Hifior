@@ -21,9 +21,9 @@ namespace RPG.UI
             buttonsInfo = new List<UIActionButtonInfo>();
             //AddAction(new UIActionButtonInfo("open", () => { Debug.Log("click Open"); }));
         }
-        public override void BeginPlay()
+        public override void Show()
         {
-            base.BeginPlay();
+            base.Show();
             RefreshUI();
         }
         public void Clear()
@@ -63,7 +63,9 @@ namespace RPG.UI
         }
         private void SetAction(Transform t, UIActionButtonInfo info)
         {
-            t.GetComponent<Button>().onClick.AddListener(info.action);
+            var button = t.GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(info.action);
             t.name = info.name;
             t.GetComponentInChildren<Text>().text = info.name;
         }

@@ -19,14 +19,10 @@ public class RPGCharacterBase
     }
     public Transform GetTransform() { return transform; }
     public GameObject GetGameObject() { return transform.gameObject; }
-    public RPGCharacterBase()
-    {
-        logic = new CharacterLogic();
 
-    }
     public virtual void SetDefaultData(CharacterDef DefaultData)
     {
-        logic.characterDef = DefaultData;
+        logic =new CharacterLogic(DefaultData);
         logic.careerDef = ResourceManager.GetCareerDef(logic.characterDef.Career);
         if (logic.careerDef == null) Debug.LogError("不存在的career def");
     }

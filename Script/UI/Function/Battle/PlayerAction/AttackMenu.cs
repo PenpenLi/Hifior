@@ -27,7 +27,7 @@ namespace RPG.UI
         /// </summary>
         /// <param name="ch"></param>
         /// <param name="OnWeaponClicked"></param>
-        public void Show(RPGCharacter ch,UnityAction<int> OnWeaponClicked)
+        public void Show(CharacterLogic ch,UnityAction<int> OnWeaponClicked)
         {
             //在这里做控件初始化
             charstate.Init(ch);

@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RPG.UI;
+using UnityEngine.Events;
 
+public enum EActionMenuState
+{
+    Main,
+    AfterMove,
+    Attack,
+    Skill,
+    UseItem,
+    ExangeItem,
+}
 public class UIManager : ManagerBase
 {
     #region Init 
     public UI_BattleTileInfo BattleTileInfo { private set; get; }
     public UI_BattleActionMenu BattleActionMenu { private set; get; }
+    public UI_CharacterInfoPanel CharacterInfo { private set; get; }
     private T FindPanelInChildren<T>(Transform t) where T : IPanel
     {
         T r = null;
@@ -23,6 +34,7 @@ public class UIManager : ManagerBase
     {
         BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent);
         BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent);
+        CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent);
     }
     public void InitMainUI(Transform panelParent)
     {
@@ -37,31 +49,52 @@ public class UIManager : ManagerBase
         BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent);
     }
     #endregion
+    #region Bind 
+    public void UpdateTileInfo(Vector2Int tilePos)
+    {
+        uiManager.BattleTileInfo.Show(gameMode.GetTileType(tilePos));
+    }
+    public void UpdateCharacterInfo(CharacterLogic logic)
+    {
+        uiManager.CharacterInfo.Show(logic);
+    }
 
+    #endregion
     /// <summary>
     /// UI 撤销操作
     /// </summary>
-    public System.Action MenuUndoAction;
+    public UnityAction MenuUndoAction;
     #region Battle Action Menu
-    public enum EActionMenuState
+    private EActionMenuState eActionMenuState;
+    public EActionMenuState ActionMenuState { get { return eActionMenuState; } }
+    public void BattleAction_Move()
     {
-        Main,
-        Attack,
-        Skill,
-        UseItem,
-        ExangeItem,
-    }
-
-    public void BattleAction_Move() {
         BattleActionMenu.Hide();
         battleManager.ChangeState(BattleManager.EBattleState.SelectMove);
     }
-    public void BattleAction_Attack() { }
-    public void BattleAction_End() { }
-    public void BuildBattleActionMenu(CharacterLogic chLogic)
+    public void BattleAction_Attack()
     {
+        BattleActionMenu.Hide();
+        battleManager.ChangeState(BattleManager.EBattleState.SelectTarget);
+    }
+    public void BattleAction_End()
+    {
+        battleManager.FinishAction();
+    }
+    public void BuildBattleActionMenu_Main(CharacterLogic chLogic)
+    {
+        BattleActionMenu.Clear();
         var move = new UI_BattleActionMenu.UIActionButtonInfo("移动", BattleAction_Move);
         BattleActionMenu.AddAction(move);
+        var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
+        BattleActionMenu.AddAction(attack);
+        var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
+        BattleActionMenu.AddAction(end);
+        BattleActionMenu.Show();
+    }
+    public void BuildBattleActionMenu_AfterMove(CharacterLogic chLogic)
+    {
+        BattleActionMenu.Clear();
         var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
         BattleActionMenu.AddAction(attack);
         var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
@@ -73,9 +106,17 @@ public class UIManager : ManagerBase
         switch (state)
         {
             case EActionMenuState.Main:
-                BuildBattleActionMenu(chLogic);
+                BuildBattleActionMenu_Main(chLogic);
+                break;
+            case EActionMenuState.AfterMove:
+                BuildBattleActionMenu_AfterMove(chLogic);
                 break;
         }
+        eActionMenuState = state;
+    }
+    public void HideBattlaActionMenu()
+    {
+        BattleActionMenu.Hide();
     }
     #endregion
 }

@@ -2,10 +2,9 @@
 
 namespace RPG.UI
 {
-    public class AttributePanel : IPanel
+    public class UI_CharacterInfoPanel : IPanel
     {
         public GameObject charStateBiggerPanel;
-        public GameObject attackInfoPanel;
         public GameObject abilityPanel;
         public GameObject itemPanel;
 
@@ -15,11 +14,10 @@ namespace RPG.UI
 
             gameObject.SetActive(false);
         }
-        public void Show(RPGCharacter ch)
+        public void Show(CharacterLogic ch)
         {
             gameObject.SetActive(true);
             charStateBiggerPanel.GetComponent<CharStateBiggerPanel>().Init(ch);
-            attackInfoPanel.GetComponent<AttackInfoPanel>().Init(ch);
             abilityPanel.GetComponent<AbilityPanel>().Init(ch);
             itemPanel.GetComponent<ItemPanel>().Init(ch);
         }

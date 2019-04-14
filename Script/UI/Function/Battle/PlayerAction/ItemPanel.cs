@@ -48,7 +48,7 @@ namespace RPG.UI
             Elements[Index].ShowNothing(Index);
         }
 
-        public void Init(RPGCharacter ch, Mode ShowMode = Mode.仅查看武器属性)
+        public void Init(CharacterLogic ch, Mode ShowMode = Mode.仅查看武器属性)
         {
             this.ShowMode = ShowMode;
 
@@ -56,9 +56,9 @@ namespace RPG.UI
 
             if (ItemsBG != null)
             {
-                ItemsBG.sprite = ch.GetPortrait();
+                ItemsBG.sprite = ch.characterDef.Portrait;
             }
-            var item = ch.Logic().Item;
+            var item = ch.Item;
             if (ShowMode <= Mode.选择装备的武器)
             {
                 int itemCount = item.GetWeaponCount();
@@ -99,15 +99,15 @@ namespace RPG.UI
         }
         public override void Tick(float DeltaTime)
         {
-            if (Input.GetButtonDown("X"))
-            {
-                if (currentSelectIndex < 0)
-                    return;
-                if (UIController.ItemTipPanel.gameObject.activeSelf)
-                    UIController.ItemTipPanel.Hide();
-                else
-                    Elements[currentSelectIndex].ShowTip();
-            }
+            //if (Input.GetButtonDown("X"))
+            //{
+            //    if (currentSelectIndex < 0)
+            //        return;
+            //    if (UIController.ItemTipPanel.gameObject.activeSelf)
+            //        UIController.ItemTipPanel.Hide();
+            //    else
+            //        Elements[currentSelectIndex].ShowTip();
+            //}
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class MultiSpriteAnimator : MonoBehaviour
 {
     public Sprite[] sprites;
-    public float switchTime;
+    private float switchTime { get { return ConstSwitchTime[(int)activeAnimateType]; } }
     int sizeOfSprites;
     public enum EAnimateType
     {
@@ -32,7 +32,6 @@ public class MultiSpriteAnimator : MonoBehaviour
     {
         activeAnimateType = t;
         int index = (int)t;
-        switchTime = ConstSwitchTime[index];
         sprites = staySprites[index];
         if (t == EAnimateType.Stay)
         {
@@ -42,7 +41,7 @@ public class MultiSpriteAnimator : MonoBehaviour
     public void SetActiveRangeAll()
     {
         Sprite[] sp = staySprites[(int)(EAnimateType.Stay)];
-        SetActiveRange(0, sp.Length);
+        SetActiveRange(0, sp.Length-1);
     }
     public void SetActiveRange(int from, int end)
     {
@@ -50,16 +49,17 @@ public class MultiSpriteAnimator : MonoBehaviour
         endFrame = end;
     }
     SpriteRenderer render;
-    void Awake()
+
+    void Start()
     {
         render = GetComponent<SpriteRenderer>();
-        if (switchTime < 0.001f) switchTime = 0.1f;
-        ConstSwitchTime = new float[countOfType] { 10 / Application.targetFrameRate, 4 / Application.targetFrameRate };
+        ConstSwitchTime = new float[countOfType] { 10.0f / Application.targetFrameRate, 4.0f / Application.targetFrameRate };
+        SetActiveAnimator(EAnimateType.Stay);
     }
     // Update is called once per frame
     void Update()
     {
-        sizeOfSprites = fromFrame - endFrame + 1;
+        sizeOfSprites = endFrame - fromFrame + 1;
         int x = (int)(Time.time / switchTime) % sizeOfSprites;
         render.sprite = sprites[fromFrame + x];
     }

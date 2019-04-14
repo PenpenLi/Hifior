@@ -17,16 +17,14 @@ public class BattleManager : ManagerBase
     /// 显示攻击范围
     /// </summary>
     public UnityAction<CharacterLogic> ShowMoveRangeAction;
+    public UnityAction<CharacterLogic> ShowChooseTargetRangeAction;
+    public UnityAction<CharacterLogic, Vector2Int> ShowEffectTargetRangeAction;
     public UnityAction<List<Vector2Int>> ShowHighlightRangeAction;
+    public UnityAction HideHighlightRangeAction;
     public UnityAction ClearRangeAction;
+    public UnityAction<Vector2Int> UpdateSelectTileInfo;
+    public UnityAction<CharacterLogic> UpdateSelectCharacterInfo;
     public System.Func<bool> IsRangeVisible;
-
-    public bool IsDesktopNo()
-    {
-        if (inputManager.GetNoInput()) return true;
-        var vMouseInputState = inputManager.GetMouseInput();
-        return vMouseInputState.active && vMouseInputState.key == InputManager.EMouseKey.Right;
-    }
 
     CharacterLogic currentCharacterLogic;
 
@@ -45,17 +43,14 @@ public class BattleManager : ManagerBase
         if (ch == null) return null;
         return ch.Logic();
     }
-    public ETileType GetTileType(Vector2Int tilePos)
-    {
-        return gameMode.GridTileManager.GetTileType(tilePos);
-    }
-    public void UpdateTileInfo(Vector2Int tilePos)
-    {
-        uiManager.BattleTileInfo.Show(GetTileType(tilePos));
-    }
 
     public void ChangeState(EBattleState state)
     {
+        if (state == EBattleState.SelectTarget)
+        {
+            //将需要执行的命令先写入到 CharacterLogic中
+            ShowChooseTargetRangeAction(currentCharacterLogic);
+        }
         battleState = state;
     }
     void HandleInput()
@@ -85,34 +80,47 @@ public class BattleManager : ManagerBase
     {
         var vMouseInputState = inputManager.GetMouseInput();
         var tilePos = vMouseInputState.tilePos;
-        UpdateTileInfo(tilePos);
+        UpdateSelectTileInfo(tilePos);
         if (vMouseInputState.IsClickedTile())
         {
-            if (vMouseInputState.key == InputManager.EMouseKey.Left)
+            currentCharacterLogic = GetCharacterLogic(tilePos);
+            if (currentCharacterLogic == null)
             {
-                currentCharacterLogic = GetCharacterLogic(tilePos);
-                if (currentCharacterLogic != null)
-                {
-                    SelectTarget();
-                }
+            }
+            else
+            {
+                SelectTarget();
             }
         }
     }
 
     public void HandleMenu()
     {
-        var vMouseInputState = inputManager.GetMouseInput();
-        if (IsDesktopNo())
+        if (inputManager.GetNoInput() && uiManager.MenuUndoAction != null)
         {
-            CloseMenu();
+            uiManager.MenuUndoAction();
+            return;
+        }
+        var vMouseInputState = inputManager.GetMouseInput();
+        if (uiManager.ActionMenuState == EActionMenuState.Main)
+        {
+            if (vMouseInputState.IsClickedTile())
+            {
+                currentCharacterLogic = GetCharacterLogic(vMouseInputState.tilePos);
+                if (currentCharacterLogic == null)
+                {
+                    ClearRangeAction();
+                    CloseMenu();
+                }
+                else
+                {
+                    SelectTarget();
+                }
+            }
         }
     }
     public void HandleSelectMove()
     {
-        if (IsDesktopNo())
-        {
-            ClearRangeAction();
-        }
         var vMouseInputState = inputManager.GetMouseInput();
         if (PositionMath.MoveableAreaPoints.Contains(vMouseInputState.tilePos))
         {
@@ -131,16 +139,21 @@ public class BattleManager : ManagerBase
             }
             else
             {
-                CancelMove();
+                WarningCannotMove();
             }
         }
     }
     public void HandleSelectTarget()
     {
-        if (IsDesktopNo())
+        if (inputManager.GetNoInput())
         {
-
+            uiManager.MenuUndoAction();
         }
+        var vMouseInputState = inputManager.GetMouseInput();
+        if (PositionMath.AttackAreaPoints.Contains(vMouseInputState.tilePos))
+            ShowEffectTargetRangeAction(currentCharacterLogic, vMouseInputState.tilePos);
+        else
+            HideHighlightRangeAction();
     }
 
     public void HandleLock()
@@ -159,10 +172,11 @@ public class BattleManager : ManagerBase
         {
             if (currentCharacterLogic.Controllable)
             {
-                OpenMenu();
+                OpenMenu(EActionMenuState.Main, UndoCancelMainActionAndClearRange);
             }
             ShowMoveRangeAction(currentCharacterLogic);
         }
+        UpdateSelectCharacterInfo(currentCharacterLogic);
     }
     public void ExecuteMove(Vector2Int destPos)
     {
@@ -170,11 +184,20 @@ public class BattleManager : ManagerBase
         currentCharacterLogic.SetTileCoord(destPos);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
-        gameMode.MoveUnit(srcPos, destPos,OpenMenu);
+        gameMode.MoveUnit(srcPos, destPos, FinishMoveEvent);
+    }
+    public void FinishMoveEvent()
+    {
+        OpenMenu(EActionMenuState.AfterMove, UndoCancelSelectTargetActionAndClearRange);
     }
     public void CancelMove()
     {
-        OpenMenu();
+        ShowMoveRangeAction(currentCharacterLogic);
+        OpenMenu(EActionMenuState.Main, UndoCancelMainActionAndClearRange);
+    }
+    public void WarningCannotMove()
+    {
+
     }
     public void ExecuteAttack()
     {
@@ -186,17 +209,35 @@ public class BattleManager : ManagerBase
     }
     public void FinishAction()
     {
-
+        battleManager.ChangeState(EBattleState.Idel);
+        currentCharacterLogic.EndAction();
     }
     public void CloseMenu()
     {
-
+        uiManager.HideBattlaActionMenu();
     }
-    public void OpenMenu()
+
+    public void OpenMenu(EActionMenuState menuState, UnityAction undoAction = null)
     {
         ChangeState(EBattleState.Menu);
-        uiManager.ShowBattleActionMenu(UIManager.EActionMenuState.Main, currentCharacterLogic);
+        uiManager.MenuUndoAction = undoAction;
+        uiManager.ShowBattleActionMenu(menuState, currentCharacterLogic);
     }
+    #region Undo Action
+
+    public void UndoCancelMainActionAndClearRange()
+    {
+        ChangeState(EBattleState.Idel);
+        ClearRangeAction();
+        CloseMenu();
+    }
+    public void UndoCancelSelectTargetActionAndClearRange()
+    {
+        ClearRangeAction();
+        OpenMenu(EActionMenuState.AfterMove, UndoCancelSelectTargetActionAndClearRange);
+    }
+    #endregion
+
     public void UpdateScene()
     {
 

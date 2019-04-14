@@ -20,9 +20,9 @@ namespace RPG.UI
         public Text tRES;
         public Image iRES;
 
-        public void Init(RPGCharacter ch)
+        public void Init(CharacterLogic ch)
         {
-            var att = ch.Logic().Info.Attribute;
+            var att = ch.Info.Attribute;
             tSTR.text = att.PhysicalPower.ToString();
             iSTR.GetComponent<ValueBar>().initBar(att.PhysicalPower, att.PhysicalPower, 5);
             tWIS.text =att.MagicalPower.ToString();

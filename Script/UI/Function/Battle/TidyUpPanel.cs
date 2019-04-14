@@ -86,7 +86,7 @@ namespace RPG.UI
             secondSelectChar = obj;
             exchangeCharIndex = index;
             ItemsPanelTop.SetActive(true);
-            ipTop.Init(_gameCharList[index]);
+            ipTop.Init(_gameCharList[index].Logic());
         }
         public void ShowCommandWindow()
         {
@@ -98,8 +98,8 @@ namespace RPG.UI
         }
         public void refreshCharInfo()
         {
-            csbp.Init(_gameCharList[selectedCharIndex]);
-            ipBottom.Init(_gameCharList[selectedCharIndex]);
+            csbp.Init(_gameCharList[selectedCharIndex].Logic());
+            ipBottom.Init(_gameCharList[selectedCharIndex].Logic());
         }
 
         public void exchangeItem(int char_Index0, int item_Index0, int char_Index1, int item_Index1)
@@ -122,8 +122,8 @@ namespace RPG.UI
                 ch0.Logic().Item.AddWeapon(item1, item_Index0);
                 ch1.Logic().Item.AddWeapon(item0, item_Index1);
             }
-            ipBottom.Init(_gameCharList[selectedCharIndex]);
-            ipTop.Init(_gameCharList[exchangeCharIndex]);
+            ipBottom.Init(_gameCharList[selectedCharIndex].Logic());
+            ipTop.Init(_gameCharList[exchangeCharIndex].Logic());
         }
         #region 按钮功能实现区
         public void button_Exchange()

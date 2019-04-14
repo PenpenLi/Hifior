@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -26,18 +27,26 @@ public class GameMode : MonoSingleton<GameMode>
         uiManager = new UIManager();
         gridTileManager = new GridTileManager();
         chapterManager = new ChapterManager();
+
         BindKeyInput();
+        uiManager.InitBattleUI(GameObject.Find("Panel(9/16)").transform);
 
         battleManager.ShowMoveRangeAction = ShowMoveRange;
+        battleManager.ShowChooseTargetRangeAction = ShowChooseTargetRange;
+        battleManager.ShowEffectTargetRangeAction = ShowEffectTargetRange;
+
         battleManager.ShowHighlightRangeAction = pathShower.ShowHighLightTiles;
+        battleManager.HideHighlightRangeAction = () => pathShower.HidePath(PathShower.EPathShowerType.HighLight);
         battleManager.IsRangeVisible = pathShower.IsRangeVisible;
         battleManager.ClearRangeAction = pathShower.HideAll;
+        battleManager.UpdateSelectTileInfo = uiManager.UpdateTileInfo;
+        battleManager.UpdateSelectCharacterInfo = uiManager.UpdateCharacterInfo;
 
-        uiManager.InitBattleUI(GameObject.Find("Panel(9/16)").transform);
 
         gridTileManager.LoadNewMap(5);
         gridTileManager.InitMouseInputEvent();
     }
+
     void Start()
     {
         Application.targetFrameRate = 30;
@@ -55,7 +64,7 @@ public class GameMode : MonoSingleton<GameMode>
     {
         InputManager.GetNoInput = () =>
         {
-            return Input.GetKeyUp(KeyCode.Escape);
+            return Input.GetKeyUp(KeyCode.Escape) || Input.GetMouseButtonUp(1);
         };
 
         InputManager.GetYesInput = () =>
@@ -85,8 +94,26 @@ public class GameMode : MonoSingleton<GameMode>
         pathShower.ShowTiles(PathShower.EPathShowerType.Damage, PositionMath.AttackAreaPoints, true, false);
     }
 
+    public void ShowChooseTargetRange(CharacterLogic logic)
+    {
+        Vector2Int tilePos = logic.GetTileCoord();
+        List<Vector2Int> atkRange = CharacterBattleInfo.GetTargetChooseRange(tilePos, EnumWeaponRangeType.菱形菱形, Vector2Int.one);
+        pathShower.ShowTiles(PathShower.EPathShowerType.Damage, atkRange);
+    }
+
+    public void ShowEffectTargetRange(CharacterLogic logic, Vector2Int mouseTilePos)
+    {
+        Vector2Int tilePos = logic.GetTileCoord();
+        List<Vector2Int> highlightRange = new List<Vector2Int> { mouseTilePos };
+        pathShower.ShowHighLightTiles(highlightRange);
+    }
     #endregion
     #region UnitShower
+
+    public ETileType GetTileType(Vector2Int tilePos)
+    {
+        return gridTileManager.GetTileType(tilePos);
+    }
     public void AddUnitToMap(RPGCharacter p, Vector2Int tilePos)
     {
         Transform unit = unitShower.AddUnit(p.GetCamp(), p.GetCharacterName(), p.GetStaySprites(), p.GetMoveSprites(), tilePos);
