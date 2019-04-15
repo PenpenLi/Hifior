@@ -116,9 +116,10 @@ public class GameMode : MonoSingleton<GameMode>
     }
     public void AddUnitToMap(RPGCharacter p, Vector2Int tilePos)
     {
-        Transform unit = unitShower.AddUnit(p.GetCamp(), p.GetCharacterName(), p.GetStaySprites(), p.GetMoveSprites(), tilePos);
+        var logic = p.Logic;
+        Transform unit = unitShower.AddUnit(p.GetCamp(), logic.GetName(), logic.GetStaySprites(), logic.GetMoveSprites(), tilePos);
         p.SetTransform(unit);
-        p.Logic().SetTileCoord(tilePos);
+        logic.SetTileCoord(tilePos);
         chapterManager.AddPlayerToBattle(p);
     }
     public void MoveUnit(Vector2Int unitPos, Vector2Int destPos, UnityAction onFinish)
@@ -127,4 +128,19 @@ public class GameMode : MonoSingleton<GameMode>
         unitShower.MoveUnit(routine, onFinish);
     }
     #endregion
+    /// <summary>
+    /// 加载章节数据，先加载存档中的数据，SLGChapter预制体，地图在StartEvent中载入并显示
+    /// </summary>
+    /// <param name="chapterID"></param>
+    public void LoadChapter(int chapterID)
+    {
+        chapterManager.LoadChapterData(chapterID);
+    }
+    /// <summary>
+    /// 开始我方行动的第一个回合
+    /// </summary>
+    public void StartBattle()
+    {
+
+    }
 }

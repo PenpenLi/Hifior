@@ -17,10 +17,11 @@ namespace RPG.UI
         public void Show(RPGCharacter ch)
         {
             Show();
+            var logic = ch.Logic;
             if (ch.GetCamp() == EnumCharacterCamp.Player)
-                Player.Show(ch.GetCharacterName(), ch.Logic().GetCurrentHP(), ch.Logic().GetMaxHP());
+                Player.Show(logic.GetName(), logic.GetCurrentHP(), logic.GetMaxHP());
             else
-                Enemy.Show(ch.GetCharacterName(), ch.Logic().GetCurrentHP(), ch.Logic().GetMaxHP());
+                Enemy.Show(logic.GetName(), logic.GetCurrentHP(), logic.GetMaxHP());
         }
         public void Change(RPGCharacter ch, int ChangedHP, float delayTime = 0.0f)
         {

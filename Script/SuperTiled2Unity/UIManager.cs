@@ -78,7 +78,7 @@ public class UIManager : ManagerBase
         battleManager.ChangeState(BattleManager.EBattleState.SelectTarget);
     }
     public void BattleAction_End()
-    {
+    { 
         battleManager.FinishAction();
     }
     public void BuildBattleActionMenu_Main(CharacterLogic chLogic)

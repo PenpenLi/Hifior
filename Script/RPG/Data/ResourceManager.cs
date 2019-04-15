@@ -33,9 +33,14 @@ public static class ResourceManager
     {
         return Resources.Load<EnemyDef>(Path.Combine(ASSET_ENEMY, ID.ToString()));
     }
-    public static string GetChapterName(int ChapterIndex)
+    public static ChapterSettingDef GetChapterDef(int ChapterIndex)
     {
         ChapterSettingDef def = Resources.Load<ChapterSettingDef>(Path.Combine(ASSET_CHAPTERSETTING, ChapterIndex.ToString()));
+        return def;
+    }
+    public static string GetChapterName(int ChapterIndex)
+    {
+        ChapterSettingDef def = GetChapterDef(ChapterIndex);
         return def.CommonProperty.Name;
     }
 

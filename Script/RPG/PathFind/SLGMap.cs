@@ -323,7 +323,7 @@ public class SLGMap : MonoBehaviour
     #endregion
     public void InitActionScope(RPGCharacter Gamechar, bool Show = true)
     {
-        InitActionScope(Gamechar, Gamechar.Logic().GetMovement(), Show);
+        InitActionScope(Gamechar, Gamechar.Logic.GetMovement(), Show);
     }
     public void InitActionScope(RPGCharacter Gamechar, int Movement, bool Show = true)
     {
@@ -335,7 +335,7 @@ public class SLGMap : MonoBehaviour
              _Job = 15;//medifyneed
          if (Gamechar.SkillGroup.isHaveStaticSkill(19))
              _Mov += 2;*/
-        _Career = Gamechar.Logic().GetCareer();
+        _Career = Gamechar.Logic.GetCareer();
         CharacterCenter = new Vector2Int(Gamechar.GetTileCoord().x, Gamechar.GetTileCoord().x);
 
         ResetMoveAcessList();
@@ -348,11 +348,11 @@ public class SLGMap : MonoBehaviour
 
         while (countPoint < _Mov)
         {
-            _FindDistance(Gamechar.Logic().GetCareer(), _Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
+            _FindDistance(Gamechar.Logic.GetCareer(), _Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
             countPoint++;
         }
 
-        WeaponItem item = Gamechar.Logic().Item.GetEquipWeapon();
+        WeaponItem item = Gamechar.Logic.Info.Items.GetEquipWeapon();
         item = new WeaponItem(1);
         if (item != null)//装备武器不为空
         {
@@ -748,7 +748,7 @@ public class SLGMap : MonoBehaviour
     public bool MoveWithOutShowRoutine(RPGCharacter Gamechar, int x, int y, UnityAction OnMoveFinish)
     {
         Vector2Int point = new Vector2Int(x, y);
-        Gamechar.Logic().SetTileCoord(point);
+        Gamechar.Logic.SetTileCoord(point);
         if (_FootData.ContainsKey(point))
         {
             buildMoveRoutine(x, y);
@@ -909,7 +909,7 @@ public class SLGMap : MonoBehaviour
         {
             for (int j = 0; j < TileHeight; j++)
             {
-                if (GetMapPassValue(Gamechar.Logic().GetCareer(), i, j) > 10 || IsOccupiedByDiffentParty(i, j))
+                if (GetMapPassValue(Gamechar.Logic.GetCareer(), i, j) > 10 || IsOccupiedByDiffentParty(i, j))
                     bWalkable = false;
                 else if (IsOccupiedBySameParty(i, j))
                     bWalkable = true;
@@ -1060,7 +1060,7 @@ public class SLGMap : MonoBehaviour
         _AttackRangeData.Clear();
         int x = Gamechar.GetTileCoord().x;
         int y = Gamechar.GetTileCoord().y;
-        List<WeaponItem> items = Gamechar.Logic().Item.GetAttackWeapon();
+        List<WeaponItem> items = Gamechar.Logic.Info.Items.GetAttackWeapon();
         foreach (WeaponItem item in items)
         {
             _ItemRangeMax = item.GetDefinition().RangeType.MaxSelectRange;

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5909f0e42b7b30a4aa38c3c23bd540e5, type: 3}
+  m_Name: 0
+  m_EditorClassIdentifier: 
+  CommonProperty:
+    ID: 0
+    Name: 
+    Description: 
+  Icon: {fileID: 0}
+  DisapperCondition: 0
+  DisapperRound: 5
+  DisapperOnExitBattle: 1
+  EventTrigger: 0
+  Effect: 0
+  AttributeChange:
+    HP: 0
+    PhysicalPower: 0
+    MagicalPower: 0
+    Skill: 0
+    Speed: 0
+    Luck: 0
+    PhysicalDefense: 0
+    MagicalDefense: 0
+    Movement: 0
+  Params: 

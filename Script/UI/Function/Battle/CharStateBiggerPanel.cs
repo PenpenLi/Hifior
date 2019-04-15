@@ -12,7 +12,7 @@ namespace RPG.UI
         public Text Text_HP;
         public void Init(CharacterLogic ch)
         {
-            Text_Name.text = ch.GetCharacterName();
+            Text_Name.text = ch.GetName();
             Text_Job.text = ch.GetCareerName();
             Text_LV.text = ch.Info.Level.ToString();
             Text_EXP.text = ch.GetExp().ToString();

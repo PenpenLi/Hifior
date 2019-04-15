@@ -86,14 +86,14 @@ namespace RPG.UI
         }
         public string GetHit(RPGCharacter ch, RPGCharacter enemy)
         {
-            int hit = ch.Logic().GetHit() - enemy.Logic().GetAvoid();
+            int hit = ch.Logic.GetHit() - enemy.Logic.GetAvoid();
             if (hit < 0) hit = 0;
             return hit.ToString();
         }
         public string GetCritical(RPGCharacter ch, RPGCharacter enemy)
         {
-            int cri = ch.Logic().GetCritical();
-            int criavoid = enemy.Logic().GetCriticalAvoid();
+            int cri = ch.Logic.GetCritical();
+            int criavoid = enemy.Logic.GetCriticalAvoid();
             int critical = cri - criavoid;
             if (critical < 0) critical = 0;
             return critical.ToString();

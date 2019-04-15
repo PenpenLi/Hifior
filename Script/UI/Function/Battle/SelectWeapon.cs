@@ -53,7 +53,7 @@ namespace RPG.UI
             m_CurCharacter = ch;
             disable();
             attackableItems.Clear();
-            attackableItems = ch.Item.GetAttackWeapon();
+            attackableItems = ch.Info.Items.GetAttackWeapon();
 
             for (int i = 0; i < attackableItems.Count; i++)
             {

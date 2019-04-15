@@ -15,8 +15,8 @@ namespace RPG.UI
         {
             CharIndex = index;
             gameChar = ch;
-            textName.text = ch.GetCharacterName();
-            imageIcon.sprite = ch.GetPortrait();
+            textName.text = ch.Logic.GetName();
+            imageIcon.sprite = ch.Logic.GetPortrait();
         }
 
         public void OnPointerClick(PointerEventData eventData)

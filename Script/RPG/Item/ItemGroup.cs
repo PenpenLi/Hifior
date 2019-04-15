@@ -1,15 +1,18 @@
 ﻿using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine;
+[System.Serializable]
 public class ItemGroup
 {
     public const int MAX_WEAPON_COUNT = 5;
     public const int MAX_PROPS_COUNT = 5;
     public const int MAX_PASSIVEITEM_COUNT = 2;//鞋子，护甲，饰品，
+    [SerializeField]
     private List<WeaponItem> weapons = new List<WeaponItem>();
+    [SerializeField]
     private List<PropsItem> props = new List<PropsItem>();
+    [SerializeField]
     private List<PropsItem> passiveItems = new List<PropsItem>();//被动装备  
-    private CharacterAttribute attribute;
     private int _currentEquipItemIndex = -1; //当前装备武器的index
     public int GetEquipIndex()
     {
@@ -19,32 +22,22 @@ public class ItemGroup
     /// 在完全获得该道具后执行的事件
     /// </summary>
     private UnityAction AfterSuccessAddItem;
-    public ItemGroup(CharacterAttribute attr)
+    public ItemGroup()
     {
-        attribute = attr;
+        weapons.Add(new WeaponItem(0));
+        props.Add(new PropsItem(0));
     }
-    public List<WeaponItem> Weapons
+    public List<WeaponItem> Weapons { get { return weapons; } }
+    public List<PropsItem> Props { get { return Props; } }
+    public List<PropsItem> PassiveItems { get { return passiveItems; } }
+    public override string ToString()
     {
-        get
-        {
-            return weapons;
-        }
+        string s = null;
+        foreach(var v in weapons) { s += "Weapons:"; s += v.ToString();s += "\n"; }
+        foreach (var v in Props) { s += "Props:"; s += v.ToString(); s += "\n"; }
+        foreach (var v in PassiveItems) { s += "PassiveItems:"; s += v.ToString(); s += "\n"; }
+        return s;
     }
-    public List<PropsItem> Props
-    {
-        get
-        {
-            return Props;
-        }
-    }
-    public List<PropsItem> PassiveItems
-    {
-        get
-        {
-            return passiveItems;
-        }
-    }
-
     #region 装备处理函数
     public void SortWeapons()
     {
@@ -97,7 +90,8 @@ public class ItemGroup
             {
                 Debug.LogError("武器超过最大可容纳的数量了");
             }
-            else {
+            else
+            {
                 AddWeapon(i, null);
             }
         }
@@ -311,7 +305,8 @@ public class ItemGroup
             {
                 Debug.LogError("武器超过最大可容纳的数量了");
             }
-            else {
+            else
+            {
                 AddProp(i, null);
             }
         }

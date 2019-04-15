@@ -58,7 +58,7 @@ namespace RPG.UI
             {
                 ItemsBG.sprite = ch.characterDef.Portrait;
             }
-            var item = ch.Item;
+            var item = ch.Info.Items;
             if (ShowMode <= Mode.选择装备的武器)
             {
                 int itemCount = item.GetWeaponCount();

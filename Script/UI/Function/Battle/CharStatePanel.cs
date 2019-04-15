@@ -21,11 +21,12 @@ namespace RPG.UI
         {
             if (ch != null)
             {
-                charIcon.sprite = ch.GetPortrait();
-                charName.text = ch.GetCharacterName();
-                hp.text = ch.Logic().GetCurrentHP() + "/" + ch.Logic().GetMaxHP();
-                lv.text = ch.Logic().GetLevel().ToString();
-                WeaponItem item = ch.Logic().Item.GetEquipWeapon();
+                var logic = ch.Logic;
+                charIcon.sprite = logic.GetPortrait();
+                charName.text = logic.GetName();
+                hp.text = logic.GetCurrentHP() + "/" + ch.Logic.GetMaxHP();
+                lv.text = ch.Logic.GetLevel().ToString();
+                WeaponItem item = ch.Logic.Info.Items.GetEquipWeapon();
                 if (item != null)
                 {
                     weaponIcon.gameObject.SetActive(true);

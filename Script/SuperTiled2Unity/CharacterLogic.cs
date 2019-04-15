@@ -1,14 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+[System.Serializable]
 public class CharacterBattleInfo
 {
-    public enum EBattleState
-    {
-        Normal,
-        Frozen,
-        Poison
-    }
-    public EBattleState battleState;
     /// <summary>
     /// 是否已经选择了目标Tile
     /// </summary>
@@ -135,20 +129,26 @@ public class CharacterBattleInfo
 }
 public class CharacterLogic
 {
-    public CharacterLogic(CharacterDef def)
+    public CharacterLogic(PlayerDef def)
     {
         characterDef = def;
+        careerDef = ResourceManager.GetCareerDef(characterDef.Career);
         Info = new CharacterInfo(def);
-        Item = new ItemGroup(GetAttribute());
         BattleInfo = new CharacterBattleInfo();
+    }
+    public CharacterLogic(CharacterInfo info)
+    {
+        Info = info;
+        int id = info.ID;
+        careerDef = ResourceManager.GetCareerDef(info.Career);
+        characterDef = ResourceManager.GetPlayerDef(id);
     }
     /// <summary>
     /// 包含需要被序列化记录的数据
     /// </summary>
     public CharacterInfo Info { private set; get; }
-    public CharacterDef characterDef;
+    public PlayerDef characterDef;
     public CareerDef careerDef;
-    public ItemGroup Item { private set; get; }
     public CharacterBattleInfo BattleInfo { private set; get; }
     public bool hasFinishAction { private set; get; }
     /// <summary>
@@ -159,13 +159,7 @@ public class CharacterLogic
     /// <summary>
     /// 是否可以被玩家选择并进行行动
     /// </summary>
-    public bool Controllable
-    {
-        get
-        {
-            return bEnableAction;
-        }
-    }
+    public bool Controllable { get { return bEnableAction; } }
     /// <summary>
     /// 是否在移动中
     /// </summary>
@@ -175,13 +169,8 @@ public class CharacterLogic
     /// </summary>
     protected bool bAttacking = false;
     protected int damageCount = 0;//收到伤害和造成伤害的次数
-    [SerializeField]
-    protected Vector2Int tileCoords;
-
-    protected Vector2Int oldTileCoords;
 
     #region get
-    public CharacterAttribute GetAttribute() { return Info.Attribute; }
 
     public int GetMovement()
     {
@@ -189,20 +178,14 @@ public class CharacterLogic
     }
     public Vector2Int GetTileCoord()
     {
-        return tileCoords;
+        return Info.tileCoords;
     }
     public Vector2Int GetOldTileCoord()
     {
-        return oldTileCoords;
+        return Info.oldTileCoords;
     }
-    public EnumCharacterImportance Importance
-    {
-        get
-        {
-            return characterDef.CharacterImportance;
-        }
-    }
-    public string GetCharacterName()
+    public EnumCharacterImportance Importance { get { return characterDef.CharacterImportance; } }
+    public string GetName()
     {
         return characterDef.CommonProperty.Name;
     }
@@ -214,7 +197,34 @@ public class CharacterLogic
     {
         return characterDef.DefaultAttribute;
     }
-
+    public CharacterAttribute GetAttribute()
+    {
+        return Info.Attribute;
+    }
+    public int GetID()
+    {
+        return characterDef.CommonProperty.ID;
+    }
+    public string GetDescription()
+    {
+        return characterDef.CommonProperty.Description;
+    }
+    public Sprite GetPortrait()
+    {
+        return characterDef.Portrait;
+    }
+    public GameObject GetStaticMesh()
+    {
+        return characterDef.BattleModel;
+    }
+    public Sprite[] GetStaySprites()
+    {
+        return careerDef.Stay;
+    }
+    public Sprite[] GetMoveSprites()
+    {
+        return careerDef.Move;
+    }
     public int GetLevel()
     {
         return Info.Level;
@@ -283,8 +293,8 @@ public class CharacterLogic
     }
     public void SetTileCoord(Vector2Int tilePos)
     {
-        oldTileCoords = tileCoords;
-        tileCoords = tilePos;
+        Info.oldTileCoords = Info.tileCoords;
+        Info.tileCoords = tilePos;
     }
     public void SetCareer(int career)
     {
@@ -314,7 +324,7 @@ public class CharacterLogic
 
     public int GetAttack()//攻击力等于自身的伤害加武器伤害
     {
-        WeaponItem equipItem = Item.GetEquipWeapon();
+        WeaponItem equipItem = Info.Items.GetEquipWeapon();
         if (equipItem == null)
             return 0;
         WeaponDef itemDef = ResourceManager.GetWeaponDef(equipItem.ID);
@@ -332,13 +342,13 @@ public class CharacterLogic
 
     public int GetHit()
     {
-        WeaponItem equipItem = Item.GetEquipWeapon();
+        WeaponItem equipItem = Info.Items.GetEquipWeapon();
         var att = GetAttribute();
         return ResourceManager.GetWeaponDef(equipItem.ID).Hit + att.Skill;//武器命中+技术
     }
     public int GetCritical()
     {
-        WeaponItem equipItem = Item.GetEquipWeapon();
+        WeaponItem equipItem = Info.Items.GetEquipWeapon();
         var att = GetAttribute();
         return ResourceManager.GetWeaponDef(equipItem.ID).Crit + (att.Skill + att.Luck / 2) / 2;
     }
@@ -354,15 +364,15 @@ public class CharacterLogic
     }
     public int GetRangeMax()
     {
-        return ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).RangeType.MaxSelectRange;
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.MaxSelectRange;
     }
     public int GetRangeMin()
     {
-        return ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).RangeType.MinSelectRange;
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.MinSelectRange;
     }
     public EnumWeaponRangeType GetRangeType()
     {
-        return ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).RangeType.RangeType;
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.RangeType;
     }
     public int GetAnger()
     {
@@ -371,7 +381,7 @@ public class CharacterLogic
     public int GetAttackSpeed()
     {
         var att = GetAttribute();
-        return att.Speed - ResourceManager.GetWeaponDef(Item.GetEquipWeapon().ID).Weight;
+        return att.Speed - ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).Weight;
     }
     #endregion
 

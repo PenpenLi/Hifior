@@ -16,7 +16,7 @@ public abstract class SerializableBase
     /// 获取存储的路径，重写该函数后可以使用序列化
     /// </summary>
     /// <returns></returns>
-    public virtual string GetFullRecordPathName() { return ""; }
+    public virtual string GetFullRecordPathName() { return Application.persistentDataPath + "/save.bin"; }
     /// <summary>
     /// 获取Key，重写以实现序列化操作
     /// </summary>
@@ -42,7 +42,7 @@ public abstract class SerializableBase
         {
             BinaryFormatter binary = new BinaryFormatter();
             FileStream fStream = File.Open(GetFullRecordPathName(), FileMode.Open);
-            T ret= binary.Deserialize(fStream) as T;
+            T ret = binary.Deserialize(fStream) as T;
             fStream.Close();
             return ret;
         }
@@ -58,6 +58,7 @@ public abstract class SerializableBase
         Assert.IsTrue(Exists(), "无法读取到磁盘文件");
         StreamReader sr = new StreamReader(GetFullRecordPathName());
         string s = sr.ReadToEnd();
+        sr.Close();
         return JsonUtility.FromJson<T>(s);
     }
 
@@ -105,15 +106,22 @@ public class Save_Character : SerializableBase
     [RuntimeInitializeOnLoadMethod]
     public static void III()
     {
-        Save_Character s = new Save_Character();
-        Debug.Log("RuntimeInit"+ s.GetFullRecordPathName());
-        s.ID = 0;
-        s.Name = "是方法就是看";
-        s.SaveBinary();
+        bool save = false;
+        if (save)
+        {
+            Save_Character s = new Save_Character();
+            Debug.Log("RuntimeInit" + s.GetFullRecordPathName());
+            s.ID = 0;
+            s.Name = "是方法就是看";
+            s.SaveBinary();
+        }
+        else
+        {
 
-        Save_Character s = new Save_Character();
-       s= s.LoadBinary<Save_Character>();
-        Debug.Log(s.ID + "  " + s.Name);
+            Save_Character s = new Save_Character();
+            s = s.LoadBinary<Save_Character>();
+            Debug.Log(s.ID + "  " + s.Name);
+        }
     }
 }
 [Serializable]
@@ -131,24 +139,30 @@ public class Save_CharacterList : SerializableList<Save_Character>
     [RuntimeInitializeOnLoadMethod]
     public static void III()
     {
-        Save_CharacterList sss = new Save_CharacterList();
-        sss.RecordList = new List<Save_Character>();
+        bool save = false;
+        if (save)
+        {
+            Save_CharacterList sss = new Save_CharacterList();
+            sss.RecordList = new List<Save_Character>();
 
-        Save_Character s0 = new Save_Character();
-        s0.Key = "0";
-        s0.ID = 0;
-        s0.Name = "是方法就是看";
-        Save_Character s1 = new Save_Character();
-        s1.Key = "liu";
-        s1.ID = 1;
-        s1.Name = "fsdafasdfdsa";
-        sss.RecordList.Add(s0);
-        sss.RecordList.Add(s1);
+            Save_Character s0 = new Save_Character();
+            s0.Key = "0";
+            s0.ID = 0;
+            s0.Name = "是方法就是看";
+            Save_Character s1 = new Save_Character();
+            s1.Key = "liu";
+            s1.ID = 1;
+            s1.Name = "fsdafasdfdsa";
+            sss.RecordList.Add(s0);
+            sss.RecordList.Add(s1);
 
-        sss.SaveBinary();
-
-        Save_CharacterList sss = new Save_CharacterList();
-        Debug.Log(sss.GetBinaryContent("liu").Name);
+            sss.SaveBinary();
+        }
+        else
+        {
+            Save_CharacterList sss = new Save_CharacterList();
+            Debug.Log(sss.GetBinaryContent("liu").Name);
+        }
     }
 }
 */

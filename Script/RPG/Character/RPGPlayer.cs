@@ -25,7 +25,8 @@ public class RPGPlayer : RPGCharacter
     /// <returns></returns>
     public override bool IsLeader()
     {
-        return GetCharacterID() == ConstTable.LEADER_0 || GetCharacterID() == ConstTable.LEADER_1 || GetCharacterID() == ConstTable.LEADER_2;
+        var id = Logic.GetID();
+        return id == ConstTable.LEADER_0 || id == ConstTable.LEADER_1 || id == ConstTable.LEADER_2;
     }
 
     private void A()

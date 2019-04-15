@@ -41,7 +41,7 @@ public class BattleManager : ManagerBase
     {
         var ch = chapterManager.GetCharacterFromCoord(tilePos);
         if (ch == null) return null;
-        return ch.Logic();
+        return ch.Logic;
     }
 
     public void ChangeState(EBattleState state)
@@ -209,6 +209,7 @@ public class BattleManager : ManagerBase
     }
     public void FinishAction()
     {
+        currentCharacterLogic.Info.Save();
         battleManager.ChangeState(EBattleState.Idel);
         currentCharacterLogic.EndAction();
     }

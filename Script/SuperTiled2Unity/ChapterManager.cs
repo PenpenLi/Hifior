@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
 /// 管理章节数据和检测
@@ -9,11 +7,14 @@ using UnityEngine.Events;
 /// </summary>
 public class ChapterManager : ManagerBase
 {
-    private SLGChapter chapterSettting;
-    public GameRecord recorder;
+    private SLGChapter chapterEvent;
+    public SLGChapter Event { get { return chapterEvent; } }
+    public ChapterSettingDef ChapterDef;
     private List<RPGPlayer> players;
     private List<RPGEnemy> enemies;
     private List<CharacterLogic> playerLogic;
+    private Warehouse warehouse;
+
     public int Condition;
     public int BossID;
     public int CityID;
@@ -28,22 +29,12 @@ public class ChapterManager : ManagerBase
     /// <summary>
     /// 清除战场数据
     /// </summary>
-    public void ClearBattle(bool save)
+    public void ClearBattle()
     {
         players.Clear();
         enemies.Clear();
-        if (save)
-        {
-            SaveBattleToLogic();
-        }
     }
-    public void SaveBattleToLogic()
-    {
-        foreach (var v in playerLogic)
-        {
-            playerLogic.Add(players[0].Logic());
-        }
-    }
+
     /// <summary>
     /// 仅添加数据
     /// </summary>
@@ -61,7 +52,7 @@ public class ChapterManager : ManagerBase
         UnityEngine.Assertions.Assert.AreEqual(ch.GetCamp(), EnumCharacterCamp.Player);
         RPGPlayer player = ch as RPGPlayer;
         players.Add(player);
-        playerLogic.Add(player.Logic());
+        playerLogic.Add(player.Logic);
     }
     public void AddEnemyToBattle()
     {
@@ -79,4 +70,38 @@ public class ChapterManager : ManagerBase
     {
         return GetCharacterFromCoord(tilePos) != null;
     }
+    #region GameRecord
+
+    private GameRecord record;
+    /// <summary>
+    /// 记录战场情况
+    /// </summary>
+    public void SaveBattle()
+    {
+
+    }
+    /// <summary>
+    /// 仅章节结束后的数据
+    /// </summary>
+    public void SaveChapterData(int slot)
+    {
+        List<CharacterInfo> playerInfos = new List<CharacterInfo>();
+        foreach (var v in players)
+        {
+            playerInfos.Add(v.Logic.Info);
+        }
+        record.SaveChapter(slot, true, ChapterDef.CommonProperty.ID, warehouse, playerInfos);
+    }
+    public void LoadChapterData(int slot)
+    {
+        ClearBattle();
+        ChapterRecordCollection collect = record.LoadChapterFromDisk(slot);
+        ChapterDef = ResourceManager.GetChapterDef(collect.Chapter);
+        playerLogic.Clear();
+        foreach (var v in collect.PlayersInfo.RecordList)
+        {
+            playerLogic.Add(new CharacterLogic(v));
+        }
+    }
+    #endregion
 }

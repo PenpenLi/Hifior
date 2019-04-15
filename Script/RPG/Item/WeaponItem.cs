@@ -54,6 +54,10 @@ public class GameItem:IComparable<GameItem>
         else
             return -1;
     }
+    public override string ToString()
+    {
+        return "item id=" + itemID + " usage=" + usage;
+    }
 }
 [System.Serializable]
 public class WeaponItem:GameItem

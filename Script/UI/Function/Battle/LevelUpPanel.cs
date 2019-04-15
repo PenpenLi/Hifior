@@ -29,7 +29,7 @@ namespace RPG.UI
             bShowFinish = false;
             gameObject.SetActive(true);
             PanelJobAndLevel.SetActive(true);
-            var logic = ch.Logic();
+            var logic = ch.Logic;
             tAbilityValue[0].text = logic.GetLevel().ToString();
             tAbilityValue[1].text = logic.GetMaxHP().ToString();
             tAbilityValue[2].text = logic.GetPhysicalPower().ToString();

@@ -6,30 +6,51 @@ using System;
 [System.Serializable]
 public class CharacterInfo : SerializableBase
 {
+    public enum EBattleState
+    {
+        Normal,
+        Frozen,
+        Poison
+    }
     public int ID;
+    public bool Alive;
+    public bool Available;
     public int Level;
     public int Exp;
     public int Career;
     public int MaxHP;
     public int CurrentHP;
+    public EBattleState battleState;
+    public Vector2Int tileCoords;
     public CharacterAttribute Attribute;
     public ItemGroup Items;
+    [NonSerialized]
+    public Vector2Int oldTileCoords;
     public override string GetKey()
     {
         return ID.ToString();
     }
-    public CharacterInfo() { }
-    public CharacterInfo(RPGCharacter Character)
+    private CharacterInfo() { }
+
+    //[RuntimeInitializeOnLoadMethod]
+    //public static void LoadFromRecord() {
+    //    CharacterInfo info = new CharacterInfo();
+    //   info= info.Load<CharacterInfo>();
+    //    Debug.Log(info.Items.Weapons.Count);
+    //}
+    public CharacterInfo(CharacterLogic Logic)
     {
-        ID = Character.GetCharacterID();
-        Level = Character.Logic().GetLevel();
-        Exp = Character.Logic().GetLevel();
-        Career = Character.Logic().GetCareer();
-        Attribute = Character.Logic().GetAttribute();
-        CurrentHP = Character.Logic().GetCurrentHP();
-        MaxHP = Character.Logic().GetMaxHP();
+        ID = Logic.GetID();
+        Level = Logic.GetLevel();
+        Exp = Logic.GetLevel();
+        Career = Logic.GetCareer();
+        Attribute = Logic.GetAttribute();
+        CurrentHP = Logic.GetCurrentHP();
+        MaxHP = Logic.GetMaxHP();
+        Items = new ItemGroup();
+
     }
-    public CharacterInfo(CharacterDef def)
+    public CharacterInfo(PlayerDef def)
     {
         ID = def.CommonProperty.ID;
         Level = def.DefaultLevel;
@@ -38,6 +59,7 @@ public class CharacterInfo : SerializableBase
         Attribute = def.DefaultAttribute;
         CurrentHP = Attribute.HP;
         MaxHP = Attribute.HP;
+        Items = new ItemGroup();
     }
     public override string ToString()
     {
@@ -48,6 +70,10 @@ public class CharacterInfo : SerializableBase
   "CharacterAttribute=" + Attribute + ";  \n" +
   "Items= " + Items;
     }
+    /// <summary>
+    /// 既存活同时又允许出场
+    /// </summary>
+    public bool Active { get { return Alive && Available; } }
 }
 [System.Serializable]
 public class ChapterRecordCollection : SerializableBase
@@ -55,7 +81,7 @@ public class ChapterRecordCollection : SerializableBase
     /// <summary>
     /// 存档顺序
     /// </summary>
-    public int Index;
+    public int Slot;
     /// <summary>
     /// 当前运输队
     /// </summary>
@@ -72,10 +98,6 @@ public class ChapterRecordCollection : SerializableBase
     /// 存档玩家信息
     /// </summary>
     public PlayerInfoCollection PlayersInfo;
-    /// <summary>
-    /// 可用的玩家ID
-    /// </summary>
-    public List<int> AvailablePlayers;
 
     /// <summary>
     /// 设置存档的顺序
@@ -85,7 +107,7 @@ public class ChapterRecordCollection : SerializableBase
     {
         Assert.IsTrue(SaveIndex >= 0, "存档Index需大于等于0");
         Assert.IsTrue(SaveIndex < 10, "存档Index需小于10");
-        Index = SaveIndex;
+        Slot = SaveIndex;
     }
     /// <summary>
     /// 更新玩家的信息，如果存档中已经存在该玩家，则替换存在的玩家信息，如果不存在则添加该玩家信息
@@ -97,23 +119,23 @@ public class ChapterRecordCollection : SerializableBase
             PlayersInfo = new PlayerInfoCollection();
         foreach (RPGCharacter Ch in Characters)
         {
-            if (PlayersInfo.HasCharacterInfo(Ch.GetCharacterID()))
+            if (PlayersInfo.HasCharacterInfo(Ch.Logic.GetID()))
             {
-                PlayersInfo.RefreshCharacterInfo(Ch.GetCharacterID(), Ch);
+                PlayersInfo.RefreshCharacterInfo(Ch.Logic.GetID(), Ch);
             }
             else
             {
-                PlayersInfo.AddContent(new CharacterInfo(Ch));
+                PlayersInfo.AddContent(new CharacterInfo(Ch.Logic));
             }
         }
     }
     public override string GetKey()
     {
-        return "ChapterRecord_" + Index;
+        return "ChapterRecord_" + Slot;
     }
     public override string GetFullRecordPathName()
     {
-        return Application.persistentDataPath + "/ChapterRecord_" + Index.ToString() + ".sav";
+        return Application.persistentDataPath + "/ChapterRecord_" + Slot.ToString() + ".sav";
     }
 }
 [System.Serializable]
@@ -127,7 +149,7 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
     /// 存档是否已经包含某个角色的信息
     /// </summary>
     /// <returns></returns>
-    public bool HasCharacterInfo(int CharacterID,out CharacterInfo OutCharacterInfo)
+    public bool HasCharacterInfo(int CharacterID, out CharacterInfo OutCharacterInfo)
     {
         CheckRecordList();
         foreach (CharacterInfo info in RecordList)
@@ -168,11 +190,11 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
         {
             if (RecordList[i].ID == CharacterID)
             {
-                RecordList[i] = new CharacterInfo(Character);
+                RecordList[i] = new CharacterInfo(Character.Logic);
                 return RecordList[i];
             }
         }
-        CharacterInfo NewInfo = new CharacterInfo(Character);
+        CharacterInfo NewInfo = new CharacterInfo(Character.Logic);
         RecordList.Add(NewInfo);
         return NewInfo;
     }
@@ -207,39 +229,24 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
 /// </summary>
 public class GameRecord
 {
-
     #region 存档相关函数
-    private ChapterRecordCollection ChapterRecord;
+    /// <summary>
+    /// 多个队伍的存档
+    /// </summary>
+    private List<ChapterRecordCollection> teamRecords;
     /// <summary>
     /// 章节结束时保存当前章节的信息到这个变量里
     /// </summary>
-    private ChapterRecordCollection TempChapterEndRecord;
-    /// <summary>
-    /// 当前存档章节数
-    /// </summary>
-    public int ChapterID;
-    public Warehouse Ware;
-    /// <summary>
-    /// 当前可用的角色，保留在存档中，每一章开始时从存档读取，当有我方人物加入时，写入该表，当有角色离开时，从该表里删除，每一章结束后存储到Save文件里
-    /// </summary>
-    private List<int> AvailablePlayers = new List<int>();
-    /// <summary>
-    /// 获取所有可用的角色列表
-    /// </summary>
-    /// <returns></returns>
-    public List<int> GetAvailablePlayersID()
-    {
-        return AvailablePlayers;
-    }
+    private ChapterRecordCollection currentTeamRecord;
+    private List<CharacterInfo> currentTeamCharacterInfo { get { return currentTeamRecord.PlayersInfo.RecordList; } }
     public List<CharacterInfo> GetAvailablePlayersInfo()
     {
         List<CharacterInfo> L = new List<CharacterInfo>();
-        for (int i = 0; i < AvailablePlayers.Count; i++)
+        foreach (var v in currentTeamCharacterInfo)
         {
-            CharacterInfo info;
-            if (ChapterRecord.PlayersInfo.HasCharacterInfo(AvailablePlayers[i], out info))
+            if (v.Active)
             {
-                L.Add(info);
+                L.Add(v);
             }
         }
         return L;
@@ -250,9 +257,10 @@ public class GameRecord
     /// <param name="ID"></param>
     public void AddAvailablePlayer(int ID)
     {
-        if (AvailablePlayers.Contains(ID))
-            return;
-        AvailablePlayers.Add(ID);
+        foreach (var v in currentTeamCharacterInfo)
+        {
+            if (v.ID == ID && v.Available == false) v.Available = true;
+        }
     }
     /// <summary>
     /// 移除可用角色，当角色因为剧情事件被移除时执行，死亡时不会移除。被移除的角色将不会在准备画面显示
@@ -260,56 +268,55 @@ public class GameRecord
     /// <param name="ID"></param>
     public void RemoveAvailablePlayer(int ID)
     {
-        if (AvailablePlayers.Contains(ID))
-            AvailablePlayers.Remove(ID);
-        else
-            Debug.LogError("你想要移除的有效角色并不存在");
+        foreach (var v in currentTeamCharacterInfo)
+        {
+            if (v.ID == ID && v.Available) v.Available = false;
+        }
+        Debug.LogError("你想要移除的有效角色并不存在");
     }
     /// <summary>
     /// 章节结束保存下数据缓存
     /// </summary>
     /// <param name="AfterStartSequence">是否是开始剧情播放完记录的</param>
-    public void SaveChapter(bool AfterStartSequence)
+    public void SaveChapter(int slot,bool AfterStartSequence,int chapterId,Warehouse ware,List<CharacterInfo> infos)
     {
-        // GM_Battle GameMode = GetGameMode<GM_Battle>();
-        TempChapterEndRecord = new ChapterRecordCollection();
-        TempChapterEndRecord.Chapter = ChapterID;
-        TempChapterEndRecord.AfterStartSequence = AfterStartSequence;
-        TempChapterEndRecord.AvailablePlayers = AvailablePlayers;
-        TempChapterEndRecord.Ware = Ware;
-        //TempChapterEndRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
+        currentTeamRecord.Slot = slot;
+        currentTeamRecord.AfterStartSequence = AfterStartSequence;
+        currentTeamRecord = new ChapterRecordCollection();
+        currentTeamRecord.Chapter = chapterId;
+        currentTeamRecord.Ware = ware;
+        currentTeamRecord.PlayersInfo = new PlayerInfoCollection();
+        foreach(var v in infos)
+        {
+            currentTeamRecord.PlayersInfo.AddContent(v);
+        }
     }
 
-    public void SaveChapterToDisk(int Index)
+    public void SaveChapterToDisk(int slot)
     {
-        Assert.IsNotNull(TempChapterEndRecord, "章节存档尚未初始化");
-        TempChapterEndRecord.SetIndex(Index);
-        TempChapterEndRecord.SaveBinary();
+        Assert.IsNotNull(currentTeamRecord, "章节存档尚未初始化");
+        currentTeamRecord.SetIndex(slot);
+        currentTeamRecord.Save();
     }
-    public bool HasChapterSave(int Index)
+    public bool HasChapterSave(int slot)
     {
-        ChapterRecord = new ChapterRecordCollection();
-        ChapterRecord.SetIndex(Index);
-        return ChapterRecord.Exists();
+        var v = new ChapterRecordCollection();
+        v.SetIndex(slot);
+        return v.Exists();
     }
     /// <summary>
     /// 从磁盘载入章节，返回章节数，并实例化ChapterRecord文件，如果没有则返回-1,并让ChapterRecord为null
     /// </summary>
-    /// <param name="Index">第几个存档</param>
+    /// <param name="slot">第几个存档</param>
     /// <returns>当前存档的章节数</returns>
-    public ChapterRecordCollection LoadChapterFromDisk(int Index)
+    public ChapterRecordCollection LoadChapterFromDisk(int slot)
     {
-        if (HasChapterSave(Index))
+        ChapterRecordCollection v=null;
+        if (HasChapterSave(slot))
         {
-            ChapterRecord = ChapterRecord.LoadBinary<ChapterRecordCollection>();
-
-            AvailablePlayers = ChapterRecord.AvailablePlayers;
+            v = v.Load<ChapterRecordCollection>();
         }
-        else
-        {
-            ChapterRecord = null;
-        }
-        return ChapterRecord;
+        return v;
     }
     /// <summary>
     /// 是否有可用的章节存档
@@ -317,7 +324,7 @@ public class GameRecord
     /// <returns></returns>
     public bool IsChapterRecordAvailable()
     {
-        return ChapterRecord != null;
+        return teamRecords != null;
     }
     /// <summary>
     /// 获取当前应用的章节存档
@@ -325,12 +332,12 @@ public class GameRecord
     /// <returns></returns>
     public ChapterRecordCollection GetCurrentChapterRecord()
     {
-        return ChapterRecord;
+        return currentTeamRecord;
     }
     #endregion
     public static void SaveTo(int index)
     {
-       // UGameInstance.Instance.SaveChapterToDisk(index);
+        // UGameInstance.Instance.SaveChapterToDisk(index);
     }
     /// <summary>
     /// 从磁盘载入章节，返回当前存档的数据，如果不存在则返回null
@@ -348,7 +355,7 @@ public class GameRecord
     /// <param name="index"></param>
     /// <param name="Record"></param>
     /// <returns></returns>
-    public static void LoadChapterSceneWithRecordData( ChapterRecordCollection Record)
+    public static void LoadChapterSceneWithRecordData(ChapterRecordCollection Record)
     {
         //UGameInstance.Instance.LoadChapterScene(Record);
     }
@@ -357,7 +364,7 @@ public class GameRecord
     /// </summary>
     public static void LoadNewGame()
     {
-       // UGameInstance.Instance.LoadChapterScene(null);
+        // UGameInstance.Instance.LoadChapterScene(null);
     }
     /// <summary>
     /// 该处是否存在存档
