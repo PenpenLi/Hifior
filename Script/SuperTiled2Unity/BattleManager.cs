@@ -209,7 +209,7 @@ public class BattleManager : ManagerBase
     }
     public void FinishAction()
     {
-        currentCharacterLogic.Info.Save();
+        chapterManager.SaveChapterData(0);
         battleManager.ChangeState(EBattleState.Idel);
         currentCharacterLogic.EndAction();
     }

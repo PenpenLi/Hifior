@@ -44,12 +44,11 @@ namespace RPG.UI
         {
             //UIController.Instance.GetUI<RPG.UI.ConfigPanel>().Show();
             ChapterRecordCollection ChapterRecord = new ChapterRecordCollection();
-            ChapterRecord.Chapter = 1;
+            //ChapterRecord.Chapter = 1;
             List<int> AvailablePlayer = new List<int>();
             AvailablePlayer.Add(1);
             AvailablePlayer.Add(2);
-            ChapterRecord.AvailablePlayers = AvailablePlayer;
-            ChapterRecord.Ware.Money = 10000;
+            //ChapterRecord.Ware.Money = 10000;
            // ChapterRecord.RefreshPlayersInfo(GetGameStatus<UGameStatus>().GetLocalPlayers());
             ChapterRecord.SaveBinary();
         }
@@ -59,9 +58,6 @@ namespace RPG.UI
             if (ChapterRecord.Exists())
             {
                 ChapterRecord = ChapterRecord.LoadBinary<ChapterRecordCollection>();
-
-                Debug.Log(ChapterRecord.Ware.Money);
-                Debug.Log(ChapterRecord.PlayersInfo);
             }
             else
             {

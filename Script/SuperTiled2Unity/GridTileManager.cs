@@ -43,7 +43,7 @@ public class GridTileManager : ManagerBase
     }
     public void InitMouseInputEvent()
     {
-        GameMode.Instance.InputManager.GetMouseInput = () =>//添加GetMouseInput Callback
+        gameMode.InputManager.GetMouseInput = () =>//添加GetMouseInput Callback
         {
             var v = new InputManager.MouseInputState();
             v.active = false;

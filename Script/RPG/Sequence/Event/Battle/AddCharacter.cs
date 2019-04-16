@@ -19,7 +19,7 @@ namespace Sequence
             {
                 if (UseDefaultAttribute) Attribute = null;
                 RPGCharacter ch = RPGPlayer.Create(ID,Attribute);
-                GameMode.Instance.AddUnitToMap(ch,Coord);
+                gameMode.AddUnitToMap(ch,Coord);
             }
 
             Continue();

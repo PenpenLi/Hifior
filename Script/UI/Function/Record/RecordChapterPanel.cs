@@ -102,7 +102,7 @@ namespace RPG.UI
                 ChapterRecordDatas[i] = GameRecord.LoadChapterRecordFrom(i);
                 if (ChapterRecordDatas[i] != null)
                 {
-                    Buttons[i].GetComponentInChildren<Text>().text = ResourceManager.GetChapterName(ChapterRecordDatas[i].Chapter);
+                    Buttons[i].GetComponentInChildren<Text>().text = ResourceManager.GetChapterName(ChapterRecordDatas[i].CurrentTeam.Chapter);
                     AlreadyHadSave[i] = true;
                 }
                 else

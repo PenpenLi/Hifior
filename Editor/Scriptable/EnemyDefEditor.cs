@@ -3,13 +3,12 @@ using UnityEditor;
 namespace RPGEditor
 {
     [CustomEditor(typeof(EnemyDef))]
-    public class EnemyDefEditor : CharacterDefEditor
+    public class EnemyDefEditor : Editor
     {
         EnemyDef enemy;
         public void OnEnable()
         {
             enemy = target as EnemyDef;
-            base.InitTarget(enemy);
         }
 
         public const string DIRECTORY_PATH = DataBaseConst.DataBase_Enemy_Folder;
@@ -36,7 +35,7 @@ namespace RPGEditor
     }
 
 
-    public class EnemyEditorProp : CharacterEditorProp<EnemyDef>
+    public class EnemyEditorProp : EditorProp<EnemyDef>
     {
         public override string AssetFolder
         {
@@ -46,10 +45,16 @@ namespace RPGEditor
             }
         }
 
+        public override string ListName(int index)
+        {
+            string Name = scriptableObjects[index].CommonProperty.Name;
+            if (string.IsNullOrEmpty(Name.Trim()))
+                return base.NO_NAME;
+            return Name;
+        }
+
         public override void OnGUI(EnemyDef Data)
         {
-            base.OnGUI(Data);
-
             Data.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", Data.ActionAI);
             Data.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", Data.AttackInRange);
             Data.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", Data.CureSelf);

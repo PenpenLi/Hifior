@@ -7,8 +7,7 @@ using UnityEngine;
 /// </summary>
 public class ChapterManager : ManagerBase
 {
-    private SLGChapter chapterEvent;
-    public SLGChapter Event { get { return chapterEvent; } }
+    public SLGChapter Event { get { return ChapterDef.Event; } }
     public ChapterSettingDef ChapterDef;
     private List<RPGPlayer> players;
     private List<RPGEnemy> enemies;
@@ -25,6 +24,7 @@ public class ChapterManager : ManagerBase
         players = new List<RPGPlayer>();
         enemies = new List<RPGEnemy>();
         playerLogic = new List<CharacterLogic>();
+        warehouse = new Warehouse();
     }
     /// <summary>
     /// 清除战场数据
@@ -72,7 +72,7 @@ public class ChapterManager : ManagerBase
     }
     #region GameRecord
 
-    private GameRecord record;
+    private static GameRecord record = new GameRecord();
     /// <summary>
     /// 记录战场情况
     /// </summary>
@@ -90,15 +90,27 @@ public class ChapterManager : ManagerBase
         {
             playerInfos.Add(v.Logic.Info);
         }
-        record.SaveChapter(slot, true, ChapterDef.CommonProperty.ID, warehouse, playerInfos);
+        if (record == null) Debug.LogError("GameRecord is null");
+        if (ChapterDef == null) Debug.LogError("ChapterDef is null");
+        record.SaveChapter(slot, ChapterDef.TeamIndex, true, ChapterDef.CommonProperty.ID, warehouse, playerInfos);
+        record.SaveBattle(ChapterDef.TeamIndex, ChapterDef.CommonProperty.ID, warehouse, playerInfos, Event.EventInfo);
+    }
+    public void NewGameData(int slot)
+    {
+        ClearBattle();
+        playerLogic.Clear();
+        ChapterRecordCollection collect = new ChapterRecordCollection();
+        collect.Slot = slot;
+        ChapterDef = ResourceManager.GetChapterDef(0);
+        SaveChapterData(slot);
     }
     public void LoadChapterData(int slot)
     {
         ClearBattle();
         ChapterRecordCollection collect = record.LoadChapterFromDisk(slot);
-        ChapterDef = ResourceManager.GetChapterDef(collect.Chapter);
+        ChapterDef = ResourceManager.GetChapterDef(collect.CurrentTeam.Chapter);
         playerLogic.Clear();
-        foreach (var v in collect.PlayersInfo.RecordList)
+        foreach (var v in collect.CurrentTeamPlayerInfo)
         {
             playerLogic.Add(new CharacterLogic(v));
         }

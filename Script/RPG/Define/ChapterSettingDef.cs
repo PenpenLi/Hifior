@@ -5,6 +5,7 @@ public class ChapterSettingDef : ExtendScriptableObject
 {
     public PropertyIDNameDesc CommonProperty;
     public Sprite Icon;
+    public int TeamIndex;
     public int MaxPlayerCount;
     public List<int> ForceInvolve;
     public EnumWeather Weather;
@@ -23,6 +24,7 @@ public class ChapterSettingDef : ExtendScriptableObject
     /// 准备画面的道具店道具列表
     /// </summary>
     public List<int> PropRoom;
+    public SLGChapter Event;
     public ChapterSettingDef()
     {
         ForceInvolve = new List<int>();

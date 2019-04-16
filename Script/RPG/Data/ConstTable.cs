@@ -9,7 +9,7 @@
 
     //包含 游戏中的设置和 相应的固定的信息
     public const int CONST_SAVE_MAXCOUNT = 6;
-
+    public const int TEAM_COUNT = 3;
     public const int LEADER_0 = 0;
     public const int LEADER_1 = 1;
     public const int LEADER_2 = 2;

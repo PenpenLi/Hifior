@@ -16,7 +16,7 @@ public abstract class SerializableBase
     /// 获取存储的路径，重写该函数后可以使用序列化
     /// </summary>
     /// <returns></returns>
-    public virtual string GetFullRecordPathName() { return Application.persistentDataPath + "/save.bin"; }
+    public virtual string GetFullRecordPathName() { return Application.persistentDataPath + "/save.json"; }
     /// <summary>
     /// 获取Key，重写以实现序列化操作
     /// </summary>
@@ -67,8 +67,13 @@ public abstract class SerializableBase
         Key = GetKey();
         RefreshTime();
         string s = JsonUtility.ToJson(this);
-
-        FileInfo t = new FileInfo(GetFullRecordPathName());
+        var fullPath = GetFullRecordPathName();
+        var fullDir = Path.GetDirectoryName(fullPath);
+        if (Directory.Exists(fullDir) == false)
+        {
+            Directory.CreateDirectory(fullDir);
+        }
+        FileInfo t = new FileInfo(fullPath);
         if (t.Exists) //如果文件存在的话，清空里面的内容先
         {
             FileStream stream = File.Open(GetFullRecordPathName(), FileMode.OpenOrCreate);

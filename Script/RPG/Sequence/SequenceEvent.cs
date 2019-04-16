@@ -7,6 +7,7 @@ namespace Sequence
 {
     public class SequenceEvent : MonoBehaviour
     {
+        protected GameMode gameMode { get { return GameMode.Instance; } }
         [HideInInspector]
         public int ItemId = -1; // Invalid flowchart item id
 
@@ -35,7 +36,7 @@ namespace Sequence
          */
         [NonSerialized]
         public Sequence RootSequence;
-        
+
         public virtual void Execute()
         {
             OnEnter();

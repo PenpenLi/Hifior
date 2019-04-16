@@ -8,14 +8,14 @@ public class EnemyUnitSetting : MonoBehaviour
     [System.Serializable]
     public struct EnemyUnit
     {
-        public VInt2 Coord;
+        public Vector2Int Coord;
         public EnemyDef Enemy;
         public EnemyUnit(int x, int y, EnemyDef enemy = null)
         {
-            Coord = new VInt2(x, y);
+            Coord = new Vector2Int(x, y);
             Enemy = enemy;
         }
-        public EnemyUnit(VInt2 p, EnemyDef enemy = null)
+        public EnemyUnit(Vector2Int p, EnemyDef enemy = null)
         {
             Coord = p;
             Enemy = enemy;
@@ -25,14 +25,14 @@ public class EnemyUnitSetting : MonoBehaviour
     /// 保存当前物体所包含的地方单位列表
     /// </summary>
     public List<EnemyUnit> Units;
-    public bool Contains(VInt2 p)
+    public bool Contains(Vector2Int p)
     {
         foreach (EnemyUnit u in Units)
             if (u.Coord == p)
                 return true;
         return false;
     }
-    public int Remove(VInt2 p)
+    public int Remove(Vector2Int p)
     {
         int at = -1;
         for (int i = 0; i < Units.Count; i++)
@@ -46,20 +46,12 @@ public class EnemyUnitSetting : MonoBehaviour
             Units.RemoveAt(at);
         return at;
     }
-    public bool Contains(int x, int y)
-    {
-        return Contains(new VInt2(x, y));
-    }
-    public EnemyUnit GetUnit(VInt2 p)
+    public EnemyUnit GetUnit(Vector2Int p)
     {
         foreach (EnemyUnit u in Units)
             if (u.Coord == p)
                 return u;
         return EmptyUnit;
-    }
-    public EnemyUnit GetUnit(int x, int y)
-    {
-        return GetUnit(new VInt2(x, y));
     }
     public bool IsEmpty(EnemyUnit unit)
     {
@@ -67,16 +59,12 @@ public class EnemyUnitSetting : MonoBehaviour
             return true;
         return false;
     }
-    public EnemyDef GetDef(VInt2 p)
+    public EnemyDef GetDef(Vector2Int p)
     {
         foreach (EnemyUnit u in Units)
             if (u.Coord == p)
                 return u.Enemy;
         return null;
-    }
-    public EnemyDef GetDef(int x, int y)
-    {
-        return GetDef(new VInt2(x, y));
     }
     void OnDrawGizmosSelected()
     {

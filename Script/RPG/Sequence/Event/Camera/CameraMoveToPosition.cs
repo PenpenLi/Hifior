@@ -3,8 +3,8 @@ using System.Collections;
 
 namespace Sequence
 {
-    [AddComponentMenu("Sequence/Camera Move To")]
-    public class MoveToPosition : SequenceEvent
+    [AddComponentMenu("Sequence/Camera Move To Position")]
+    public class CameraMoveToPosition : SequenceEvent
     {
         public Vector3 TargetPoint;
         [Tooltip("平滑类型")]

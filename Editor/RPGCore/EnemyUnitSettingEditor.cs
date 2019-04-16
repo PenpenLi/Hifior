@@ -64,16 +64,18 @@ namespace RPGEditor
 
                     if (Physics.Raycast(ray, out rayHit))
                     {
-                        VInt2 p = VInt2.Vector3ToPoint2D(rayHit.point);
+                        VInt2 pi = VInt2.Vector3ToPoint2D(rayHit.point);
+                        Vector2Int p = new Vector2Int(pi.x, pi.y);
 
                         x = Mathf.Clamp(p.x, 0, int.MaxValue);
                         y = Mathf.Clamp(p.y, 0, int.MaxValue);
                         //按下右键弹出菜单
                         if (Event.current.button == 1)
                         {
-                            if (unitSetting.Contains(x, y))
+                            if (unitSetting.Contains(new Vector2Int(x, y)))
                                 setSceneMenu.ShowAsContext();
-                            else {
+                            else
+                            {
                                 addSceneMenu = new GenericMenu();
                                 addSceneMenu.AddItem(new GUIContent("添加敌人"), false, OnAddUnit, 0);
                                 if (unitSetting.IsEmpty(unitMirror))
@@ -99,7 +101,7 @@ namespace RPGEditor
         }
         void OnSetUnit()
         {
-            EnemyDef def = unitSetting.GetDef(x, y);
+            EnemyDef def = unitSetting.GetDef(new Vector2Int(x, y));
             if (def == null)
                 EnemyUnitSettingWindow.OpenSetEnemyWindow(x, y, unitSetting, def, 0);
             else
@@ -107,7 +109,7 @@ namespace RPGEditor
         }
         void OnCopy()
         {
-            unitMirror = unitSetting.GetUnit(x, y);
+            unitMirror = unitSetting.GetUnit(new Vector2Int(x, y));
         }
         void OnPaste()
         {
@@ -115,12 +117,12 @@ namespace RPGEditor
         }
         void OnCut()
         {
-            unitMirror = unitSetting.GetUnit(x, y);
-            unitSetting.Remove(new VInt2(x, y));
+            unitMirror = unitSetting.GetUnit(new Vector2Int(x, y));
+            unitSetting.Remove(new Vector2Int(x, y));
         }
         void OnDelete()
         {
-            unitSetting.Remove(new VInt2(x, y));
+            unitSetting.Remove(new Vector2Int(x, y));
         }
     }
 }

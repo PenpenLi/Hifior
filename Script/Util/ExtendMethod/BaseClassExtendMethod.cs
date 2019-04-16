@@ -20,14 +20,6 @@ public static class BaseClassExtendMethod
     {
         tran.position = new Vector3(tran.position.x, tran.position.y, z);
     }
-    public static void SetTilePosition(this Transform tran, int x, int y, bool Shift, float height = 0f)
-    {
-        tran.position = VInt2.VInt2ToVector3(x, y, height, Shift);
-    }
-    public static void SetTilePosition(this Transform tran, VInt2 point, bool Shift, float height = 0f)
-    {
-        tran.position = VInt2.VInt2ToVector3(point.x, point.y, height, Shift);
-    }
     public static void DelaySetActive(this GameObject gameObject, float delayTime, bool visible)
     {
         gameMode.StartCoroutine(IEnumDelayFunc(() => gameObject.SetActive(visible), delayTime));

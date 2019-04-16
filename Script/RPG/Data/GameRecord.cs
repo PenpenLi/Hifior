@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using System;
+using UnityEngine.Events;
 #region 序列化类类型
 [System.Serializable]
 public class CharacterInfo : SerializableBase
@@ -75,69 +76,7 @@ public class CharacterInfo : SerializableBase
     /// </summary>
     public bool Active { get { return Alive && Available; } }
 }
-[System.Serializable]
-public class ChapterRecordCollection : SerializableBase
-{
-    /// <summary>
-    /// 存档顺序
-    /// </summary>
-    public int Slot;
-    /// <summary>
-    /// 当前运输队
-    /// </summary>
-    public Warehouse Ware;
-    /// <summary>
-    /// 章节
-    /// </summary>
-    public int Chapter;
-    /// <summary>
-    /// 是否已经播放完开始剧情
-    /// </summary>
-    public bool AfterStartSequence;
-    /// <summary>
-    /// 存档玩家信息
-    /// </summary>
-    public PlayerInfoCollection PlayersInfo;
 
-    /// <summary>
-    /// 设置存档的顺序
-    /// </summary>
-    /// <param name="SaveIndex"></param>
-    public void SetIndex(int SaveIndex)
-    {
-        Assert.IsTrue(SaveIndex >= 0, "存档Index需大于等于0");
-        Assert.IsTrue(SaveIndex < 10, "存档Index需小于10");
-        Slot = SaveIndex;
-    }
-    /// <summary>
-    /// 更新玩家的信息，如果存档中已经存在该玩家，则替换存在的玩家信息，如果不存在则添加该玩家信息
-    /// </summary>
-    /// <param name="Characters"></param>
-    public void RefreshPlayersInfo(List<RPGCharacter> Characters)
-    {
-        if (PlayersInfo == null)
-            PlayersInfo = new PlayerInfoCollection();
-        foreach (RPGCharacter Ch in Characters)
-        {
-            if (PlayersInfo.HasCharacterInfo(Ch.Logic.GetID()))
-            {
-                PlayersInfo.RefreshCharacterInfo(Ch.Logic.GetID(), Ch);
-            }
-            else
-            {
-                PlayersInfo.AddContent(new CharacterInfo(Ch.Logic));
-            }
-        }
-    }
-    public override string GetKey()
-    {
-        return "ChapterRecord_" + Slot;
-    }
-    public override string GetFullRecordPathName()
-    {
-        return Application.persistentDataPath + "/ChapterRecord_" + Slot.ToString() + ".sav";
-    }
-}
 [System.Serializable]
 public class PlayerInfoCollection : SerializableList<CharacterInfo>
 {
@@ -215,30 +154,389 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
         }
         return temp;
     }
-    [RuntimeInitializeOnLoadMethod]
-    public static void III()
-    {
+}
 
+[System.Serializable]
+public class ChapterRecordCollection : SerializableBase
+{
+    public ChapterRecordCollection()
+    {
+        team = new List<TeamCollection>();
+        for (int i = 0; i < ConstTable.TEAM_COUNT; i++)
+        {
+            team.Add(new TeamCollection());
+            team[i].TeamID = i;
+        }
+    }
+    [System.Serializable]
+    public class TeamCollection
+    {
+        public int TeamID;
+        /// <summary>
+        /// 章节
+        /// </summary>
+        public int Chapter;
+        /// <summary>
+        /// 是否已经播放完开始剧情
+        /// </summary>
+        public bool AfterStartSequence;
+        /// <summary>
+        /// 存档玩家信息
+        /// </summary>
+        public PlayerInfoCollection PlayersInfo;
+        /// <summary>
+        /// 当前运输队
+        /// </summary>
+        public Warehouse Ware;
+
+        /// <summary>
+        /// 更新玩家的信息，如果存档中已经存在该玩家，则替换存在的玩家信息，如果不存在则添加该玩家信息
+        /// </summary>
+        /// <param name="Characters"></param>
+        public void RefreshPlayersInfo(List<RPGCharacter> Characters)
+        {
+            if (PlayersInfo == null)
+                PlayersInfo = new PlayerInfoCollection();
+            foreach (RPGCharacter Ch in Characters)
+            {
+                if (PlayersInfo.HasCharacterInfo(Ch.Logic.GetID()))
+                {
+                    PlayersInfo.RefreshCharacterInfo(Ch.Logic.GetID(), Ch);
+                }
+                else
+                {
+                    PlayersInfo.AddContent(new CharacterInfo(Ch.Logic));
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// 存档顺序
+    /// </summary>
+    public int Slot;
+    public int CurrentTeamIndex;
+    public List<TeamCollection> team;
+    public TeamCollection CurrentTeam { get { return team[CurrentTeamIndex]; } }
+    public List<CharacterInfo> CurrentTeamPlayerInfo { get { return CurrentTeam.PlayersInfo.RecordList; } }
+    /// <summary>
+    /// 设置存档的顺序
+    /// </summary>
+    /// <param name="SaveIndex"></param>
+    public void SetIndex(int SaveIndex)
+    {
+        Assert.IsTrue(SaveIndex >= 0, "存档Index需大于等于0");
+        Assert.IsTrue(SaveIndex < 10, "存档Index需小于10");
+        Slot = SaveIndex;
+    }
+
+    public override string GetKey()
+    {
+        return "ChapterRecord_" + Slot;
+    }
+    public override string GetFullRecordPathName()
+    {
+        return Application.persistentDataPath + "/" + Slot + "/ChapterRecord.sav";
+    }
+}
+
+[System.Serializable]
+public class BattleInfoCollection : ChapterRecordCollection
+{
+    public EventInfoCollection Event;
+
+    public override string GetKey()
+    {
+        return "BattleInfo";
+    }
+    public override string GetFullRecordPathName()
+    {
+        return Application.persistentDataPath + "/BattleInfo.sav";
+    }
+}
+[System.Serializable]
+public class EventInfoCollection
+{
+    #region 事件结构
+
+    [System.Serializable]
+    public struct EventEnableSwitch
+    {
+        public EnumEventTriggerCondition EventType;
+        int Index;
+        public bool Enable;
+    }
+    //添加了Serializable标记的变量都需要被记录到存档中
+    [System.Serializable]
+    public class EventTypeBase
+    {
+        public string Description;
+        /// <summary>
+        /// 是否可用,这个触发完就关闭
+        /// </summary>
+        public bool Enable;
+        public string SequenceName;
+        public Sequence.Sequence Sequence;
+        public EventTypeBase()
+        {
+            Enable = true;
+        }
+        public EventTypeBase(string seqName)
+        {
+
+        }
+        /// <summary>
+        /// 执行Sequence
+        /// </summary>
+        public virtual void Execute(UnityAction OnFinish)
+        {
+            UnityEngine.Assertions.Assert.IsNotNull(Sequence, "即将执行的Sequence为Null");
+            Enable = false;
+            Sequence.Execute(OnFinish);
+        }
+    }
+    [System.Serializable]
+    public class TurnEventType : EventTypeBase
+    {
+        public int From = 0;
+        public int To = 0;
+        public EnumCharacterCamp TriggerCamp;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
+    }
+    [System.Serializable]
+    public class BattleTalkEventType : EventTypeBase
+    {
+        /// <summary>
+        /// 发送者的ID
+        /// </summary>
+        public int Sender = -1;
+        /// <summary>
+        /// 接收者的ID
+        /// </summary>
+        public int Receiver = -1;
+        /// <summary>
+        /// 接收者的阵营
+        /// </summary>
+        public EnumCharacterCamp ReceiverCamp;
+        /// <summary>
+        /// 是否互相触发
+        /// </summary>
+        public bool Mutual;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
+        public override void Execute(UnityAction OnFinish)
+        {
+            base.Execute(OnFinish);
+            Enable = false;
+        }
+    }
+    public enum EnumLocationEventCaption
+    {
+        宝箱,
+        访问村庄,
+        占领,
+        开门,
+        使用开关
+    }
+    [System.Serializable]
+    public class LocationEventType : EventTypeBase
+    {
+        /// <summary>
+        /// 显示的文字
+        /// </summary>
+        public EnumLocationEventCaption Caption;
+        /// <summary>
+        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
+        /// </summary>
+        private bool HasTrigger = false;
+        /// <summary>
+        /// 指定的人才可以触发
+        /// </summary>
+        public int DedicatedCharacter = -1;
+        /// <summary>
+        /// 触发点
+        /// </summary>
+        public VInt2 Location = VInt2.InvalidPoint;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
+        public override void Execute(UnityAction OnFinish)
+        {
+            base.Execute(OnFinish);
+
+            HasTrigger = true;
+        }
+        public string GetButtonText()
+        {
+            return Caption.ToString();
+        }
+    }
+    [System.Serializable]
+    public class RangeEventType : EventTypeBase
+    {
+        /// <summary>
+        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
+        /// </summary>
+        private bool HasTrigger;
+        /// <summary>
+        /// 指定的人才可以触发
+        /// </summary>
+        public int DedicatedCharacter;
+        /// <summary>
+        /// 指定的人才可以触发
+        /// </summary>
+        public int DedicatedCareer;
+        /// <summary>
+        /// 触发区域
+        /// </summary>
+        public Range2D Range;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
+    }
+    [System.Serializable]
+    public class EnemiesLessEventType : EventTypeBase
+    {
+        /// <summary>
+        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
+        /// </summary>
+        private bool HasTrigger;
+        /// <summary>
+        /// 触发数量
+        /// </summary>
+        public int TriggerNum;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
+    }
+    [System.Serializable]
+    public class EnemyDieEventType : EventTypeBase
+    {
+        /// <summary>
+        /// 触发人物
+        /// </summary>
+        public int TriggerCharacterID;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
+    }
+    #endregion
+
+    [Tooltip("回合事件")]
+    public List<TurnEventType> TurnEvent;
+    [Tooltip("位置事件")]
+    public List<LocationEventType> LocationEvent;
+    [Tooltip("范围事件")]
+    public List<RangeEventType> RangeEvent;
+    [Tooltip("对话事件")]
+    public List<BattleTalkEventType> BattleTalkEvent;
+    [Tooltip("敌方少于事件")]
+    public List<EnemiesLessEventType> EnemiesLessEvent;
+    [Tooltip("敌方死亡事件")]
+    public List<EnemyDieEventType> EnemyDieEvent;
+    public LocationEventType GetLocationEvent(VInt2 TilePosition, int CharacterID)
+    {
+        foreach (LocationEventType Event in LocationEvent)
+        {
+            if (Event.Enable && Event.Location == TilePosition)
+            {
+                if (Event.DedicatedCharacter < 0 || CharacterID == Event.DedicatedCharacter)
+                    return Event;
+            }
+        }
+        return null;
+    }
+    public TurnEventType GetTurnEvent(int Round, EnumCharacterCamp Camp)
+    {
+        foreach (TurnEventType Event in TurnEvent)
+        {
+            if (Event.Enable && Event.TriggerCamp == Camp && Round >= Event.From && Round <= Event.To)
+            {
+                return Event;
+            }
+        }
+        return null;
+    }
+    public RangeEventType GetRangeEvent(VInt2 TilePosition)
+    {
+        foreach (RangeEventType Event in RangeEvent)
+        {
+            if (Event.Enable && Range2D.InRange(TilePosition.x, TilePosition.y, Event.Range))
+            {
+                return Event;
+            }
+        }
+        return null;
+    }
+    public BattleTalkEventType GetBattleTalkEvent(int SenderCharacterID, int ReceiverCharacterID, EnumCharacterCamp ReceiverCamp)
+    {
+        foreach (BattleTalkEventType Event in BattleTalkEvent)
+        {
+            if (Event.Enable && Event.ReceiverCamp == ReceiverCamp)
+            {
+                if (Event.Mutual)
+                {
+                    if ((Event.Sender == SenderCharacterID && Event.Receiver == ReceiverCharacterID) || (Event.Sender == ReceiverCharacterID && Event.Receiver == SenderCharacterID))
+                        return Event;
+                }
+                else
+                {
+                    if (Event.Sender == SenderCharacterID && Event.Receiver == ReceiverCharacterID)
+                        return Event;
+                }
+            }
+        }
+        return null;
+    }
+    public EnemiesLessEventType GetEnemiesLessEvent(int EnemyCount)
+    {
+        foreach (EnemiesLessEventType Event in EnemiesLessEvent)
+        {
+            if (Event.Enable && EnemyCount <= Event.TriggerNum)
+            {
+                return Event;
+            }
+        }
+        return null;
+    }
+    public EnemyDieEventType GetEnemyDieEvent(int DiedCharacterID)
+    {
+        foreach (EnemyDieEventType Event in EnemyDieEvent)
+        {
+            if (Event.Enable && Event.TriggerCharacterID == DiedCharacterID)
+            {
+                return Event;
+            }
+        }
+        return null;
     }
 }
 #endregion
-
 
 /// <summary>
 /// 该类从GameInstance里抓取东西
 /// </summary>
 public class GameRecord
 {
+    public UnityAction OnSaveFileBroke;
+    public UnityAction OnSaveFileNotExist;
+    public UnityAction OnFinishSave;
+
     #region 存档相关函数
-    /// <summary>
-    /// 多个队伍的存档
-    /// </summary>
-    private List<ChapterRecordCollection> teamRecords;
     /// <summary>
     /// 章节结束时保存当前章节的信息到这个变量里
     /// </summary>
     private ChapterRecordCollection currentTeamRecord;
-    private List<CharacterInfo> currentTeamCharacterInfo { get { return currentTeamRecord.PlayersInfo.RecordList; } }
+    public static string RootDataPath { get { return Application.persistentDataPath; } }
+    private List<CharacterInfo> currentTeamCharacterInfo { get { return currentTeamRecord.CurrentTeam.PlayersInfo.RecordList; } }
     public List<CharacterInfo> GetAvailablePlayersInfo()
     {
         List<CharacterInfo> L = new List<CharacterInfo>();
@@ -278,25 +576,40 @@ public class GameRecord
     /// 章节结束保存下数据缓存
     /// </summary>
     /// <param name="AfterStartSequence">是否是开始剧情播放完记录的</param>
-    public void SaveChapter(int slot,bool AfterStartSequence,int chapterId,Warehouse ware,List<CharacterInfo> infos)
+    public void SaveChapter(int slot, int teamIndex, bool AfterStartSequence, int chapterId, Warehouse ware, List<CharacterInfo> infos)
     {
-        currentTeamRecord.Slot = slot;
-        currentTeamRecord.AfterStartSequence = AfterStartSequence;
+        //设置存储位置，存储队伍的信息
         currentTeamRecord = new ChapterRecordCollection();
-        currentTeamRecord.Chapter = chapterId;
-        currentTeamRecord.Ware = ware;
-        currentTeamRecord.PlayersInfo = new PlayerInfoCollection();
-        foreach(var v in infos)
+        currentTeamRecord.Slot = slot;
+        currentTeamRecord.CurrentTeamIndex = teamIndex;
+        //设置队伍数据
+        ChapterRecordCollection.TeamCollection teamData = new ChapterRecordCollection.TeamCollection();
+        teamData.AfterStartSequence = AfterStartSequence;
+        teamData.Chapter = chapterId;
+        teamData.Ware = ware;
+        teamData.PlayersInfo = new PlayerInfoCollection();
+        foreach (var v in infos)
         {
-            currentTeamRecord.PlayersInfo.AddContent(v);
+            teamData.PlayersInfo.AddContent(v);
         }
-    }
-
-    public void SaveChapterToDisk(int slot)
-    {
-        Assert.IsNotNull(currentTeamRecord, "章节存档尚未初始化");
-        currentTeamRecord.SetIndex(slot);
+        currentTeamRecord.team[teamIndex] = teamData;
         currentTeamRecord.Save();
+    }
+    public void SaveBattle(int teamIndex, int chapterId, Warehouse ware, List<CharacterInfo> infos, EventInfoCollection eventInfo)
+    {
+        BattleInfoCollection battleInfo = new BattleInfoCollection();
+        battleInfo.Slot = -1;
+        battleInfo.CurrentTeamIndex = teamIndex;
+
+        ChapterRecordCollection.TeamCollection teamData = new ChapterRecordCollection.TeamCollection();
+        teamData.AfterStartSequence = true;
+        teamData.Chapter = chapterId;
+        teamData.Ware = ware;
+        teamData.PlayersInfo = new PlayerInfoCollection();
+        battleInfo.team[teamIndex] = teamData;
+        battleInfo.Event = eventInfo;
+        battleInfo.Save();
+
     }
     public bool HasChapterSave(int slot)
     {
@@ -311,20 +624,17 @@ public class GameRecord
     /// <returns>当前存档的章节数</returns>
     public ChapterRecordCollection LoadChapterFromDisk(int slot)
     {
-        ChapterRecordCollection v=null;
+        ChapterRecordCollection v = null;
         if (HasChapterSave(slot))
         {
             v = v.Load<ChapterRecordCollection>();
         }
+        else
+        {
+            Debug.LogError("没有发现可以被载入的存储文件");
+            OnSaveFileNotExist();
+        }
         return v;
-    }
-    /// <summary>
-    /// 是否有可用的章节存档
-    /// </summary>
-    /// <returns></returns>
-    public bool IsChapterRecordAvailable()
-    {
-        return teamRecords != null;
     }
     /// <summary>
     /// 获取当前应用的章节存档

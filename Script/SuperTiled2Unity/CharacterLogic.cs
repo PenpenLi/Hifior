@@ -304,10 +304,6 @@ public class CharacterLogic
     {
         Info.Level = level;
     }
-    public void SetBattleState(CharacterBattleInfo.EBattleState state)
-    {
-        BattleInfo.battleState = state;
-    }
     public void EndAction()
     {
         hasFinishAction = true;

@@ -7,7 +7,7 @@ public static class ResourceManager
     private const string ASSET_PROPS = "rpgdata/item/props";
     private const string ASSET_WEAPON = "rpgdata/item/weapon";
     private const string ASSET_MAP = "rpgdata/map";
-    private const string ASSET_CHAPTERSETTING = "rpgdata/chaptersetting";
+    private const string ASSET_CHAPTERSETTING = "rpgdata/chapter";
     private const string ASSET_CAREER = "rpgdata/career";
     private const string ASSET_PASSIVESKILL = "rpgdata/passiveskill";
     private const string ASSET_PLAYER = "rpgdata/character/player";
@@ -36,6 +36,7 @@ public static class ResourceManager
     public static ChapterSettingDef GetChapterDef(int ChapterIndex)
     {
         ChapterSettingDef def = Resources.Load<ChapterSettingDef>(Path.Combine(ASSET_CHAPTERSETTING, ChapterIndex.ToString()));
+        def.Event.SetChapterDef(def);
         return def;
     }
     public static string GetChapterName(int ChapterIndex)

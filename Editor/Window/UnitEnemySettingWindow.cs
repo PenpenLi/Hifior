@@ -116,7 +116,7 @@ namespace RPGEditor
                     UnitSetting.Units.Add(unit);
                 else
                 {
-                    EnemyUnitSetting.EnemyUnit previousUnit = UnitSetting.GetUnit(previousX, previousY);
+                    EnemyUnitSetting.EnemyUnit previousUnit = UnitSetting.GetUnit(new Vector2Int(previousX, previousY));
                     int i = UnitSetting.Units.IndexOf(previousUnit);
                     if (i >= 0)
                     {
@@ -180,21 +180,21 @@ namespace RPGEditor
             unit.Enemy.CommonProperty.Name = EditorGUILayout.TextField("人物名称", unit.Enemy.CommonProperty.Name);
             unit.Enemy.CommonProperty.Description = EditorGUILayout.TextField("人物描述", unit.Enemy.CommonProperty.Description);
 
-            unit.Enemy.Portrait = (Sprite)EditorGUILayout.ObjectField("图标", unit.Enemy.Portrait, typeof(Sprite), false);
-            unit.Enemy.BattleModel = EditorGUILayout.ObjectField("人物模型", unit.Enemy.BattleModel, typeof(GameObject), true) as GameObject;
-            unit.Enemy.CharacterImportance = (EnumCharacterImportance)EditorGUILayout.EnumPopup("重要性", unit.Enemy.CharacterImportance);
-            unit.Enemy.Career = EditorGUILayout.IntPopup("职业", unit.Enemy.Career, RPGData.CareerNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.CareerNameList.Count));
-            unit.Enemy.DefaultLevel = EditorGUILayout.IntSlider("初始等级", unit.Enemy.DefaultLevel, 1, 40);
+            unit.Enemy.PlayerDef.Portrait = (Sprite)EditorGUILayout.ObjectField("图标", unit.Enemy.PlayerDef.Portrait, typeof(Sprite), false);
+            unit.Enemy.PlayerDef.BattleModel = EditorGUILayout.ObjectField("人物模型", unit.Enemy.PlayerDef.BattleModel, typeof(GameObject), true) as GameObject;
+            unit.Enemy.PlayerDef.CharacterImportance = (EnumCharacterImportance)EditorGUILayout.EnumPopup("重要性", unit.Enemy.PlayerDef.CharacterImportance);
+            unit.Enemy.PlayerDef.Career = EditorGUILayout.IntPopup("职业", unit.Enemy.PlayerDef.Career, RPGData.CareerNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.CareerNameList.Count));
+            unit.Enemy.PlayerDef.DefaultLevel = EditorGUILayout.IntSlider("初始等级", unit.Enemy.PlayerDef.DefaultLevel, 1, 40);
 
-            unit.Enemy.DefaultAttribute.HP = EditorGUILayout.IntSlider("HP", unit.Enemy.DefaultAttribute.HP, 0, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
-            unit.Enemy.DefaultAttribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", unit.Enemy.DefaultAttribute.PhysicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", unit.Enemy.DefaultAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", unit.Enemy.DefaultAttribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", unit.Enemy.DefaultAttribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", unit.Enemy.DefaultAttribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", unit.Enemy.DefaultAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", unit.Enemy.DefaultAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", unit.Enemy.DefaultAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
+            unit.Enemy.PlayerDef.DefaultAttribute.HP = EditorGUILayout.IntSlider("HP", unit.Enemy.PlayerDef.DefaultAttribute.HP, 0, RPGEditorGlobal.MAX_ATTRIBUTE_HP);
+            unit.Enemy.PlayerDef.DefaultAttribute.PhysicalPower = EditorGUILayout.IntSlider("物理攻击", unit.Enemy.PlayerDef.DefaultAttribute.PhysicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", unit.Enemy.PlayerDef.DefaultAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", unit.Enemy.PlayerDef.DefaultAttribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", unit.Enemy.PlayerDef.DefaultAttribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", unit.Enemy.PlayerDef.DefaultAttribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", unit.Enemy.PlayerDef.DefaultAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", unit.Enemy.PlayerDef.DefaultAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", unit.Enemy.PlayerDef.DefaultAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
             unit.Enemy.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", unit.Enemy.ActionAI);
             unit.Enemy.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", unit.Enemy.AttackInRange);
             unit.Enemy.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", unit.Enemy.CureSelf);
@@ -220,7 +220,7 @@ namespace RPGEditor
             }
             else
             {
-                if (unit.Coord != new VInt2(previousX, previousY))
+                if (unit.Coord != new Vector2Int(previousX, previousY))
                 {
                     if (UnitSetting.Contains(unit.Coord))
                         return false;

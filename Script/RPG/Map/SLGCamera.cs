@@ -15,7 +15,7 @@ public class SLGCamera : MonoBehaviour
 
     public float moveSpeed = 7.0f;
     public Vector2Int maxMoveable;
-
+    
     public CameraControlMode ControlMode;
 
     private Vector3 TargetPosition;
@@ -24,7 +24,7 @@ public class SLGCamera : MonoBehaviour
     public Vector3 ShiftVector = Vector3.zero;
 
     private Camera m_currentCamera;
-    public VInt2 LastArrowPoint;
+    public Vector2Int LastArrowPoint;
 
     private float widthBorder = Screen.height / 10;
     private float heightBorder = Screen.height / 10;
@@ -99,16 +99,19 @@ public class SLGCamera : MonoBehaviour
 
     void LateUpdate()
     {
-        Vector3 mousePos = Input.mousePosition;
-        var localPos = PositionMath.TilePositionToTileLocalPosition(maxMoveable);
-        if (mousePos.x > Screen.height - widthBorder && transform.localPosition.x < localPos.x)
-            transform.Translate(Vector3.right * PositionMath.TileLength, Space.Self);
-        if (mousePos.y > Screen.height - heightBorder  && transform.localPosition.y < 0)
-            transform.Translate(Vector3.up * PositionMath.TileLength, Space.Self);
-        if (mousePos.x < widthBorder && transform.localPosition.x > 0)
-            transform.Translate(Vector3.left * PositionMath.TileLength, Space.Self);
-        if (mousePos.y < heightBorder&& transform.localPosition.y >= localPos.y)
-            transform.Translate(Vector3.down * PositionMath.TileLength, Space.Self);
+        if (ControlMode == CameraControlMode.FreeMove)
+        {
+            Vector3 mousePos = Input.mousePosition;
+            var localPos = PositionMath.TilePositionToTileLocalPosition(maxMoveable - Vector2Int.one);
+            if (mousePos.x > Screen.height - widthBorder && transform.localPosition.x < localPos.x)
+                transform.Translate(Vector3.right * PositionMath.TileLength, Space.Self);
+            if (mousePos.y > Screen.height - heightBorder && transform.localPosition.y < 0)
+                transform.Translate(Vector3.up * PositionMath.TileLength, Space.Self);
+            if (mousePos.x < widthBorder && transform.localPosition.x > 0)
+                transform.Translate(Vector3.left * PositionMath.TileLength, Space.Self);
+            if (mousePos.y < heightBorder && transform.localPosition.y >= localPos.y)
+                transform.Translate(Vector3.down * PositionMath.TileLength, Space.Self);
+        }
     }
 }
 

@@ -6,7 +6,8 @@ using UnityEngine.Events;
 
 public class GameMode : MonoSingleton<GameMode>
 {
-    public Camera mainCam;
+    public SLGCamera slgCamera;
+    public Transform MainCameraTransform { get { return slgCamera.transform; } }
     public PathShower pathShower;
     public UnitShower unitShower;
     private ChapterManager chapterManager;
@@ -19,6 +20,26 @@ public class GameMode : MonoSingleton<GameMode>
     public UIManager UIManager { get { return uiManager; } }
     public GridTileManager GridTileManager { get { return gridTileManager; } }
     public ChapterManager ChapterManager { get { return chapterManager; } }
+
+    #region GameMode Info
+    public struct GameModeInfo
+    {
+        public enum ModeState
+        {
+            MainMenu,
+            BigMap,
+            House,
+            Battle
+        }
+        public ModeState modeState;
+        /// <summary>
+        /// 是否在战斗中
+        /// </summary>
+        public bool HasStartBattle() { return modeState == ModeState.Battle; }
+    }
+    private GameModeInfo modeInfo;
+    #endregion
+
     // Start is called before the first frame update
     protected override void Init()
     {
@@ -41,12 +62,19 @@ public class GameMode : MonoSingleton<GameMode>
         battleManager.ClearRangeAction = pathShower.HideAll;
         battleManager.UpdateSelectTileInfo = uiManager.UpdateTileInfo;
         battleManager.UpdateSelectCharacterInfo = uiManager.UpdateCharacterInfo;
-
-
-        gridTileManager.LoadNewMap(5);
         gridTileManager.InitMouseInputEvent();
-    }
 
+        LogInitInfo();
+        TestFunctionAddHere();
+    }
+    void LogInitInfo()
+    {
+        Debug.Log("存档位置：" + GameRecord.RootDataPath);
+    }
+    void TestFunctionAddHere()
+    {
+        chapterManager.NewGameData(1);
+    }
     void Start()
     {
         Application.targetFrameRate = 30;
@@ -55,9 +83,12 @@ public class GameMode : MonoSingleton<GameMode>
     // Update is called once per frame
     void Update()
     {
-        BattleManager.Update();
         InputManager.Update();
         UIManager.Update();
+        if (modeInfo.HasStartBattle())
+        {
+            BattleManager.Update();
+        }
     }
 
     private void BindKeyInput()
@@ -128,19 +159,36 @@ public class GameMode : MonoSingleton<GameMode>
         unitShower.MoveUnit(routine, onFinish);
     }
     #endregion
+    #region Battle Manager
     /// <summary>
     /// 加载章节数据，先加载存档中的数据，SLGChapter预制体，地图在StartEvent中载入并显示
     /// </summary>
-    /// <param name="chapterID"></param>
+    /// <param name="chapterID">章节ID</param>
     public void LoadChapter(int chapterID)
     {
         chapterManager.LoadChapterData(chapterID);
     }
-    /// <summary>
-    /// 开始我方行动的第一个回合
-    /// </summary>
-    public void StartBattle()
+    public void LoadTileMap(int mapId)
     {
-
+        gridTileManager.LoadNewMap(mapId);
     }
+    /// <summary>
+    /// 开始战斗
+    /// </summary>
+    /// <param name="FirstActionCamp">第一个回合行动的阵营</param>
+    public void StartBattle(EnumCharacterCamp FirstActionCamp)
+    {
+        modeInfo.modeState = GameModeInfo.ModeState.Battle;
+        Utils.GameUtil.DelayFunc(() => { slgCamera.ControlMode = CameraControlMode.FreeMove; }, 3.0f);
+    }
+    #endregion
+    #region Camera
+    public void CameraMoveTo(Vector2Int tilePos, float moveTime = 0.0f, bool accelerate = false)
+    {
+        if (moveTime < 0.01f)
+        {
+            PositionMath.SetCameraFocusPosition(MainCameraTransform, tilePos);
+        }
+    }
+    #endregion
 }

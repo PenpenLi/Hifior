@@ -4,8 +4,9 @@ using UnityEngine;
 public static class PositionMath
 {
     public const float TileLength = 1.6f;
+    public const float CameraPosZ = -100f;
     public static readonly Vector2Int MapViewSize = new Vector2Int(15, 15);
-    public static readonly Vector2Int CameraViewSize = new Vector2Int(15, 15);
+    public static readonly Vector2Int CameraHalfViewSize = new Vector2Int(7, 7);
     public static Vector3 TilePositionToTileLocalPosition(Vector2Int pos)
     {
         return new Vector3(pos.x * TileLength, pos.y * -TileLength, 0);
@@ -14,17 +15,30 @@ public static class PositionMath
     {
         return new Vector2Int(pos.x, -pos.y - 1);
     }
+    public static Vector2Int CameraTilePositionFocusOnTilePosition(Vector2Int pos)
+    {
+        Vector2Int subPos = pos - CameraHalfViewSize;
+        subPos = Vector2Int.Max(Vector2Int.zero, subPos);
+        return subPos;
+    }
     public static Vector3Int TilePositionToGridPosition(Vector2Int pos)
     {
         return new Vector3Int(pos.x, -1 - pos.y, 0);
     }
     public static Vector3 TilePositionToUnitLocalPosition(Vector2Int pos)
     {
-        return new Vector3(pos.x, -pos.y,0);
+        return new Vector3(pos.x, -pos.y, 0);
     }
-    public static void SetUnitLocalPosition(Transform t,Vector2Int pos)
+    public static void SetUnitLocalPosition(Transform t, Vector2Int pos)
     {
         t.localPosition = TilePositionToUnitLocalPosition(pos);
+    }
+    public static void SetCameraFocusPosition(Transform t, Vector2Int pos)
+    {
+        var tilePos = CameraTilePositionFocusOnTilePosition(pos);
+        Debug.Log(tilePos);
+        t.localPosition = new Vector3(tilePos.x * TileLength, -tilePos.y * TileLength, CameraPosZ);
+        Debug.Log(t.localPosition);
     }
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y
