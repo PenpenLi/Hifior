@@ -23,6 +23,8 @@ public class ChapterManager : ManagerBase
     private EnemyEntity enemies;
     private Warehouse warehouse;
     public int MapId { get; private set; }
+    public int TurnIndex { get; private set; }
+    public EnumCharacterCamp TurnCamp { get; private set; }
     public ChapterManager()
     {
         players.Players = new List<RPGPlayer>();
@@ -37,6 +39,7 @@ public class ChapterManager : ManagerBase
     public void InitMapEvent(int mapId)
     {
         MapId = mapId;
+        TurnIndex = 0;
     }
     /// <summary>
     /// 清除战场数据
@@ -46,7 +49,43 @@ public class ChapterManager : ManagerBase
         players.Players.Clear();
         enemies.Enemies.Clear();
     }
+    public void NextTurn()
+    {
+        gameMode.LockInput(true);
+        if (TurnIndex == 0)
+        {
+            TurnCamp = EnumCharacterCamp.Player;
+            TurnIndex++;
+            uiManager.TurnIndicate.Show(TurnCamp, TurnIndex, PlayerAction);
+            return;
+        }
+        if (TurnCamp == EnumCharacterCamp.Player)
+        {
+            TurnCamp = EnumCharacterCamp.Enemy;
+            uiManager.TurnIndicate.Show(TurnCamp, TurnIndex, EnemyAction);
+        }
+        else
+        {
+            TurnCamp = EnumCharacterCamp.Player;
+            TurnIndex++;
+            uiManager.TurnIndicate.Show(TurnCamp, TurnIndex, PlayerAction);
+        }
+    }
+    /// <summary>
+    /// 开始玩家行动
+    /// </summary>
+    public void PlayerAction()
+    {
+        gameMode.FreeBattleCamera();
+        gameMode.LockInput(false);
+    }
+    /// <summary>
+    /// 敌人AI行动
+    /// </summary>
+    public void EnemyAction()
+    {
 
+    }
     /// <summary>
     /// 仅添加数据
     /// </summary>
@@ -83,7 +122,7 @@ public class ChapterManager : ManagerBase
     public RPGCharacter GetCharacterFromID(int id)
     {
         foreach (var v in players.Players)
-            if (v.Logic.GetID()==id) return v;
+            if (v.Logic.GetID() == id) return v;
         foreach (var v in enemies.Enemies)
             if (v.Logic.GetID() == id) return v;
         return null;

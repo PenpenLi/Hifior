@@ -85,6 +85,6 @@ public class UnitShower : MonoBehaviour
         }
         anim.GetComponent<SpriteRenderer>().flipX = false;
         anim.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
-        onFinish();
+        if(onFinish!=null) onFinish();
     }
 }

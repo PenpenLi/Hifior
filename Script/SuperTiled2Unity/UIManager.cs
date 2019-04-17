@@ -19,6 +19,7 @@ public class UIManager : ManagerBase
     public UI_BattleTileInfo BattleTileInfo { private set; get; }
     public UI_BattleActionMenu BattleActionMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
+    public UI_TurnIndicate TurnIndicate { private set; get; }
     public UI_ScreenMask ScreenMask { private set; get; }
     private T FindPanelInChildren<T>(Transform t) where T : IPanel
     {
@@ -37,6 +38,7 @@ public class UIManager : ManagerBase
         BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent9_16);
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
+        TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
     }
     public void InitMainUI(Transform panelParent)
     {

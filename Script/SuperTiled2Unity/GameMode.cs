@@ -194,6 +194,10 @@ public class GameMode : MonoSingleton<GameMode>
     {
         modeInfo.lockInput = bLock;
     }
+    public void FreeBattleCamera()
+    {
+        slgCamera.ControlMode = CameraControlMode.FreeMove;
+    }
     /// <summary>
     /// 开始战斗
     /// </summary>
@@ -201,7 +205,7 @@ public class GameMode : MonoSingleton<GameMode>
     public void StartBattle(EnumCharacterCamp FirstActionCamp)
     {
         modeInfo.modeState = GameModeInfo.ModeState.Battle;
-        Utils.GameUtil.DelayFunc(() => { slgCamera.ControlMode = CameraControlMode.FreeMove; }, 3.0f);
+        chapterManager.NextTurn();
     }
     #endregion
     #region Camera

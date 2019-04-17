@@ -36,6 +36,7 @@ public static class ResourceManager
     public static ChapterSettingDef GetChapterDef(int ChapterIndex)
     {
         ChapterSettingDef def = Resources.Load<ChapterSettingDef>(Path.Combine(ASSET_CHAPTERSETTING, ChapterIndex.ToString()));
+        if (def.Event == null) Debug.LogError("你需要在ChapterDef" + def.CommonProperty.ID + "中指定Event");
         def.Event.SetChapterDef(def);
         return def;
     }

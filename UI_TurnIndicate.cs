@@ -39,14 +39,14 @@ namespace RPG.UI
         public void Show(EnumCharacterCamp camp, int Turn, UnityAction onHide)
         {
             base.Show();
-            OnHideDelegate = onHide;
+            RegisterHideEvent(onHide);
             text.text = camp.ToString() + "  Turn " + Turn;
             text.color = ConstTable.CAMP_COLOR(camp);
             AnimatePos(true, MoveOut);
         }
         private void MoveOut()
         {
-            Utils.GameUtil.DelayFunc(() => AnimatePos(false, () => gameObject.SetActive(false)), waitTime);
+            Utils.GameUtil.DelayFunc(() => AnimatePos(false, Hide), waitTime);
         }
         private void AnimatePos(bool moveIn, UnityAction onFinish)
         {
