@@ -4,12 +4,7 @@ namespace Utils
 {
     public class GameUtil
     {
-        public static GameMode gameMode;
-        [RuntimeInitializeOnLoadMethod]
-        public static void RunOnStart()
-        {
-            gameMode = GameMode.Instance;
-        }
+        public static GameMode gameMode { get { return GameMode.Instance; } }
         private static IEnumerator IEnumDelayFunc(UnityEngine.Events.UnityAction Action, float Time)
         {
             yield return new WaitForSeconds(Time);

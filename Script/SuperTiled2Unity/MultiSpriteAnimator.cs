@@ -41,7 +41,7 @@ public class MultiSpriteAnimator : MonoBehaviour
     public void SetActiveRangeAll()
     {
         Sprite[] sp = staySprites[(int)(EAnimateType.Stay)];
-        SetActiveRange(0, sp.Length-1);
+        SetActiveRange(0, sp.Length - 1);
     }
     public void SetActiveRange(int from, int end)
     {
@@ -50,11 +50,10 @@ public class MultiSpriteAnimator : MonoBehaviour
     }
     SpriteRenderer render;
 
-    void Start()
+    void Awake()
     {
         render = GetComponent<SpriteRenderer>();
         ConstSwitchTime = new float[countOfType] { 10.0f / Application.targetFrameRate, 4.0f / Application.targetFrameRate };
-        SetActiveAnimator(EAnimateType.Stay);
     }
     // Update is called once per frame
     void Update()

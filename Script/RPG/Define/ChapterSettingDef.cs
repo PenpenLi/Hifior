@@ -40,12 +40,14 @@ public class WinCondition
     public int BossID;
     public int CityID;
     public int Round;
-    public WinCondition(int condition, int bossID, int cityID, int round)
+    public Vector2Int Position;
+    public WinCondition(int condition, int bossID, int cityID, int round, Vector2Int pos)
     {
         Condition = condition;
         BossID = bossID;
         CityID = cityID;
         Round = round;
+        Position = pos;
     }
 }
 [System.Serializable]

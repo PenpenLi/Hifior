@@ -19,14 +19,6 @@ namespace Sequence
             Vector3 v = new Vector3();
             v = amount;
 
-            Hashtable tweenParams = new Hashtable();
-            tweenParams.Add("amount", v);
-            tweenParams.Add("time", duration);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", gameObject);
-            tweenParams.Add("oncompleteparams", this);
-            iTween.ShakePosition(Camera.main.gameObject, tweenParams);
-
             if (!waitUntilFinished)
             {
                 Continue();

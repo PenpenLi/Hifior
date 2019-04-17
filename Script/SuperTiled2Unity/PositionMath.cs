@@ -21,6 +21,11 @@ public static class PositionMath
         subPos = Vector2Int.Max(Vector2Int.zero, subPos);
         return subPos;
     }
+    public static Vector3 CameraTilePositionFocusOnLocalPosition(Vector2Int pos)
+    {
+        var tilePos = CameraTilePositionFocusOnTilePosition(pos);
+        return new Vector3(tilePos.x * TileLength, -tilePos.y * TileLength, CameraPosZ);
+    }
     public static Vector3Int TilePositionToGridPosition(Vector2Int pos)
     {
         return new Vector3Int(pos.x, -1 - pos.y, 0);
@@ -35,10 +40,7 @@ public static class PositionMath
     }
     public static void SetCameraFocusPosition(Transform t, Vector2Int pos)
     {
-        var tilePos = CameraTilePositionFocusOnTilePosition(pos);
-        Debug.Log(tilePos);
-        t.localPosition = new Vector3(tilePos.x * TileLength, -tilePos.y * TileLength, CameraPosZ);
-        Debug.Log(t.localPosition);
+        t.localPosition = CameraTilePositionFocusOnLocalPosition(pos);
     }
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y

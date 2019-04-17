@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
-
+using UnityEngine.Assertions;
 namespace Sequence
 {
     /// <summary>
@@ -13,22 +13,36 @@ namespace Sequence
         public RPGCharacter Character;
         public EnumCharacterCamp Camp;
         public int CharacterID;
-        public VInt2[] TileCoords;
+        public EMoveSpeed Speed;
+        public List<Vector2Int> Routine;
+        public bool CameraFollow;
+        public bool WaitUntilFinished;
         public override void OnEnter()
         {
-            //if (Character == null)
-            //{
-            //    if (Camp == AddCharacter.ECamp.我方)
-            //        Character = GetGameMode<GM_Battle>().GetGameStatus<GS_Battle>().GetPlayer(CharacterID);
-            //    else
-            //        Character = GetGameMode<GM_Battle>().GetGameStatus<GS_Battle>().GetEnemy(CharacterID);
-            //}
-            //if (Character == null)
-            //{
-            //    Continue();
-            //    Debug.LogError("没有找到该角色", gameObject);
-            //}
-            //GetGameMode<GM_Battle>().GetSLGMap().MoveByRoutine(Character, TileCoords, null, Continue);
+            Vector2Int startPos = Routine.First();
+            Vector2Int endPos = Routine.Last();
+            Assert.IsFalse(startPos == endPos, "移动点和终结点相同");
+            RPGCharacter ch = null;
+            if (CharacterID >= 0)
+            {
+                ch = gameMode.ChapterManager.GetCharacterFromID(CharacterID);
+                Assert.IsNotNull(ch, startPos + "处不存在角色");
+                var chPos = ch.GetTileCoord();
+                Assert.IsTrue(startPos == chPos, "移动起始点" + startPos + "与角色所在位置" + chPos + "不相符");
+            }
+            else
+            {
+                ch = gameMode.ChapterManager.GetCharacterFromCoord(startPos);
+                Assert.IsNotNull(ch, startPos + "处不存在角色");
+            }
+            ch.Logic.SetTileCoord(endPos);
+            if (WaitUntilFinished)
+                gameMode.MoveUnit(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
+            else
+            {
+                gameMode.MoveUnit(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), null);
+                Continue();
+            }
         }
     }
 }

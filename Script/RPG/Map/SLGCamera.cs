@@ -92,8 +92,8 @@ public class SLGCamera : MonoBehaviour
     }
     public void MoveCameraToTargetPosition()
     {
-        iTween.Stop();
-        iTween.MoveTo(gameObject, TargetPosition, smoothTime);
+        //iTween.Stop();
+        //iTween.MoveTo(gameObject, TargetPosition, smoothTime);
     }
 
 

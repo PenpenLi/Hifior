@@ -771,32 +771,32 @@ public class SLGMap : MonoBehaviour
     }
     private void iTweenGameCharMove(RPGCharacter Gamechar, Vector3[] paths, UnityAction callStart, UnityAction callEnd)
     {
-        FuncMoveStart.RemoveAllListeners();
-        FuncMoveEnd.RemoveAllListeners();
-        FuncMoveStart.AddListener(callStart);
-        FuncMoveEnd.AddListener(callEnd);
-        Hashtable args = new Hashtable();
-        //设置路径的点
-        args.Add("path", paths);
-        //设置类型为线性，线性效果会好一些。
-        args.Add("easeType", iTween.EaseType.linear);
-        //设置寻路的速度
-        args.Add("speed", 15f);
-        //是否先从原始位置走到路径中第一个点的位置
-        args.Add("movetopath", true);
-        //是否让模型始终面朝当面目标的方向，拐弯的地方会自动旋转模型
-        //如果你发现你的模型在寻路的时候始终都是一个方向那么一定要打开这个
-        args.Add("orienttopath", true);
+        //FuncMoveStart.RemoveAllListeners();
+        //FuncMoveEnd.RemoveAllListeners();
+        //FuncMoveStart.AddListener(callStart);
+        //FuncMoveEnd.AddListener(callEnd);
+        //Hashtable args = new Hashtable();
+        ////设置路径的点
+        //args.Add("path", paths);
+        ////设置类型为线性，线性效果会好一些。
+        //args.Add("easeType", iTween.EaseType.linear);
+        ////设置寻路的速度
+        //args.Add("speed", 15f);
+        ////是否先从原始位置走到路径中第一个点的位置
+        //args.Add("movetopath", true);
+        ////是否让模型始终面朝当面目标的方向，拐弯的地方会自动旋转模型
+        ////如果你发现你的模型在寻路的时候始终都是一个方向那么一定要打开这个
+        //args.Add("orienttopath", true);
 
-        args.Add("onstart", "OnMoveStart");
-        args.Add("onstartparams", Gamechar);
-        args.Add("onstarttarget", gameObject);
-        //设置接受方法的对象，默认是自身接受，这里也可以改成别的对象接受，
-        //那么就得在接收对象的脚本中实现AnimationStart方法。
-        args.Add("oncomplete", "OnMoveEnd");
-        args.Add("oncompleteparams", Gamechar);
-        args.Add("oncompletetarget", gameObject);
-        iTween.MoveTo(Gamechar.GetGameObject(), args);
+        //args.Add("onstart", "OnMoveStart");
+        //args.Add("onstartparams", Gamechar);
+        //args.Add("onstarttarget", gameObject);
+        ////设置接受方法的对象，默认是自身接受，这里也可以改成别的对象接受，
+        ////那么就得在接收对象的脚本中实现AnimationStart方法。
+        //args.Add("oncomplete", "OnMoveEnd");
+        //args.Add("oncompleteparams", Gamechar);
+        //args.Add("oncompletetarget", gameObject);
+        //iTween.MoveTo(Gamechar.GetGameObject(), args);
     }
     /// <summary>
     /// 按照当前的路径进行移动
@@ -1004,10 +1004,6 @@ public class SLGMap : MonoBehaviour
         return neibourhood;
     }
     #endregion
-    public void StopMoveImmediate()
-    {
-        iTween.Stop();
-    }
 
     private bool IsEffectivelyCoordinate(Vector2Int p)
     {

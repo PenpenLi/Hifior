@@ -6,15 +6,15 @@ using RPG.UI;
 public class UIController : MonoBehaviour
 {
     private static UIController instance;
-    private static ScreenMask m_screenMask;
+    private static UI_ScreenMask m_screenMask;
     private static ItemTip m_itemTipPanel;
 
-    public static ScreenMask ScreenFade
+    public static UI_ScreenMask ScreenFade
     {
         get
         {
             if (m_screenMask == null)
-                m_screenMask = GetMonoScript<ScreenMask>(m_screenMask, "Prefab/UIElement/BlackFadeMask");
+                m_screenMask = GetMonoScript<UI_ScreenMask>(m_screenMask, "Prefab/UIElement/BlackFadeMask");
             return m_screenMask;
         }
     }
@@ -80,22 +80,22 @@ public class UIController : MonoBehaviour
     public static void ScreenDarkToNormal(float duration, UnityEngine.Events.UnityAction action = null)
     {
         ScreenFade.Show(false, true, duration);
-        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenFade.GetComponent<ScreenMask>().Hide(); }, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenFade.GetComponent<UI_ScreenMask>().Hide(); }, duration);
     }
 
     public static void ScreenNormalToDark(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
     {
         ScreenFade.Show(true, true, duration);
-        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenFade.GetComponent<ScreenMask>().Hide(); }, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenFade.GetComponent<UI_ScreenMask>().Hide(); }, duration);
     }
     public static void ScreenWhiteToNormal(float duration, UnityEngine.Events.UnityAction action = null)
     {
         ScreenFade.Show(false, false, duration);
-        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenFade.GetComponent<ScreenMask>().Hide(); }, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenFade.GetComponent<UI_ScreenMask>().Hide(); }, duration);
     }
     public static void ScreenNormalToWhite(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
     {
         ScreenFade.Show(true, false, duration);
-        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenFade.GetComponent<ScreenMask>().Hide(); }, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenFade.GetComponent<UI_ScreenMask>().Hide(); }, duration);
     }
 }

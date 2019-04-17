@@ -184,7 +184,7 @@ public class BattleManager : ManagerBase
         currentCharacterLogic.SetTileCoord(destPos);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
-        gameMode.MoveUnit(srcPos, destPos, FinishMoveEvent);
+        gameMode.MoveUnit(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), FinishMoveEvent);
     }
     public void FinishMoveEvent()
     {
@@ -210,6 +210,7 @@ public class BattleManager : ManagerBase
     public void FinishAction()
     {
         chapterManager.SaveChapterData(0);
+        chapterManager.SaveBattleData();
         battleManager.ChangeState(EBattleState.Idel);
         currentCharacterLogic.EndAction();
     }

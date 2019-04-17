@@ -19,10 +19,10 @@ public class EditorCallback
     private static void OnPrefabInstanceUpdate(GameObject obj)
     {
         SLGChapter chapter = obj.GetComponent<SLGChapter>();
-        chapter.CheckSequenceName();
         if (chapter != null)
         {
-            foreach (var v in chapter.EventInfo.BattleTalkEvent){  v.SequenceName = v.Sequence.SequenceName; }
+            chapter.CheckSequenceName();
+            foreach (var v in chapter.EventInfo.BattleTalkEvent) { v.SequenceName = v.Sequence.SequenceName; }
             foreach (var v in chapter.EventInfo.EnemiesLessEvent) { v.SequenceName = v.Sequence.SequenceName; }
             foreach (var v in chapter.EventInfo.EnemyDieEvent) { v.SequenceName = v.Sequence.SequenceName; }
             foreach (var v in chapter.EventInfo.LocationEvent) { v.SequenceName = v.Sequence.SequenceName; }

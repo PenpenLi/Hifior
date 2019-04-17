@@ -2,7 +2,7 @@
 
 namespace RPG.UI
 {
-    public class ScreenMask : AbstractUI
+    public class UI_ScreenMask : IPanel
     {
         public enum EnumUIMaskState
         {
@@ -10,12 +10,12 @@ namespace RPG.UI
             Black,
             White
         }
-        public static EnumUIMaskState State=EnumUIMaskState.Normal;
+        public static EnumUIMaskState State = EnumUIMaskState.Normal;
         public bool bReverse;
-        public float Duration=1.0f;
+        public float Duration = 1.0f;
         public bool bDark;
         private Animator animator;
-        public void Show(bool Reverse,bool Dark,float duration)
+        public void Show(bool Reverse, bool Dark, float duration)
         {
             bReverse = Reverse;
             bDark = Dark;
@@ -29,7 +29,7 @@ namespace RPG.UI
             transform.SetAsLastSibling();
             RectTransform rt = GetComponent<RectTransform>();
             rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1920f);
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,1080f);
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1080f);
             rt.localScale = Vector3.one;
         }
         protected override void Awake()
@@ -42,17 +42,17 @@ namespace RPG.UI
         protected override void OnEnable()
         {
             animator.speed = 1.0f / Duration;
-            if (bReverse) 
+            if (bReverse)
             {
                 if (bDark)
                 {
                     animator.Play("NormalFadeToDark");
-                    ScreenMask.State = EnumUIMaskState.Black;
+                    UI_ScreenMask.State = EnumUIMaskState.Black;
                 }
                 else
                 {
                     animator.Play("NormalFadeToWhite");
-                    ScreenMask.State = EnumUIMaskState.White;
+                    UI_ScreenMask.State = EnumUIMaskState.White;
                 }
 
             }
@@ -62,8 +62,9 @@ namespace RPG.UI
                     animator.Play("DarkFadeToNormal");
                 else
                     animator.Play("WhiteFadeToNormal");
-                ScreenMask.State = EnumUIMaskState.Normal;
+                UI_ScreenMask.State = EnumUIMaskState.Normal;
             }
         }
+
     }
 }

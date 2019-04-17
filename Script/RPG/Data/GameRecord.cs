@@ -75,6 +75,11 @@ public class CharacterInfo : SerializableBase
     /// 既存活同时又允许出场
     /// </summary>
     public bool Active { get { return Alive && Available; } }
+    public void AfterBattle()
+    {
+        CurrentHP = MaxHP;
+        battleState = EBattleState.Normal;
+    }
 }
 
 [System.Serializable]
@@ -242,8 +247,9 @@ public class ChapterRecordCollection : SerializableBase
 [System.Serializable]
 public class BattleInfoCollection : ChapterRecordCollection
 {
+    public int MapID;
     public EventInfoCollection Event;
-
+    public WinCondition WinCondition;
     public override string GetKey()
     {
         return "BattleInfo";
@@ -442,6 +448,8 @@ public class EventInfoCollection
     public List<EnemiesLessEventType> EnemiesLessEvent;
     [Tooltip("敌方死亡事件")]
     public List<EnemyDieEventType> EnemyDieEvent;
+    [Tooltip("胜利条件")]
+    public List<WinCondition> WinCondition;
     public LocationEventType GetLocationEvent(VInt2 TilePosition, int CharacterID)
     {
         foreach (LocationEventType Event in LocationEvent)
@@ -595,17 +603,21 @@ public class GameRecord
         currentTeamRecord.team[teamIndex] = teamData;
         currentTeamRecord.Save();
     }
-    public void SaveBattle(int teamIndex, int chapterId, Warehouse ware, List<CharacterInfo> infos, EventInfoCollection eventInfo)
+    public void SaveBattle(int teamIndex, int chapterId,int mapId, Warehouse ware, List<CharacterInfo> infos, EventInfoCollection eventInfo)
     {
         BattleInfoCollection battleInfo = new BattleInfoCollection();
         battleInfo.Slot = -1;
         battleInfo.CurrentTeamIndex = teamIndex;
-
+        battleInfo.MapID = mapId;
         ChapterRecordCollection.TeamCollection teamData = new ChapterRecordCollection.TeamCollection();
         teamData.AfterStartSequence = true;
         teamData.Chapter = chapterId;
         teamData.Ware = ware;
         teamData.PlayersInfo = new PlayerInfoCollection();
+        foreach (var v in infos)
+        {
+            teamData.PlayersInfo.AddContent(v);
+        }
         battleInfo.team[teamIndex] = teamData;
         battleInfo.Event = eventInfo;
         battleInfo.Save();
@@ -628,6 +640,20 @@ public class GameRecord
         if (HasChapterSave(slot))
         {
             v = v.Load<ChapterRecordCollection>();
+        }
+        else
+        {
+            Debug.LogError("没有发现可以被载入的存储文件");
+            OnSaveFileNotExist();
+        }
+        return v;
+    }
+    public BattleInfoCollection LoadBattleFromDisk(int slot)
+    {
+        BattleInfoCollection v = new BattleInfoCollection();
+        if (v.Exists())
+        {
+            v = v.Load<BattleInfoCollection>();
         }
         else
         {

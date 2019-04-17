@@ -10,9 +10,16 @@ namespace Sequence
         public Vector2Int TilePos;
         public float MoveTime;
         public bool Accelerate;
+        public bool WaitUntilFinished;
         public override void OnEnter()
         {
-            gameMode.CameraMoveTo(TilePos, MoveTime, Accelerate);
+            if (WaitUntilFinished)
+                gameMode.CameraMoveTo(TilePos, Continue, MoveTime, Accelerate);
+            else
+            {
+                gameMode.CameraMoveTo(TilePos, null, MoveTime, Accelerate);
+                Continue();
+            }
         }
     }
 }

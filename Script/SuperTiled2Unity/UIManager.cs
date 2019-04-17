@@ -19,6 +19,7 @@ public class UIManager : ManagerBase
     public UI_BattleTileInfo BattleTileInfo { private set; get; }
     public UI_BattleActionMenu BattleActionMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
+    public UI_ScreenMask ScreenMask { private set; get; }
     private T FindPanelInChildren<T>(Transform t) where T : IPanel
     {
         T r = null;
@@ -30,11 +31,12 @@ public class UIManager : ManagerBase
         if (r == null) Debug.LogError(typeof(T).Name + "is not find under " + t.name);
         return r;
     }
-    public void InitBattleUI(Transform panelParent)
+    public void InitBattleUI(Transform panelParent0_9,Transform panelParent9_16,Transform panelParent0_16)
     {
-        BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent);
-        BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent);
-        CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent);
+        BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent9_16);
+        BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent9_16);
+        CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
+        ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
     }
     public void InitMainUI(Transform panelParent)
     {
@@ -60,11 +62,11 @@ public class UIManager : ManagerBase
     }
 
     #endregion
+    #region Battle Action Menu
     /// <summary>
     /// UI 撤销操作
     /// </summary>
     public UnityAction MenuUndoAction;
-    #region Battle Action Menu
     private EActionMenuState eActionMenuState;
     public EActionMenuState ActionMenuState { get { return eActionMenuState; } }
     public void BattleAction_Move()
@@ -117,6 +119,29 @@ public class UIManager : ManagerBase
     public void HideBattlaActionMenu()
     {
         BattleActionMenu.Hide();
+    }
+    #endregion
+    #region Screen Fade
+    public void ScreenDarkToNormal(float duration, UnityEngine.Events.UnityAction action = null)
+    {
+        ScreenMask.Show(false, true, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenMask.Hide(); }, duration);
+    }
+
+    public  void ScreenNormalToDark(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
+    {
+        ScreenMask.Show(true, true, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
+    }
+    public  void ScreenWhiteToNormal(float duration, UnityEngine.Events.UnityAction action = null)
+    {
+        ScreenMask.Show(false, false, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenMask.Hide(); }, duration);
+    }
+    public  void ScreenNormalToWhite(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
+    {
+        ScreenMask.Show(true, false, duration);
+        Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
     }
     #endregion
 }

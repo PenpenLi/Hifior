@@ -24,29 +24,35 @@ namespace Sequence
 
         public override void OnEnter()
         {
+            gameMode.LockInput(true);
             switch (FadeType)
             {
                 case 渐变类型.正常变黑:
-                    UIController.ScreenNormalToDark(duration, false);
+                    gameMode.UIManager.ScreenNormalToDark(duration, false);
                     break;
                 case 渐变类型.黑变正常:
-                    UIController.ScreenDarkToNormal(duration);
+                    gameMode.UIManager.ScreenDarkToNormal(duration);
                     break;
                 case 渐变类型.正常变白:
-                    UIController.ScreenNormalToWhite(duration, false);
+                    gameMode.UIManager.ScreenNormalToWhite(duration, false);
                     break;
                 case 渐变类型.白变正常:
-                    UIController.ScreenWhiteToNormal(duration);
+                    gameMode.UIManager.ScreenWhiteToNormal(duration);
                     break;
             }
             if (waitUntilFinished)
             {
-                Utils.GameUtil.DelayFunc(() => Continue(), duration);
+                Utils.GameUtil.DelayFunc(Continue, duration);
             }
             else
             {
                 Continue();
             }
+        }
+        public override void Continue()
+        {
+            base.Continue();
+            gameMode.LockInput(false);
         }
     }
 }

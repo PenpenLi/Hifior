@@ -1034,7 +1034,7 @@ namespace RPG.UI
             {
                 return;
             }
-            iTween.ShakePosition(Camera.main.gameObject, axis, time);
+            //iTween.ShakePosition(Camera.main.gameObject, axis, time);
         }
 
         protected virtual void Flash(float duration)

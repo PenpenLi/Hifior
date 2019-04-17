@@ -9,12 +9,12 @@ namespace RPG.UI
 {
     public class AbstractUI : MonoBehaviour, IComparable<AbstractUI>
     {
-
         [Header("AbstructUI 基类参数")]
         private static AbstractUI m_UI;
         public int SortOrder = 0;
         protected UnityAction OnHideDelegate;
 
+        protected GameMode gameMode { get { return GameMode.Instance; } }
         protected virtual void Awake()
         {
             Init();

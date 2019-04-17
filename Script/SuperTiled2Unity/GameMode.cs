@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+using DG.Tweening;
 public class GameMode : MonoSingleton<GameMode>
 {
     public SLGCamera slgCamera;
@@ -20,7 +20,6 @@ public class GameMode : MonoSingleton<GameMode>
     public UIManager UIManager { get { return uiManager; } }
     public GridTileManager GridTileManager { get { return gridTileManager; } }
     public ChapterManager ChapterManager { get { return chapterManager; } }
-
     #region GameMode Info
     public struct GameModeInfo
     {
@@ -32,6 +31,8 @@ public class GameMode : MonoSingleton<GameMode>
             Battle
         }
         public ModeState modeState;
+
+        public bool lockInput;
         /// <summary>
         /// 是否在战斗中
         /// </summary>
@@ -50,7 +51,7 @@ public class GameMode : MonoSingleton<GameMode>
         chapterManager = new ChapterManager();
 
         BindKeyInput();
-        uiManager.InitBattleUI(GameObject.Find("Panel(9/16)").transform);
+        uiManager.InitBattleUI(GameObject.Find("Panel(0/9)").transform, GameObject.Find("Panel(9/16)").transform, GameObject.Find("Panel(0/16)").transform);
 
         battleManager.ShowMoveRangeAction = ShowMoveRange;
         battleManager.ShowChooseTargetRangeAction = ShowChooseTargetRange;
@@ -74,6 +75,12 @@ public class GameMode : MonoSingleton<GameMode>
     void TestFunctionAddHere()
     {
         chapterManager.NewGameData(1);
+        // StartCoroutine(TestLoadBattleFromSave());
+    }
+    IEnumerator TestLoadBattleFromSave()
+    {
+        LoadBattle();
+        yield return new WaitForEndOfFrame();
     }
     void Start()
     {
@@ -83,6 +90,7 @@ public class GameMode : MonoSingleton<GameMode>
     // Update is called once per frame
     void Update()
     {
+        if (modeInfo.lockInput) return;
         InputManager.Update();
         UIManager.Update();
         if (modeInfo.HasStartBattle())
@@ -153,10 +161,14 @@ public class GameMode : MonoSingleton<GameMode>
         logic.SetTileCoord(tilePos);
         chapterManager.AddPlayerToBattle(p);
     }
-    public void MoveUnit(Vector2Int unitPos, Vector2Int destPos, UnityAction onFinish)
+    public void MoveUnit(Vector2Int unitPos, Vector2Int destPos, float speed, UnityAction onComplete)
     {
         List<Vector2Int> routine = PositionMath.GetMoveRoutine(destPos);
-        unitShower.MoveUnit(routine, onFinish);
+        unitShower.MoveUnit(routine, onComplete, speed);
+    }
+    public void MoveUnit(List<Vector2Int> routine, float speed, UnityAction onComplete)
+    {
+        unitShower.MoveUnit(routine, onComplete, speed);
     }
     #endregion
     #region Battle Manager
@@ -168,9 +180,19 @@ public class GameMode : MonoSingleton<GameMode>
     {
         chapterManager.LoadChapterData(chapterID);
     }
+    public void LoadBattle()
+    {
+        ChapterManager.LoadBattleData(-1);
+        //载入数据后，将各种战斗组件开启
+    }
     public void LoadTileMap(int mapId)
     {
         gridTileManager.LoadNewMap(mapId);
+        chapterManager.InitMapEvent(mapId);
+    }
+    public void LockInput(bool bLock)
+    {
+        modeInfo.lockInput = bLock;
     }
     /// <summary>
     /// 开始战斗
@@ -183,11 +205,18 @@ public class GameMode : MonoSingleton<GameMode>
     }
     #endregion
     #region Camera
-    public void CameraMoveTo(Vector2Int tilePos, float moveTime = 0.0f, bool accelerate = false)
+    public void CameraMoveTo(Vector2Int tilePos, UnityAction onComplete, float moveTime = 0.0f, bool accelerate = false)
     {
         if (moveTime < 0.01f)
         {
             PositionMath.SetCameraFocusPosition(MainCameraTransform, tilePos);
+        }
+        else
+        {
+            var targetPosition = PositionMath.CameraTilePositionFocusOnLocalPosition(tilePos);
+            Tweener tw = MainCameraTransform.DOLocalMove(targetPosition, moveTime);
+            if (onComplete != null)
+                tw.OnComplete(() => onComplete());
         }
     }
     #endregion

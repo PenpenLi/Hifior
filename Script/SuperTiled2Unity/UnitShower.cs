@@ -32,6 +32,9 @@ public class UnitShower : MonoBehaviour
     {
         if (routine.Count <= 1) Debug.LogError("路径太少，移动不了");
         MultiSpriteAnimator animator = GetUnitAt(routine[0]);
+        if (animator == null) { Debug.LogError("没有在" + routine[0] + "处发现MultiSpriteAnimator组件"); return; }
+        keyValue.Remove(routine[0]);
+        keyValue.Add(routine[routine.Count - 1], animator);
         StartCoroutine(moveCoroutine(animator, routine, 1.0f / speed, onFinish));
     }
     private MultiSpriteAnimator GetUnitAt(Vector2Int tilePos)
@@ -48,7 +51,7 @@ public class UnitShower : MonoBehaviour
         Transform t = anim.transform;
         anim.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Move);
         float waitFrame = (int)(Application.targetFrameRate * waitTime);
-        
+
         for (int i = 1; i < routine.Count; i++)
         {
             Vector2Int dir = routine[i] - routine[i - 1];
@@ -69,12 +72,12 @@ public class UnitShower : MonoBehaviour
                 anim.SetActiveRange(0, 3);
                 anim.GetComponent<SpriteRenderer>().flipX = true;
             }
-            var firstPos = PositionMath.TilePositionToUnitLocalPosition(routine[i-1]);
-            var lastPos= PositionMath.TilePositionToUnitLocalPosition(routine[i]);
-            for(int j = 0; j < waitFrame; j++)
+            var firstPos = PositionMath.TilePositionToUnitLocalPosition(routine[i - 1]);
+            var lastPos = PositionMath.TilePositionToUnitLocalPosition(routine[i]);
+            for (int j = 0; j < waitFrame; j++)
             {
                 t.localPosition = Vector3.Lerp(firstPos, lastPos, (float)j / waitFrame);
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
 
             PositionMath.SetUnitLocalPosition(t, routine[i]);
