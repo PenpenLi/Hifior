@@ -196,7 +196,7 @@ public class GameMode : MonoSingleton<GameMode>
     }
     public void FreeBattleCamera()
     {
-        slgCamera.ControlMode = CameraControlMode.FreeMove;
+        slgCamera.SetControlMode( CameraControlMode.FreeMove);
     }
     /// <summary>
     /// 开始战斗

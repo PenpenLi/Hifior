@@ -7,6 +7,8 @@ public static class PositionMath
     public const float CameraPosZ = -100f;
     public static readonly Vector2Int MapViewSize = new Vector2Int(15, 15);
     public static readonly Vector2Int CameraHalfViewSize = new Vector2Int(7, 7);
+    public static float MaxCameraLocalPositionX { get { return (TileWidth - MapViewSize.x) * TileLength; } }
+    public static float MinCameraLocalPositionY { get { return -(TileHeight - MapViewSize.y) * TileLength; } }
     public static Vector3 TilePositionToTileLocalPosition(Vector2Int pos)
     {
         return new Vector3(pos.x * TileLength, pos.y * -TileLength, 0);
@@ -25,6 +27,15 @@ public static class PositionMath
     {
         var tilePos = CameraTilePositionFocusOnTilePosition(pos);
         return new Vector3(tilePos.x * TileLength, -tilePos.y * TileLength, CameraPosZ);
+    }
+    public static Vector3 CameraLocalPositionFollowUnitLocalPosition(Vector3 pos)
+    {
+        Vector3 camPos = new Vector3(pos.x, -pos.y + 1, 0) - new Vector3(CameraHalfViewSize.x, CameraHalfViewSize.y, 0);
+        camPos = Vector3.Max(Vector3.zero, camPos);
+        camPos = new Vector3(camPos.x * TileLength, -camPos.y * TileLength, CameraPosZ);
+        if (camPos.x > MaxCameraLocalPositionX) camPos.x = MaxCameraLocalPositionX;
+        if (camPos.y < MinCameraLocalPositionY) camPos.y = MinCameraLocalPositionY;
+        return camPos;
     }
     public static Vector3Int TilePositionToGridPosition(Vector2Int pos)
     {

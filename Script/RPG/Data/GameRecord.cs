@@ -13,6 +13,10 @@ public class CharacterInfo : SerializableBase
         Frozen,
         Poison
     }
+    /// <summary>
+    /// 属于哪一方
+    /// </summary>
+    public EnumCharacterCamp Camp;
     public int ID;
     public bool Alive;
     public bool Available;
@@ -25,6 +29,7 @@ public class CharacterInfo : SerializableBase
     public Vector2Int tileCoords;
     public CharacterAttribute Attribute;
     public ItemGroup Items;
+    public ActionAI AI;
     [NonSerialized]
     public Vector2Int oldTileCoords;
     public override string GetKey()

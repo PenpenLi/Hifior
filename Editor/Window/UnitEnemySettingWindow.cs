@@ -195,9 +195,6 @@ namespace RPGEditor
             unit.Enemy.PlayerDef.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", unit.Enemy.PlayerDef.DefaultAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", unit.Enemy.PlayerDef.DefaultAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", unit.Enemy.PlayerDef.DefaultAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
-            unit.Enemy.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", unit.Enemy.ActionAI);
-            unit.Enemy.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", unit.Enemy.AttackInRange);
-            unit.Enemy.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", unit.Enemy.CureSelf);
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.EndVertical();
         }

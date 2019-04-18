@@ -28,9 +28,8 @@ namespace RPGEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            enemy.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", enemy.ActionAI);
-            enemy.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", enemy.AttackInRange);
-            enemy.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", enemy.CureSelf);
+            //enemy.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", enemy.ActionAI);
+            //enemy.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", enemy.CureSelf);
         }
     }
 
@@ -55,9 +54,6 @@ namespace RPGEditor
 
         public override void OnGUI(EnemyDef Data)
         {
-            Data.ActionAI = (EnumEnemyActionAI)EditorGUILayout.EnumPopup("行动策略", Data.ActionAI);
-            Data.AttackInRange = EditorGUILayout.Toggle("攻击范围内攻击", Data.AttackInRange);
-            Data.CureSelf = (EnumEnemyCureSelfCondition)EditorGUILayout.EnumPopup("治疗自身", Data.CureSelf);
         }
     }
 }

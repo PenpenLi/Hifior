@@ -5,6 +5,7 @@ using UnityEngine.Events;
 public class UnitShower : MonoBehaviour
 {
     public Transform[] UnitTransform;
+    public Material[] UnitMaterials;
     public Transform GetUnitTransformRoot(EnumCharacterCamp t) { return UnitTransform[(int)t]; }
     private Dictionary<Vector2Int, MultiSpriteAnimator> keyValue = new Dictionary<Vector2Int, MultiSpriteAnimator>();
 
@@ -13,7 +14,8 @@ public class UnitShower : MonoBehaviour
         Transform root = GetUnitTransformRoot(t);
         GameObject v = new GameObject(name);
         v.transform.SetParent(root, false);
-        v.AddComponent<SpriteRenderer>();
+        var sr = v.AddComponent<SpriteRenderer>();
+        sr.sharedMaterial = UnitMaterials[(int)t];
         MultiSpriteAnimator anim = v.AddComponent<MultiSpriteAnimator>();
         anim.SetAnimatorContent(MultiSpriteAnimator.EAnimateType.Stay, stay);
         anim.SetAnimatorContent(MultiSpriteAnimator.EAnimateType.Move, move);
@@ -21,6 +23,10 @@ public class UnitShower : MonoBehaviour
         PositionMath.SetUnitLocalPosition(v.transform, tilePos);
         keyValue.Add(tilePos, anim);
         return v.transform;
+    }
+    public void ChangeUnitColor(Vector2Int pos, EnumCharacterCamp camp)
+    {
+        keyValue[pos].GetComponent<SpriteRenderer>().sharedMaterial = UnitMaterials[(int)camp];
     }
     /// <summary>
     /// 代表一秒钟移动10个格子，则走一个格子需要0.1f
@@ -85,6 +91,6 @@ public class UnitShower : MonoBehaviour
         }
         anim.GetComponent<SpriteRenderer>().flipX = false;
         anim.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
-        if(onFinish!=null) onFinish();
+        if (onFinish != null) onFinish();
     }
 }

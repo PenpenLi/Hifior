@@ -21,7 +21,12 @@ namespace Sequence
                 RPGCharacter ch = RPGPlayer.Create(ID,Attribute);
                 gameMode.AddUnitToMap(ch,Coord);
             }
-
+            if (Camp == EnumCharacterCamp.Enemy)
+            {
+                if (UseDefaultAttribute) Attribute = null;
+                RPGCharacter ch = RPGEnemy.Create(ID, Attribute);
+                gameMode.AddUnitToMap(ch, Coord);
+            }
             Continue();
         }
     }

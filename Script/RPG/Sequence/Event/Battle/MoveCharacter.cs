@@ -36,6 +36,9 @@ namespace Sequence
                 Assert.IsNotNull(ch, startPos + "处不存在角色");
             }
             ch.Logic.SetTileCoord(endPos);
+
+            if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform());
+
             if (WaitUntilFinished)
                 gameMode.MoveUnit(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
             else
@@ -43,6 +46,11 @@ namespace Sequence
                 gameMode.MoveUnit(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), null);
                 Continue();
             }
+        }
+        public override void Continue()
+        {
+            base.Continue();
+            if(CameraFollow) gameMode.slgCamera.SetOldControlMode();
         }
     }
 }

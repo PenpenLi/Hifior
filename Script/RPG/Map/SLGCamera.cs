@@ -5,7 +5,7 @@ public enum CameraControlMode
     DisableControl,
     FollowArrowCenter,
     FollowArrowEdge,
-    FollowCharacter,
+    FollowTransform,
     FreeMove
 }
 public class SLGCamera : MonoBehaviour
@@ -15,11 +15,12 @@ public class SLGCamera : MonoBehaviour
 
     public float moveSpeed = 7.0f;
     public Vector2Int maxMoveable;
-    
-    public CameraControlMode ControlMode;
 
-    private Vector3 TargetPosition;
-    private Transform TargetTransform;
+    public CameraControlMode ControlMode;
+    private CameraControlMode oldControlMode;
+    public Vector2Int FocusTilePos;
+    private Vector3 targetPosition;
+    private Transform targetTransform;
     public float Height = 180;
     public Vector3 ShiftVector = Vector3.zero;
 
@@ -36,69 +37,7 @@ public class SLGCamera : MonoBehaviour
     {
         if (ControlMode == CameraControlMode.DisableControl)
             return;
-        //if (LastArrowPoint != ArrowPoint)
-        {
-            //LastArrowPoint = ArrowPoint;
-            if (ControlMode == CameraControlMode.FollowArrowCenter)
-            {
-                //    SetTargetPosition(ArrowPoint);
-                MoveCameraToTargetPosition();
-            }
-            if (ControlMode == CameraControlMode.FollowArrowEdge)
-            {
-                if (ShouldMoveCamera())
-                {
-                    MoveCameraToTargetPosition();
-                }
-            }
-        }
-    }
-    /// <summary>
-    /// 跟随光标边缘模式是否需要移动摄像机
-    /// </summary>
-    /// <returns></returns>
-    private bool ShouldMoveCamera()
-    {
-        Vector3 subPos = transform.position;
-        bool shouldMove = false;
-        float left = subPos.x - 40;
-        if (left > 0)
-        {
-            TargetPosition = transform.position + Vector3.left * left;
-            shouldMove = true;
-        }
-        float right = subPos.x + 40;
-        if (right < 0)
-        {
-            TargetPosition = transform.position + Vector3.left * right;
-            shouldMove = true;
-        }
-        float top = subPos.z - 30;
-        if (top > 0)
-        {
 
-            TargetPosition = transform.position + Vector3.back * top;
-            shouldMove = true;
-        }
-        float bot = subPos.z + 30;
-        if (bot < 0)
-        {
-            TargetPosition = transform.position + Vector3.back * bot;
-            shouldMove = true;
-        }
-        if (!shouldMove)
-            TargetPosition = transform.position;
-        return shouldMove;
-    }
-    public void MoveCameraToTargetPosition()
-    {
-        //iTween.Stop();
-        //iTween.MoveTo(gameObject, TargetPosition, smoothTime);
-    }
-
-
-    void LateUpdate()
-    {
         if (ControlMode == CameraControlMode.FreeMove)
         {
             Vector3 mousePos = Input.mousePosition;
@@ -111,7 +50,43 @@ public class SLGCamera : MonoBehaviour
                 transform.Translate(Vector3.left * PositionMath.TileLength, Space.Self);
             if (mousePos.y < heightBorder && transform.localPosition.y >= localPos.y)
                 transform.Translate(Vector3.down * PositionMath.TileLength, Space.Self);
+            return;
         }
+        {
+            if(ControlMode == CameraControlMode.FollowTransform)
+            {
+                CameraFollowTargetPosition();
+            }
+            //LastArrowPoint = ArrowPoint;
+            if (ControlMode == CameraControlMode.FollowArrowCenter)
+            {
+            }
+            if (ControlMode == CameraControlMode.FollowArrowEdge)
+            {
+
+            }
+        }
+    }
+    public void SetOldControlMode()
+    {
+        var temp = ControlMode;
+        ControlMode = oldControlMode;
+        oldControlMode = temp;
+    }
+    public void SetControlMode(CameraControlMode mode)
+    {
+        oldControlMode = ControlMode;
+        ControlMode = mode;
+    }
+    public void StartFollowTransform(Transform t)
+    {
+        targetTransform = t;
+        SetControlMode(CameraControlMode.FollowTransform);
+    }
+    public void CameraFollowTargetPosition()
+    {
+        Vector3 p = PositionMath.CameraLocalPositionFollowUnitLocalPosition(targetTransform.localPosition);
+        transform.localPosition = p;
     }
 }
 

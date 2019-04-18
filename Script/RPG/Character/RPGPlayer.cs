@@ -24,24 +24,11 @@ public class RPGPlayer : RPGCharacter
     }
     private RPGPlayer(PlayerDef def)
     {
-        SetDefaultData(def);
+        SetDataFromDef(def);
     }
-    /// <summary>
-    /// 是否是主角
-    /// </summary>
-    /// <returns></returns>
     public override bool IsLeader()
     {
         var id = Logic.GetID();
         return id == ConstTable.LEADER_0 || id == ConstTable.LEADER_1 || id == ConstTable.LEADER_2;
-    }
-
-    private void A()
-    {
-
-    }
-    private void B()
-    {
-
     }
 }

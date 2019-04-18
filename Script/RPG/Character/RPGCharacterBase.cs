@@ -8,11 +8,8 @@ public class RPGCharacterBase
     protected Transform transform;
     protected CharacterLogic logic;
     public CharacterLogic Logic { get { return logic; } }
+    public ActionAI AI { get { return logic.Info.AI; } }
 
-    /// <summary>
-    /// 属于哪一方
-    /// </summary>
-    protected EnumCharacterCamp camp;
     public void SetTransform(Transform t)
     {
         transform = t;
@@ -20,11 +17,15 @@ public class RPGCharacterBase
     public Transform GetTransform() { return transform; }
     public GameObject GetGameObject() { return transform.gameObject; }
 
-    public virtual void SetDefaultData(PlayerDef DefaultData)
+    public virtual void SetDataFromDef(PlayerDef DefaultData)
     {
         logic = new CharacterLogic(DefaultData);
         logic.careerDef = ResourceManager.GetCareerDef(logic.characterDef.Career);
         if (logic.careerDef == null) Debug.LogError("不存在的career def");
+    }
+    public virtual void SetAI(ActionAI ai)
+    {
+        logic.Info.AI = ai;
     }
     /// <summary>
     /// 是否是领导者，在Player里和Enemy类里重写
@@ -36,11 +37,11 @@ public class RPGCharacterBase
     }
     public EnumCharacterCamp GetCamp()
     {
-        return camp;
+        return logic.Info.Camp;
     }
     public void SetCamp(EnumCharacterCamp Camp)
     {
-        this.camp = Camp;
+        logic.Info.Camp = Camp;
     }
 
 }

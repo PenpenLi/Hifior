@@ -139,7 +139,7 @@ public class CharacterLogic
     public CharacterLogic(CharacterInfo info)
     {
         Info = info;
-        int id = info.ID;
+        var id = info.ID;
         careerDef = ResourceManager.GetCareerDef(info.Career);
         characterDef = ResourceManager.GetPlayerDef(id);
     }
