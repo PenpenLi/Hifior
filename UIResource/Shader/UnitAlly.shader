@@ -58,15 +58,13 @@
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.texcoord);
-			if (col.a < 0.5f) {
-				discard;
+				fixed4 col = tex2D(_MainTex, i.texcoord)* i.color;
+				col.rgb *= col.a;
+				if (col.b > col.r + col.g - 0.1) {
+					col = fixed4(col.r,col.b, col.g,  col.a);
+				}
+				return col ;
 			}
-			if (col.b > col.r + col.g - 0.1) {
-				col = fixed4(col.r,col.b, col.g,  col.a);
-			}
-			return col;
-		}
 		ENDCG
 	}
 	}

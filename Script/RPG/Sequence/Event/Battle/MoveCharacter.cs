@@ -13,7 +13,7 @@ namespace Sequence
         public RPGCharacter Character;
         public EnumCharacterCamp Camp;
         public int CharacterID;
-        public EMoveSpeed Speed;
+        public EModeSpeed Speed;
         public List<Vector2Int> Routine;
         public bool CameraFollow;
         public bool WaitUntilFinished;
@@ -40,10 +40,10 @@ namespace Sequence
             if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform());
 
             if (WaitUntilFinished)
-                gameMode.MoveUnit(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
+                gameMode.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
             else
             {
-                gameMode.MoveUnit(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), null);
+                gameMode.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), null);
                 Continue();
             }
         }

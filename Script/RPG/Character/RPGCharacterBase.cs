@@ -16,13 +16,8 @@ public class RPGCharacterBase
     }
     public Transform GetTransform() { return transform; }
     public GameObject GetGameObject() { return transform.gameObject; }
+    public SpriteRenderer GetSpriteRender() { return transform.GetComponent<SpriteRenderer>(); }
 
-    public virtual void SetDataFromDef(PlayerDef DefaultData)
-    {
-        logic = new CharacterLogic(DefaultData);
-        logic.careerDef = ResourceManager.GetCareerDef(logic.characterDef.Career);
-        if (logic.careerDef == null) Debug.LogError("不存在的career def");
-    }
     public virtual void SetAI(ActionAI ai)
     {
         logic.Info.AI = ai;

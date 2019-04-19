@@ -27,10 +27,10 @@ public class RPGEnemy : RPGCharacter
 
     private RPGEnemy(EnemyDef def)
     {
-        if (def.PlayerDef==null) Debug.LogError("EnemyDef_"+def.CommonProperty.ID+" is null");
+        if (def.PlayerDef == null) Debug.LogError("EnemyDef_" + def.CommonProperty.ID + " is null");
         SetDataFromDef(def.PlayerDef);
         SetAI(def.AI);
-        logic.Info.Camp = EnumCharacterCamp.Enemy;
+        SetCamp(EnumCharacterCamp.Enemy);
     }
     public override bool IsLeader()
     {

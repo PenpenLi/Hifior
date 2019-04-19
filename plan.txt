@@ -1,11 +1,4 @@
-战斗菜单选项
-点击先弹出选择菜单  菜单
-在UIManager里面写入 OpenBattleMenu(){
-根据battleState,currentCharacterLogic设计菜单显示。
-//每一次都把Undo操作写好到UndoAction,在UIManager里面添加而不是在BattleManager
-}
-要不要移动，Idel状态移动
-
-完成人物移动的动画
-
-初始化人物到战场，从ScriptObject 开始
+add enemy
+待机状态
+Attack 
+enemy AI

@@ -82,8 +82,10 @@ public class UIManager : ManagerBase
         battleManager.ChangeState(BattleManager.EBattleState.SelectTarget);
     }
     public void BattleAction_End()
-    { 
+    {
+        BattleActionMenu.Hide();
         battleManager.FinishAction();
+        battleManager.ChangeState(BattleManager.EBattleState.Idel);
     }
     public void BuildBattleActionMenu_Main(CharacterLogic chLogic)
     {

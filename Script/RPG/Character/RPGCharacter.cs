@@ -6,7 +6,7 @@ using System;
 
 public class RPGCharacter : RPGCharacterBase
 {
-    protected Animator anim;
+    protected Material normalMaterial;
     /// <summary>
     /// 是否可以操控行动，行动完毕或者被石化，冻住等则为False
     /// </summary>
@@ -19,20 +19,32 @@ public class RPGCharacter : RPGCharacterBase
 
     public RPGCharacter()
     {
+
+    }
+    public void SetDataFromDef(PlayerDef DefaultData)
+    {
+        logic = new CharacterLogic(DefaultData);
+
+        logic.careerDef = ResourceManager.GetCareerDef(logic.characterDef.Career);
+        if (logic.careerDef == null) Debug.LogError("不存在的career def");
     }
     /// <summary>
     /// 使角色不可以行动
     /// </summary>
-    public void DisableControl()
+    public void DisableAction(bool changeMaterial)
     {
         bEnableAction = false;
+        logic.EndAction();
+        if (changeMaterial) GetSpriteRender().material = ResourceManager.UnitGreyMaterial;
     }
     /// <summary>
     /// 使角色可以行动
     /// </summary>
-    public void EnableControl()
+    public void EnableAction(bool changeMaterial)
     {
         bEnableAction = true;
+        logic.EndAction();
+        if (changeMaterial) GetSpriteRender().material = normalMaterial;
     }
     public Vector2Int GetTileCoord()
     {

@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using DG.Tweening;
 public class UnitShower : MonoBehaviour
 {
     public Transform[] UnitTransform;
     public Material[] UnitMaterials;
+    public Material UnitGreyMaterial;
+
     public Transform GetUnitTransformRoot(EnumCharacterCamp t) { return UnitTransform[(int)t]; }
     private Dictionary<Vector2Int, MultiSpriteAnimator> keyValue = new Dictionary<Vector2Int, MultiSpriteAnimator>();
-
+    private void Awake()
+    {
+        UnitGreyMaterial = ResourceManager.UnitGreyMaterial;
+        UnitMaterials = new Material[4] { ResourceManager.UnitPlayerMaterial, ResourceManager.UnitEnemyMaterial, ResourceManager.UnitAllyMaterial, ResourceManager.UnitNPCMaterial };
+    }
     public Transform AddUnit(EnumCharacterCamp t, string name, Sprite[] stay, Sprite[] move, Vector2Int tilePos)
     {
         Transform root = GetUnitTransformRoot(t);
@@ -34,7 +41,7 @@ public class UnitShower : MonoBehaviour
     /// <param name="srcPos"></param>
     /// <param name="destPos"></param>
     /// <param name="speed"></param>
-    public void MoveUnit(List<Vector2Int> routine, UnityAction onFinish, float speed = 5.0f)
+    public void MoveUnit(List<Vector2Int> routine, UnityAction onFinish, float speed = ConstTable.CONST_NORMAL_UNIT_MOVE_SPEED)
     {
         if (routine.Count <= 1) Debug.LogError("路径太少，移动不了");
         MultiSpriteAnimator animator = GetUnitAt(routine[0]);
@@ -42,6 +49,15 @@ public class UnitShower : MonoBehaviour
         keyValue.Remove(routine[0]);
         keyValue.Add(routine[routine.Count - 1], animator);
         StartCoroutine(moveCoroutine(animator, routine, 1.0f / speed, onFinish));
+    }
+    public void DisappearUnit(Vector2Int pos, float t, UnityAction onComplete)
+    {
+        MultiSpriteAnimator animator = GetUnitAt(pos);
+        if (animator == null) { Debug.LogError("没有在" + pos + "处发现MultiSpriteAnimator组件"); return; }
+        Color oriCol = animator.render.color;
+        Tweener tw = DOTween.ToAlpha(() => oriCol, x => oriCol = x, 0, t);
+        tw.onUpdate = () => { animator.render.color = oriCol; };
+        tw.onComplete = () => onComplete();
     }
     private MultiSpriteAnimator GetUnitAt(Vector2Int tilePos)
     {

@@ -2731,6 +2731,40 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7604196695464512608, guid: b369ea258fd6c3740bf65392dc52fec2,
+        type: 3}
+      propertyPath: Routine.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7604196695464512608, guid: b369ea258fd6c3740bf65392dc52fec2,
+        type: 3}
+      propertyPath: Speed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3984320355396059073, guid: b369ea258fd6c3740bf65392dc52fec2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 622564011263920346, guid: b369ea258fd6c3740bf65392dc52fec2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3654497520420416, guid: b369ea258fd6c3740bf65392dc52fec2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3092059938389212459, guid: b369ea258fd6c3740bf65392dc52fec2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 399060379770089052, guid: b369ea258fd6c3740bf65392dc52fec2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b369ea258fd6c3740bf65392dc52fec2, type: 3}
 --- !u!1 &390957119
@@ -5426,11 +5460,8 @@ MonoBehaviour:
   - {fileID: 1456204245}
   - {fileID: 1840747}
   - {fileID: 68564396}
-  UnitMaterials:
-  - {fileID: 2100000, guid: cae2da4c8e7e602458181fe78a91b158, type: 2}
-  - {fileID: 2100000, guid: b40c6954b90b2ad418da65c975421efc, type: 2}
-  - {fileID: 2100000, guid: b9a1b7f29f15e8c4a84ff5503bb9be22, type: 2}
-  - {fileID: 2100000, guid: 282434d20a251c746ad77af4c7d155ee, type: 2}
+  UnitMaterials: []
+  UnitGreyMaterial: {fileID: 2100000, guid: eaa30f79a1bd3b24fb41c9cc9a527de3, type: 2}
 --- !u!1 &728368969
 GameObject:
   m_ObjectHideFlags: 0
@@ -6332,7 +6363,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: fd8545b57baea4f41829fea6846e4321, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.30588236}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6360,6 +6391,7 @@ MonoBehaviour:
   - {fileID: 21300004, guid: 355db20e50f891f4583c93d8cfd3d8c6, type: 3}
   - {fileID: 21300006, guid: 355db20e50f891f4583c93d8cfd3d8c6, type: 3}
   activeAnimateType: 0
+  render: {fileID: 0}
 --- !u!1 &820855296
 GameObject:
   m_ObjectHideFlags: 0

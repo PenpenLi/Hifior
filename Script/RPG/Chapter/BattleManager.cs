@@ -26,7 +26,8 @@ public class BattleManager : ManagerBase
     public UnityAction<CharacterLogic> UpdateSelectCharacterInfo;
     public System.Func<bool> IsRangeVisible;
 
-    CharacterLogic currentCharacterLogic;
+    private RPGCharacter currentCharacter;
+    private CharacterLogic currentCharacterLogic { get { if (currentCharacter == null) return null; return currentCharacter.Logic; } }
 
     EBattleState battleState = EBattleState.Idel;
 
@@ -36,12 +37,10 @@ public class BattleManager : ManagerBase
         HandleInput();
         UpdateScene();
     }
-
-    public CharacterLogic GetCharacterLogic(Vector2Int tilePos)
+    public RPGCharacter GetCharacter(Vector2Int tilePos)
     {
         var ch = chapterManager.GetCharacterFromCoord(tilePos);
-        if (ch == null) return null;
-        return ch.Logic;
+        return ch;
     }
 
     public void ChangeState(EBattleState state)
@@ -78,14 +77,21 @@ public class BattleManager : ManagerBase
     }
     public void HandleIdel()
     {
+        gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
+        if (inputManager.GetNoInput())
+        {
+            ClearRangeAction();
+            return;
+        }
         var vMouseInputState = inputManager.GetMouseInput();
         var tilePos = vMouseInputState.tilePos;
         UpdateSelectTileInfo(tilePos);
         if (vMouseInputState.IsClickedTile())
         {
-            currentCharacterLogic = GetCharacterLogic(tilePos);
+            currentCharacter = GetCharacter(tilePos);
             if (currentCharacterLogic == null)
             {
+                ClearRangeAction();
             }
             else
             {
@@ -106,7 +112,7 @@ public class BattleManager : ManagerBase
         {
             if (vMouseInputState.IsClickedTile())
             {
-                currentCharacterLogic = GetCharacterLogic(vMouseInputState.tilePos);
+                currentCharacter = GetCharacter(vMouseInputState.tilePos);
                 if (currentCharacterLogic == null)
                 {
                     ClearRangeAction();
@@ -121,6 +127,7 @@ public class BattleManager : ManagerBase
     }
     public void HandleSelectMove()
     {
+        gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
         var vMouseInputState = inputManager.GetMouseInput();
         if (PositionMath.MoveableAreaPoints.Contains(vMouseInputState.tilePos))
         {
@@ -184,7 +191,7 @@ public class BattleManager : ManagerBase
         currentCharacterLogic.SetTileCoord(destPos);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
-        gameMode.MoveUnit(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), FinishMoveEvent);
+        gameMode.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), FinishMoveEvent);
     }
     public void FinishMoveEvent()
     {
@@ -209,19 +216,21 @@ public class BattleManager : ManagerBase
     }
     public void FinishAction()
     {
-        chapterManager.SaveChapterData(0);
-        chapterManager.SaveBattleData();
-        battleManager.ChangeState(EBattleState.Idel);
-        currentCharacterLogic.EndAction();
+        //chapterManager.SaveChapterData(0);
+        //chapterManager.SaveBattleData();
+        ClearRangeAction();
+        currentCharacter.DisableAction(true);
     }
     public void CloseMenu()
     {
         uiManager.HideBattlaActionMenu();
+        gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
     }
 
     public void OpenMenu(EActionMenuState menuState, UnityAction undoAction = null)
     {
         ChangeState(EBattleState.Menu);
+        gameMode.slgCamera.SetControlMode(CameraControlMode.DisableControl);
         uiManager.MenuUndoAction = undoAction;
         uiManager.ShowBattleActionMenu(menuState, currentCharacterLogic);
     }

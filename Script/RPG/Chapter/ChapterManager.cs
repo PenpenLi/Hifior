@@ -107,7 +107,7 @@ public class ChapterManager : ManagerBase
     }
     public void AddEnemyToBattle(RPGCharacter ch)
     {
-        UnityEngine.Assertions.Assert.AreEqual(ch.GetCamp(), EnumCharacterCamp.Player);
+        UnityEngine.Assertions.Assert.AreEqual(ch.GetCamp(), EnumCharacterCamp.Enemy);
         RPGEnemy player = ch as RPGEnemy;
         enemies.Enemies.Add(player);
     }

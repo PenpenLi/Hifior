@@ -1,8 +1,9 @@
-﻿Shader "UI/UnitNPC"
+﻿Shader "UI/UnitGrey"
 {
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
+	_LuminosityAmount("GrayScale Amount", Range(0.0,1.0)) = 1.0
 	}
 
 		SubShader
@@ -54,16 +55,15 @@
 				return OUT;
 			}
 
-			sampler2D _MainTex;
+			sampler2D _MainTex; fixed _LuminosityAmount;
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;
-			col.rgb *= col.a;
-			if (col.b > col.r + col.g - 0.1) {
-				col = fixed4(col.b,col.r, col.g,  col.a);
-			}
-			return col;
+			 fixed4 renderTex = tex2D(_MainTex, i.texcoord) * i.color;				
+			renderTex.rgb *= renderTex.a;
+			float luminosity = 0.299 * renderTex.r + 0.587 * renderTex.g + 0.114 * renderTex.b;
+			fixed4 col = lerp(renderTex, luminosity, _LuminosityAmount);
+			return fixed4(col.r,col.g,col.b,renderTex.a);
 		}
 		ENDCG
 	}

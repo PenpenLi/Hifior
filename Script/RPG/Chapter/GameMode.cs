@@ -68,6 +68,7 @@ public class GameMode : MonoSingleton<GameMode>
         LogInitInfo();
         TestFunctionAddHere();
     }
+
     void LogInitInfo()
     {
         Debug.Log("存档位置：" + GameRecord.RootDataPath);
@@ -84,7 +85,7 @@ public class GameMode : MonoSingleton<GameMode>
     }
     void Start()
     {
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = 60;
     }
 
     // Update is called once per frame
@@ -159,16 +160,30 @@ public class GameMode : MonoSingleton<GameMode>
         Transform unit = unitShower.AddUnit(p.GetCamp(), logic.GetName(), logic.GetStaySprites(), logic.GetMoveSprites(), tilePos);
         p.SetTransform(unit);
         logic.SetTileCoord(tilePos);
-        chapterManager.AddPlayerToBattle(p);
+        var camp = p.GetCamp();
+        if (camp == EnumCharacterCamp.Player)
+            chapterManager.AddPlayerToBattle(p);
+        if (camp == EnumCharacterCamp.Enemy)
+            chapterManager.AddEnemyToBattle(p);
     }
-    public void MoveUnit(Vector2Int unitPos, Vector2Int destPos, float speed, UnityAction onComplete)
+    public void MoveUnitAfterAction(Vector2Int unitPos, Vector2Int destPos, float speed, UnityAction onComplete)
     {
         List<Vector2Int> routine = PositionMath.GetMoveRoutine(destPos);
         unitShower.MoveUnit(routine, onComplete, speed);
     }
-    public void MoveUnit(List<Vector2Int> routine, float speed, UnityAction onComplete)
+    public void MoveUnitByRoutine(List<Vector2Int> routine, float speed, UnityAction onComplete)
     {
         unitShower.MoveUnit(routine, onComplete, speed);
+    }
+
+    public void KillUnitAt(Vector2Int tilePos, float v, UnityAction onComplete)
+    {
+        unitShower.DisappearUnit(tilePos, v, onComplete);
+    }
+    public void KillUnit(int Id, float v, UnityAction onComplete)
+    {
+        var ch = chapterManager.GetCharacterFromID(Id);
+        unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
     }
     #endregion
     #region Battle Manager
@@ -196,7 +211,7 @@ public class GameMode : MonoSingleton<GameMode>
     }
     public void FreeBattleCamera()
     {
-        slgCamera.SetControlMode( CameraControlMode.FreeMove);
+        slgCamera.SetControlMode(CameraControlMode.FreeMove);
     }
     /// <summary>
     /// 开始战斗

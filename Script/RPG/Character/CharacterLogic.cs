@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 [System.Serializable]
 public class CharacterBattleInfo
 {
@@ -159,7 +160,7 @@ public class CharacterLogic
     /// <summary>
     /// 是否可以被玩家选择并进行行动
     /// </summary>
-    public bool Controllable { get { return bEnableAction; } }
+    public bool Controllable { get { return Info.Camp == EnumCharacterCamp.Player && !hasFinishAction && bEnableAction; } }
     /// <summary>
     /// 是否在移动中
     /// </summary>
@@ -250,37 +251,37 @@ public class CharacterLogic
         return Info.Exp;
     }
 
-    public object GetPhysicalPower()
+    public int GetPhysicalPower()
     {
         return Info.Attribute.PhysicalPower;
     }
 
-    public object GetSkill()
+    public int GetSkill()
     {
         return Info.Attribute.Skill;
     }
 
-    public object GetSpeed()
+    public int GetSpeed()
     {
         return Info.Attribute.Speed;
     }
 
-    public object GetLuck()
+    public int GetLuck()
     {
         return Info.Attribute.Luck;
     }
 
-    public object GetMagicalDefense()
+    public int GetMagicalDefense()
     {
         return Info.Attribute.MagicalDefense;
     }
 
-    public object GetPhysicalDefense()
+    public int GetPhysicalDefense()
     {
         return Info.Attribute.PhysicalDefense;
     }
 
-    public object GetMagicalPower()
+    public int GetMagicalPower()
     {
         return Info.Attribute.MagicalPower;
     }

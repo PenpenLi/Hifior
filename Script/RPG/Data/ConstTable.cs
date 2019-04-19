@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-public enum EMoveSpeed
+public enum EModeSpeed
 {
     Normal,
     Fast,
@@ -13,7 +13,7 @@ public class ConstTable
     public const string PREFAB_UI_START_MENU = "Prefab/UIElement/Panel_StartMenu";*/
     public const string PREFAB_UI_ACTIONMENU_BUTTON = "Prefab/UIElement/ActionMenuButton";
     #endregion
-
+    public static EModeSpeed ModeSpeed = EModeSpeed.Normal;
     //包含 游戏中的设置和 相应的固定的信息
     public const int CONST_SAVE_MAXCOUNT = 6;
     public const int TEAM_COUNT = 3;
@@ -47,9 +47,13 @@ public class ConstTable
     //显示
     public const float CONST_TURN_IMAGE_ANIMATION_DURATION = 0.5f;
     public const float CONST_TURN_IMAGE_ANIMATION_WAITTIME = 1.0f;
-    public const float CONST_NORMAL_UNIT_MOVE_SPEED = 4.0f;
-    public const float CONST_FAST_UNIT_MOVE_SPEED = 6.0f;
-    public const float CONST_SLOW_UNIT_MOVE_SPEED = 2.0f;
+    public const float CONST_SLOW_UNIT_MOVE_SPEED = 3.0f;
+    public const float CONST_NORMAL_UNIT_MOVE_SPEED = 6.0f;
+    public const float CONST_FAST_UNIT_MOVE_SPEED = 12.0f;
+
+    public const float CONST_SLOW_UNIT_DISAPPEAR_SPEED = 2.0f;
+    public const float CONST_NORMAL_UNIT_DISAPPEAR_SPEED = 1.0f;
+    public const float CONST_FAST_UNIT_DISAPPEAR_SPEED = 0.5f;
     public static Color CAMP_COLOR(EnumCharacterCamp camp)
     {
         switch (camp)
@@ -65,14 +69,42 @@ public class ConstTable
         }
         return Color.white;
     }
-    public static float UNIT_MOVE_SPEED() { return CONST_NORMAL_UNIT_MOVE_SPEED; }
-    public static float UNIT_MOVE_SPEED(EMoveSpeed speed)
+    public static float UNIT_MOVE_SPEED() { return UNIT_MOVE_SPEED(ModeSpeed); }
+    public static float UNIT_MOVE_SPEED(EModeSpeed speed)
     {
         switch (speed)
         {
-            case EMoveSpeed.Fast: return CONST_FAST_UNIT_MOVE_SPEED;
-            case EMoveSpeed.Slow: return CONST_SLOW_UNIT_MOVE_SPEED;
+            case EModeSpeed.Fast: return CONST_FAST_UNIT_MOVE_SPEED;
+            case EModeSpeed.Slow: return CONST_SLOW_UNIT_MOVE_SPEED;
         }
         return CONST_NORMAL_UNIT_MOVE_SPEED;
+    }
+    public static float UNIT_DISAPPEAR_SPEED() { return UNIT_DISAPPEAR_SPEED(ModeSpeed); }
+    public static float UNIT_DISAPPEAR_SPEED(EModeSpeed speed)
+    {
+        switch (speed)
+        {
+            case EModeSpeed.Fast: return CONST_FAST_UNIT_DISAPPEAR_SPEED;
+            case EModeSpeed.Slow: return CONST_SLOW_UNIT_DISAPPEAR_SPEED;
+        }
+        return CONST_NORMAL_UNIT_DISAPPEAR_SPEED;
+    }
+    public static float UNIT_STAY_SWITCH_TIME()
+    {
+        switch (ModeSpeed)
+        {
+            case EModeSpeed.Fast: return 0.15f;
+            case EModeSpeed.Slow: return 0.5f;
+        }
+        return 0.35f;
+    }
+    public static float UNIT_MOVE_SWITCH_TIME()
+    {
+        switch (ModeSpeed)
+        {
+            case EModeSpeed.Fast: return 0.14f;
+            case EModeSpeed.Slow: return 0.3f;
+        }
+        return 0.20f;
     }
 }

@@ -16,7 +16,12 @@ MonoBehaviour:
     ID: 1
     Name: 
     Description: 
-  PlayerDef: {fileID: 0}
-  ActionAI: 0
-  AttackInRange: 0
-  CureSelf: 0
+  PlayerDef: {fileID: 11400000, guid: 931c0df9958cfdf4dada90c06b90ea42, type: 2}
+  AI:
+    IsLeader: 0
+    ActionCommand: 0
+    CureSelf: 0
+  Attribute:
+    UsePlayerDef: 0
+    Level: 0
+    HardMode: 0

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public static class ResourceManager
 {
@@ -12,6 +13,7 @@ public static class ResourceManager
     private const string ASSET_PASSIVESKILL = "rpgdata/passiveskill";
     private const string ASSET_PLAYER = "rpgdata/character/player";
     private const string ASSET_ENEMY = "rpgdata/character/enemy";
+
     private const string ASSET_BG = "bg";
     private static Dictionary<int, WeaponDef> weaponDefTable;
     private static Dictionary<int, PropsDef> propsDefTable;
@@ -21,6 +23,8 @@ public static class ResourceManager
 
     private static MapTileDef mapDef;
     private static Dictionary<int, PassiveSkillDef> passiveSkillDefTable;
+
+
     public static PlayerDef GetPlayerDef(int ID)
     {
         return Resources.Load<PlayerDef>(Path.Combine(ASSET_PLAYER, ID.ToString()));
@@ -81,7 +85,34 @@ public static class ResourceManager
     {
         weaponDefTable.Clear();
     }
+    #region Material 
+    private const string RESOURCE_APP_MATERIAL_DIR = "App/Material/";
+    private const string RESOURCE_APP_MATERIAL_UNIT_ALLY = "UnitAlly";
+    private const string RESOURCE_APP_MATERIAL_UNIT_ENEMY = "UnitEnemy";
+    private const string RESOURCE_APP_MATERIAL_UNIT_NPC = "UnitNPC";
+    private const string RESOURCE_APP_MATERIAL_UNIT_PLAYER = "UnitPlayer";
+    private const string RESOURCE_APP_MATERIAL_UNIT_GREY = "UnitGrey";
+    private static Dictionary<string, Material> app_material = new Dictionary<string, Material>();
+    public static void LoadMaterial()
+    {
+        var res = Resources.LoadAll<Material>(RESOURCE_APP_MATERIAL_DIR);
+        foreach (var v in res)
+        {
+            Debug.Log(v.name);
+            app_material.Add(v.name, v);
+        }
+    }
+    public static Material UnitGreyMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_GREY]; } }
+    public static Material UnitPlayerMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_PLAYER]; } }
+    public static Material UnitEnemyMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_ENEMY]; } }
+    public static Material UnitAllyMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_ALLY]; } }
+    public static Material UnitNPCMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_NPC]; } }
 
+    #endregion
+    static ResourceManager()
+    {
+        LoadMaterial();
+    }
     [RuntimeInitializeOnLoadMethod]
     public static void Initialize()
     {

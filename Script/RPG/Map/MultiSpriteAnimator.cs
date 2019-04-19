@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(SpriteRenderer))]
 public class MultiSpriteAnimator : MonoBehaviour
 {
     public Sprite[] sprites;
@@ -48,12 +48,12 @@ public class MultiSpriteAnimator : MonoBehaviour
         fromFrame = from;
         endFrame = end;
     }
-    SpriteRenderer render;
+    public SpriteRenderer render;
 
     void Awake()
     {
         render = GetComponent<SpriteRenderer>();
-        ConstSwitchTime = new float[countOfType] { 10.0f / Application.targetFrameRate, 4.0f / Application.targetFrameRate };
+        ConstSwitchTime = new float[countOfType] { ConstTable.UNIT_STAY_SWITCH_TIME(), ConstTable.UNIT_MOVE_SWITCH_TIME() };
     }
     // Update is called once per frame
     void Update()
