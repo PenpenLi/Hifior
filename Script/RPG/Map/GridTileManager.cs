@@ -43,12 +43,14 @@ public class GridTileManager : ManagerBase
     }
     public void InitMouseInputEvent()
     {
+        Vector2Int oldPos=Vector2Int.one;
         gameMode.InputManager.GetMouseInput = () =>//添加GetMouseInput Callback
         {
             var v = new InputManager.MouseInputState();
             v.active = false;
+            v.oldTilePos = oldPos;
             RaycastTilePosition(ref v.localPos, ref v.tilePos);
-
+            oldPos = v.tilePos;
             if (Input.GetMouseButtonUp(0))
             {
                 v.active = true;

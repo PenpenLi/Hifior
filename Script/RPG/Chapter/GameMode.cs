@@ -54,11 +54,11 @@ public class GameMode : MonoSingleton<GameMode>
         uiManager.InitBattleUI(GameObject.Find("Panel(0/9)").transform, GameObject.Find("Panel(9/16)").transform, GameObject.Find("Panel(0/16)").transform);
 
         battleManager.ShowMoveRangeAction = ShowMoveRange;
-        battleManager.ShowChooseTargetRangeAction = ShowChooseTargetRange;
+        battleManager.ShowSelectTargetRangeAction = ShowSelectTargetRange;
         battleManager.ShowEffectTargetRangeAction = ShowEffectTargetRange;
 
         battleManager.ShowHighlightRangeAction = pathShower.ShowHighLightTiles;
-        battleManager.HideHighlightRangeAction = () => pathShower.HidePath(PathShower.EPathShowerType.HighLight);
+        battleManager.ClearHighlightRangeAction = () => pathShower.HidePath(PathShower.EPathShowerType.HighLight);
         battleManager.IsRangeVisible = pathShower.IsRangeVisible;
         battleManager.ClearRangeAction = pathShower.HideAll;
         battleManager.UpdateSelectTileInfo = uiManager.UpdateTileInfo;
@@ -128,23 +128,24 @@ public class GameMode : MonoSingleton<GameMode>
 
     public void ShowMoveRange(CharacterLogic logic)
     {
-        Vector2Int tilePos = logic.GetTileCoord();
-        PositionMath.InitActionScope(EnumCharacterCamp.Player, EMoveClassType.Savege, 6, tilePos, EnumWeaponType.光明, Vector2Int.one);
+        PositionMath.InitActionScope(logic.Info.Camp, logic.GetMoveClass(), logic.GetMovement(), logic.GetTileCoord(), Vector2Int.one);
         pathShower.ShowTiles(PathShower.EPathShowerType.Move, PositionMath.MoveableAreaPoints);
         pathShower.ShowTiles(PathShower.EPathShowerType.Damage, PositionMath.AttackAreaPoints, true, false);
     }
 
-    public void ShowChooseTargetRange(CharacterLogic logic)
+    public void ShowSelectTargetRange(CharacterLogic logic)
     {
         Vector2Int tilePos = logic.GetTileCoord();
-        List<Vector2Int> atkRange = CharacterBattleInfo.GetTargetChooseRange(tilePos, EnumWeaponRangeType.菱形菱形, Vector2Int.one);
+        List<Vector2Int> atkRange = logic.BattleInfo.TargetChooseRanges;
         pathShower.ShowTiles(PathShower.EPathShowerType.Damage, atkRange);
     }
 
     public void ShowEffectTargetRange(CharacterLogic logic, Vector2Int mouseTilePos)
     {
         Vector2Int tilePos = logic.GetTileCoord();
-        List<Vector2Int> highlightRange = new List<Vector2Int> { mouseTilePos };
+        //List<Vector2Int> highlightRange = new List<Vector2Int> { mouseTilePos };
+        logic.BattleInfo.SetEffectTarget(mouseTilePos);
+        List<Vector2Int> highlightRange = logic.BattleInfo.TargetEffectRanges;
         pathShower.ShowHighLightTiles(highlightRange);
     }
     #endregion
@@ -183,6 +184,7 @@ public class GameMode : MonoSingleton<GameMode>
     public void KillUnit(int Id, float v, UnityAction onComplete)
     {
         var ch = chapterManager.GetCharacterFromID(Id);
+        chapterManager.RemoveCharacter(ch);
         unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
     }
     #endregion

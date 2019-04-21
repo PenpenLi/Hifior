@@ -23,6 +23,7 @@ public class CareerDef : ExtendScriptableObject
     /// 兵种类型
     /// </summary>
     public EnumCareerSeries Series;
+    public EnumMoveClassType MoveClass;
     /// <summary>
     /// 可以使用的武器等级 -1：不可用 0:D ,1:C,2:B,3:A,4:S,5:SSS,6:*
     /// </summary>
@@ -38,5 +39,5 @@ public class CareerDef : ExtendScriptableObject
     /// <summary>
     /// 最大属性限制
     /// </summary>
-    public CharacterAttribute MaxAttribute;
+    public CharacterAttribute MaxAttribute; 
 }

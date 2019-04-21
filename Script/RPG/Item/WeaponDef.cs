@@ -14,7 +14,7 @@ public class WeaponDef : ExtendScriptableObject
     /// 为-1时代表可以无限使用
     /// </summary>
     public int UseNumber;
-    public SelectRangeType RangeType;
+    public SelectEffectRangeType RangeType;
     public int Weight;
     public int Power;
     public int Hit;
@@ -42,7 +42,10 @@ public class WeaponDef : ExtendScriptableObject
     public CharacterAttribute AdditionalAttribute;
     //成长率提高
     public CharacterAttributeGrow AdditionalAttributeGrow;
-
+    public WeaponDef()
+    {
+        UseNumber = 1;
+    }
     public const int SWORD = 1;
     public const int SPEAR = 2;
     public const int AXE = 3;
@@ -154,7 +157,7 @@ public class WeaponDef : ExtendScriptableObject
         get
         {
             return GetWeaponTypeName() + " " + GetWeaponLevelName() + "  " + "威力" + " " + Power + "  " + "命中" + " " + Hit + "  " + "必杀" + " " + Crit + "  " +
-           "重量" + " " + Weight + "  " + "射程" + " " + RangeType.MinSelectRange + "-" + RangeType.MaxSelectRange + "\n" + CommonProperty.Description;
+           "重量" + " " + Weight + "  " + "射程" + " " + RangeType.SelectRange.x + "-" + RangeType.SelectRange.y + "\n" + CommonProperty.Description;
 
         }
     }

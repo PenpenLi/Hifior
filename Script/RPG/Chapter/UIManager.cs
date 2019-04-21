@@ -18,6 +18,7 @@ public class UIManager : ManagerBase
     #region Init 
     public UI_BattleTileInfo BattleTileInfo { private set; get; }
     public UI_BattleActionMenu BattleActionMenu { private set; get; }
+    public UI_BattleSelectWeaponMenu BattleSelectWeaponMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
     public UI_TurnIndicate TurnIndicate { private set; get; }
     public UI_ScreenMask ScreenMask { private set; get; }
@@ -32,13 +33,15 @@ public class UIManager : ManagerBase
         if (r == null) Debug.LogError(typeof(T).Name + "is not find under " + t.name);
         return r;
     }
-    public void InitBattleUI(Transform panelParent0_9,Transform panelParent9_16,Transform panelParent0_16)
+    public void InitBattleUI(Transform panelParent0_9, Transform panelParent9_16, Transform panelParent0_16)
     {
         BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent9_16);
         BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent9_16);
+        BattleSelectWeaponMenu = FindPanelInChildren<UI_BattleSelectWeaponMenu>(panelParent9_16);
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
+        MenuUndoAction = new Stack<UnityAction>();
     }
     public void InitMainUI(Transform panelParent)
     {
@@ -68,7 +71,8 @@ public class UIManager : ManagerBase
     /// <summary>
     /// UI 撤销操作
     /// </summary>
-    public UnityAction MenuUndoAction;
+
+    public Stack<UnityAction> MenuUndoAction;
     private EActionMenuState eActionMenuState;
     public EActionMenuState ActionMenuState { get { return eActionMenuState; } }
     public void BattleAction_Move()
@@ -79,7 +83,17 @@ public class UIManager : ManagerBase
     public void BattleAction_Attack()
     {
         BattleActionMenu.Hide();
-        battleManager.ChangeState(BattleManager.EBattleState.SelectTarget);
+        CharacterLogic logic = battleManager.CurrentCharacterLogic;
+        BuildBattleSelectWeaponMenu(logic);
+        MenuUndoAction.Push(UndoShowBattleActionMenu);
+    }
+    /// <summary>
+    /// 不显示其他的Menu
+    /// </summary>
+    public void UndoShowBattleActionMenu()
+    {
+        BattleActionMenu.Show();
+        BattleSelectWeaponMenu.Hide();
     }
     public void BattleAction_End()
     {
@@ -125,6 +139,46 @@ public class UIManager : ManagerBase
         BattleActionMenu.Hide();
     }
     #endregion
+    public void BuildBattleSelectWeaponMenu(CharacterLogic chLogic)
+    {
+        BattleSelectWeaponMenu.Clear();
+        List<WeaponItem> weaponItems = chLogic.Info.Items.GetAllWeapons();
+        foreach (var v in weaponItems)
+        {
+            var weaponAction = new UI_BattleActionMenu.UIActionButtonInfo(v.GetName(), () => BattleAction_SelectWeapon(v));
+            BattleSelectWeaponMenu.AddAction(weaponAction);
+        }
+        BattleSelectWeaponMenu.Show();
+    }
+    private void BattleAction_SelectWeapon(WeaponItem item)
+    {
+        battleManager.ChangeState(BattleManager.EBattleState.SelectTarget);
+        if (item == null) Debug.LogError("选择的武器是null");
+        else Debug.Log(item.ToString());
+        BattleActionMenu.Hide();
+        BattleSelectWeaponMenu.Hide();
+        CharacterLogic logic = battleManager.CurrentCharacterLogic;
+        logic.Info.Items.EquipWeapon(item);
+        //从选择的武器确定
+        var rangeType = item.GetDefinition().RangeType;
+        EnumSelectEffectRangeType selRangeType = rangeType.SelectType;
+        Vector2Int selRange = rangeType.SelectRange;
+        EnumSelectEffectRangeType effRangeType = rangeType.EffectType;
+        Vector2Int effRange = rangeType.EffectRange;
+        logic.BattleInfo.SetSelectTargetParam(CharacterBattleInfo.EBattleActionType.Attack, logic.GetTileCoord(), selRangeType, selRange, effRangeType, effRange);
+        battleManager.ShowSelectTargetRangeAction(logic);
+        MenuUndoAction.Push(UndoSelectWeapon);
+    }
+    private void UndoSelectWeapon()
+    {
+        battleManager.ChangeState(BattleManager.EBattleState.Menu);
+        battleManager.ClearRangeAction();
+        BattleSelectWeaponMenu.Show();
+        BattleActionMenu.Hide();
+    }
+    #region Battle Choose Weapon Action Menu
+
+    #endregion
     #region Screen Fade
     public void ScreenDarkToNormal(float duration, UnityEngine.Events.UnityAction action = null)
     {
@@ -132,17 +186,17 @@ public class UIManager : ManagerBase
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenMask.Hide(); }, duration);
     }
 
-    public  void ScreenNormalToDark(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
+    public void ScreenNormalToDark(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
     {
         ScreenMask.Show(true, true, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
     }
-    public  void ScreenWhiteToNormal(float duration, UnityEngine.Events.UnityAction action = null)
+    public void ScreenWhiteToNormal(float duration, UnityEngine.Events.UnityAction action = null)
     {
         ScreenMask.Show(false, false, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenMask.Hide(); }, duration);
     }
-    public  void ScreenNormalToWhite(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
+    public void ScreenNormalToWhite(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
     {
         ScreenMask.Show(true, false, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);

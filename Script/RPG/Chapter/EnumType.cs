@@ -74,7 +74,7 @@ public enum ETileType
     ItemShop,
     SecretShop,
 }
-public enum EMoveClassType
+public enum EnumMoveClassType
 {
     /// <summary>
     /// 步兵系

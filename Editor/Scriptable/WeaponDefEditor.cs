@@ -58,11 +58,10 @@ namespace RPGEditor
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginVertical();
 
-                wea.RangeType.RangeType = (EnumWeaponRangeType)EditorGUILayout.EnumPopup("攻击范围类型", wea.RangeType.RangeType);
-                wea.RangeType.MinSelectRange = EditorGUILayout.IntSlider("最小选择距离", wea.RangeType.MinSelectRange, 1, RPGEditorGlobal.MAX_ATTACK_SELECT_RANGE);
-                wea.RangeType.MaxSelectRange = EditorGUILayout.IntSlider("最大选择距离", wea.RangeType.MaxSelectRange, 1, RPGEditorGlobal.MAX_ATTACK_SELECT_RANGE);
-                wea.RangeType.MinEffectRange = EditorGUILayout.IntSlider("最小生效距离", wea.RangeType.MinEffectRange, 1, RPGEditorGlobal.MAX_ATTACK_EFFECT_RANGE);
-                wea.RangeType.MaxEffectRange = EditorGUILayout.IntSlider("最大生效距离", wea.RangeType.MaxEffectRange, 1, RPGEditorGlobal.MAX_ATTACK_EFFECT_RANGE);
+                wea.RangeType.SelectType = (EnumSelectEffectRangeType)EditorGUILayout.EnumPopup("选择范围类型", wea.RangeType.SelectType);
+                wea.RangeType.EffectType = (EnumSelectEffectRangeType)EditorGUILayout.EnumPopup("生效范围类型", wea.RangeType.EffectType);
+                wea.RangeType.SelectRange = EditorGUILayout.Vector2IntField("选择距离", wea.RangeType.SelectRange);
+                wea.RangeType.EffectRange = EditorGUILayout.Vector2IntField("生效距离", wea.RangeType.EffectRange);
 
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();

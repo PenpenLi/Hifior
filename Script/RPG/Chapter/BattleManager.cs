@@ -17,17 +17,19 @@ public class BattleManager : ManagerBase
     /// 显示攻击范围
     /// </summary>
     public UnityAction<CharacterLogic> ShowMoveRangeAction;
-    public UnityAction<CharacterLogic> ShowChooseTargetRangeAction;
+    public UnityAction<CharacterLogic> ShowSelectTargetRangeAction;
     public UnityAction<CharacterLogic, Vector2Int> ShowEffectTargetRangeAction;
     public UnityAction<List<Vector2Int>> ShowHighlightRangeAction;
-    public UnityAction HideHighlightRangeAction;
+    public UnityAction ClearHighlightRangeAction;
     public UnityAction ClearRangeAction;
     public UnityAction<Vector2Int> UpdateSelectTileInfo;
     public UnityAction<CharacterLogic> UpdateSelectCharacterInfo;
     public System.Func<bool> IsRangeVisible;
 
     private RPGCharacter currentCharacter;
-    private CharacterLogic currentCharacterLogic { get { if (currentCharacter == null) return null; return currentCharacter.Logic; } }
+    public CharacterLogic CurrentCharacterLogic { get { if (currentCharacter == null) return null; return currentCharacter.Logic; } }
+    private RPGCharacter selectTargetCharacter;
+    private List<RPGCharacter> selectEffectCharacter;
 
     EBattleState battleState = EBattleState.Idel;
 
@@ -45,11 +47,6 @@ public class BattleManager : ManagerBase
 
     public void ChangeState(EBattleState state)
     {
-        if (state == EBattleState.SelectTarget)
-        {
-            //将需要执行的命令先写入到 CharacterLogic中
-            ShowChooseTargetRangeAction(currentCharacterLogic);
-        }
         battleState = state;
     }
     void HandleInput()
@@ -85,17 +82,19 @@ public class BattleManager : ManagerBase
         }
         var vMouseInputState = inputManager.GetMouseInput();
         var tilePos = vMouseInputState.tilePos;
-        UpdateSelectTileInfo(tilePos);
+        bool dirty = vMouseInputState.IsMouseTilePosChanged();
+        if (dirty)
+            UpdateSelectTileInfo(tilePos);
         if (vMouseInputState.IsClickedTile())
         {
             currentCharacter = GetCharacter(tilePos);
-            if (currentCharacterLogic == null)
+            if (CurrentCharacterLogic == null)
             {
                 ClearRangeAction();
             }
             else
             {
-                SelectTarget();
+                SelectMoveTarget();
             }
         }
     }
@@ -104,7 +103,8 @@ public class BattleManager : ManagerBase
     {
         if (inputManager.GetNoInput() && uiManager.MenuUndoAction != null)
         {
-            uiManager.MenuUndoAction();
+            if (uiManager.MenuUndoAction.Count == 0) Debug.LogWarning("Undo operation is empty");
+            else uiManager.MenuUndoAction.Pop().Invoke();
             return;
         }
         var vMouseInputState = inputManager.GetMouseInput();
@@ -113,14 +113,14 @@ public class BattleManager : ManagerBase
             if (vMouseInputState.IsClickedTile())
             {
                 currentCharacter = GetCharacter(vMouseInputState.tilePos);
-                if (currentCharacterLogic == null)
+                if (CurrentCharacterLogic == null)
                 {
                     ClearRangeAction();
                     CloseMenu();
                 }
                 else
                 {
-                    SelectTarget();
+                    SelectMoveTarget();
                 }
             }
         }
@@ -129,9 +129,13 @@ public class BattleManager : ManagerBase
     {
         gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
         var vMouseInputState = inputManager.GetMouseInput();
-        if (PositionMath.MoveableAreaPoints.Contains(vMouseInputState.tilePos))
+        bool dirty = vMouseInputState.IsMouseTilePosChanged();
+        if (dirty)
         {
-            ShowHighlightRangeAction(new List<Vector2Int> { vMouseInputState.tilePos });
+            if (PositionMath.MoveableAreaPoints.Contains(vMouseInputState.tilePos))
+            {
+                ShowHighlightRangeAction(new List<Vector2Int> { vMouseInputState.tilePos });
+            }
         }
         if (inputManager.GetNoInput())
         {
@@ -152,15 +156,63 @@ public class BattleManager : ManagerBase
     }
     public void HandleSelectTarget()
     {
+        gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
         if (inputManager.GetNoInput())
         {
-            uiManager.MenuUndoAction();
+            uiManager.MenuUndoAction.Pop().Invoke();
         }
         var vMouseInputState = inputManager.GetMouseInput();
-        if (PositionMath.AttackAreaPoints.Contains(vMouseInputState.tilePos))
-            ShowEffectTargetRangeAction(currentCharacterLogic, vMouseInputState.tilePos);
-        else
-            HideHighlightRangeAction();
+        bool dirty = vMouseInputState.IsMouseTilePosChanged();
+        var targetSelectRange = CurrentCharacterLogic.BattleInfo.TargetChooseRanges;
+        if (dirty)
+        {
+            if (targetSelectRange.Contains(vMouseInputState.tilePos))
+            {
+                ShowEffectTargetRangeAction(CurrentCharacterLogic, vMouseInputState.tilePos);
+            }
+            else
+                ClearHighlightRangeAction();
+        }
+        if (vMouseInputState.IsClickedTile())
+        {
+            if (targetSelectRange.Contains(vMouseInputState.tilePos))
+            {
+                ShowEffectTargetRangeAction(CurrentCharacterLogic, vMouseInputState.tilePos);
+                var targetEffectRange = CurrentCharacterLogic.BattleInfo.TargetEffectRanges;
+                var effectCamps = CurrentCharacterLogic.BattleInfo.GetEffectCamps();
+                switch (CurrentCharacterLogic.BattleInfo.BattleActionType)
+                {
+                    case CharacterBattleInfo.EBattleActionType.Attack:
+                        {
+                            if (chapterManager.HasCharacterFromCoord(targetEffectRange, effectCamps))
+                                ExecuteAttack();
+                            break;
+                        }
+                    case CharacterBattleInfo.EBattleActionType.Skill:
+                        {
+                            if (chapterManager.HasCharacterFromCoord(targetEffectRange, effectCamps))
+                                ExecuteAttack();
+                            break;
+                        }
+                    case CharacterBattleInfo.EBattleActionType.Heal:
+                        {
+                            if (chapterManager.HasCharacterFromCoord(targetEffectRange, effectCamps))
+                                ExecuteAttack();
+                            break;
+                        }
+                    case CharacterBattleInfo.EBattleActionType.Stole:
+                        {
+                            if (chapterManager.HasCharacterFromCoord(targetEffectRange, effectCamps))
+                                ExecuteAttack();
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                WarningCannotMove();
+            }
+        }
     }
 
     public void HandleLock()
@@ -171,24 +223,24 @@ public class BattleManager : ManagerBase
     /// 选择目标
     /// </summary>
     /// <param name="pos"></param>
-    public void SelectTarget()
+    public void SelectMoveTarget()
     {
-        if (currentCharacterLogic == null) return;
+        if (CurrentCharacterLogic == null) return;
         if (ShowMoveRangeAction == null) Debug.LogError("ShowMoveRangeAction is not binded");
         else
         {
-            if (currentCharacterLogic.Controllable)
+            if (CurrentCharacterLogic.Controllable)
             {
                 OpenMenu(EActionMenuState.Main, UndoCancelMainActionAndClearRange);
             }
-            ShowMoveRangeAction(currentCharacterLogic);
+            ShowMoveRangeAction(CurrentCharacterLogic);
         }
-        UpdateSelectCharacterInfo(currentCharacterLogic);
+        UpdateSelectCharacterInfo(CurrentCharacterLogic);
     }
     public void ExecuteMove(Vector2Int destPos)
     {
-        Vector2Int srcPos = currentCharacterLogic.GetTileCoord();
-        currentCharacterLogic.SetTileCoord(destPos);
+        Vector2Int srcPos = CurrentCharacterLogic.GetTileCoord();
+        CurrentCharacterLogic.SetTileCoord(destPos);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
         gameMode.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), FinishMoveEvent);
@@ -199,7 +251,7 @@ public class BattleManager : ManagerBase
     }
     public void CancelMove()
     {
-        ShowMoveRangeAction(currentCharacterLogic);
+        ShowMoveRangeAction(CurrentCharacterLogic);
         OpenMenu(EActionMenuState.Main, UndoCancelMainActionAndClearRange);
     }
     public void WarningCannotMove()
@@ -208,7 +260,17 @@ public class BattleManager : ManagerBase
     }
     public void ExecuteAttack()
     {
-
+        var targetEffectRange = CurrentCharacterLogic.BattleInfo.TargetEffectRanges;
+        var effectCamps = CurrentCharacterLogic.BattleInfo.GetEffectCamps();
+        Debug.Log("执行Attack 生效网格数=" + targetEffectRange.Count);
+        foreach(var v in targetEffectRange)
+        {
+            var enemy = chapterManager.GetCharacterFromCoord(v, EnumCharacterCamp.Enemy);
+            if(enemy!=null)
+            {
+                Debug.Log(v + "处发现敌方单位 ID="+ enemy.Logic.GetID());
+            }
+        }
     }
     public void ExecuteSkill()
     {
@@ -231,8 +293,9 @@ public class BattleManager : ManagerBase
     {
         ChangeState(EBattleState.Menu);
         gameMode.slgCamera.SetControlMode(CameraControlMode.DisableControl);
-        uiManager.MenuUndoAction = undoAction;
-        uiManager.ShowBattleActionMenu(menuState, currentCharacterLogic);
+        if (undoAction != null)
+            uiManager.MenuUndoAction.Push(undoAction);
+        uiManager.ShowBattleActionMenu(menuState, CurrentCharacterLogic);
     }
     #region Undo Action
 

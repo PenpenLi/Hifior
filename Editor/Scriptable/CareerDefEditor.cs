@@ -51,6 +51,7 @@ namespace RPGEditor
 
             career.Level = (EnumCareerLevel)EditorGUILayout.EnumPopup("职业等级", career.Level);
             career.Series = (EnumCareerSeries)EditorGUILayout.EnumPopup("职业系", career.Series);
+            career.MoveClass = (EnumMoveClassType)EditorGUILayout.EnumPopup("移动类型", career.MoveClass);
 
             career.Skill = EditorGUILayout.MaskField("职业特有技能", career.Skill, new string[] { "再次移动", "必杀+30", "魔物特效" });
             career.ModelSize = (EnumCareerModelSize)EditorGUILayout.EnumPopup("模型大小", career.ModelSize);

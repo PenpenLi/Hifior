@@ -23,9 +23,11 @@ public class InputManager : ManagerBase
         public bool active;
         public bool clickedUI;
         public EMouseKey key;
+        public Vector2Int oldTilePos;
         public Vector2Int tilePos;
         public Vector3Int localPos;
         public bool IsClickedTile() { return active && key == EMouseKey.Left && !clickedUI; }
+        public bool IsMouseTilePosChanged() { return oldTilePos != tilePos; }
     }
     public System.Func<MouseInputState> GetMouseInput;
     public System.Func<bool> GetYesInput;

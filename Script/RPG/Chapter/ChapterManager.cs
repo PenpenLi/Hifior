@@ -119,6 +119,37 @@ public class ChapterManager : ManagerBase
             if (v.GetTileCoord() == tilePos) return v;
         return null;
     }
+    public RPGCharacter GetCharacterFromCoord(Vector2Int tilePos, EnumCharacterCamp camp)
+    {
+        switch (camp)
+        {
+            case EnumCharacterCamp.Player:
+                {
+                    foreach (var v in players.Players)
+                        if (v.GetTileCoord() == tilePos) return v;
+                    break;
+                }
+            case EnumCharacterCamp.Enemy:
+                {
+                    foreach (var v in enemies.Enemies)
+                        if (v.GetTileCoord() == tilePos) return v;
+                    break;
+                }
+            case EnumCharacterCamp.Ally:
+                {
+                    foreach (var v in players.Players)
+                        if (v.GetTileCoord() == tilePos) return v;
+                    break;
+                }
+            case EnumCharacterCamp.NPC:
+                {
+                    foreach (var v in players.Players)
+                        if (v.GetTileCoord() == tilePos) return v;
+                    break;
+                }
+        }
+        return null;
+    }
     public RPGCharacter GetCharacterFromID(int id)
     {
         foreach (var v in players.Players)
@@ -131,9 +162,53 @@ public class ChapterManager : ManagerBase
     {
         return GetCharacterFromID(id) != null;
     }
+    public void RemoveCharacter(RPGCharacter ch)
+    {
+        var camp = ch.GetCamp();
+        if (camp == EnumCharacterCamp.Player)
+        {
+            players.Players.Remove(ch as RPGPlayer);
+            ch.Logic.SetDead();
+        }
+        if (camp == EnumCharacterCamp.Enemy)
+        {
+            enemies.Enemies.Remove(ch as RPGEnemy);
+        }
+    }
+    public RPGCharacter RemoveCharacterFromID(int id)
+    {
+        RPGCharacter rm = null;
+        foreach (var v in players.Players)
+            if (v.Logic.GetID() == id) rm= v;
+        if (rm != null) { RemoveCharacter(rm); }
+        foreach (var v in enemies.Enemies)
+            if (v.Logic.GetID() == id) rm=v;
+        if (rm != null) { RemoveCharacter(rm); }
+        return null;
+    }
     public bool HasCharacterFromCoord(Vector2Int tilePos)
     {
         return GetCharacterFromCoord(tilePos) != null;
+    }
+    public bool HasCharacterFromCoord(List<Vector2Int> tilePos)
+    {
+        foreach (var v in tilePos)
+        {
+            if (GetCharacterFromCoord(v) != null) return true;
+        }
+        return false;
+    }
+    public bool HasCharacterFromCoord(List<Vector2Int> tilePos, List<EnumCharacterCamp> camps)
+    {
+        foreach (var camp in camps)
+        {
+            foreach (var v in tilePos)
+            {
+                if (GetCharacterFromCoord(v, camp) != null)
+                    return true;
+            }
+        }
+        return false;
     }
     #region GameRecord
 

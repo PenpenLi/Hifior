@@ -18,14 +18,14 @@ public class FeTileInfo
         type = _type;
         name = type.ToString();
         avoid = recover = phyDef = fireDef = iceDef = thunderDef = 0;
-        moveCost = new int[(int)EMoveClassType.Count] { 1, 1, 1, 1, 1, 1 };
+        moveCost = new int[(int)EnumMoveClassType.Count] { 1, 1, 1, 1, 1, 1 };
 
     }
     public static ETileType FromString(string _typename)
     {
         return (ETileType)System.Enum.Parse(typeof(ETileType), _typename);
     }
-    public int GetMoveCost(EMoveClassType t)
+    public int GetMoveCost(EnumMoveClassType t)
     {
         return moveCost[(int)t];
     }
@@ -39,32 +39,32 @@ public class FeTileInfo
     }
     public FeTileInfo ChangeInfantryMove(int cost)
     {
-        moveCost[(int)EMoveClassType.Infantry] = cost;
+        moveCost[(int)EnumMoveClassType.Infantry] = cost;
         return this;
     }
     public FeTileInfo ChangeSavegeMove(int cost)
     {
-        moveCost[(int)EMoveClassType.Savege] = cost;
+        moveCost[(int)EnumMoveClassType.Savege] = cost;
         return this;
     }
     public FeTileInfo ChangeCavalryMove(int cost)
     {
-        moveCost[(int)EMoveClassType.Cavalry] = cost;
+        moveCost[(int)EnumMoveClassType.Cavalry] = cost;
         return this;
     }
     public FeTileInfo ChangeAircraftMove(int cost)
     {
-        moveCost[(int)EMoveClassType.Aircraft] = cost;
+        moveCost[(int)EnumMoveClassType.Aircraft] = cost;
         return this;
     }
     public FeTileInfo ChangeAquaticMove(int cost)
     {
-        moveCost[(int)EMoveClassType.Aquatic] = cost;
+        moveCost[(int)EnumMoveClassType.Aquatic] = cost;
         return this;
     }
     public FeTileInfo ChangeSpecterMove(int cost)
     {
-        moveCost[(int)EMoveClassType.Specter] = cost;
+        moveCost[(int)EnumMoveClassType.Specter] = cost;
         return this;
     }
 }

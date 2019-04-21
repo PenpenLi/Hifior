@@ -126,7 +126,7 @@ public class SLGMap : MonoBehaviour
     [SerializeField]
     private int _Mov; //移动力
     private int _Career;
-    private EnumWeaponRangeType _WeaponRangeType;
+    private EnumSelectEffectRangeType _WeaponRangeType;
 
     public AStarNode[,] AStarGrid;
 
@@ -357,9 +357,9 @@ public class SLGMap : MonoBehaviour
         if (item != null)//装备武器不为空
         {
             _AttackRangeData.Clear();
-            _ItemRangeMin = item.GetDefinition().RangeType.MinSelectRange;
-            _ItemRangeMax = item.GetDefinition().RangeType.MaxSelectRange;
-            _WeaponRangeType = item.GetDefinition().RangeType.RangeType;
+            _ItemRangeMin = item.GetDefinition().RangeType.SelectRange.x;
+            _ItemRangeMax = item.GetDefinition().RangeType.SelectRange.y;
+            _WeaponRangeType = item.GetDefinition().RangeType.SelectType;
             if (_ItemRangeMax != 0 && _ItemRangeMax - _ItemRangeMin > -1)//武器有距离
             {
                 for (int i = 0; i < PList.Count; i++)//遍历可移动的区域
@@ -427,7 +427,7 @@ public class SLGMap : MonoBehaviour
         int right = (x + _ItemRangeMax) > TileWidth - 1 ? TileWidth - 1 : x + _ItemRangeMax;
         int up = (y - _ItemRangeMax < 0) ? 0 : y - _ItemRangeMax;
         int bottom = (y + _ItemRangeMax) > TileHeight - 1 ? TileHeight - 1 : y + _ItemRangeMax;
-        if (_WeaponRangeType == EnumWeaponRangeType.菱形菱形)
+        if (_WeaponRangeType == EnumSelectEffectRangeType.菱形)
         {
             for (int i = left; i <= right; i++)
             {
@@ -447,7 +447,7 @@ public class SLGMap : MonoBehaviour
                 }
             }
         }
-        if (_WeaponRangeType == EnumWeaponRangeType.十字形)//为1则是只能上下左右寻找目标
+        if (_WeaponRangeType == EnumSelectEffectRangeType.十字形)//为1则是只能上下左右寻找目标
         {
             for (int i = left; i <= right; i++)//得到x轴上所有的范围
             {
@@ -1059,15 +1059,15 @@ public class SLGMap : MonoBehaviour
         List<WeaponItem> items = Gamechar.Logic.Info.Items.GetAttackWeapon();
         foreach (WeaponItem item in items)
         {
-            _ItemRangeMax = item.GetDefinition().RangeType.MaxSelectRange;
-            _ItemRangeMin = item.GetDefinition().RangeType.MinSelectRange;
-            EnumWeaponRangeType rangeType = item.GetDefinition().RangeType.RangeType;
+            _ItemRangeMin = item.GetDefinition().RangeType.SelectRange.x;
+            _ItemRangeMax = item.GetDefinition().RangeType.SelectRange.y;
+            EnumSelectEffectRangeType rangeType = item.GetDefinition().RangeType.SelectType;
 
             int left = (x - _ItemRangeMax) < 0 ? 0 : x - _ItemRangeMax;
             int right = (x + _ItemRangeMax) > TileWidth - 1 ? TileWidth - 1 : x + _ItemRangeMax;
             int up = (y - _ItemRangeMax < 0) ? 0 : y - _ItemRangeMax;
             int bottom = (y + _ItemRangeMax) > TileHeight - 1 ? TileHeight - 1 : y + _ItemRangeMax;
-            if (rangeType == EnumWeaponRangeType.菱形菱形)
+            if (rangeType == EnumSelectEffectRangeType.菱形)
             {
                 for (int i = left; i <= right; i++)
                 {
@@ -1083,7 +1083,7 @@ public class SLGMap : MonoBehaviour
                     }
                 }
             }
-            if (rangeType == EnumWeaponRangeType.十字形)//为1则是只能上下左右寻找目标
+            if (rangeType == EnumSelectEffectRangeType.十字形)//为1则是只能上下左右寻找目标
             {
                 for (int i = left; i <= right; i++)//得到x轴上所有的范围
                 {
@@ -1117,9 +1117,9 @@ public class SLGMap : MonoBehaviour
     public List<Vector2Int> FindAttackRange(int x, int y, WeaponDef EquipItem, bool bShow = true)//指定的坐标
     {
         _AttackRangeData.Clear();
-        _ItemRangeMax = EquipItem.RangeType.MaxSelectRange;
-        _ItemRangeMin = EquipItem.RangeType.MinSelectRange;
-        EnumWeaponRangeType rangeType = EquipItem.RangeType.RangeType;
+        _ItemRangeMin = EquipItem.RangeType.SelectRange.x;
+        _ItemRangeMax = EquipItem.RangeType.SelectRange.y;
+        EnumSelectEffectRangeType rangeType = EquipItem.RangeType.SelectType;
 
         if (_ItemRangeMin > 1)
         {
@@ -1140,7 +1140,7 @@ public class SLGMap : MonoBehaviour
                     }
                 }
             }
-            if (rangeType == EnumWeaponRangeType.十字形)//为1则是只能上下左右寻找目标
+            if (rangeType == EnumSelectEffectRangeType.十字形)//为1则是只能上下左右寻找目标
             {
                 for (int i = left; i <= right; i++)//得到x轴上所有的范围
                 {
@@ -1158,7 +1158,7 @@ public class SLGMap : MonoBehaviour
                     _AttackRangeData.Add(new Vector2Int(x, i));
                 }
             }
-            if (rangeType == EnumWeaponRangeType.正方形)//为2矩形攻击范围
+            if (rangeType == EnumSelectEffectRangeType.正方形)//为2矩形攻击范围
             {
                 for (int i = left; i <= right; i++)
                 {
@@ -1192,13 +1192,13 @@ public class SLGMap : MonoBehaviour
                 {
                     switch (rangeType)
                     {
-                        case EnumWeaponRangeType.菱形菱形:
+                        case EnumSelectEffectRangeType.菱形:
                             if (Math.Abs(i) + Math.Abs(j) > _ItemRangeMax) { continue; }
                             break;
-                        case EnumWeaponRangeType.十字形:
+                        case EnumSelectEffectRangeType.十字形:
                             if (Math.Abs(i) != 0 && Math.Abs(j) != 0) { continue; }
                             break;
-                        case EnumWeaponRangeType.正方形:
+                        case EnumSelectEffectRangeType.正方形:
                             break;
                     }
                     _AttackRangeData.Add(new Vector2Int(i + x, j + y));

@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class SelectRangeType
+public class SelectEffectRangeType
 {
-    public EnumWeaponRangeType RangeType;
-    public int MinSelectRange;
-    public int MaxSelectRange;
-    public int MinEffectRange;
-    public int MaxEffectRange;
+    public EnumSelectEffectRangeType SelectType;
+    public EnumSelectEffectRangeType EffectType;
+    public Vector2Int SelectRange;
+    public Vector2Int EffectRange;
+    public SelectEffectRangeType()
+    {
+        SelectRange = Vector2Int.one;
+        EffectRange = Vector2Int.zero;
+    }
 }

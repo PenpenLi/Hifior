@@ -98,7 +98,6 @@ public static class ResourceManager
         var res = Resources.LoadAll<Material>(RESOURCE_APP_MATERIAL_DIR);
         foreach (var v in res)
         {
-            Debug.Log(v.name);
             app_material.Add(v.name, v);
         }
     }

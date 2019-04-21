@@ -14,6 +14,7 @@ public class ItemGroup
     [SerializeField]
     private List<PropsItem> passiveItems = new List<PropsItem>();//被动装备  
     private int _currentEquipItemIndex = -1; //当前装备武器的index
+
     public int GetEquipIndex()
     {
         return _currentEquipItemIndex;
@@ -33,7 +34,7 @@ public class ItemGroup
     public override string ToString()
     {
         string s = null;
-        foreach(var v in weapons) { s += "Weapons:"; s += v.ToString();s += "\n"; }
+        foreach (var v in weapons) { s += "Weapons:"; s += v.ToString(); s += "\n"; }
         foreach (var v in Props) { s += "Props:"; s += v.ToString(); s += "\n"; }
         foreach (var v in PassiveItems) { s += "PassiveItems:"; s += v.ToString(); s += "\n"; }
         return s;
@@ -152,11 +153,24 @@ public class ItemGroup
             Weapons.Insert(InsertIndex, Item);
         return true;
     }
+    public void EquipWeapon(WeaponItem item)
+    {
+        int i = 0;
+        foreach (var v in weapons)
+        {
+            if (v == item)
+            {
+                _currentEquipItemIndex = i;
+                return;
+            }
+            i++;
+        }
+    }
     public void EquipWeapon(int index)
     {
         if (Weapons.Count <= index)
         {
-            this._currentEquipItemIndex = -1;
+            _currentEquipItemIndex = -1;
             return;
         }
         this._currentEquipItemIndex = index;
@@ -230,7 +244,7 @@ public class ItemGroup
         int maxRange = 0;
         for (int i = 0; i < Weapons.Count; i++)
         {
-            int tempMaxRange = Weapons[i].GetDefinition().RangeType.MaxSelectRange;
+            int tempMaxRange = Weapons[i].GetDefinition().RangeType.SelectRange.y;
             if (tempMaxRange > maxRange)
                 maxRange = tempMaxRange;
         }

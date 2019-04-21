@@ -75,8 +75,8 @@ public static class PositionMath
     private static int _ItemRangeMin;//所有可用装备的最小范围
     private static int _ItemRangeMax; //所有可用装备的最大范围
     private static int _Mov; //移动力
-    private static EMoveClassType _MoveClass;//移动分类
-    private static EnumWeaponRangeType _WeaponRangeType;
+    private static EnumMoveClassType _MoveClass;//移动分类
+    private static EnumSelectEffectRangeType _WeaponRangeType;
     /// <summary>
     /// 包含己方单位的可用坐标
     /// </summary>
@@ -208,7 +208,7 @@ public static class PositionMath
     {
         return x >= 0 && y >= 0 && x < TileWidth && y < TileHeight;
     }
-    public static int GetMapPassValue(EMoveClassType moveClass, int x, int y)//得到此处的人物通过消耗
+    public static int GetMapPassValue(EnumMoveClassType moveClass, int x, int y)//得到此处的人物通过消耗
     {
         if (IsOccupiedByDiffentParty(x, y))//图块被敌方占用，则我方不可通过,敌方按正常计算
         {
@@ -268,7 +268,7 @@ public static class PositionMath
         int right = (x + _ItemRangeMax) > TileWidth - 1 ? TileWidth - 1 : x + _ItemRangeMax;
         int up = (y - _ItemRangeMax < 0) ? 0 : y - _ItemRangeMax;
         int bottom = (y + _ItemRangeMax) > TileHeight - 1 ? TileHeight - 1 : y + _ItemRangeMax;
-        if (_WeaponRangeType == EnumWeaponRangeType.菱形菱形)
+        if (_WeaponRangeType == EnumSelectEffectRangeType.菱形)
         {
             for (int i = left; i <= right; i++)
             {
@@ -288,7 +288,7 @@ public static class PositionMath
                 }
             }
         }
-        if (_WeaponRangeType == EnumWeaponRangeType.十字形)//为1则是只能上下左右寻找目标
+        if (_WeaponRangeType == EnumSelectEffectRangeType.十字形)//为1则是只能上下左右寻找目标
         {
             for (int i = left; i <= right; i++)//得到x轴上所有的范围
             {
@@ -321,7 +321,7 @@ public static class PositionMath
             }
         }
     }
-    public static void InitActionScope(EnumCharacterCamp camp, EMoveClassType moveClass, int Movement, Vector2Int pos, EnumWeaponType weaponRangeType, Vector2Int atkRange)
+    public static void InitActionScope(EnumCharacterCamp camp, EnumMoveClassType moveClass, int Movement, Vector2Int pos,Vector2Int atkRange)
     {
         _bPlayer = (camp == EnumCharacterCamp.Player);//0,2为我方的单位
 

@@ -51,9 +51,9 @@ public class ConstTable
     public const float CONST_NORMAL_UNIT_MOVE_SPEED = 6.0f;
     public const float CONST_FAST_UNIT_MOVE_SPEED = 12.0f;
 
-    public const float CONST_SLOW_UNIT_DISAPPEAR_SPEED = 2.0f;
-    public const float CONST_NORMAL_UNIT_DISAPPEAR_SPEED = 1.0f;
-    public const float CONST_FAST_UNIT_DISAPPEAR_SPEED = 0.5f;
+    public const float CONST_SLOW_UNIT_DISAPPEAR_SPEED = 3.0f;
+    public const float CONST_NORMAL_UNIT_DISAPPEAR_SPEED = 2.0f;
+    public const float CONST_FAST_UNIT_DISAPPEAR_SPEED = 1.0f;
     public static Color CAMP_COLOR(EnumCharacterCamp camp)
     {
         switch (camp)

@@ -209,12 +209,14 @@ public enum EnumWeaponLevel
     SSS,
     星
 }
-public enum EnumWeaponRangeType
+/// <summary>
+/// 选择和实际效果都用这个
+/// </summary>
+public enum EnumSelectEffectRangeType
 {
-    菱形菱形,
+    菱形,
     十字形,
     正方形,
-    中心菱形,
     扇形,
 }
 public enum EnumWeaponAttackEffectType

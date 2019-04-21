@@ -1,9 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
 [System.Serializable]
 public class CharacterBattleInfo
 {
+    public enum EBattleActionType
+    {
+        Attack,
+        Skill,
+        Heal,
+        Stole
+    }
     /// <summary>
     /// 是否已经选择了目标Tile
     /// </summary>
@@ -17,24 +26,66 @@ public class CharacterBattleInfo
     /// </summary>
     int effectSide;
     /// <summary>
+    /// 本身的位置
+    /// </summary>
+    Vector2Int selfTilePos;
+    /// <summary>
     /// 选择的目标Tile位置
     /// </summary>
-    Vector2Int targetPos;
+    Vector2Int selectTilePos;
     /// <summary>
     /// 目标位置处可以被选择的范围
     /// </summary>
-    List<Vector2Int> targetChooseRange;
+    List<Vector2Int> targetChooseRanges; public List<Vector2Int> TargetChooseRanges { get { return targetChooseRanges; } }
     /// <summary>
     /// 目标位置处可以作用的范围
     /// </summary>
-    List<Vector2Int> targetEffectRange;
-    public static List<Vector2Int> GetTargetChooseRange(Vector2Int pos, EnumWeaponRangeType rangeType, Vector2Int range)
+    List<Vector2Int> targetEffectRanges; public List<Vector2Int> TargetEffectRanges { get { return targetEffectRanges; } }
+    EBattleActionType battleActionType; public EBattleActionType BattleActionType { get { return battleActionType; } }
+    EnumSelectEffectRangeType selectRangeType;
+    EnumSelectEffectRangeType effectRangeType;
+    Vector2Int selectRange;
+    Vector2Int effectRange;
+    public void SetSelectTargetParam(EBattleActionType actionType, Vector2Int selfPos, EnumSelectEffectRangeType selRangeType, Vector2Int selRange, EnumSelectEffectRangeType effRangeType, Vector2Int effRange)
     {
+        battleActionType = actionType;
+        selfTilePos = selfPos;
+        selectRangeType = selRangeType;
+        effectRangeType = effRangeType;
+        selectRange = selRange;
+        effectRange = effRange;
+        targetChooseRanges = GetTargetSelectRange(selfTilePos, selRangeType, selectRange);
+    }
+    public void SetEffectTarget(Vector2Int tilePos)
+    {
+        selectTilePos = tilePos;
+        targetEffectRanges = GetTargetSelectRange(selectTilePos, effectRangeType, effectRange);
+    }
+    public List<EnumCharacterCamp> GetEffectCamps()
+    {
+        List<EnumCharacterCamp> r = new List<EnumCharacterCamp>();
+        switch (battleActionType)
+        {
+            case EBattleActionType.Attack:
+                r.Add(EnumCharacterCamp.Enemy);
+                break;
+            case EBattleActionType.Heal:
+                r.Add(EnumCharacterCamp.Player);
+                break;
+            case EBattleActionType.Stole:
+                r.Add(EnumCharacterCamp.Enemy);
+                break;
+        }
+        return r;
+    }
+    public static List<Vector2Int> GetTargetSelectRange(Vector2Int pos, EnumSelectEffectRangeType rangeType, Vector2Int range)
+    {
+        List<Vector2Int> attackArea = new List<Vector2Int>();
         int x = pos.x;
         int y = pos.y;
         int TileWidth = PositionMath.TileWidth;
         int TileHeight = PositionMath.TileHeight;
-        PositionMath.AttackAreaPoints.Clear();
+        attackArea.Clear();
 
         var RangeMax = range.y;
         var RangeMin = range.x;
@@ -53,31 +104,34 @@ public class CharacterBattleInfo
                     for (int j = up; j <= bottom; j++)
                     {
                         int absLen = Mathf.Abs(i - x) + Mathf.Abs(j - y);
-                        if (absLen < RangeMin || absLen > RangeMax || PositionMath.AttackAreaPoints.Contains(new Vector2Int(i, j)))
+                        if (absLen < RangeMin || absLen > RangeMax || attackArea.Contains(new Vector2Int(i, j)))
                             continue;
-                        PositionMath.AttackAreaPoints.Add(new Vector2Int(i, j));
+                        if (i >= 0 && j >= 0)
+                            attackArea.Add(new Vector2Int(i, j));
                     }
                 }
             }
-            if (rangeType == EnumWeaponRangeType.十字形)//为1则是只能上下左右寻找目标
+            if (rangeType == EnumSelectEffectRangeType.十字形)//为1则是只能上下左右寻找目标
             {
                 for (int i = left; i <= right; i++)//得到x轴上所有的范围
                 {
                     int absLen = Mathf.Abs(i - x);
-                    if (absLen < RangeMin || absLen > RangeMax || PositionMath.AttackAreaPoints.Contains(new Vector2Int(i, y)))
+                    if (absLen < RangeMin || absLen > RangeMax || attackArea.Contains(new Vector2Int(i, y)))
                         continue;
-                    PositionMath.AttackAreaPoints.Add(new Vector2Int(i, y));
+                    if (i >= 0 && y >= 0)
+                        attackArea.Add(new Vector2Int(i, y));
 
                 }
                 for (int i = up; i <= bottom; i++)//得到y轴上所有的范围
                 {
                     int absLen = Mathf.Abs(i - y);
-                    if (absLen < RangeMin || absLen > RangeMax || PositionMath.AttackAreaPoints.Contains(new Vector2Int(x, i)))
+                    if (absLen < RangeMin || absLen > RangeMax || attackArea.Contains(new Vector2Int(x, i)))
                         continue;
-                    PositionMath.AttackAreaPoints.Add(new Vector2Int(x, i));
+                    if (x >= 0 && i >= 0)
+                        attackArea.Add(new Vector2Int(x, i));
                 }
             }
-            if (rangeType == EnumWeaponRangeType.正方形)//为2矩形攻击范围
+            if (rangeType == EnumSelectEffectRangeType.正方形)//为2矩形攻击范围
             {
                 for (int i = left; i <= right; i++)
                 {
@@ -87,7 +141,8 @@ public class CharacterBattleInfo
                         int absY = Mathf.Abs(j - y);
                         if (absX < RangeMin && absY < RangeMin)//在其中xy均小于最小坐标的不符合，直接进行下一个循环
                             continue;
-                        PositionMath.AttackAreaPoints.Add(new Vector2Int(i, j));
+                        if (i >= 0 && j >= 0)
+                            attackArea.Add(new Vector2Int(i, j));
                     }
                 }
             }
@@ -97,7 +152,7 @@ public class CharacterBattleInfo
                  {
                      for (int j = 0; j < mapTileX; j++)
                      {
-                         PositionMath.AttackAreaPoints.Add(new Point2D(i, j));
+                         AttackAreaPoints.Add(new Point2D(i, j));
                      }
                  }
              }*/
@@ -111,21 +166,23 @@ public class CharacterBattleInfo
                 {
                     switch (rangeType)
                     {
-                        case EnumWeaponRangeType.菱形菱形:
+                        case EnumSelectEffectRangeType.菱形:
                             if (Mathf.Abs(i) + Mathf.Abs(j) > RangeMax) { continue; }
                             break;
-                        case EnumWeaponRangeType.十字形:
+                        case EnumSelectEffectRangeType.十字形:
                             if (Mathf.Abs(i) != 0 && Mathf.Abs(j) != 0) { continue; }
                             break;
-                        case EnumWeaponRangeType.正方形:
+                        case EnumSelectEffectRangeType.正方形:
                             break;
                     }
-                    PositionMath.AttackAreaPoints.Add(new Vector2Int(i + x, j + y));
+                    if (i + x >= 0 && j + y >= 0)
+                        attackArea.Add(new Vector2Int(i + x, j + y));
                 }
             }
-            PositionMath.AttackAreaPoints.Remove(new Vector2Int(x, y));
+            if (RangeMin == 1)
+                attackArea.Remove(new Vector2Int(x, y));
         }
-        return PositionMath.AttackAreaPoints;
+        return attackArea;
     }
 }
 public class CharacterLogic
@@ -172,7 +229,10 @@ public class CharacterLogic
     protected int damageCount = 0;//收到伤害和造成伤害的次数
 
     #region get
-
+    public EnumMoveClassType GetMoveClass()
+    {
+        return careerDef.MoveClass;
+    }
     public int GetMovement()
     {
         return 6;
@@ -361,15 +421,19 @@ public class CharacterLogic
     }
     public int GetRangeMax()
     {
-        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.MaxSelectRange;
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.SelectRange.y;
     }
     public int GetRangeMin()
     {
-        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.MinSelectRange;
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.SelectRange.x;
     }
-    public EnumWeaponRangeType GetRangeType()
+    public EnumSelectEffectRangeType GetSelectRangeType()
     {
-        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.RangeType;
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.SelectType;
+    }
+    public EnumSelectEffectRangeType GetEffectRangeType()
+    {
+        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.EffectType;
     }
     public int GetAnger()
     {
@@ -379,6 +443,19 @@ public class CharacterLogic
     {
         var att = GetAttribute();
         return att.Speed - ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).Weight;
+    }
+
+    public void SetDead()
+    {
+        Info.Alive = false;
+    }
+    public void SetAlive()
+    {
+        Info.Alive = true;
+    }
+    public bool IsAlive()
+    {
+        return Info.Alive;
     }
     #endregion
 

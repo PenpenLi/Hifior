@@ -57,7 +57,7 @@ public class UnitShower : MonoBehaviour
         Color oriCol = animator.render.color;
         Tweener tw = DOTween.ToAlpha(() => oriCol, x => oriCol = x, 0, t);
         tw.onUpdate = () => { animator.render.color = oriCol; };
-        tw.onComplete = () => onComplete();
+        tw.onComplete = () => { onComplete(); Destroy(animator.gameObject); };
     }
     private MultiSpriteAnimator GetUnitAt(Vector2Int tilePos)
     {

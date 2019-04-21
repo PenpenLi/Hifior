@@ -82,7 +82,14 @@ public class WeaponItem:GameItem
     {
         return def;
     }
-
+    public string GetName()
+    {
+        return def.CommonProperty.Name;
+    }
+    public string GetDesc()
+    {
+        return def.CommonProperty.Description;
+    }
     public int SellPrice
     {
         get
