@@ -99,7 +99,7 @@ namespace RPGEditor
                 wea.AdditionalAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", wea.AdditionalAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 wea.AdditionalAttribute.Skill = EditorGUILayout.IntSlider("技术", wea.AdditionalAttribute.Skill, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 wea.AdditionalAttribute.Speed = EditorGUILayout.IntSlider("速度", wea.AdditionalAttribute.Speed, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
-                wea.AdditionalAttribute.Luck = EditorGUILayout.IntSlider("幸运", wea.AdditionalAttribute.Luck, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
+                wea.AdditionalAttribute.Intel = EditorGUILayout.IntSlider("智力", wea.AdditionalAttribute.Intel, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 wea.AdditionalAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", wea.AdditionalAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 wea.AdditionalAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", wea.AdditionalAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 wea.AdditionalAttribute.Movement = EditorGUILayout.IntSlider("移动", wea.AdditionalAttribute.Movement, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
@@ -120,7 +120,7 @@ namespace RPGEditor
                 wea.AdditionalAttributeGrow.MagicalPower = EditorGUILayout.IntSlider("魔法攻击成长率", wea.AdditionalAttributeGrow.MagicalPower, 0, RPGEditorGlobal.MAX_ADDGROW);
                 wea.AdditionalAttributeGrow.Skill = EditorGUILayout.IntSlider("技术成长率", wea.AdditionalAttributeGrow.Skill, 0, RPGEditorGlobal.MAX_ADDGROW);
                 wea.AdditionalAttributeGrow.Speed = EditorGUILayout.IntSlider("速度成长率", wea.AdditionalAttributeGrow.Speed, 0, RPGEditorGlobal.MAX_ADDGROW);
-                wea.AdditionalAttributeGrow.Luck = EditorGUILayout.IntSlider("幸运成长率", wea.AdditionalAttributeGrow.Luck, 0, RPGEditorGlobal.MAX_ADDGROW);
+                wea.AdditionalAttributeGrow.Intel = EditorGUILayout.IntSlider("智力成长率", wea.AdditionalAttributeGrow.Intel, 0, RPGEditorGlobal.MAX_ADDGROW);
                 wea.AdditionalAttributeGrow.PhysicalDefense = EditorGUILayout.IntSlider("物理防御成长率", wea.AdditionalAttributeGrow.PhysicalDefense, 0, RPGEditorGlobal.MAX_ADDGROW);
                 wea.AdditionalAttributeGrow.MagicalDefense = EditorGUILayout.IntSlider("魔法防御成长率", wea.AdditionalAttributeGrow.MagicalDefense, 0, RPGEditorGlobal.MAX_ADDGROW);
                 wea.AdditionalAttributeGrow.Movement = EditorGUILayout.IntSlider("移动成长率", wea.AdditionalAttributeGrow.Movement, 0, RPGEditorGlobal.MAX_ADDGROW);

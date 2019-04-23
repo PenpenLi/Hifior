@@ -50,7 +50,9 @@ public enum EnumEventTriggerCondition
     /// <summary>
     /// 某个人物死亡后触发,通常设在Boss和NPC身上
     /// </summary>
-    死亡事件
+    敌人死亡事件,
+    战场对话事件,
+
 }
 public enum EnumEnemyCureSelfCondition
 {
@@ -221,10 +223,26 @@ public enum EnumSelectEffectRangeType
 }
 public enum EnumWeaponAttackEffectType
 {
-    无,
+    物理,
+    魔法,
+    魔杖,
+    耐久无限,
+    不可出售,
+    两次攻击,
+    魔法剑,
+    属性反转,
+    无维修,
+    飞行特效无效,
+    必杀免疫,
+    无必杀,
+    毒,
+    重毒,
+    力量反噬,
+    沉睡,
     HP吸收,
     防御力无视,
     防御力减半,
+    最大只减低HP到1,
     HP强制为1,
     对方不可反击,
     对方不可必杀
@@ -234,6 +252,33 @@ public enum EnumPropsEffectType
     治疗,
     解毒,
     防御增加
+}
+public enum EnumCareerAblity
+{
+    救援,
+    在行动,
+    偷,
+    盗贼技能,
+    跳舞,
+    演奏,
+    必杀率上升,
+    射手可用,
+    高级职业,
+    输送对命令,
+    马标志,
+    飞马标志,
+    领主单位,
+    女性,
+    敌将,
+    最大LV10,
+    最大LV20,
+    最大LV30,
+    不可选,
+    铠甲类,
+    NPC,
+    经验得分0,
+    封魔者,
+    召唤
 }
 public static class EnumTables
 {

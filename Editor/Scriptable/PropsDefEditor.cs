@@ -70,9 +70,10 @@ namespace RPGEditor
                 props.AdditionalAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", props.AdditionalAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.Skill = EditorGUILayout.IntSlider("技术", props.AdditionalAttribute.Skill, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.Speed = EditorGUILayout.IntSlider("速度", props.AdditionalAttribute.Speed, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
-                props.AdditionalAttribute.Luck = EditorGUILayout.IntSlider("幸运", props.AdditionalAttribute.Luck, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
+                props.AdditionalAttribute.Intel = EditorGUILayout.IntSlider("智力", props.AdditionalAttribute.Intel, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", props.AdditionalAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", props.AdditionalAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
+                props.AdditionalAttribute.BodySize = EditorGUILayout.IntSlider("体格", props.AdditionalAttribute.BodySize, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
                 props.AdditionalAttribute.Movement = EditorGUILayout.IntSlider("移动", props.AdditionalAttribute.Movement, 0, RPGEditorGlobal.MAX_ADDATTIBUTE);
 
                 EditorGUILayout.EndVertical();
@@ -91,9 +92,10 @@ namespace RPGEditor
                 props.AdditionalAttributeGrow.MagicalPower = EditorGUILayout.IntSlider("魔法攻击成长率", props.AdditionalAttributeGrow.MagicalPower, 0, RPGEditorGlobal.MAX_ADDGROW);
                 props.AdditionalAttributeGrow.Skill = EditorGUILayout.IntSlider("技术成长率", props.AdditionalAttributeGrow.Skill, 0, RPGEditorGlobal.MAX_ADDGROW);
                 props.AdditionalAttributeGrow.Speed = EditorGUILayout.IntSlider("速度成长率", props.AdditionalAttributeGrow.Speed, 0, RPGEditorGlobal.MAX_ADDGROW);
-                props.AdditionalAttributeGrow.Luck = EditorGUILayout.IntSlider("幸运成长率", props.AdditionalAttributeGrow.Luck, 0, RPGEditorGlobal.MAX_ADDGROW);
+                props.AdditionalAttributeGrow.Intel = EditorGUILayout.IntSlider("智力成长率", props.AdditionalAttributeGrow.Intel, 0, RPGEditorGlobal.MAX_ADDGROW);
                 props.AdditionalAttributeGrow.PhysicalDefense = EditorGUILayout.IntSlider("物理防御成长率", props.AdditionalAttributeGrow.PhysicalDefense, 0, RPGEditorGlobal.MAX_ADDGROW);
                 props.AdditionalAttributeGrow.MagicalDefense = EditorGUILayout.IntSlider("魔法防御成长率", props.AdditionalAttributeGrow.MagicalDefense, 0, RPGEditorGlobal.MAX_ADDGROW);
+                props.AdditionalAttributeGrow.BodySize = EditorGUILayout.IntSlider("体格成长率", props.AdditionalAttributeGrow.BodySize, 0, RPGEditorGlobal.MAX_ADDGROW);
                 props.AdditionalAttributeGrow.Movement = EditorGUILayout.IntSlider("移动成长率", props.AdditionalAttributeGrow.Movement, 0, RPGEditorGlobal.MAX_ADDGROW);
 
                 EditorGUILayout.EndVertical();

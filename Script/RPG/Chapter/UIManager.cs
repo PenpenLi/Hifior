@@ -110,6 +110,8 @@ public class UIManager : ManagerBase
         BattleActionMenu.AddAction(attack);
         var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
         BattleActionMenu.AddAction(end);
+        gameMode.ChapterManager.Event.CheckLocation(chLogic.GetTileCoord(), chLogic.GetID());
+        var location=new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
         BattleActionMenu.Show();
     }
     public void BuildBattleActionMenu_AfterMove(CharacterLogic chLogic)

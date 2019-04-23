@@ -1,12 +1,29 @@
 using System;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
 public class StringHelper
 {
 	public static StringBuilder Formater = new StringBuilder(1024);
-
-	public static void ClearFormater()
+    public static string PrintVariablesOf<T>(T t)
+    {
+        var type = t.GetType().DeclaringType;
+        var Fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+        StringBuilder sb = new StringBuilder();
+        foreach (var finfo in Fields)
+        {
+            var test = finfo.GetValue(t);
+            if (test == null)
+                continue;
+            sb.Append(finfo.Name.ToString());
+            sb.Append(": ");
+            sb.Append(test.ToString());
+            sb.AppendLine();
+        }
+        return sb.ToString();
+    }
+    public static void ClearFormater()
 	{
 		StringHelper.Formater.Remove(0, StringHelper.Formater.Length);
 	}

@@ -31,8 +31,8 @@ namespace RPG.UI
             iDEX.GetComponent<ValueBar>().initBar(att.Skill, att.Skill, 5);
             tAGI.text =att.Speed.ToString();
             iAGI.GetComponent<ValueBar>().initBar(att.Speed, att.Speed, 5);
-            tLUK.text =att.Luck.ToString();
-            iLUK.GetComponent<ValueBar>().initBar(att.Luck, att.Luck, 5);
+            tLUK.text =att.Intel.ToString();
+            iLUK.GetComponent<ValueBar>().initBar(att.Intel, att.Intel, 5);
             tDEF.text =att.PhysicalDefense.ToString();
             iDEF.GetComponent<ValueBar>().initBar(att.PhysicalDefense, att.PhysicalDefense, 5);
             tRES.text =att.MagicalDefense.ToString();

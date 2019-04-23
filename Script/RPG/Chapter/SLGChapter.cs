@@ -38,7 +38,8 @@ public class SLGChapter : MonoBehaviour
     }
     #endregion
 
-    #region 章节设置
+    #region 章节设置 检查胜利
+
     public bool CheckWin_KillAllEnemy()
     {
         if (HasWinCondition(EnumWinCondition.全灭敌人))// && GetGameStatus<GS_Battle>().GetNumLocalEnemies() == 0
@@ -115,6 +116,26 @@ public class SLGChapter : MonoBehaviour
     public bool HasWinCondition(EnumWinCondition Condition)
     {
         return EnumTables.MaskFieldIdentify(ChapterSetting.WinCondition.Condition, (int)Condition);
+    }
+    #endregion
+    #region 章节设置 检查事件
+    public void CheckTurn(int round, EnumCharacterCamp camp)
+    {
+        var turnEvent = EventInfo.GetTurnEvent(round, camp);
+        if (turnEvent == null) Debug.Log("没有Turn事件");
+        else Debug.Log("找到相匹配的Turn Event"+turnEvent);
+    }
+    public void CheckLocation(Vector2Int tilePos,int characterId)
+    {
+        var locationEvent = EventInfo.GetLocationEvent(tilePos, characterId);
+        if (locationEvent == null) Debug.Log("没有Location事件");
+        else Debug.Log("找到相匹配的Location Event" + locationEvent);
+    }
+    public void CheckEnemyLess(int count)
+    {
+        var lessEvent = EventInfo.GetEnemiesLessEvent(count);
+        if (lessEvent == null) Debug.Log("没有Enemy Less事件");
+        else Debug.Log("找到相匹配的Enemy Less Event" + lessEvent);
     }
     #endregion
 }
