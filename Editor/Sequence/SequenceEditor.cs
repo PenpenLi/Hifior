@@ -6,7 +6,6 @@ namespace RPGEditor
     public class SequenceEditor : Editor
     {
         private static int weaponCount;
-        private static bool foldOut = true;
         Sequence.Sequence _target;
         void OnEnable()
         {

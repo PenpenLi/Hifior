@@ -125,12 +125,7 @@ public class SLGChapter : MonoBehaviour
         if (turnEvent == null) Debug.Log("没有Turn事件");
         else Debug.Log("找到相匹配的Turn Event"+turnEvent);
     }
-    public void CheckLocation(Vector2Int tilePos,int characterId)
-    {
-        var locationEvent = EventInfo.GetLocationEvent(tilePos, characterId);
-        if (locationEvent == null) Debug.Log("没有Location事件");
-        else Debug.Log("找到相匹配的Location Event" + locationEvent);
-    }
+
     public void CheckEnemyLess(int count)
     {
         var lessEvent = EventInfo.GetEnemiesLessEvent(count);

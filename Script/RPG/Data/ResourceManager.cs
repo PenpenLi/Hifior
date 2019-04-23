@@ -84,6 +84,7 @@ public static class ResourceManager
     public static void UnloadAllRPGData()
     {
         weaponDefTable.Clear();
+        propsDefTable.Clear();
     }
     #region Material 
     private const string RESOURCE_APP_MATERIAL_DIR = "App/Material/";

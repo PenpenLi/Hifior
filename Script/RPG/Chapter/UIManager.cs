@@ -101,17 +101,36 @@ public class UIManager : ManagerBase
         battleManager.FinishAction();
         battleManager.ChangeState(BattleManager.EBattleState.Idel);
     }
+    public bool GetBattleAction_LocationAction(CharacterLogic chLogic, ref UI_BattleActionMenu.UIActionButtonInfo info)
+    {
+        var locationEvent = chapterManager.Event.EventInfo.GetLocationEvent(chLogic.GetTileCoord(), chLogic.GetID());
+        if (locationEvent == null)
+        {
+            Debug.Log("没有Location事件");
+            return false;
+        }
+        Debug.Log("找到相匹配的Location Event" + locationEvent);
+        info.name = locationEvent.GetButtonText();
+        info.action = () =>
+        {
+            Debug.Log("click " + locationEvent.GetButtonText());
+        };
+        return true;
+    }
     public void BuildBattleActionMenu_Main(CharacterLogic chLogic)
     {
         BattleActionMenu.Clear();
+        UI_BattleActionMenu.UIActionButtonInfo location = new UI_BattleActionMenu.UIActionButtonInfo();
+        if (GetBattleAction_LocationAction(chLogic,ref location))
+        {
+            BattleActionMenu.AddAction(location);
+        }
         var move = new UI_BattleActionMenu.UIActionButtonInfo("移动", BattleAction_Move);
         BattleActionMenu.AddAction(move);
         var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
         BattleActionMenu.AddAction(attack);
         var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
         BattleActionMenu.AddAction(end);
-        gameMode.ChapterManager.Event.CheckLocation(chLogic.GetTileCoord(), chLogic.GetID());
-        var location=new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
         BattleActionMenu.Show();
     }
     public void BuildBattleActionMenu_AfterMove(CharacterLogic chLogic)

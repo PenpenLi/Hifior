@@ -12,13 +12,16 @@ namespace RPG.UI
         public Image iDEX;
         public Text tAGI;
         public Image iAGI;
-
-        public Text tLUK;
-        public Image iLUK;
+        public Text tINT;
+        public Image iINT;
         public Text tDEF;
         public Image iDEF;
         public Text tRES;
         public Image iRES;
+        public Text tBDY;
+        public Image iBDY;
+        public Text tMOV;
+        public Image iMOV;
 
         public void Init(CharacterLogic ch)
         {
@@ -32,12 +35,16 @@ namespace RPG.UI
             iDEX.GetComponent<ValueBar>().initBar(max.Skill, att.Skill, 5);
             tAGI.text =att.Speed.ToString();
             iAGI.GetComponent<ValueBar>().initBar(max.Speed, att.Speed, 5);
-            tLUK.text =att.Luck.ToString();
-            iLUK.GetComponent<ValueBar>().initBar(max.Luck, att.Luck, 5);
+            tINT.text =att.Intel.ToString();
+            iINT.GetComponent<ValueBar>().initBar(max.Intel, att.Intel, 5);
             tDEF.text =att.PhysicalDefense.ToString();
             iDEF.GetComponent<ValueBar>().initBar(max.PhysicalDefense, att.PhysicalDefense, 5);
             tRES.text =att.MagicalDefense.ToString();
             iRES.GetComponent<ValueBar>().initBar(max.MagicalDefense, att.MagicalDefense, 5);
+            tBDY.text = att.BodySize.ToString();
+            iBDY.GetComponent<ValueBar>().initBar(max.BodySize, att.BodySize, 5);
+            tMOV.text = att.Movement.ToString();
+            iMOV.GetComponent<ValueBar>().initBar(max.Movement, att.Movement, 5);
         }
     }
 }
