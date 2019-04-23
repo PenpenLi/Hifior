@@ -58,9 +58,10 @@ namespace RPGEditor
                 buff.AttributeChange.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", buff.AttributeChange.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 buff.AttributeChange.Skill = EditorGUILayout.IntSlider("技术", buff.AttributeChange.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 buff.AttributeChange.Speed = EditorGUILayout.IntSlider("速度", buff.AttributeChange.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                buff.AttributeChange.Luck = EditorGUILayout.IntSlider("幸运", buff.AttributeChange.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                buff.AttributeChange.Intel = EditorGUILayout.IntSlider("智力", buff.AttributeChange.Intel, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 buff.AttributeChange.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", buff.AttributeChange.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 buff.AttributeChange.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", buff.AttributeChange.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                buff.AttributeChange.BodySize = EditorGUILayout.IntSlider("体格", buff.AttributeChange.BodySize, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 buff.AttributeChange.Movement = EditorGUILayout.IntSlider("移动", buff.AttributeChange.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
 
                 EditorGUILayout.EndVertical();

@@ -13,7 +13,7 @@ namespace RPGEditor
         private static int weaponRoomCount = 0;
         private static int propRoomCount = 0;
 
-        public const string DIRECTORY_PATH =DataBaseConst.DataBase_ChapterSetting_Folder;
+        public const string DIRECTORY_PATH = DataBaseConst.DataBase_ChapterSetting_Folder;
 
         [MenuItem("RPGEditor/Create ChapterSetting", false)]
         public static ChapterSettingDef CreateWeapon()
@@ -58,7 +58,7 @@ namespace RPGEditor
             chapter.CommonProperty.Description = EditorGUILayout.TextField(guiContent_Desc, chapter.CommonProperty.Description);
 
             chapter.Icon = (Sprite)EditorGUILayout.ObjectField("图标", chapter.Icon, typeof(Sprite), false);
-            chapter.TeamIndex= EditorGUILayout.IntSlider("所属队伍", chapter.MaxPlayerCount, 0, 3);
+            chapter.TeamIndex = EditorGUILayout.IntSlider("所属队伍", chapter.MaxPlayerCount, 0, 3);
             chapter.MaxPlayerCount = EditorGUILayout.IntSlider("最大出场人数", chapter.MaxPlayerCount, 1, 20);
             string[] displayPlayerNames = RPGData.PlayerNameList.ToArray();
             int[] valuePlayerNames = EnumTables.GetSequentialArray(RPGData.PlayerNameList.Count);
@@ -66,7 +66,7 @@ namespace RPGEditor
 
             chapter.Weather = (EnumWeather)EditorGUILayout.EnumPopup("默认天气", chapter.Weather);
             chapter.Preparation = EditorGUILayout.Toggle("是否有准备画面", chapter.Preparation);
-
+            chapter.BrokeWallHP = EditorGUILayout.IntField("破坏墙壁的HP", chapter.BrokeWallHP);
             WinConditionInspectorGUI(chapter.WinCondition);
             FailConditionInspectorGUI(chapter.FailCondition);
 

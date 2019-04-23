@@ -5,12 +5,12 @@ namespace RPGEditor
 {
     public class RPGEditorGlobal
     {
-        public const int MAX_ADDATTIBUTE = 20;
+        public const int MAX_ADDATTIBUTE = 100;
         public const int MAX_ADDGROW = 100;
         public const int MAX_ATTACK_SELECT_RANGE = 10;
         public const int MAX_ATTACK_EFFECT_RANGE = 10;
-        public const int MAX_ATTRIBUTE_HP = 150;
-        public const int MAX_ATTRIBUTE_MISC = 60;
+        public const int MAX_ATTRIBUTE_HP = 10000;
+        public const int MAX_ATTRIBUTE_MISC = 1000;
         public const int MAX_ATTRIBUTE_MOVEMENT = 12;
         public static void MarkSceneDirty()
         {

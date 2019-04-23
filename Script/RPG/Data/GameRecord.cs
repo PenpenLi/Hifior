@@ -274,7 +274,7 @@ public class EventInfoCollection
     public struct EventEnableSwitch
     {
         public EnumEventTriggerCondition EventType;
-        int Index;
+        public int Index;
         public bool Enable;
     }
     //添加了Serializable标记的变量都需要被记录到存档中
@@ -288,6 +288,10 @@ public class EventInfoCollection
         public bool Enable;
         public string SequenceName;
         public Sequence.Sequence Sequence;
+        /// <summary>
+        /// 对相关事件设置Enable
+        /// </summary>
+        public List<EventEnableSwitch> Switcher;
         public EventTypeBase()
         {
             Enable = true;
@@ -299,11 +303,19 @@ public class EventInfoCollection
         /// <summary>
         /// 执行Sequence
         /// </summary>
-        public virtual void Execute(UnityAction OnFinish)
+        public virtual void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
         {
             UnityEngine.Assertions.Assert.IsNotNull(Sequence, "即将执行的Sequence为Null");
-            Enable = false;
             Sequence.Execute(OnFinish);
+            foreach (var s in Switcher)
+            {
+                eventCollection.GetEventBase(s.EventType, s.Index).Enable = s.Enable;
+            }
+        }
+        public override string ToString()
+        {
+
+            return StringHelper.PrintVariablesOf(this);
         }
     }
     [System.Serializable]
@@ -312,10 +324,6 @@ public class EventInfoCollection
         public int From = 0;
         public int To = 0;
         public EnumCharacterCamp TriggerCamp;
-        /// <summary>
-        /// 对相关事件设置Enable
-        /// </summary>
-        public List<EventEnableSwitch> Switcher;
     }
     [System.Serializable]
     public class BattleTalkEventType : EventTypeBase
@@ -336,14 +344,14 @@ public class EventInfoCollection
         /// 是否互相触发
         /// </summary>
         public bool Mutual;
-        /// <summary>
-        /// 对相关事件设置Enable
-        /// </summary>
-        public List<EventEnableSwitch> Switcher;
-        public override void Execute(UnityAction OnFinish)
+        public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
         {
-            base.Execute(OnFinish);
             Enable = false;
+            base.Execute(eventCollection, OnFinish);
+        }
+        public string GetButtonString()
+        {
+            return "对话";
         }
     }
     public enum EnumLocationEventCaption
@@ -364,7 +372,8 @@ public class EventInfoCollection
         /// <summary>
         /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
         /// </summary>
-        private bool HasTrigger = false;
+        public bool HasTrigger = false;
+        public bool TriggerOnceOnly = true;
         /// <summary>
         /// 指定的人才可以触发
         /// </summary>
@@ -372,16 +381,12 @@ public class EventInfoCollection
         /// <summary>
         /// 触发点
         /// </summary>
-        public VInt2 Location = VInt2.InvalidPoint;
-        /// <summary>
-        /// 对相关事件设置Enable
-        /// </summary>
-        public List<EventEnableSwitch> Switcher;
-        public override void Execute(UnityAction OnFinish)
+        public Vector2Int Location;
+        public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
         {
-            base.Execute(OnFinish);
-
+            if (TriggerOnceOnly) Enable = false;
             HasTrigger = true;
+            base.Execute(eventCollection, OnFinish);
         }
         public string GetButtonText()
         {
@@ -407,10 +412,11 @@ public class EventInfoCollection
         /// 触发区域
         /// </summary>
         public Range2D Range;
-        /// <summary>
-        /// 对相关事件设置Enable
-        /// </summary>
-        public List<EventEnableSwitch> Switcher;
+        public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
+        {
+            Enable = false;
+            base.Execute(eventCollection, OnFinish);
+        }
     }
     [System.Serializable]
     public class EnemiesLessEventType : EventTypeBase
@@ -423,10 +429,11 @@ public class EventInfoCollection
         /// 触发数量
         /// </summary>
         public int TriggerNum;
-        /// <summary>
-        /// 对相关事件设置Enable
-        /// </summary>
-        public List<EventEnableSwitch> Switcher;
+        public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
+        {
+            Enable = false;
+            base.Execute(eventCollection, OnFinish);
+        }
     }
     [System.Serializable]
     public class EnemyDieEventType : EventTypeBase
@@ -435,10 +442,11 @@ public class EventInfoCollection
         /// 触发人物
         /// </summary>
         public int TriggerCharacterID;
-        /// <summary>
-        /// 对相关事件设置Enable
-        /// </summary>
-        public List<EventEnableSwitch> Switcher;
+        public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
+        {
+            Enable = false;
+            base.Execute(eventCollection, OnFinish);
+        }
     }
     #endregion
 
@@ -456,7 +464,27 @@ public class EventInfoCollection
     public List<EnemyDieEventType> EnemyDieEvent;
     [Tooltip("胜利条件")]
     public List<WinCondition> WinCondition;
-    public LocationEventType GetLocationEvent(VInt2 TilePosition, int CharacterID)
+
+    public EventTypeBase GetEventBase(EnumEventTriggerCondition cond, int index)
+    {
+        switch (cond)
+        {
+            case EnumEventTriggerCondition.位置事件:
+                return LocationEvent[index];
+            case EnumEventTriggerCondition.回合事件:
+                return TurnEvent[index];
+            case EnumEventTriggerCondition.敌人少于事件:
+                return EnemiesLessEvent[index];
+            case EnumEventTriggerCondition.敌人死亡事件:
+                return EnemyDieEvent[index];
+            case EnumEventTriggerCondition.范围事件:
+                return RangeEvent[index];
+            case EnumEventTriggerCondition.战场对话事件:
+                return BattleTalkEvent[index];
+        }
+        return null;
+    }
+    public LocationEventType GetLocationEvent(Vector2Int TilePosition, int CharacterID)
     {
         foreach (LocationEventType Event in LocationEvent)
         {
@@ -609,7 +637,7 @@ public class GameRecord
         currentTeamRecord.team[teamIndex] = teamData;
         currentTeamRecord.Save();
     }
-    public void SaveBattle(int teamIndex, int chapterId,int mapId, Warehouse ware, List<CharacterInfo> infos, EventInfoCollection eventInfo)
+    public void SaveBattle(int teamIndex, int chapterId, int mapId, Warehouse ware, List<CharacterInfo> infos, EventInfoCollection eventInfo)
     {
         BattleInfoCollection battleInfo = new BattleInfoCollection();
         battleInfo.Slot = -1;

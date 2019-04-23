@@ -59,7 +59,10 @@ public class CharacterBattleInfo
     public void SetEffectTarget(Vector2Int tilePos)
     {
         selectTilePos = tilePos;
-        targetEffectRanges = GetTargetSelectRange(selectTilePos, effectRangeType, effectRange);
+        if (effectRangeType == EnumSelectEffectRangeType.扇形)
+            targetEffectRanges = GetTargetSelectRange(selectTilePos, selectTilePos - selfTilePos, effectRange.y);
+        else
+            targetEffectRanges = GetTargetSelectRange(selectTilePos, effectRangeType, effectRange);
     }
     public List<EnumCharacterCamp> GetEffectCamps()
     {
@@ -77,6 +80,55 @@ public class CharacterBattleInfo
                 break;
         }
         return r;
+    }
+    public static List<Vector2Int> GetTargetSelectRange(Vector2Int pos, Vector2Int dir, int rangeMax)
+    {
+        List<Vector2Int> attackArea = new List<Vector2Int>();
+        if (dir.x<0 && dir.y==0)
+        {
+            for (int i = 0; i < rangeMax; i++)
+            {
+                for (int j = -i; j <= i; j++)
+                {
+                    var v = pos - new Vector2Int(i, j);
+                    if(v.x>=0 && v.y>=0) attackArea.Add(v);
+                }
+            }
+        }
+        if (dir.x > 0 && dir.y == 0)
+        {
+            for (int i = 0; i < rangeMax; i++)
+            {
+                for (int j = -i; j <= i; j++)
+                {
+                    var v=pos + new Vector2Int(i, j);
+                    if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
+                }
+            }
+        }
+        if (dir.x == 0 && dir.y > 0)
+        {
+            for (int i = 0; i < rangeMax; i++)
+            {
+                for (int j = -i; j <= i; j++)
+                {
+                    var v=pos + new Vector2Int(j, i);
+                    if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
+                }
+            }
+        }
+        if (dir.x == 0 && dir.y < 0)
+        {
+            for (int i = 0; i < rangeMax; i++)
+            {
+                for (int j = -i; j <= i; j++)
+                {
+                    var v=pos - new Vector2Int(j, i);
+                    if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
+                }
+            }
+        }
+        return attackArea;
     }
     public static List<Vector2Int> GetTargetSelectRange(Vector2Int pos, EnumSelectEffectRangeType rangeType, Vector2Int range)
     {
@@ -97,7 +149,7 @@ public class CharacterBattleInfo
             int right = (x + RangeMax) > TileWidth - 1 ? TileWidth - 1 : x + RangeMax;
             int up = (y - RangeMax < 0) ? 0 : y - RangeMax;
             int bottom = (y + RangeMax) > TileHeight - 1 ? TileHeight - 1 : y + RangeMax;
-            if (rangeType == 0)
+            if (rangeType == EnumSelectEffectRangeType.菱形)
             {
                 for (int i = left; i <= right; i++)
                 {
@@ -146,16 +198,6 @@ public class CharacterBattleInfo
                     }
                 }
             }
-            /* if (rangeType == 3)//全屏攻击。放到外面单独处理，暂时用不到
-             {
-                 for (int i = 0; i < mapTileX; i++)
-                 {
-                     for (int j = 0; j < mapTileX; j++)
-                     {
-                         AttackAreaPoints.Add(new Point2D(i, j));
-                     }
-                 }
-             }*/
         }
         else //如果是最小攻击距离从1开始
         {
@@ -328,7 +370,7 @@ public class CharacterLogic
 
     public int GetLuck()
     {
-        return Info.Attribute.Luck;
+        return Info.Attribute.Intel;
     }
 
     public int GetMagicalDefense()
@@ -407,17 +449,17 @@ public class CharacterLogic
     {
         WeaponItem equipItem = Info.Items.GetEquipWeapon();
         var att = GetAttribute();
-        return ResourceManager.GetWeaponDef(equipItem.ID).Crit + (att.Skill + att.Luck / 2) / 2;
+        return ResourceManager.GetWeaponDef(equipItem.ID).Crit + (att.Skill + att.Intel / 2) / 2;
     }
     public int GetAvoid()
     { //自身速度+自身幸运+支援效果+地形效果
         var att = GetAttribute();
-        return att.Speed + att.Luck;//getMapAvoid()
+        return att.Speed + att.Intel;//getMapAvoid()
     }
     public int GetCriticalAvoid()
     {
         var att = GetAttribute();
-        return att.Luck;
+        return att.Intel;
     }
     public int GetRangeMax()
     {

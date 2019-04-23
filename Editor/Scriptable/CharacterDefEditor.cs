@@ -54,9 +54,10 @@ namespace RPGEditor
                 character.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", character.DefaultAttribute.MagicalPower, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", character.DefaultAttribute.Skill, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", character.DefaultAttribute.Speed, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", character.DefaultAttribute.Luck, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                character.DefaultAttribute.Intel = EditorGUILayout.IntSlider("智力", character.DefaultAttribute.Intel, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", character.DefaultAttribute.PhysicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", character.DefaultAttribute.MagicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                character.DefaultAttribute.BodySize = EditorGUILayout.IntSlider("体格", character.DefaultAttribute.BodySize, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", character.DefaultAttribute.Movement, 4, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
 
                 EditorGUILayout.EndVertical();
@@ -86,9 +87,10 @@ namespace RPGEditor
                 Attribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", Attribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Attribute.Skill = EditorGUILayout.IntSlider("技术", Attribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Attribute.Speed = EditorGUILayout.IntSlider("速度", Attribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                Attribute.Luck = EditorGUILayout.IntSlider("幸运", Attribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.Intel = EditorGUILayout.IntSlider("智力", Attribute.Intel, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Attribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", Attribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Attribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", Attribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Attribute.BodySize = EditorGUILayout.IntSlider("体格", Attribute.BodySize, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Attribute.Movement = EditorGUILayout.IntSlider("移动", Attribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
 
                 EditorGUILayout.EndVertical();
@@ -150,9 +152,10 @@ namespace RPGEditor
                 Data.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", Data.DefaultAttribute.MagicalPower, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Data.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", Data.DefaultAttribute.Skill, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Data.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", Data.DefaultAttribute.Speed, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                Data.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", Data.DefaultAttribute.Luck, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.Intel = EditorGUILayout.IntSlider("智力", Data.DefaultAttribute.Intel, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Data.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", Data.DefaultAttribute.PhysicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Data.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", Data.DefaultAttribute.MagicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+                Data.DefaultAttribute.BodySize = EditorGUILayout.IntSlider("体格", Data.DefaultAttribute.BodySize, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 Data.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", Data.DefaultAttribute.Movement, 4, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
 
                 EditorGUILayout.EndVertical();

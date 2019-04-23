@@ -191,9 +191,10 @@ namespace RPGEditor
             unit.Enemy.PlayerDef.DefaultAttribute.MagicalPower = EditorGUILayout.IntSlider("魔法攻击", unit.Enemy.PlayerDef.DefaultAttribute.MagicalPower, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.Skill = EditorGUILayout.IntSlider("技术", unit.Enemy.PlayerDef.DefaultAttribute.Skill, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.Speed = EditorGUILayout.IntSlider("速度", unit.Enemy.PlayerDef.DefaultAttribute.Speed, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-            unit.Enemy.PlayerDef.DefaultAttribute.Luck = EditorGUILayout.IntSlider("幸运", unit.Enemy.PlayerDef.DefaultAttribute.Luck, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.Intel = EditorGUILayout.IntSlider("智力", unit.Enemy.PlayerDef.DefaultAttribute.Intel, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", unit.Enemy.PlayerDef.DefaultAttribute.PhysicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", unit.Enemy.PlayerDef.DefaultAttribute.MagicalDefense, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
+            unit.Enemy.PlayerDef.DefaultAttribute.BodySize = EditorGUILayout.IntSlider("体格", unit.Enemy.PlayerDef.DefaultAttribute.BodySize, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
             unit.Enemy.PlayerDef.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", unit.Enemy.PlayerDef.DefaultAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.EndVertical();

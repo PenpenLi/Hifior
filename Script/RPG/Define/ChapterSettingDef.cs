@@ -10,6 +10,7 @@ public class ChapterSettingDef : ExtendScriptableObject
     public List<int> ForceInvolve;
     public EnumWeather Weather;
     public bool Preparation;
+    public int BrokeWallHP;
     public WinCondition WinCondition;
     public FailCondition FailCondition;
     /// <summary>
@@ -31,6 +32,7 @@ public class ChapterSettingDef : ExtendScriptableObject
         BGMSetting = new List<int>();
         WeaponRoom = new List<int>();
         PropRoom = new List<int>();
+        BrokeWallHP = 1000;
     }
 }
 [System.Serializable]
