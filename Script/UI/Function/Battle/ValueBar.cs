@@ -19,7 +19,7 @@ namespace RPG.UI
         protected override void Awake()
         {
             base.Awake();
-
+            GetComponent<RectTransform>().anchoredPosition = new Vector2(30, 0);
             rPar = ParentImage.GetComponent<RectTransform>();
             rChi = CurrentImage.GetComponent<RectTransform>();
             rExt = ExtraImage.GetComponent<RectTransform>();

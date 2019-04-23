@@ -66,6 +66,7 @@ public class CharacterInfo : SerializableBase
         CurrentHP = Attribute.HP;
         MaxHP = Attribute.HP;
         Items = new ItemGroup();
+        Items.AddWeapons(def.DefaultWeapons);
     }
     public override string ToString()
     {

@@ -33,6 +33,15 @@ public class BattleManager : ManagerBase
 
     EBattleState battleState = EBattleState.Idel;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private bool bClearRangeFlag = false;
+    public override void Init()
+    {
+        base.Init();
+        ClearRangeAction += () => { bClearRangeFlag = true; };
+    }
     public override void Update()
     {
         base.Update();
@@ -94,7 +103,10 @@ public class BattleManager : ManagerBase
             }
             else
             {
-                SelectMoveTarget();
+                if (bClearRangeFlag)
+                    SelectMoveTarget();
+                else
+                    ClearRangeAction();
             }
         }
     }
@@ -234,6 +246,7 @@ public class BattleManager : ManagerBase
                 OpenMenu(EActionMenuState.Main, UndoCancelMainActionAndClearRange);
             }
             ShowMoveRangeAction(CurrentCharacterLogic);
+            bClearRangeFlag = false;
         }
         UpdateSelectCharacterInfo(CurrentCharacterLogic);
     }
@@ -263,12 +276,13 @@ public class BattleManager : ManagerBase
         var targetEffectRange = CurrentCharacterLogic.BattleInfo.TargetEffectRanges;
         var effectCamps = CurrentCharacterLogic.BattleInfo.GetEffectCamps();
         Debug.Log("执行Attack 生效网格数=" + targetEffectRange.Count);
-        foreach(var v in targetEffectRange)
+        foreach (var v in targetEffectRange)
         {
             var enemy = chapterManager.GetCharacterFromCoord(v, EnumCharacterCamp.Enemy);
-            if(enemy!=null)
+            if (enemy != null)
             {
-                Debug.Log(v + "处发现敌方单位 ID="+ enemy.Logic.GetID());
+                Debug.Log(v + "处发现敌方单位 ID=" + enemy.Logic.GetID());
+                //先转向然后进行抖动攻击
             }
         }
     }

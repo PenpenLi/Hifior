@@ -63,6 +63,7 @@ public class GameMode : MonoSingleton<GameMode>
         battleManager.ClearRangeAction = pathShower.HideAll;
         battleManager.UpdateSelectTileInfo = uiManager.UpdateTileInfo;
         battleManager.UpdateSelectCharacterInfo = uiManager.UpdateCharacterInfo;
+        BattleManager.Init();
         gridTileManager.InitMouseInputEvent();
 
         LogInitInfo();
@@ -186,6 +187,12 @@ public class GameMode : MonoSingleton<GameMode>
         var ch = chapterManager.GetCharacterFromID(Id);
         chapterManager.RemoveCharacter(ch);
         unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
+    }
+    public void AttackUnit(CharacterLogic attacker,CharacterLogic defender)
+    {
+        var atkPos = attacker.GetTileCoord();
+        var defPos = defender.GetTileCoord();
+       //计算处方向 然后在Unitshower里面转向并攻击，抖动
     }
     #endregion
     #region Battle Manager

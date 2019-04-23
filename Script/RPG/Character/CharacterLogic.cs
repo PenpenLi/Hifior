@@ -304,7 +304,7 @@ public class CharacterLogic
     }
     public int GetCurrentHP()
     {
-        return Info.Exp;
+        return Info.CurrentHP;
     }
     public int GetExp()
     {

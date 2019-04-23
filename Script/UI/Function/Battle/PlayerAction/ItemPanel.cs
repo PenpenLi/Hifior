@@ -85,11 +85,12 @@ namespace RPG.UI
         }
         public void ShowTip(int index)
         {
-            /*WeaponDef def = ResourceManager.GetWeaponDef(weaponItems[currentSelectIndex].ID);
+            WeaponDef def = ResourceManager.GetWeaponDef(weaponItems[currentSelectIndex].ID);
 
             string content = def.GetWeaponTypeName() + " " + def.GetWeaponLevelName() + "  " + "威力" + " " + def.Power + "  " + "命中" + " " + def.Hit + "  " + "必杀" + " " + def.Crit + "  " +
-                "重量" + " " + def.Weight + "  " + "射程" + " " + def.RangeType.MinSelectRange + "-" + def.RangeType.MaxSelectRange + "\n" + def.CommonProperty.Description;
-            ItemTipControl.Show(Input.mousePosition, content);*/
+                "重量" + " " + def.Weight + "  " + "射程" + " " + def.RangeType.SelectRange.x + "-" + def.RangeType.SelectRange.y + "\n" + def.CommonProperty.Description;
+            Debug.Log(content);
+            //ItemTipControl.Show(Input.mousePosition, content);
 
         }
         public void HideTip()

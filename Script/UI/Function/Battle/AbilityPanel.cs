@@ -23,20 +23,21 @@ namespace RPG.UI
         public void Init(CharacterLogic ch)
         {
             var att = ch.Info.Attribute;
+            var max = ResourceManager.GetCareerDef( ch.GetCareer()).MaxAttribute;
             tSTR.text = att.PhysicalPower.ToString();
-            iSTR.GetComponent<ValueBar>().initBar(att.PhysicalPower, att.PhysicalPower, 5);
+            iSTR.GetComponent<ValueBar>().initBar(max.PhysicalPower, att.PhysicalPower, 5);
             tWIS.text =att.MagicalPower.ToString();
-            iWIS.GetComponent<ValueBar>().initBar(att.MagicalPower, att.MagicalPower, 5);
+            iWIS.GetComponent<ValueBar>().initBar(max.MagicalPower, att.MagicalPower, 5);
             tDEX.text = att.Skill.ToString();
-            iDEX.GetComponent<ValueBar>().initBar(att.Skill, att.Skill, 5);
+            iDEX.GetComponent<ValueBar>().initBar(max.Skill, att.Skill, 5);
             tAGI.text =att.Speed.ToString();
-            iAGI.GetComponent<ValueBar>().initBar(att.Speed, att.Speed, 5);
+            iAGI.GetComponent<ValueBar>().initBar(max.Speed, att.Speed, 5);
             tLUK.text =att.Luck.ToString();
-            iLUK.GetComponent<ValueBar>().initBar(att.Luck, att.Luck, 5);
+            iLUK.GetComponent<ValueBar>().initBar(max.Luck, att.Luck, 5);
             tDEF.text =att.PhysicalDefense.ToString();
-            iDEF.GetComponent<ValueBar>().initBar(att.PhysicalDefense, att.PhysicalDefense, 5);
+            iDEF.GetComponent<ValueBar>().initBar(max.PhysicalDefense, att.PhysicalDefense, 5);
             tRES.text =att.MagicalDefense.ToString();
-            iRES.GetComponent<ValueBar>().initBar(att.MagicalDefense, att.MagicalDefense, 5);
+            iRES.GetComponent<ValueBar>().initBar(max.MagicalDefense, att.MagicalDefense, 5);
         }
     }
 }

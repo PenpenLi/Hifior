@@ -23,7 +23,7 @@ namespace RPG.UI
                 curHp = "<color=orange>" + ch.GetCurrentHP() + "</color>";
             if (ch.GetCurrentHP() < ch.Info.MaxHP / 2)
                 curHp = "<color=red>" + ch.GetCurrentHP() + "</color>";
-            Text_HP.text = ch.GetMaxHP() + "/" + curHp;
+            Text_HP.text =curHp + "/" + ch.GetMaxHP();
         }
     }
 }

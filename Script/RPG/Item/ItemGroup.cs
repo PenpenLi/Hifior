@@ -25,8 +25,8 @@ public class ItemGroup
     private UnityAction AfterSuccessAddItem;
     public ItemGroup()
     {
-        weapons.Add(new WeaponItem(0));
-        props.Add(new PropsItem(0));
+        //weapons.Add(new WeaponItem(0));
+        //props.Add(new PropsItem(0));
     }
     public List<WeaponItem> Weapons { get { return weapons; } }
     public List<PropsItem> Props { get { return Props; } }
@@ -93,13 +93,13 @@ public class ItemGroup
             }
             else
             {
-                AddWeapon(i, null);
+                AddWeapon(i);
             }
         }
     }
-    public bool AddWeapon(int ID, UnityAction AfterAddItem)//获得装备
+    public bool AddWeapon(int ID)//获得装备
     {
-        return AddWeapon(new WeaponItem(ID), AfterAddItem);
+        return AddWeapon(new WeaponItem(ID), null);
     }
     public bool AddWeapon(WeaponItem Item, UnityAction AfterAddItem)//获得装备
     {
