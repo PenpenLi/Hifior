@@ -21,6 +21,7 @@ public class UIManager : ManagerBase
     public UI_BattleSelectWeaponMenu BattleSelectWeaponMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
     public UI_TurnIndicate TurnIndicate { private set; get; }
+    public UI_GetItemOrMoney GetItemOrMoney { private set; get; }
     public UI_ScreenMask ScreenMask { private set; get; }
     private T FindPanelInChildren<T>(Transform t) where T : IPanel
     {
@@ -41,6 +42,7 @@ public class UIManager : ManagerBase
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
+        GetItemOrMoney = FindPanelInChildren<UI_GetItemOrMoney>(panelParent0_9);
         MenuUndoAction = new Stack<UnityAction>();
     }
     public void InitMainUI(Transform panelParent)
@@ -101,6 +103,12 @@ public class UIManager : ManagerBase
         battleManager.FinishAction();
         battleManager.ChangeState(BattleManager.EBattleState.Idel);
     }
+    /// <summary>
+    /// 检查是否拥有位置事件
+    /// </summary>
+    /// <param name="chLogic"></param>
+    /// <param name="info"></param>
+    /// <returns></returns>
     public bool GetBattleAction_LocationAction(CharacterLogic chLogic, ref UI_BattleActionMenu.UIActionButtonInfo info)
     {
         var locationEvent = chapterManager.Event.EventInfo.GetLocationEvent(chLogic.GetTileCoord(), chLogic.GetID());
@@ -113,18 +121,43 @@ public class UIManager : ManagerBase
         info.name = locationEvent.GetButtonText();
         info.action = () =>
         {
-            Debug.Log("click " + locationEvent.GetButtonText());
+            gameMode.pathShower.SetRootVisible(false);
+            gameMode.LockInput(true);
+            HideBattlaActionMenu();
+            if (locationEvent.Sequence != null)
+            {
+                locationEvent.Execute(chapterManager.Event.EventInfo, () =>
+                {
+                    gameMode.pathShower.SetRootVisible(true);
+                    gameMode.LockInput(false);
+                    ShowBattleActionMenu(ActionMenuState, chLogic);
+                });
+            }
+            if(locationEvent.Caption== EventInfoCollection.EnumLocationEventCaption.占领)
+            {
+                gameMode.ChapterManager.Event.CheckWin_Seize();
+            }
+            if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开门)
+            {
+                gameMode.GridTileManager.OpenDoor(new Vector2Int(0,0));
+            }
         };
         return true;
+    }
+    public bool CheckHasLocationEvent(CharacterLogic chLogic)
+    {
+        UI_BattleActionMenu.UIActionButtonInfo location = new UI_BattleActionMenu.UIActionButtonInfo();
+        if (GetBattleAction_LocationAction(chLogic, ref location))
+        {
+            BattleActionMenu.AddAction(location);
+            return true;
+        }
+        return false;
     }
     public void BuildBattleActionMenu_Main(CharacterLogic chLogic)
     {
         BattleActionMenu.Clear();
-        UI_BattleActionMenu.UIActionButtonInfo location = new UI_BattleActionMenu.UIActionButtonInfo();
-        if (GetBattleAction_LocationAction(chLogic,ref location))
-        {
-            BattleActionMenu.AddAction(location);
-        }
+        CheckHasLocationEvent(chLogic);
         var move = new UI_BattleActionMenu.UIActionButtonInfo("移动", BattleAction_Move);
         BattleActionMenu.AddAction(move);
         var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
@@ -136,6 +169,7 @@ public class UIManager : ManagerBase
     public void BuildBattleActionMenu_AfterMove(CharacterLogic chLogic)
     {
         BattleActionMenu.Clear();
+        CheckHasLocationEvent(chLogic);
         var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
         BattleActionMenu.AddAction(attack);
         var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);

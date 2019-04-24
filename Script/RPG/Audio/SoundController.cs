@@ -37,12 +37,13 @@ public class SoundController : MonoBehaviour
                 DontDestroyOnLoad(go);
                 instance = go.GetComponent<SoundController>();
             }
-            
+
             return instance;
         }
     }
     public void PlayMusic(AudioClip musicClip, float atTime = 0)
     {
+        if (musicClip == null) { Debug.LogError("clip is null "); return; }
         _2DBGMAudio.clip = musicClip;
         _2DBGMAudio.time = atTime;      // May be inaccurate if the audio source is compressed http://docs.unity3d.com/ScriptReference/AudioSource-time.html BK
         _2DBGMAudio.Play();
@@ -62,13 +63,15 @@ public class SoundController : MonoBehaviour
      * @param soundClip The sound effect clip to play
      * @param volume The volume level of the sound effect
      */
-    public void PlaySound(AudioClip soundClip, float volume=1.0f)
+    public void PlaySound(AudioClip soundClip, float volume = 1.0f)
     {
+        if (soundClip == null) { Debug.LogError("clip is null "); return; }
         _2DEffectAudio.PlayOneShot(soundClip, volume);
     }
 
     public virtual void PlaySoundAtTime(AudioClip soundClip, float volume, float atTime)
     {
+        if (soundClip == null) { Debug.LogError("clip is null "); return; }
         _2DEffectAudio.time = atTime;                      // This may not work BK
         _2DEffectAudio.PlayOneShot(soundClip, volume);
     }
@@ -157,7 +160,7 @@ public class SoundController : MonoBehaviour
     private float beforeMuteVolume;
     public void SetVolumeMute()
     {
-         Mixer.GetFloat("MasterVolume",out beforeMuteVolume);
+        Mixer.GetFloat("MasterVolume", out beforeMuteVolume);
         SetMasterVolume(0);
     }
     public void SetVolumeOpen()

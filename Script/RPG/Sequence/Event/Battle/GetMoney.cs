@@ -8,26 +8,22 @@ namespace Sequence
     {
         public int MoneyAmount = 0;
         public AudioClip GetAudio;
-        /// <summary>
-        /// 第一个int参数是所属的队伍，因为游戏可能会出现分散的队伍
-        /// </summary>
-        public UnityAction<int,int> AddMoneyAction;
         public override void OnEnter()
         {
             SoundController.Instance.PlaySound(GetAudio);
-            UIController.Instance.GetUI<RPG.UI.GetItemOrMoney>().ShowGetMoney(MoneyAmount);
-            Invoke("LogicGetWeapon", 2.5f);
+            gameMode.UIManager.GetItemOrMoney.ShowGetMoney(MoneyAmount);
+            Utils.GameUtil.DelayFunc(LogicGetMoney, ConstTable.CONST_SHOW_GET_ITEM_MONEY_TIME);
         }
         public override string GetSummary()
         {
             return " 获得金钱：" + MoneyAmount;
         }
-        public void LogicGetWeapon()
+        public void LogicGetMoney()
         {
-            UIController.Instance.GetUI<RPG.UI.GetItemOrMoney>().Hide();
-            AddMoneyAction(0,MoneyAmount);
+            gameMode.UIManager.GetItemOrMoney.Hide();
+            //AddMoneyAction(0, MoneyAmount);
+            gameMode.ChapterManager.AddCurrentTeamMoney(MoneyAmount);
             Continue();
-            Debug.Log(GetSummary());
         }
 
     }

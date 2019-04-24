@@ -11,7 +11,8 @@ public enum EnumCharacterCamp
     Player,
     Enemy,
     Ally,
-    NPC
+    NPC,
+    All
 }
 public enum EnumItemType
 {

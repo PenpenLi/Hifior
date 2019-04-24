@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommonProperty:
     ID: 0
-    Name: "\u5E8F\u7AE0\u5F00\u59CB\u884C\u52A8"
+    Name: "\u5E8F\u7AE0"
     Description: 
   Icon: {fileID: 21300000, guid: 5594c626052984d408e737804d4727cf, type: 3}
   TeamIndex: 1
@@ -22,6 +22,7 @@ MonoBehaviour:
   ForceInvolve: 
   Weather: 3
   Preparation: 1
+  BrokeWallHP: 1000
   WinCondition:
     Condition: 105
     BossID: 0
@@ -36,4 +37,4 @@ MonoBehaviour:
   BGMSetting: 0400000017000000000000000e000000000000000000000000000000
   WeaponRoom: 
   PropRoom: 
-  Event: {fileID: 2418015397204225506, guid: b369ea258fd6c3740bf65392dc52fec2, type: 3}
+  Event: {fileID: 3919424369301072109, guid: b369ea258fd6c3740bf65392dc52fec2, type: 3}

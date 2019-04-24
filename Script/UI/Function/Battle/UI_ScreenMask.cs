@@ -27,10 +27,6 @@ namespace RPG.UI
         {
             base.Show();
             transform.SetAsLastSibling();
-            RectTransform rt = GetComponent<RectTransform>();
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1920f);
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1080f);
-            rt.localScale = Vector3.one;
         }
         protected override void Awake()
         {

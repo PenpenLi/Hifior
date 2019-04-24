@@ -54,7 +54,6 @@ namespace Sequence
         [System.NonSerialized]
         public float executingIconTimer;
 
-        [HideInInspector]
         public List<SequenceEvent> commandList = new List<SequenceEvent>();
 
         protected int executionCount;
@@ -75,8 +74,8 @@ namespace Sequence
             // Give each child command a reference back to its parent block
             // and tell each command its index in the list.
             int index = 0;
+            executionState = ExecutionState.Idle;
             GetComponentsInChildren(commandList);
-
             foreach (SequenceEvent command in commandList)
             {
                 if (command == null)
@@ -111,7 +110,6 @@ namespace Sequence
             {
                 return false;
             }
-
             executionCount++;
             StartCoroutine(ExecuteBlock(onComplete));
 
@@ -133,7 +131,7 @@ namespace Sequence
                 }
 
                 // Skip disabled commands, comments and labels
-                while (i < commandList.Count && !commandList[i].enabled)
+                while (i < commandList.Count && (!commandList[i].gameObject.activeInHierarchy || !commandList[i].enabled))
                 {
                     i = commandList[i].commandIndex + 1;
                 }

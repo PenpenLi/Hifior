@@ -8,7 +8,7 @@ public class StringHelper
 	public static StringBuilder Formater = new StringBuilder(1024);
     public static string PrintVariablesOf<T>(T t)
     {
-        var type = t.GetType().DeclaringType;
+        var type = t.GetType();
         var Fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         StringBuilder sb = new StringBuilder();
         foreach (var finfo in Fields)

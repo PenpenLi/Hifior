@@ -21,6 +21,10 @@ public class PathShower : MonoBehaviour
         GetTransformRoot(t).gameObject.SetActive(show);
         bVisible = true;
     }
+    public void SetRootVisible(bool show)
+    {
+        gameObject.SetActive(show);
+    }
     bool bVisible = false;
     public bool IsRangeVisible()
     {

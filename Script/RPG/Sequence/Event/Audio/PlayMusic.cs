@@ -29,7 +29,7 @@ namespace Sequence
         {
             if (MusicClip == null)
             {
-                return "Error: No music clip selected";
+                return null;
             }
 
             return MusicClip.name;

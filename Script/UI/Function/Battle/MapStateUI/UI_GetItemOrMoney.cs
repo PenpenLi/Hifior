@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace RPG.UI
 {
-    public class GetItemOrMoney : IPanel
+    public class UI_GetItemOrMoney : IPanel
     {
         public Text text;
 

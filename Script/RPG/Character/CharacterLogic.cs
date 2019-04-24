@@ -499,6 +499,10 @@ public class CharacterLogic
     {
         return Info.Alive;
     }
+    public bool IsInActiveTeam()
+    {
+        return Info.Active;
+    }
     #endregion
 
 }

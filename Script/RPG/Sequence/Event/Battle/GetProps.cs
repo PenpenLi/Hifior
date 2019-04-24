@@ -14,38 +14,26 @@ namespace Sequence
         public override void OnEnter()
         {
             SoundController.Instance.PlaySound(GetAudio);
-            UIController.Instance.GetUI<RPG.UI.GetItemOrMoney>().ShowGetProps(PropID);
-            Utils.GameUtil.DelayFunc(this, LogicGetProps, 2.0f);
+            gameMode.UIManager.GetItemOrMoney.ShowGetProps(PropID);
+            Utils.GameUtil.DelayFunc(this, LogicGetProps, ConstTable.CONST_SHOW_GET_ITEM_MONEY_TIME);
         }
-        private void WaitSecondsToContinue()
-        {
-            Utils.GameUtil.DelayFunc(this, Continue, 1f);
-        }
+
         public override string GetSummary()
         {
             return "Player:" + PlayerID + " 获得道具：" + PropID;
         }
         public void LogicGetProps()
         {
-            //UIController.Instance.GetUI<RPG.UI.GetItemOrMoney>().Hide();
-            //if (PlayerID == -1)
-            //{
-            //    RPGCharacter Character = GetGameMode<UGameMode>().GetPlayerPawn<Pawn_BattleArrow>().SelectedCharacter;
-            //    if (Character != null)
-            //    {
-            //        Character.Item.AddProp(PropID, WaitSecondsToContinue);
-            //    }
-            //    else
-            //    {
-            //        Debug.LogError("无法获取当前行动人物");
-            //        Continue();
-            //    }
-            //}
-            //else
-            //{
-            //    UGameInstance.Instance.GetGameState<GS_Battle>().GetPlayer(PlayerID).Item.AddProp(PropID, WaitSecondsToContinue);
-            //}
-            //Debug.Log(GetSummary());
+            gameMode.UIManager.GetItemOrMoney.Hide();
+            if (PlayerID == -1)
+            {
+                gameMode.BattleManager.CurrentCharacterLogic.Info.Items.AddProp(PropID);
+            }
+            else
+            {
+
+            }
+            Continue();
         }
 
     }

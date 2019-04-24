@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
+using RPG.UI;
+
 public class GameMode : MonoSingleton<GameMode>
 {
     public SLGCamera slgCamera;
@@ -149,6 +151,7 @@ public class GameMode : MonoSingleton<GameMode>
         List<Vector2Int> highlightRange = logic.BattleInfo.TargetEffectRanges;
         pathShower.ShowHighLightTiles(highlightRange);
     }
+
     #endregion
     #region UnitShower
 

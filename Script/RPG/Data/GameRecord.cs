@@ -298,7 +298,7 @@ public class EventInfoCollection
         }
         public EventTypeBase(string seqName)
         {
-
+            Enable = true;
         }
         /// <summary>
         /// 执行Sequence
@@ -357,10 +357,10 @@ public class EventInfoCollection
     public enum EnumLocationEventCaption
     {
         宝箱,
-        访问村庄,
+        访问,
         占领,
         开门,
-        使用开关
+        开关
     }
     [System.Serializable]
     public class LocationEventType : EventTypeBase
@@ -507,7 +507,7 @@ public class EventInfoCollection
         }
         return null;
     }
-    public RangeEventType GetRangeEvent(VInt2 TilePosition)
+    public RangeEventType GetRangeEvent(Vector2Int TilePosition)
     {
         foreach (RangeEventType Event in RangeEvent)
         {
@@ -670,7 +670,7 @@ public class GameRecord
     /// <returns>当前存档的章节数</returns>
     public ChapterRecordCollection LoadChapterFromDisk(int slot)
     {
-        ChapterRecordCollection v = null;
+        ChapterRecordCollection v =new ChapterRecordCollection();
         if (HasChapterSave(slot))
         {
             v = v.Load<ChapterRecordCollection>();

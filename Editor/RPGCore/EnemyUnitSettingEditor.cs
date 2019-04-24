@@ -64,8 +64,7 @@ namespace RPGEditor
 
                     if (Physics.Raycast(ray, out rayHit))
                     {
-                        VInt2 pi = VInt2.Vector3ToPoint2D(rayHit.point);
-                        Vector2Int p = new Vector2Int(pi.x, pi.y);
+                        Vector2Int p = new Vector2Int((int)rayHit.point.x, (int)rayHit.point.y);
 
                         x = Mathf.Clamp(p.x, 0, int.MaxValue);
                         y = Mathf.Clamp(p.y, 0, int.MaxValue);

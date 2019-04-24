@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
+using System;
+
 public class GridTileManager : ManagerBase
 {
     public const string TILE_LAYER_PREFIX = "Tile Layer";
@@ -17,7 +19,7 @@ public class GridTileManager : ManagerBase
     public void LoadNewMap(int id)
     {
         GameObject mapPrefab = Resources.Load<GameObject>("fe/fe" + id);
-        mapPrefab= GameObject.Instantiate(mapPrefab);
+        mapPrefab = GameObject.Instantiate(mapPrefab);
         mapPrefab.transform.localScale = new Vector3(10, 10, 1);
         InitScript(mapPrefab.transform);
         InitTileTypeData();
@@ -43,7 +45,7 @@ public class GridTileManager : ManagerBase
     }
     public void InitMouseInputEvent()
     {
-        Vector2Int oldPos=Vector2Int.one;
+        Vector2Int oldPos = Vector2Int.one;
         gameMode.InputManager.GetMouseInput = () =>//添加GetMouseInput Callback
         {
             var v = new InputManager.MouseInputState();
@@ -118,4 +120,8 @@ public class GridTileManager : ManagerBase
         return FeTileData.TileInfos[tileType];
     }
 
+    public void OpenDoor(Vector2Int tilePos)
+    {
+        Debug.Log(tilePos + " 处开门"+ " 修改某处Tile");
+    }
 }

@@ -19,10 +19,6 @@ public class ItemGroup
     {
         return _currentEquipItemIndex;
     }
-    /// <summary>
-    /// 在完全获得该道具后执行的事件
-    /// </summary>
-    private UnityAction AfterSuccessAddItem;
     public ItemGroup()
     {
         //weapons.Add(new WeaponItem(0));
@@ -103,15 +99,12 @@ public class ItemGroup
     }
     public bool AddWeapon(WeaponItem Item, UnityAction AfterAddItem)//获得装备
     {
-        AfterSuccessAddItem = AfterAddItem;
 
         if (Weapons.Count == MAX_WEAPON_COUNT)//装备已满返回false
         {
             Debug.Log("物品已达上限");
             weapons.Add(Item);
             RPG.UI.SendItemToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendItemToWarehouse>();
-            if (AfterSuccessAddItem != null)
-                Sender.RegisterHideEvent(AfterSuccessAddItem);
             Sender.Show(weapons);
             return false;
         }
@@ -134,8 +127,6 @@ public class ItemGroup
             {
                 Weapons.Add(Item);
             }
-            if (AfterSuccessAddItem != null)
-                AfterSuccessAddItem.Invoke();
             return true;
         }
     }
@@ -321,35 +312,29 @@ public class ItemGroup
             }
             else
             {
-                AddProp(i, null);
+                AddProp(i);
             }
         }
     }
 
-    public bool AddProp(int ID, UnityAction AfterAddItem)//获得装备
+    public bool AddProp(int ID)//获得装备
     {
-        return AddProp(new PropsItem(ID), AfterAddItem);
+        return AddProp(new PropsItem(ID));
     }
 
-    public bool AddProp(PropsItem Item, UnityAction AfterAddItem)//获得装备
+    public bool AddProp(PropsItem Item)//获得装备
     {
-        AfterSuccessAddItem = AfterAddItem;
-
         if (props.Count == MAX_PROPS_COUNT)//装备已满返回false
         {
             Debug.Log("物品已达上限");
             props.Add(Item);
             RPG.UI.SendItemToWarehouse Sender = UIController.Instance.GetUI<RPG.UI.SendItemToWarehouse>();
-            if (AfterSuccessAddItem != null)
-                Sender.RegisterHideEvent(AfterSuccessAddItem);
             Sender.Show(props);
             return false;
         }
         else
         {
             props.Add(Item);
-            if (AfterSuccessAddItem != null)
-                AfterSuccessAddItem.Invoke();
             return true;
         }
     }

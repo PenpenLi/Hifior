@@ -8,6 +8,7 @@ namespace Sequence
     public class SequenceEvent : MonoBehaviour
     {
         protected GameMode gameMode { get { return GameMode.Instance; } }
+
         [HideInInspector]
         public int ItemId = -1; // Invalid flowchart item id
 
@@ -57,6 +58,11 @@ namespace Sequence
             if (RootSequence != null)
             {
                 RootSequence.jumpToSequenceEventIndex = nextCommandIndex;
+            }
+            if (AppConst.DebugMode)
+            {
+                var s = GetSummary();
+                if (s != null && s.Length > 0) Debug.Log("Sequence Event:" + s);
             }
         }
 

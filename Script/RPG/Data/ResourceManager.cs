@@ -24,32 +24,20 @@ public static class ResourceManager
     private static MapTileDef mapDef;
     private static Dictionary<int, PassiveSkillDef> passiveSkillDefTable;
 
-
-    public static PlayerDef GetPlayerDef(int ID)
-    {
-        return Resources.Load<PlayerDef>(Path.Combine(ASSET_PLAYER, ID.ToString()));
-    }
+    #region Const Data 图片 音乐等不会改变的素材
     public static Sprite GetTalkBackground(int ID)
     {
         return Resources.Load<Sprite>(Path.Combine(ASSET_BG, ID.ToString())); ;
     }
+    #endregion
+    public static PlayerDef GetPlayerDef(int ID)
+    {
+        return GetDef(playerDefTable, ASSET_PLAYER, ID);
+    }
     public static EnemyDef GetEnemyDef(int ID)
     {
-        return Resources.Load<EnemyDef>(Path.Combine(ASSET_ENEMY, ID.ToString()));
+        return GetDef(enemyDefTable, ASSET_ENEMY, ID);
     }
-    public static ChapterSettingDef GetChapterDef(int ChapterIndex)
-    {
-        ChapterSettingDef def = Resources.Load<ChapterSettingDef>(Path.Combine(ASSET_CHAPTERSETTING, ChapterIndex.ToString()));
-        if (def.Event == null) Debug.LogError("你需要在ChapterDef" + def.CommonProperty.ID + "中指定Event");
-        def.Event.SetChapterDef(def);
-        return def;
-    }
-    public static string GetChapterName(int ChapterIndex)
-    {
-        ChapterSettingDef def = GetChapterDef(ChapterIndex);
-        return def.CommonProperty.Name;
-    }
-
     public static PropsDef GetPropsDef(int ID)
     {
         return GetDef(propsDefTable, ASSET_PROPS, ID);
@@ -62,7 +50,21 @@ public static class ResourceManager
     {
         return GetDef(careerDefTable, ASSET_CAREER, ID);
     }
-    private static T GetDef<T>(Dictionary<int, T> TargetDictionary, string AssetBundleURL, int ID) where T : ScriptableObject
+
+    public static ChapterSettingDef GetChapterDef(int ChapterIndex)
+    {
+        ChapterSettingDef def = Resources.Load<ChapterSettingDef>(Path.Combine(ASSET_CHAPTERSETTING, ChapterIndex.ToString()));
+        ChapterSettingDef r = GameObject.Instantiate<ChapterSettingDef>(def);
+        if (r.Event == null) Debug.LogError("你需要在ChapterDef" + r.CommonProperty.ID + "中指定Event");
+        r.Event.SetChapterDef(r);
+        return r;
+    }
+    public static string GetChapterName(int ChapterIndex)
+    {
+        ChapterSettingDef def = GetChapterDef(ChapterIndex);
+        return def.CommonProperty.Name;
+    }
+    private static T GetDef<T>(Dictionary<int, T> TargetDictionary, string assetUrl, int ID) where T : ScriptableObject
     {
         if (TargetDictionary == null)
         {
@@ -74,17 +76,29 @@ public static class ResourceManager
         }
         else
         {
-            var res = Resources.Load<T>(Path.Combine(AssetBundleURL, ID.ToString()));
-            if (res == null) { Debug.LogError("the res is null" + AssetBundleURL + " :" + ID); return null; }
-            TargetDictionary.Add(ID, res);
+            var res = Resources.Load<T>(Path.Combine(assetUrl, ID.ToString()));
+            if (res == null) { Debug.LogError("the res is null:" + assetUrl + " :" + ID); return null; }
+            TargetDictionary.Add(ID, GameObject.Instantiate<T>(res));
             return TargetDictionary[ID];
         }
     }
-
+    #region Sequence
+    private const string RESOURCE_SEQUENCE_DIR = "rpgdata/chapter/sequence/";
+    private const string RESOURCE_SEQUENCE_TREASUREBOX = RESOURCE_SEQUENCE_DIR+ "TreasureBox";
+    public static Sequence.Sequence Sequence_TreasureBox;
+    public static void LoadSequence()
+    {
+        var temp = Resources.Load<Sequence.Sequence>(RESOURCE_SEQUENCE_TREASUREBOX);
+        Sequence_TreasureBox = GameObject.Instantiate(temp);
+    }
+    #endregion
     public static void UnloadAllRPGData()
     {
         weaponDefTable.Clear();
         propsDefTable.Clear();
+        careerDefTable.Clear();
+        playerDefTable.Clear();
+        enemyDefTable.Clear();
     }
     #region Material 
     private const string RESOURCE_APP_MATERIAL_DIR = "App/Material/";

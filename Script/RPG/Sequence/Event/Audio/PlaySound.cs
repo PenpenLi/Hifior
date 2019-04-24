@@ -50,7 +50,7 @@ namespace Sequence
         {
             if (soundClip == null)
             {
-                return "Error: No music clip selected";
+                return null;
             }
 
             return soundClip.name;

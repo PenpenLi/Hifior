@@ -210,6 +210,17 @@ public class ChapterManager : ManagerBase
         }
         return false;
     }
+
+    #region Money
+   public void AddTeamMoney(int team ,int amount)
+    {
+
+    }
+    public void AddCurrentTeamMoney( int amount)
+    {
+
+    }
+    #endregion
     #region GameRecord
 
     private static GameRecord record = new GameRecord();
@@ -225,6 +236,7 @@ public class ChapterManager : ManagerBase
         collect.Slot = slot;
         ChapterDef = ResourceManager.GetChapterDef(0);
         SaveChapterData(slot);
+        LoadChapterData(slot);
     }
     /// <summary>
     /// 仅章节结束后的数据
@@ -246,6 +258,7 @@ public class ChapterManager : ManagerBase
         players.PlayersLogic.Clear();
         ChapterRecordCollection collect = record.LoadChapterFromDisk(slot);
         ChapterDef = ResourceManager.GetChapterDef(collect.CurrentTeam.Chapter);
+        ChapterDef.Event = GameObject.Instantiate(ChapterDef.Event);
         foreach (var v in collect.CurrentTeamPlayerInfo)
         {
             players.PlayersLogic.Add(new CharacterLogic(v));
@@ -285,4 +298,6 @@ public class ChapterManager : ManagerBase
         }
     }
     #endregion
+
+
 }

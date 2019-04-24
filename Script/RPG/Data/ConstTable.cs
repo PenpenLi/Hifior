@@ -54,6 +54,8 @@ public class ConstTable
     public const float CONST_SLOW_UNIT_DISAPPEAR_SPEED = 3.0f;
     public const float CONST_NORMAL_UNIT_DISAPPEAR_SPEED = 2.0f;
     public const float CONST_FAST_UNIT_DISAPPEAR_SPEED = 1.0f;
+
+    public const float CONST_SHOW_GET_ITEM_MONEY_TIME = 2.5f;
     public static Color CAMP_COLOR(EnumCharacterCamp camp)
     {
         switch (camp)
