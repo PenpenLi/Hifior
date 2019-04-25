@@ -6,7 +6,7 @@ using System;
 
 public class RPGCharacter : RPGCharacterBase
 {
-    protected Material normalMaterial;
+    protected Material NormalMaterial { get { return ResourceManager.GetUnitMaterial(GetCamp()); } }
     /// <summary>
     /// 是否可以操控行动，行动完毕或者被石化，冻住等则为False
     /// </summary>
@@ -19,7 +19,6 @@ public class RPGCharacter : RPGCharacterBase
 
     public RPGCharacter()
     {
-
     }
     public void SetDataFromDef(PlayerDef DefaultData)
     {
@@ -43,8 +42,8 @@ public class RPGCharacter : RPGCharacterBase
     public void EnableAction(bool changeMaterial)
     {
         bEnableAction = true;
-        logic.EndAction();
-        if (changeMaterial) GetSpriteRender().material = normalMaterial;
+        logic.StartAction();
+        if (changeMaterial) GetSpriteRender().material = NormalMaterial;
     }
     public Vector2Int GetTileCoord()
     {

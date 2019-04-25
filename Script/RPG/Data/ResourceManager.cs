@@ -121,7 +121,17 @@ public static class ResourceManager
     public static Material UnitEnemyMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_ENEMY]; } }
     public static Material UnitAllyMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_ALLY]; } }
     public static Material UnitNPCMaterial { get { return app_material[RESOURCE_APP_MATERIAL_UNIT_NPC]; } }
-
+    public static Material GetUnitMaterial(EnumCharacterCamp camp)
+    {
+        switch (camp)
+        {
+            case EnumCharacterCamp.Player:return UnitPlayerMaterial;
+            case EnumCharacterCamp.Enemy:return UnitEnemyMaterial;
+            case EnumCharacterCamp.Ally:return UnitAllyMaterial;
+            case EnumCharacterCamp.NPC:return UnitNPCMaterial;
+        }
+        return UnitPlayerMaterial;
+    }
     #endregion
     static ResourceManager()
     {

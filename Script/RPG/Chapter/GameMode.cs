@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
-using RPG.UI;
 
 public class GameMode : MonoSingleton<GameMode>
 {
@@ -60,13 +58,16 @@ public class GameMode : MonoSingleton<GameMode>
         battleManager.ShowEffectTargetRangeAction = ShowEffectTargetRange;
 
         battleManager.ShowHighlightRangeAction = pathShower.ShowHighLightTiles;
+        battleManager.ShowTalkCharacterRangeAction = pathShower.ShowTalkCharacterTiles;
         battleManager.ClearHighlightRangeAction = () => pathShower.HidePath(PathShower.EPathShowerType.HighLight);
         battleManager.IsRangeVisible = pathShower.IsRangeVisible;
         battleManager.ClearRangeAction = pathShower.HideAll;
         battleManager.UpdateSelectTileInfo = uiManager.UpdateTileInfo;
         battleManager.UpdateSelectCharacterInfo = uiManager.UpdateCharacterInfo;
-        BattleManager.Init();
+        battleManager.Init();
         gridTileManager.InitMouseInputEvent();
+
+        chapterManager.OnShowTurnIndicate +=uiManager.TurnIndicate.Show;
 
         LogInitInfo();
         TestFunctionAddHere();
@@ -249,6 +250,18 @@ public class GameMode : MonoSingleton<GameMode>
             if (onComplete != null)
                 tw.OnComplete(() => onComplete());
         }
+    }
+    #endregion
+    #region Sequence
+    public void BeforePlaySequence()
+    {
+        pathShower.SetRootVisible(false);
+        LockInput(true);
+    }
+    public void AfterPlaySequence()
+    {
+        pathShower.SetRootVisible(true);
+        LockInput(false);
     }
     #endregion
 }

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace RPG.UI
 {
-    public class UI_BattleSelectWeaponMenu : IActionMenu
+    public class UI_BattleMainMenu : IActionMenu
     {
-
     }
 }

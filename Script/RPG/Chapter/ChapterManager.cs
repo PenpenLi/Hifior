@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 
 /// <summary>
 /// 管理章节数据和检测
@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class ChapterManager : ManagerBase
 {
+    public UnityAction<EnumCharacterCamp, int, UnityAction> OnShowTurnIndicate;
     public SLGChapter Event { get { return ChapterDef.Event; } }
     public ChapterSettingDef ChapterDef;
     public struct PlayerEntity
@@ -54,27 +55,30 @@ public class ChapterManager : ManagerBase
         gameMode.LockInput(true);
         if (TurnIndex == 0)
         {
-            TurnCamp = EnumCharacterCamp.Player;
             TurnIndex++;
-            uiManager.TurnIndicate.Show(TurnCamp, TurnIndex, PlayerAction);
+            TurnCamp = EnumCharacterCamp.Player;
+            EnableAllPlayerAction();
+            CheckTurnEvent(TurnIndex, TurnCamp);
             return;
         }
         if (TurnCamp == EnumCharacterCamp.Player)
         {
             TurnCamp = EnumCharacterCamp.Enemy;
-            uiManager.TurnIndicate.Show(TurnCamp, TurnIndex, EnemyAction);
+            DisableAllPlayerAction();
+            CheckTurnEvent(TurnIndex, TurnCamp);
         }
         else
         {
-            TurnCamp = EnumCharacterCamp.Player;
             TurnIndex++;
-            uiManager.TurnIndicate.Show(TurnCamp, TurnIndex, PlayerAction);
+            TurnCamp = EnumCharacterCamp.Player;
+            EnableAllPlayerAction();
+            CheckTurnEvent(TurnIndex, TurnCamp);
         }
     }
     /// <summary>
     /// 开始玩家行动
     /// </summary>
-    public void PlayerAction()
+    public void StartPlayerAction()
     {
         gameMode.FreeBattleCamera();
         gameMode.LockInput(false);
@@ -82,9 +86,36 @@ public class ChapterManager : ManagerBase
     /// <summary>
     /// 敌人AI行动
     /// </summary>
-    public void EnemyAction()
+    public void StartEnemyAction()
     {
+        gameMode.LockInput(true);
+    }
+    public void CheckTurnEvent(int round, EnumCharacterCamp camp)
+    {
+        var turnEvent = Event.EventInfo.GetTurnEvent(round, camp);
+        if (AppConst.DebugMode)
+        {
+            if (turnEvent == null) Debug.Log("没有Turn事件");
+            else Debug.Log("找到相匹配的Turn Event" + turnEvent);
+        }
+        UnityAction onCompleteTurnEvent = null;
+        if (camp == EnumCharacterCamp.Player) onCompleteTurnEvent = StartPlayerAction;
+        if (camp == EnumCharacterCamp.Enemy) onCompleteTurnEvent = StartEnemyAction;
+        if (turnEvent == null || turnEvent.Sequence == null)
+        {
+            OnShowTurnIndicate(camp, round, onCompleteTurnEvent);
+            return;
+        }
 
+        //如果有事件发生，则在事件发生后显示回合条
+        {
+            gameMode.BeforePlaySequence();
+            turnEvent.Execute(chapterManager.Event.EventInfo, () =>
+            {
+                gameMode.AfterPlaySequence();
+                OnShowTurnIndicate(camp, round, onCompleteTurnEvent);
+            });
+        }
     }
     /// <summary>
     /// 仅添加数据
@@ -150,6 +181,18 @@ public class ChapterManager : ManagerBase
         }
         return null;
     }
+    public List<RPGCharacter> GetSidewayCharacter(Vector2Int tilePos)
+    {
+        List<RPGCharacter> r = new List<RPGCharacter>();
+        var sideways = PositionMath.GetSidewayTilePos(tilePos);
+        foreach (var v in sideways)
+        {
+            var ch = GetCharacterFromCoord(v);
+            if (ch != null)
+                r.Add(ch);
+        }
+        return r;
+    }
     public RPGCharacter GetCharacterFromID(int id)
     {
         foreach (var v in players.Players)
@@ -179,10 +222,10 @@ public class ChapterManager : ManagerBase
     {
         RPGCharacter rm = null;
         foreach (var v in players.Players)
-            if (v.Logic.GetID() == id) rm= v;
+            if (v.Logic.GetID() == id) rm = v;
         if (rm != null) { RemoveCharacter(rm); }
         foreach (var v in enemies.Enemies)
-            if (v.Logic.GetID() == id) rm=v;
+            if (v.Logic.GetID() == id) rm = v;
         if (rm != null) { RemoveCharacter(rm); }
         return null;
     }
@@ -210,13 +253,26 @@ public class ChapterManager : ManagerBase
         }
         return false;
     }
-
+    public void EnableAllPlayerAction()
+    {
+        foreach (var v in players.Players)
+        {
+            v.EnableAction(true);
+        }
+    }
+    public void DisableAllPlayerAction()
+    {
+        foreach (var v in players.Players)
+        {
+            v.DisableAction(true);
+        }
+    }
     #region Money
-   public void AddTeamMoney(int team ,int amount)
+    public void AddTeamMoney(int team, int amount)
     {
 
     }
-    public void AddCurrentTeamMoney( int amount)
+    public void AddCurrentTeamMoney(int amount)
     {
 
     }

@@ -7,7 +7,6 @@ using UnityEngine.Events;
 public enum EActionMenuState
 {
     Main,
-    AfterMove,
     Attack,
     Skill,
     UseItem,
@@ -18,6 +17,7 @@ public class UIManager : ManagerBase
     #region Init 
     public UI_BattleTileInfo BattleTileInfo { private set; get; }
     public UI_BattleActionMenu BattleActionMenu { private set; get; }
+    public UI_BattleMainMenu BattleMainMenu { private set; get; }
     public UI_BattleSelectWeaponMenu BattleSelectWeaponMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
     public UI_TurnIndicate TurnIndicate { private set; get; }
@@ -38,6 +38,7 @@ public class UIManager : ManagerBase
     {
         BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent9_16);
         BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent9_16);
+        BattleMainMenu = FindPanelInChildren<UI_BattleMainMenu>(panelParent9_16);
         BattleSelectWeaponMenu = FindPanelInChildren<UI_BattleSelectWeaponMenu>(panelParent9_16);
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
@@ -81,12 +82,14 @@ public class UIManager : ManagerBase
     {
         BattleActionMenu.Hide();
         battleManager.ChangeState(BattleManager.EBattleState.SelectMove);
+        battleManager. ShowMoveRangeAction(battleManager.CurrentCharacterLogic);
     }
     public void BattleAction_Attack()
     {
         BattleActionMenu.Hide();
         CharacterLogic logic = battleManager.CurrentCharacterLogic;
         BuildBattleSelectWeaponMenu(logic);
+        BattleSelectWeaponMenu.Show();
         MenuUndoAction.Push(UndoShowBattleActionMenu);
     }
     /// <summary>
@@ -99,17 +102,18 @@ public class UIManager : ManagerBase
     }
     public void BattleAction_End()
     {
-        BattleActionMenu.Hide();
+        HideBattlaActionMenu(true);
         battleManager.FinishAction();
         battleManager.ChangeState(BattleManager.EBattleState.Idel);
     }
+    #region  事件添加的菜单选项
     /// <summary>
     /// 检查是否拥有位置事件
     /// </summary>
     /// <param name="chLogic"></param>
     /// <param name="info"></param>
     /// <returns></returns>
-    public bool GetBattleAction_LocationAction(CharacterLogic chLogic, ref UI_BattleActionMenu.UIActionButtonInfo info)
+    public bool GetBattleAction_Location(CharacterLogic chLogic, ref IActionMenu.UIActionButtonInfo info)
     {
         var locationEvent = chapterManager.Event.EventInfo.GetLocationEvent(chLogic.GetTileCoord(), chLogic.GetID());
         if (locationEvent == null)
@@ -121,77 +125,131 @@ public class UIManager : ManagerBase
         info.name = locationEvent.GetButtonText();
         info.action = () =>
         {
-            gameMode.pathShower.SetRootVisible(false);
-            gameMode.LockInput(true);
-            HideBattlaActionMenu();
+            gameMode.BeforePlaySequence();
+            HideBattlaActionMenu(false);
             if (locationEvent.Sequence != null)
             {
                 locationEvent.Execute(chapterManager.Event.EventInfo, () =>
                 {
-                    gameMode.pathShower.SetRootVisible(true);
-                    gameMode.LockInput(false);
+                    gameMode.AfterPlaySequence();
                     ShowBattleActionMenu(ActionMenuState, chLogic);
                 });
             }
-            if(locationEvent.Caption== EventInfoCollection.EnumLocationEventCaption.占领)
+            if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.占领)
             {
                 gameMode.ChapterManager.Event.CheckWin_Seize();
             }
             if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开门)
             {
-                gameMode.GridTileManager.OpenDoor(new Vector2Int(0,0));
+                gameMode.GridTileManager.OpenDoor(new Vector2Int(0, 0));
             }
         };
         return true;
     }
-    public bool CheckHasLocationEvent(CharacterLogic chLogic)
+    public bool CheckLocationEvent(CharacterLogic chLogic)
     {
-        UI_BattleActionMenu.UIActionButtonInfo location = new UI_BattleActionMenu.UIActionButtonInfo();
-        if (GetBattleAction_LocationAction(chLogic, ref location))
+        IActionMenu.UIActionButtonInfo location = new IActionMenu.UIActionButtonInfo();
+        if (GetBattleAction_Location(chLogic, ref location))
         {
             BattleActionMenu.AddAction(location);
             return true;
         }
         return false;
     }
+    public bool GetBattleAction_BattleTalk(CharacterLogic chLogic, ref IActionMenu.UIActionButtonInfo info)
+    {
+        //找到临近的4个单位的id
+        var center = chLogic.GetTileCoord();
+        var sidewayCharacter = chapterManager.GetSidewayCharacter(center);
+        List<BattleTalkEventActionInfo> talkEvents = new List<BattleTalkEventActionInfo>();
+        foreach (var v in sidewayCharacter)
+        {
+            var t = chapterManager.Event.EventInfo.GetBattleTalkEvent(chLogic.GetID(), v.Logic.GetID());
+            if (t != null)
+            {
+                talkEvents.Add(new BattleTalkEventActionInfo(v.Logic, t));
+            }
+        }
+        if (talkEvents.Count == 0)
+        {
+            Debug.Log("没有Talk事件");
+            return false;
+        }
+        Debug.Log("找到相匹配的Tald Event" + Utils.TextUtil.GetListString(talkEvents));
+
+        info.name = talkEvents[0].Event.GetButtonText();
+        info.action = () =>
+        {
+            HideBattlaActionMenu(false);
+            //进入选择Target阶段，然后将TalkEvents和坐标一并传入到BattleManager里面的SelectTarget阶段。
+            //点击选择后执行绑定后的动作
+            battleManager.SelectTalkCharacter(talkEvents);
+        };
+        return true;
+    }
+    public bool CheckBattleTalkEvent(CharacterLogic chLogic)
+    {
+        IActionMenu.UIActionButtonInfo location = new IActionMenu.UIActionButtonInfo();
+        if (GetBattleAction_BattleTalk(chLogic, ref location))
+        {
+            BattleActionMenu.AddAction(location);
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
     public void BuildBattleActionMenu_Main(CharacterLogic chLogic)
     {
         BattleActionMenu.Clear();
-        CheckHasLocationEvent(chLogic);
-        var move = new UI_BattleActionMenu.UIActionButtonInfo("移动", BattleAction_Move);
+        CheckLocationEvent(chLogic);
+        CheckBattleTalkEvent(chLogic);
+        var move = new IActionMenu.UIActionButtonInfo("移动", BattleAction_Move);
         BattleActionMenu.AddAction(move);
-        var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
+        var attack = new IActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
         BattleActionMenu.AddAction(attack);
-        var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
+        var end = new IActionMenu.UIActionButtonInfo("待机", BattleAction_End);
         BattleActionMenu.AddAction(end);
-        BattleActionMenu.Show();
     }
     public void BuildBattleActionMenu_AfterMove(CharacterLogic chLogic)
     {
         BattleActionMenu.Clear();
-        CheckHasLocationEvent(chLogic);
-        var attack = new UI_BattleActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
+        CheckBattleTalkEvent(chLogic);
+        CheckLocationEvent(chLogic);
+        var attack = new IActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
         BattleActionMenu.AddAction(attack);
-        var end = new UI_BattleActionMenu.UIActionButtonInfo("待机", BattleAction_End);
+        var end = new IActionMenu.UIActionButtonInfo("待机", BattleAction_End);
         BattleActionMenu.AddAction(end);
-        BattleActionMenu.Show();
     }
     public void ShowBattleActionMenu(EActionMenuState state, CharacterLogic chLogic)
     {
+        HideBattleMainMenu();
         switch (state)
         {
             case EActionMenuState.Main:
                 BuildBattleActionMenu_Main(chLogic);
                 break;
-            case EActionMenuState.AfterMove:
-                BuildBattleActionMenu_AfterMove(chLogic);
-                break;
         }
         eActionMenuState = state;
+        BattleActionMenu.Show();
     }
-    public void HideBattlaActionMenu()
+    public void HideBattlaActionMenu(bool showMainMenu)
     {
+        Debug.Log("Hide " + showMainMenu);
+        if (showMainMenu) ShowBattleMainMenu();
         BattleActionMenu.Hide();
+    }
+
+    public void ShowBattleMainMenu()
+    {
+        BattleMainMenu.Clear();
+        var endTurn = new IActionMenu.UIActionButtonInfo("结束行动", EndPlayerTurn);
+        BattleMainMenu.AddAction(endTurn);
+        BattleMainMenu.Show();
+    }
+    public void HideBattleMainMenu()
+    {
+        BattleMainMenu.Hide();
     }
     #endregion
     public void BuildBattleSelectWeaponMenu(CharacterLogic chLogic)
@@ -200,10 +258,9 @@ public class UIManager : ManagerBase
         List<WeaponItem> weaponItems = chLogic.Info.Items.GetAllWeapons();
         foreach (var v in weaponItems)
         {
-            var weaponAction = new UI_BattleActionMenu.UIActionButtonInfo(v.GetName(), () => BattleAction_SelectWeapon(v));
+            var weaponAction = new IActionMenu.UIActionButtonInfo(v.GetName(), () => BattleAction_SelectWeapon(v));
             BattleSelectWeaponMenu.AddAction(weaponAction);
         }
-        BattleSelectWeaponMenu.Show();
     }
     private void BattleAction_SelectWeapon(WeaponItem item)
     {
@@ -230,6 +287,12 @@ public class UIManager : ManagerBase
         battleManager.ClearRangeAction();
         BattleSelectWeaponMenu.Show();
         BattleActionMenu.Hide();
+    }
+    private void EndPlayerTurn()
+    {
+        //将所有玩家的状态设置为已经行动
+        battleManager.ClearRangeAction();
+        chapterManager.NextTurn();
     }
     #region Battle Choose Weapon Action Menu
 

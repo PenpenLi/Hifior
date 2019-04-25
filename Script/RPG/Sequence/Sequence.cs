@@ -53,6 +53,10 @@ namespace Sequence
         [HideInInspector]
         [System.NonSerialized]
         public float executingIconTimer;
+        /// <summary>
+        /// 触发该事件的Event引用
+        /// </summary>
+        public EventInfoCollection.EventTypeBase EventRef;
 
         public List<SequenceEvent> commandList = new List<SequenceEvent>();
 

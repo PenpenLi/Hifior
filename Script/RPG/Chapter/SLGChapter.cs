@@ -119,12 +119,6 @@ public class SLGChapter : MonoBehaviour
     }
     #endregion
     #region 章节设置 检查事件
-    public void CheckTurn(int round, EnumCharacterCamp camp)
-    {
-        var turnEvent = EventInfo.GetTurnEvent(round, camp);
-        if (turnEvent == null) Debug.Log("没有Turn事件");
-        else Debug.Log("找到相匹配的Turn Event"+turnEvent);
-    }
 
     public void CheckEnemyLess(int count)
     {

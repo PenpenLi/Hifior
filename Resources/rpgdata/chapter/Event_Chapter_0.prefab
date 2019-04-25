@@ -220,6 +220,14 @@ MonoBehaviour:
   description: 
   DestroyWhenFinish: 0
   TimeSpan: 0
+  EventRef:
+    EventID: 0
+    Description: 
+    Enable: 1
+    HasTrigger: 0
+    SequenceName: 
+    Sequence: {fileID: 0}
+    Switcher: []
   commandList: []
 --- !u!1 &3919424368958165964
 GameObject:
@@ -298,6 +306,14 @@ MonoBehaviour:
   description: 
   DestroyWhenFinish: 0
   TimeSpan: 0
+  EventRef:
+    EventID: 0
+    Description: 
+    Enable: 1
+    HasTrigger: 0
+    SequenceName: 
+    Sequence: {fileID: 0}
+    Switcher: []
   commandList: []
 --- !u!1 &3919424369301072108
 GameObject:
@@ -310,7 +326,7 @@ GameObject:
   - component: {fileID: 3919424369301072110}
   - component: {fileID: 3919424369301072109}
   m_Layer: 0
-  m_Name: Event_Chapter_0_Start
+  m_Name: Event_Chapter_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -346,20 +362,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EventInfo:
-    TurnEvent: []
-    LocationEvent:
-    - Description: 
+    TurnEvent:
+    - EventID: 23
+      Description: 
       Enable: 1
+      HasTrigger: 0
+      SequenceName: 
+      Sequence: {fileID: 3919424368649164591}
+      Switcher: []
+      From: 2
+      To: 3
+      TriggerCamp: 0
+    LocationEvent:
+    - EventID: 0
+      Description: 
+      Enable: 1
+      HasTrigger: 0
       SequenceName: Visit
       Sequence: {fileID: 861155119795040568}
       Switcher: []
       Caption: 0
-      HasTrigger: 1
       TriggerOnceOnly: 1
-      DedicatedCharacter: 0
+      DedicatedCharacter: -1
       Location: {x: 8, y: 0}
-    RangeEvent: []
-    BattleTalkEvent: []
+    RangeEvent:
+    - EventID: 0
+      Description: 
+      Enable: 1
+      HasTrigger: 0
+      SequenceName: 
+      Sequence: {fileID: 861155119795040568}
+      Switcher: []
+      DedicatedCharacter: -1
+      DedicatedCareer: -1
+      Range:
+        x: 0
+        y: 0
+        width: 10
+        height: 10
+    BattleTalkEvent:
+    - EventID: 0
+      Description: 
+      Enable: 1
+      HasTrigger: 0
+      SequenceName: 
+      Sequence: {fileID: 861155119795040568}
+      Switcher: []
+      Sender: 1
+      Receiver: 0
+      ReceiverCamp: 0
+      Mutual: 1
     EnemiesLessEvent: []
     EnemyDieEvent: []
     WinCondition: []
@@ -958,6 +1010,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemId: -1
   IndentLevel: 0
+  DefaultWhenError: 0
   WhenTrue: {fileID: 2551400571942166677}
   WhenFalse: {fileID: 8981868927013950860}
   ID: 0

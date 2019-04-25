@@ -47,6 +47,11 @@ public class PathShower : MonoBehaviour
         HidePath(EPathShowerType.HighLight);
         ShowTiles(EPathShowerType.HighLight, pos, true, false);
     }
+    public void ShowTalkCharacterTiles(List<Vector2Int> pos)
+    {
+        HidePath(EPathShowerType.Heal);
+        ShowTiles(EPathShowerType.Heal, pos, true, false);
+    }
     public void ShowTiles(EPathShowerType t, List<Vector2Int> pos, bool showNow = true, bool hideOther = true)
     {
         var transRoot = GetTransformRoot(t);

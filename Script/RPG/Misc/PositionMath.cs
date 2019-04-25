@@ -53,6 +53,17 @@ public static class PositionMath
     {
         t.localPosition = CameraTilePositionFocusOnLocalPosition(pos);
     }
+    public static List<Vector2Int> GetSidewayTilePos(Vector2Int center)
+    {
+        List<Vector2Int> sidewayPos = new List<Vector2Int>();
+        var increment=new Vector2Int[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        foreach(var i in increment)
+        {
+            var p = center + i;
+            if (p.x >= 0 && p.y >= 0) sidewayPos.Add(p);
+        }
+        return sidewayPos;
+    }
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y
     /// <summary>

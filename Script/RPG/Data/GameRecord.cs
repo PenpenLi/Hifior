@@ -274,18 +274,23 @@ public class EventInfoCollection
     public struct EventEnableSwitch
     {
         public EnumEventTriggerCondition EventType;
-        public int Index;
+        public int EventID;
         public bool Enable;
     }
     //添加了Serializable标记的变量都需要被记录到存档中
     [System.Serializable]
     public class EventTypeBase
     {
+        public int EventID;
         public string Description;
         /// <summary>
         /// 是否可用,这个触发完就关闭
         /// </summary>
         public bool Enable;
+        /// <summary>
+        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
+        /// </summary>
+        public bool HasTrigger;
         public string SequenceName;
         public Sequence.Sequence Sequence;
         /// <summary>
@@ -306,10 +311,14 @@ public class EventInfoCollection
         public virtual void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
         {
             UnityEngine.Assertions.Assert.IsNotNull(Sequence, "即将执行的Sequence为Null");
+            Sequence.EventRef = this;
+            HasTrigger = true;
             Sequence.Execute(OnFinish);
             foreach (var s in Switcher)
             {
-                eventCollection.GetEventBase(s.EventType, s.Index).Enable = s.Enable;
+                var switchEvent = eventCollection.GetEventBase(s.EventType, s.EventID);
+                if (switchEvent == null) Debug.LogError("The Event u want switch enable is null");
+                else switchEvent.Enable = s.Enable;
             }
         }
         public override string ToString()
@@ -337,10 +346,6 @@ public class EventInfoCollection
         /// </summary>
         public int Receiver = -1;
         /// <summary>
-        /// 接收者的阵营
-        /// </summary>
-        public EnumCharacterCamp ReceiverCamp;
-        /// <summary>
         /// 是否互相触发
         /// </summary>
         public bool Mutual;
@@ -349,7 +354,7 @@ public class EventInfoCollection
             Enable = false;
             base.Execute(eventCollection, OnFinish);
         }
-        public string GetButtonString()
+        public string GetButtonText()
         {
             return "对话";
         }
@@ -369,19 +374,21 @@ public class EventInfoCollection
         /// 显示的文字
         /// </summary>
         public EnumLocationEventCaption Caption;
-        /// <summary>
-        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
-        /// </summary>
-        public bool HasTrigger = false;
-        public bool TriggerOnceOnly = true;
+        public bool TriggerOnceOnly;
         /// <summary>
         /// 指定的人才可以触发
         /// </summary>
-        public int DedicatedCharacter = -1;
+        public int DedicatedCharacter;
         /// <summary>
         /// 触发点
         /// </summary>
         public Vector2Int Location;
+        public LocationEventType()
+        {
+            DedicatedCharacter = -1;
+            HasTrigger = false;
+            TriggerOnceOnly = true;
+        }
         public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
         {
             if (TriggerOnceOnly) Enable = false;
@@ -396,10 +403,6 @@ public class EventInfoCollection
     [System.Serializable]
     public class RangeEventType : EventTypeBase
     {
-        /// <summary>
-        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
-        /// </summary>
-        private bool HasTrigger;
         /// <summary>
         /// 指定的人才可以触发
         /// </summary>
@@ -422,16 +425,14 @@ public class EventInfoCollection
     public class EnemiesLessEventType : EventTypeBase
     {
         /// <summary>
-        /// 是否已经触发过了，触发过不一定关闭该事件，这个只指示是否触发过
-        /// </summary>
-        private bool HasTrigger;
-        /// <summary>
         /// 触发数量
         /// </summary>
         public int TriggerNum;
         public override void Execute(EventInfoCollection eventCollection, UnityAction OnFinish)
         {
-            Enable = false;
+            TriggerNum--;
+            if (TriggerNum <= 0)
+                Enable = false;
             base.Execute(eventCollection, OnFinish);
         }
     }
@@ -465,22 +466,22 @@ public class EventInfoCollection
     [Tooltip("胜利条件")]
     public List<WinCondition> WinCondition;
 
-    public EventTypeBase GetEventBase(EnumEventTriggerCondition cond, int index)
+    public EventTypeBase GetEventBase(EnumEventTriggerCondition cond, int eventID)
     {
         switch (cond)
         {
             case EnumEventTriggerCondition.位置事件:
-                return LocationEvent[index];
+                return LocationEvent.Find((x) => { return x.EventID == eventID; });
             case EnumEventTriggerCondition.回合事件:
-                return TurnEvent[index];
+                return TurnEvent.Find((x) => { return x.EventID == eventID; });
             case EnumEventTriggerCondition.敌人少于事件:
-                return EnemiesLessEvent[index];
+                return EnemiesLessEvent.Find((x) => { return x.EventID == eventID; });
             case EnumEventTriggerCondition.敌人死亡事件:
-                return EnemyDieEvent[index];
+                return EnemyDieEvent.Find((x) => { return x.EventID == eventID; });
             case EnumEventTriggerCondition.范围事件:
-                return RangeEvent[index];
+                return RangeEvent.Find((x) => { return x.EventID == eventID; });
             case EnumEventTriggerCondition.战场对话事件:
-                return BattleTalkEvent[index];
+                return BattleTalkEvent.Find((x) => { return x.EventID == eventID; });
         }
         return null;
     }
@@ -491,7 +492,14 @@ public class EventInfoCollection
             if (Event.Enable && Event.Location == TilePosition)
             {
                 if (Event.DedicatedCharacter < 0 || CharacterID == Event.DedicatedCharacter)
+                {
+                    if (Event.HasTrigger && Event.TriggerOnceOnly) { Debug.Log("该事件已经触发过了"); return null; }
                     return Event;
+                }
+                else
+                {
+                    Debug.Log("角色ID不匹配,当前ID=" + CharacterID + " 期望的ID=" + Event.DedicatedCharacter);
+                }
             }
         }
         return null;
@@ -507,22 +515,32 @@ public class EventInfoCollection
         }
         return null;
     }
-    public RangeEventType GetRangeEvent(Vector2Int TilePosition)
+    public RangeEventType GetRangeEvent(int characterID, int career, Vector2Int TilePosition)
     {
         foreach (RangeEventType Event in RangeEvent)
         {
             if (Event.Enable && Range2D.InRange(TilePosition.x, TilePosition.y, Event.Range))
             {
+                if (Event.DedicatedCareer >= 0 && career != Event.DedicatedCareer)
+                {
+                    Debug.Log("不是特定职业");
+                    return null;
+                }
+                if (Event.DedicatedCharacter >= 0 && characterID != Event.DedicatedCareer)
+                {
+                    Debug.Log("不是特定Player ID");
+                    return null;
+                }
                 return Event;
             }
         }
         return null;
     }
-    public BattleTalkEventType GetBattleTalkEvent(int SenderCharacterID, int ReceiverCharacterID, EnumCharacterCamp ReceiverCamp)
+    public BattleTalkEventType GetBattleTalkEvent(int SenderCharacterID, int ReceiverCharacterID)
     {
         foreach (BattleTalkEventType Event in BattleTalkEvent)
         {
-            if (Event.Enable && Event.ReceiverCamp == ReceiverCamp)
+            if (Event.Enable)
             {
                 if (Event.Mutual)
                 {
@@ -670,7 +688,7 @@ public class GameRecord
     /// <returns>当前存档的章节数</returns>
     public ChapterRecordCollection LoadChapterFromDisk(int slot)
     {
-        ChapterRecordCollection v =new ChapterRecordCollection();
+        ChapterRecordCollection v = new ChapterRecordCollection();
         if (HasChapterSave(slot))
         {
             v = v.Load<ChapterRecordCollection>();

@@ -16,6 +16,7 @@ namespace Sequence
     /// </summary>
     public abstract class EventIf : SequenceEvent
     {
+        public bool DefaultWhenError;
         public abstract bool IsTrue();
         public GameObject WhenTrue;
         public GameObject WhenFalse;

@@ -1,7 +1,18 @@
 ﻿using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
+using System.Linq;
+public struct BattleTalkEventActionInfo
+{
+    public CharacterLogic Logic;
+    public EventInfoCollection.BattleTalkEventType Event;
+    public BattleTalkEventActionInfo(CharacterLogic l, EventInfoCollection.BattleTalkEventType e)
+    {
+        Logic = l;
+        Event = e;
+    }
+}
 public class BattleManager : ManagerBase
 {
 
@@ -11,6 +22,7 @@ public class BattleManager : ManagerBase
         Menu,
         SelectMove,
         SelectTarget,
+        SelectTalkTarget,
         Lock,
     }
     /// <summary>
@@ -19,13 +31,14 @@ public class BattleManager : ManagerBase
     public UnityAction<CharacterLogic> ShowMoveRangeAction;
     public UnityAction<CharacterLogic> ShowSelectTargetRangeAction;
     public UnityAction<CharacterLogic, Vector2Int> ShowEffectTargetRangeAction;
+    public UnityAction<List<Vector2Int>> ShowTalkCharacterRangeAction;
     public UnityAction<List<Vector2Int>> ShowHighlightRangeAction;
     public UnityAction ClearHighlightRangeAction;
     public UnityAction ClearRangeAction;
     public UnityAction<Vector2Int> UpdateSelectTileInfo;
     public UnityAction<CharacterLogic> UpdateSelectCharacterInfo;
     public System.Func<bool> IsRangeVisible;
-
+    private List<BattleTalkEventActionInfo> talkEventInfo;
     private RPGCharacter currentCharacter;
     public CharacterLogic CurrentCharacterLogic { get { if (currentCharacter == null) return null; return currentCharacter.Logic; } }
     private RPGCharacter selectTargetCharacter;
@@ -77,6 +90,9 @@ public class BattleManager : ManagerBase
             case EBattleState.SelectTarget:
                 HandleSelectTarget();
                 break;
+            case EBattleState.SelectTalkTarget:
+                HandleSelectTalkCharacter();
+                break;
             default:
                 break;
         }
@@ -116,7 +132,12 @@ public class BattleManager : ManagerBase
         if (inputManager.GetNoInput() && uiManager.MenuUndoAction != null)
         {
             if (uiManager.MenuUndoAction.Count == 0) Debug.LogWarning("Undo operation is empty");
-            else uiManager.MenuUndoAction.Pop().Invoke();
+            else
+            {
+                UnityAction undo = uiManager.MenuUndoAction.Pop();
+                if (AppConst.DebugMode) Debug.Log("Menu Undo Event = " + undo.Method);
+                undo.Invoke();
+            }
             return;
         }
         var vMouseInputState = inputManager.GetMouseInput();
@@ -162,7 +183,7 @@ public class BattleManager : ManagerBase
             }
             else
             {
-                WarningCannotMove();
+                WarningCannotSelect();
             }
         }
     }
@@ -171,7 +192,9 @@ public class BattleManager : ManagerBase
         gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
         if (inputManager.GetNoInput())
         {
-            uiManager.MenuUndoAction.Pop().Invoke();
+            UnityAction undo = uiManager.MenuUndoAction.Pop();
+            if (AppConst.DebugMode) Debug.Log(undo.Method);
+            undo.Invoke();
         }
         var vMouseInputState = inputManager.GetMouseInput();
         bool dirty = vMouseInputState.IsMouseTilePosChanged();
@@ -222,9 +245,67 @@ public class BattleManager : ManagerBase
             }
             else
             {
-                WarningCannotMove();
+                WarningCannotSelect();
             }
         }
+    }
+    public void HandleSelectTalkCharacter()
+    {
+        gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
+        var vMouseInputState = inputManager.GetMouseInput();
+        bool dirty = vMouseInputState.IsMouseTilePosChanged();
+        if (dirty)
+        {
+            if (talkEventInfo.Exists((BattleTalkEventActionInfo x) => { return x.Logic.GetTileCoord() == vMouseInputState.tilePos; }))
+            {
+                ShowHighlightRangeAction(new List<Vector2Int> { vMouseInputState.tilePos });
+            }
+        }
+        if (inputManager.GetNoInput())
+        {
+            CancelTalk();
+        }
+        if (vMouseInputState.IsClickedTile())
+        {
+            bool has = false;
+            foreach (var v in talkEventInfo)
+            {
+                if (v.Logic.GetTileCoord() == vMouseInputState.tilePos)
+                {
+                    has = true;
+                    ClearRangeAction();
+                    gameMode.BeforePlaySequence();
+                    v.Event.Execute(chapterManager.Event.EventInfo, () =>
+                    {
+                        gameMode.AfterPlaySequence();
+                        OpenMenu(EActionMenuState.Main);
+                    });
+                }
+            }
+            if (!has)
+            {
+                WarningCannotSelect();
+            }
+        }
+    }
+
+    public void SelectTalkCharacter(List<BattleTalkEventActionInfo> talkAction)
+    {
+        ChangeState(EBattleState.SelectTalkTarget);
+        talkEventInfo = talkAction;
+        var range = new List<Vector2Int>();
+        foreach (var v in talkEventInfo)
+        {
+            range.Add(v.Logic.GetTileCoord());
+            Debug.Log(v.Logic.GetID() + "  " + v.Logic.GetTileCoord());
+        }
+        ClearRangeAction();
+        ShowTalkCharacterRangeAction(range);
+
+    }
+    private void CancelTalk()
+    {
+        throw new NotImplementedException();
     }
 
     public void HandleLock()
@@ -256,18 +337,39 @@ public class BattleManager : ManagerBase
         CurrentCharacterLogic.SetTileCoord(destPos);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
-        gameMode.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), FinishMoveEvent);
+        gameMode.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), CheckRangeEvent);
     }
-    public void FinishMoveEvent()
+
+    public void CheckRangeEvent()
     {
-        OpenMenu(EActionMenuState.AfterMove, UndoCancelSelectTargetActionAndClearRange);
+        var rangeEvent = chapterManager.Event.EventInfo.GetRangeEvent(CurrentCharacterLogic.GetID(), CurrentCharacterLogic.GetCareer(), CurrentCharacterLogic.GetTileCoord());
+        if (AppConst.DebugMode)
+        {
+            if (rangeEvent == null) Debug.Log("没有Range事件");
+            else Debug.Log("找到相匹配的Range Event" + rangeEvent);
+        }
+        if (rangeEvent == null || rangeEvent.Sequence == null)
+        {
+            OpenMenu(EActionMenuState.Main, UndoCancelSelectTargetActionAndClearRange);
+            return;
+        }
+
+        //如果有事件发生，则在事件发生后显示回合条
+        {
+            gameMode.BeforePlaySequence();
+            rangeEvent.Execute(chapterManager.Event.EventInfo, () =>
+            {
+                gameMode.AfterPlaySequence();
+                OpenMenu(EActionMenuState.Main, UndoCancelSelectTargetActionAndClearRange);
+            });
+        }
     }
     public void CancelMove()
     {
         ShowMoveRangeAction(CurrentCharacterLogic);
         OpenMenu(EActionMenuState.Main, UndoCancelMainActionAndClearRange);
     }
-    public void WarningCannotMove()
+    public void WarningCannotSelect()
     {
 
     }
@@ -286,6 +388,7 @@ public class BattleManager : ManagerBase
             }
         }
     }
+
     public void ExecuteSkill()
     {
 
@@ -299,7 +402,7 @@ public class BattleManager : ManagerBase
     }
     public void CloseMenu()
     {
-        uiManager.HideBattlaActionMenu();
+        uiManager.HideBattlaActionMenu(true);
         gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
     }
 
@@ -322,7 +425,7 @@ public class BattleManager : ManagerBase
     public void UndoCancelSelectTargetActionAndClearRange()
     {
         ClearRangeAction();
-        OpenMenu(EActionMenuState.AfterMove, UndoCancelSelectTargetActionAndClearRange);
+        OpenMenu(EActionMenuState.Main, UndoCancelSelectTargetActionAndClearRange);
     }
     #endregion
 
