@@ -1,78 +1,82 @@
 ﻿using UnityEngine.Events;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
 namespace RPG.UI
 {
     public class IActionMenu : IPanel
-{
-    public struct UIActionButtonInfo
     {
-        public string name;
-        public UnityAction action;
-        public UIActionButtonInfo(string _name, UnityAction _action) { name = _name; action = _action; }
-    }
-
-    List<UIActionButtonInfo> buttonsInfo;
-    public List<Transform> buttons;
-    protected override void Awake()
-    {
-        base.Awake();
-        buttonsInfo = new List<UIActionButtonInfo>();
-        //AddAction(new UIActionButtonInfo("open", () => { Debug.Log("click Open"); }));
-    }
-    public override void Show()
-    {
-        base.Show();
-        RefreshUI();
-    }
-    public void Clear()
-    {
-        buttonsInfo.Clear();
-    }
-    public void AddAction(UIActionButtonInfo info)
-    {
-        buttonsInfo.Add(info);
-    }
-    public void AddActions(List<UIActionButtonInfo> info)
-    {
-        buttonsInfo.AddRange(info);
-    }
-    public void RefreshUI()
-    {
-        int infoCount = buttonsInfo.Count;
-        int childCount = transform.childCount;
-        int approveCount = infoCount - childCount;
-        for (int i = 0; i < approveCount; i++)
+        public struct UIActionButtonInfo
         {
-            var newObj = Instantiate<GameObject>(transform.GetChild(0).gameObject);
-            newObj.transform.SetParent(transform, false);
+            public string name;
+            public UnityAction action;
+            public bool enable;
+            public UIActionButtonInfo(string _name, UnityAction _action, bool _enable = true) { name = _name; action = _action; enable = _enable; }
         }
-        for (int i = 0; i < childCount; i++)
+        public Transform buttonParent;
+        List<UIActionButtonInfo> buttonsInfo;
+        protected override void Awake()
         {
-            var childTransform = transform.GetChild(i);
-            if (i < infoCount)
+            base.Awake();
+            if (buttonParent == null)
+                buttonParent = transform;
+            buttonsInfo = new List<UIActionButtonInfo>();
+            //AddAction(new UIActionButtonInfo("open", () => { Debug.Log("click Open"); }));
+        }
+        public override void Show()
+        {
+            base.Show();
+            RefreshUI();
+        }
+        public void Clear()
+        {
+            buttonsInfo.Clear();
+        }
+        public void AddAction(UIActionButtonInfo info)
+        {
+            buttonsInfo.Add(info);
+        }
+        public void AddActions(List<UIActionButtonInfo> info)
+        {
+            buttonsInfo.AddRange(info);
+        }
+        public void RefreshUI()
+        {
+            int infoCount = buttonsInfo.Count;
+            int childCount = buttonParent.childCount;
+            int approveCount = infoCount - childCount;
+            for (int i = 0; i < approveCount; i++)
             {
-                SetAction(childTransform, buttonsInfo[i]);
+                var newObj = Instantiate<GameObject>(buttonParent.GetChild(0).gameObject);
+                newObj.transform.SetParent(buttonParent, false);
             }
-            else
+            for (int i = 0; i < childCount; i++)
             {
-                ClearAction(childTransform);
+                var childTransform = buttonParent.GetChild(i);
+                if (i < infoCount)
+                {
+                    SetAction(childTransform, buttonsInfo[i]);
+                }
+                else
+                {
+                    ClearAction(childTransform);
+                }
             }
         }
+        private void SetAction(Transform t, UIActionButtonInfo info)
+        {
+            t.gameObject.SetActive(true);
+            var button = t.GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(info.action);
+            button.interactable = info.enable;
+            t.name = info.name;
+            t.GetComponentInChildren<Text>().text = info.name;
+        }
+        private void ClearAction(Transform t)
+        {
+            t.gameObject.SetActive(false);
+        }
     }
-    private void SetAction(Transform t, UIActionButtonInfo info)
-    {
-        var button = t.GetComponent<Button>();
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(info.action);
-        t.name = info.name;
-        t.GetComponentInChildren<Text>().text = info.name;
-    }
-    private void ClearAction(Transform t)
-    {
-        t.GetComponent<Button>().onClick.RemoveAllListeners();
-        t.gameObject.SetActive(false);
-    }
-}
 }

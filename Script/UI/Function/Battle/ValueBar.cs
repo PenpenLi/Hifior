@@ -11,7 +11,6 @@ namespace RPG.UI
         private RectTransform rPar;
         private RectTransform rChi;
         private RectTransform rExt;
-        private float MaxAbility = 60.0f;
         private float barX;
         private float barY;
         Image hp;
@@ -28,15 +27,11 @@ namespace RPG.UI
         }
 
         // Update is called once per frame
-        public void initBar(int Max, int Cur, int Extra)
+        public void initBar(int len, int Max, int Cur, int Extra)
         {
-            rPar.sizeDelta = new Vector2((Max / MaxAbility) * barX, barY);
-            rChi.sizeDelta = new Vector2((Cur / MaxAbility) * barX, barY);
-            rExt.sizeDelta = new Vector2(((Cur + Extra) / MaxAbility) * barX, barY);
-        }
-        public void setMax(float f)
-        {
-            MaxAbility = f;
+            rPar.sizeDelta = new Vector2((Max / (float)len) * barX, barY);
+            rChi.sizeDelta = new Vector2((Cur / (float)len) * barX, barY);
+            rExt.sizeDelta = new Vector2(((Cur + Extra) / (float)len) * barX, barY);
         }
     }
 }

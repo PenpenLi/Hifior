@@ -39,7 +39,8 @@ MonoBehaviour:
   - {fileID: 21300028, guid: 1e00d245abeb58743bb05103ef697989, type: 3}
   Level: 0
   Series: 0
-  UseWeaponTypeLevel: 0000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  MoveClass: 0
+  UseWeaponTypeLevel: ffffffffffffffff00000000ffffffff000000000000000000000000ffffffffffffffffffffffff
   Skill: 0
   ModelSize: 1
   MaxAttribute:
@@ -48,7 +49,19 @@ MonoBehaviour:
     MagicalPower: 60
     Skill: 60
     Speed: 60
-    Luck: 0
+    Intel: 0
     PhysicalDefense: 60
     MagicalDefense: 60
+    BodySize: 0
     Movement: 12
+  ActionCost:
+    Move: 30
+    Attack: 35
+    Skill: 35
+    Item: 30
+    ExchangeItem: 50
+    Heal: 35
+    Steal: 50
+    Visit: 50
+    OpenTreasureBox: 50
+    Talk: 50

@@ -1,5 +1,31 @@
 ﻿using UnityEngine;
-
+[System.Serializable]
+public class ActionPoint
+{
+    public int Move;
+    public int Attack;
+    public int Skill;
+    public int Item;
+    public int ExchangeItem;
+    public int Heal;
+    public int Steal;
+    public int Visit;
+    public int OpenTreasureBox;
+    public int Talk;
+    public ActionPoint()
+    {
+        Move = 30;
+        Attack = 35;
+        Skill = 35;
+        Item = 30;
+        ExchangeItem = 50;
+        Heal = 35;
+        Steal = 50;
+        Visit = 50;
+        OpenTreasureBox = 50;
+        Talk = 50;
+    }
+}
 public class CareerDef : ExtendScriptableObject
 {
     [ContextMenu("Json")]
@@ -39,5 +65,6 @@ public class CareerDef : ExtendScriptableObject
     /// <summary>
     /// 最大属性限制
     /// </summary>
-    public CharacterAttribute MaxAttribute; 
+    public CharacterAttribute MaxAttribute;
+    public ActionPoint ActionCost;
 }

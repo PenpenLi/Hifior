@@ -6,5 +6,10 @@ namespace RPG.UI
 {
     public class UI_BattleActionMenu : IActionMenu
     {
+        public Text Text_ActionPoint;
+        public void SetActionPoint(int p)
+        {
+            Text_ActionPoint.text = "AP:" + p;
+        }
     }
 }

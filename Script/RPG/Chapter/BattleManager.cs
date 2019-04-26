@@ -275,6 +275,7 @@ public class BattleManager : ManagerBase
                     has = true;
                     ClearRangeAction();
                     gameMode.BeforePlaySequence();
+                    CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Talk);
                     v.Event.Execute(chapterManager.Event.EventInfo, () =>
                     {
                         gameMode.AfterPlaySequence();
@@ -335,6 +336,7 @@ public class BattleManager : ManagerBase
     {
         Vector2Int srcPos = CurrentCharacterLogic.GetTileCoord();
         CurrentCharacterLogic.SetTileCoord(destPos);
+        CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Move);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
         gameMode.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), CheckRangeEvent);
@@ -350,7 +352,7 @@ public class BattleManager : ManagerBase
         }
         if (rangeEvent == null || rangeEvent.Sequence == null)
         {
-            OpenMenu(EActionMenuState.Main, UndoCancelSelectTargetActionAndClearRange);
+            OpenMenu(EActionMenuState.Main);
             return;
         }
 
@@ -360,7 +362,7 @@ public class BattleManager : ManagerBase
             rangeEvent.Execute(chapterManager.Event.EventInfo, () =>
             {
                 gameMode.AfterPlaySequence();
-                OpenMenu(EActionMenuState.Main, UndoCancelSelectTargetActionAndClearRange);
+                OpenMenu(EActionMenuState.Main);
             });
         }
     }
@@ -384,7 +386,17 @@ public class BattleManager : ManagerBase
             if (enemy != null)
             {
                 Debug.Log(v + "处发现敌方单位 ID=" + enemy.Logic.GetID());
-                //先转向然后进行抖动攻击
+                CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Attack);
+
+                //
+                List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(CurrentCharacterLogic, enemy.Logic);
+                Debug.Log(Utils.TextUtil.GetListString(attackInfo));
+                ClearRangeAction();
+                //应用伤害到人物身上，转向然后进行抖动攻击，并播放动画，在动画播放完毕后切换状态
+                //以Sequence的形式呈现战斗过程，
+                gameMode.BeforePlaySequence();
+                OpenMenu(EActionMenuState.Main);
+                gameMode.AfterPlaySequence();
             }
         }
     }

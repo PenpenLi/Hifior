@@ -42,7 +42,7 @@ namespace Sequence
             }
             if (waitUntilFinished)
             {
-                Utils.GameUtil.DelayFunc(Continue, duration);
+               DelayContinue(duration);
             }
             else
             {

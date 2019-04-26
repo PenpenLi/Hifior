@@ -6,12 +6,6 @@ namespace RPG.UI
 {
     public class TalkWithoutbg : IPanel
     {
-        private float TypeTime = 0.1f;
-        private Color COLOR_TRANS = new Color(0.345f, 0.302f, 0.784f, 0f);
-        private Color COLOR_LIGHT = new Color(0.345f, 0.302f, 0.784f, 0.784f);
-        private Color COLOR_DARK = new Color(0.176f, 0.176f, 0.476f, 0.784f);
-        private const int POS_TOP = 0;
-        private const int POS_BOTTOM = 1;
         public Image Top;
         public Image Char_Top;
         public Image Arrow_Top;
@@ -50,6 +44,17 @@ namespace RPG.UI
         "-1",
         "-0"
     };
+        private float TypeTime = 0.1f;
+        private Color COLOR_TRANS = new Color(0.345f, 0.302f, 0.784f, 0f);
+        private Color COLOR_LIGHT = new Color(0.345f, 0.302f, 0.784f, 0.784f);
+        private Color COLOR_DARK = new Color(0.176f, 0.176f, 0.476f, 0.784f);
+        private Color COLOR_WHITE = new Color(1f, 1f, 1f, 1f);
+        private const int POS_TOP = 0;
+        private const int POS_BOTTOM = 1;
+        private const int POS_BOTH = 2;
+        private bool HasTop(int pos) { return pos == POS_TOP || pos == POS_BOTH; }
+        private bool HasBottom(int pos) { return pos == POS_BOTTOM || pos == POS_BOTH; }
+        private int FadeSpeed { get { return ConstTable.SHOW_TALK_UI_FADE_TIME(); } }
         protected override void Awake()
         {
             base.Awake();
@@ -59,7 +64,14 @@ namespace RPG.UI
             gameObject.SetActive(false);
             Top.gameObject.SetActive(false);
             Bottom.gameObject.SetActive(false);
-        }/*
+            ContentBox_Top.text = null;
+            ContentBox_Bottom.text = null;
+        }
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            Show(mTalkData);
+        }
         void Update()
         {
             if (scriptLineIndex < mTalkData.Length)
@@ -87,7 +99,7 @@ namespace RPG.UI
             }
             else//此处结束显示
             {
-                SLGLevel.SLG._sound.NormalBGM();
+                SoundManage.Instance.NormalBGM();
                 if (Top.gameObject.activeSelf)
                 {
                     HideCharacter(POS_TOP);
@@ -97,13 +109,13 @@ namespace RPG.UI
                     HideCharacter(POS_BOTTOM);
                 }
                 if (!Top.gameObject.activeSelf && !Bottom.gameObject.activeSelf)
-                    StartCoroutine(fadeHide());
+                    StartCoroutine(IFadeHide(POS_BOTH, true));
             }
         }
         void setActive(int Pos)//设置哪个面板激活，激活的，对话框背景和人物头像均为高亮，且arrow不停的闪烁显示
                                //非激活的对话框背景和人物头像为灰色，且不显示箭头
         {
-            if (Pos == POS_TOP && Top.gameObject.activeSelf)
+            if (HasTop(Pos) && Top.gameObject.activeSelf)
             {
                 bTop = true;
                 bBottom = false;
@@ -119,7 +131,7 @@ namespace RPG.UI
                 Arrow_Bottom.gameObject.SetActive(false);
 
             }
-            if (Pos == POS_BOTTOM && Bottom.gameObject.activeSelf)
+            if (HasBottom(Pos) && Bottom.gameObject.activeSelf)
             {
                 bBottom = true;
                 bTop = false;
@@ -133,61 +145,60 @@ namespace RPG.UI
                 setColor(POS_BOTTOM, Color.white);
                 NameBox_Bottom.transform.parent.gameObject.SetActive(true);
                 Arrow_Bottom.gameObject.SetActive(true);
-
             }
         }
-        void SetTalkName(int Pos, int id)
+        void SetTalkName(int Pos, string name)
         {
-            if (Pos == POS_TOP)
+            if (HasTop(Pos))
             {
-                NameBox_Top.text = Table._GameCharTable.getName(id);
+                NameBox_Top.text = name;
             }
-            if (Pos == POS_BOTTOM)
+            if (HasBottom(Pos))
             {
-                NameBox_Bottom.text = Table._GameCharTable.getName(id);
+                NameBox_Bottom.text = name;
             }
         }
-        void ShowCharacter(int id, int Pos)
+        void ShowCharacter(int Pos, Sprite icon, string name)
         {
-            if (Pos == POS_TOP)
+            if (HasTop(Pos))
             {
                 bTop = true;
                 bBottom = false;
-                Char_Top.sprite = GameCharIconGroup.GetIcon(id);
-                NameBox_Top.text = Table._GameCharTable.getName(id);
+                Char_Top.sprite = icon;
+                NameBox_Top.text = name;
                 NameBox_Top.transform.parent.gameObject.SetActive(true);
                 NameBox_Bottom.transform.parent.gameObject.SetActive(false);
                 Arrow_Top.gameObject.SetActive(true);
                 Arrow_Bottom.gameObject.SetActive(false);
                 if (!Top.gameObject.activeSelf)
                 {
-                    StartCoroutine(fadeShow(POS_TOP));
+                    StartCoroutine(IFadeShow(POS_TOP));
                 }
             }
-            if (Pos == POS_BOTTOM)
+            if (HasBottom(Pos))
             {
                 bBottom = true;
                 bTop = false;
-                Char_Bottom.sprite = GameCharIconGroup.GetIcon(id);
-                NameBox_Bottom.text = Table._GameCharTable.getName(id);
+                Char_Bottom.sprite = icon;
+                NameBox_Bottom.text = name;
                 NameBox_Top.transform.parent.gameObject.SetActive(false);
                 NameBox_Bottom.transform.parent.gameObject.SetActive(true);
                 Arrow_Top.gameObject.SetActive(false);
                 Arrow_Bottom.gameObject.SetActive(true);
                 if (!Bottom.gameObject.activeSelf)
                 {
-                    StartCoroutine(fadeShow(POS_BOTTOM));
+                    StartCoroutine(IFadeShow(POS_BOTTOM));
                 }
             }
         }
 
         void HideCharacter(int Pos)
         {
-            if (Pos == POS_TOP && Top.gameObject.activeSelf)
+            if (HasTop(Pos) && Top.gameObject.activeSelf)
             {
                 Top.gameObject.SetActive(false);
             }
-            if (Pos == POS_BOTTOM && Bottom.gameObject.activeSelf)
+            if (HasBottom(Pos) && Bottom.gameObject.activeSelf)
             {
                 Bottom.gameObject.SetActive(false);
             }
@@ -200,7 +211,9 @@ namespace RPG.UI
                 int id, pos;
                 int.TryParse(code[0], out id);
                 int.TryParse(code[1], out pos);
-                ShowCharacter(id, pos);
+                Sprite icon = ResourceManager.GetPlayerDef(id).Portrait;
+                string name = ResourceManager.GetPlayerDef(id).CommonProperty.Name;
+                ShowCharacter(pos, icon, name);
                 return false;
             }
             else if (str.StartsWith("-"))
@@ -228,15 +241,16 @@ namespace RPG.UI
             {
                 if (lastLineIndex != scriptLineIndex)//翻译的不是同一行
                 {
-                    StartCoroutine(Typing(str));
+                    StartCoroutine(ITyping(str));
                 }
                 return true;
             }
         }
-        IEnumerator Typing(string s)
+        IEnumerator ITyping(string s)
         {
             int len = s.Length;
             bTyping = true;
+            yield return new WaitForSeconds(0.3f);
             for (int i = 1; i <= len; i++)
             {
                 if (bStopType)
@@ -273,13 +287,13 @@ namespace RPG.UI
                 NameBox_Bottom.color = color;
             }
         }
-        IEnumerator fadeShow(int Pos)
+        IEnumerator IFadeShow(int Pos)
         {
-            if (Pos == POS_TOP)
+            if (HasTop(Pos))
             {
                 Top.gameObject.SetActive(true);
                 setColor(POS_TOP, COLOR_TRANS);
-                for (int i = 60; i < 256; i += 6)
+                for (int i = 60; i < 256; i += FadeSpeed)
                 {
                     float a = (float)i / 255.0f;
                     Color col = new Color(Color.white.r, Color.white.g, Color.white.b, a);
@@ -288,11 +302,11 @@ namespace RPG.UI
                     yield return null;
                 }
             }
-            if (Pos == POS_BOTTOM)
+            if (HasBottom(Pos))
             {
                 Bottom.gameObject.SetActive(true);
                 setColor(POS_BOTTOM, COLOR_TRANS);
-                for (int i = 60; i < 256; i += 6)
+                for (int i = 60; i < 256; i += FadeSpeed)
                 {
                     float a = (float)i / 255.0f;
                     Color col = new Color(Color.white.r, Color.white.g, Color.white.b, a);
@@ -302,16 +316,49 @@ namespace RPG.UI
                 }
             }
         }
-        IEnumerator fadeHide()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Pos"></param>
+        /// <param name="fullyClose"> 是否是完全对话完毕或者跳过</param>
+        /// <returns></returns>
+        IEnumerator IFadeHide(int Pos, bool fullyClose)
         {
-            yield return new WaitForSeconds(0.5f);
-            gameObject.SetActive(false);
+            if (HasTop(Pos))
+            {
+                setColor(POS_TOP, COLOR_WHITE);
+                for (int i = 60; i < 256; i += FadeSpeed)
+                {
+                    float a = 1 - (float)i / 255.0f;
+                    Color col = new Color(Color.white.r, Color.white.g, Color.white.b, a);
+                    setColor(POS_TOP, col);
+                    Top.color = new Color(COLOR_TRANS.r, COLOR_TRANS.g, COLOR_TRANS.b, a - 56f / 255f);
+                    yield return null;
+                }
+            }
+            if (HasBottom(Pos))
+            {
+                setColor(POS_BOTTOM, COLOR_WHITE);
+                for (int i = 60; i < 256; i += FadeSpeed)
+                {
+                    float a = 1 - (float)i / 255.0f;
+                    Color col = new Color(Color.white.r, Color.white.g, Color.white.b, a);
+                    setColor(POS_BOTTOM, col);
+                    Bottom.color = new Color(COLOR_TRANS.r, COLOR_TRANS.g, COLOR_TRANS.b, a - 56f / 255f);
+                    yield return null;
+                }
+            }
+            if (fullyClose)
+            {
+                Hide(true);
+            }
         }
         public void Show(string[] talkData)
         {
             mTalkData = talkData;
-            SLGLevel.SLG._sound.LowerBGM();
+            TypeTime = ConstTable.SHOW_TEXT_TYPE_TIME();
+            SoundManage.Instance.LowerBGM();
             gameObject.SetActive(true);
-        }*/
+        }
     }
 }

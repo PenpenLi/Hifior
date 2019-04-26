@@ -23,8 +23,12 @@ public struct BattleAttackInfo
     /// 有些技能或者武器可能会反噬自己血量
     /// </summary>
     public int damageToAttack;
+    public override string ToString()
+    {
+        return "攻击方:" + attacker.GetName() + "    防御方:" + defender.GetName() + "\n" + "是否命中:" + hit + "  伤害:" + damageToDefender + "  反噬伤害:" + damageToAttack + "  吸收血量:" + suckFromDefender;
+    }
 }
-public class BattleLogic
+public static class BattleLogic
 {
     public static int RandomInt(int start, int end)
     {

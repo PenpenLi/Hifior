@@ -21,7 +21,6 @@ namespace RPG.UI
                 return ItemElement.SelectIndex;
             }
         }
-        private int currentSelectItemID = -1;
 
         public ItemElement[] Elements;
 
@@ -95,7 +94,6 @@ namespace RPG.UI
         }
         public void HideTip()
         {
-            currentSelectItemID = -1;
             UIController.ItemTipPanel.Hide();
         }
         public override void Tick(float DeltaTime)

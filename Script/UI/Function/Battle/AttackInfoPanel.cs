@@ -24,7 +24,7 @@ namespace RPG.UI
             Text_Attack.text = ch.GetAttack().ToString();
             Text_Hit.text = ch.GetHit().ToString();
             Text_Critical.text = ch.GetCritical().ToString();
-            Text_Range.text = ch.GetRangeMin() + "-" + ch.GetRangeMax();
+            Text_Range.text = ch.GetAttackRangeMin() + "-" + ch.GetAttackRangeMax();
             Text_Anger.text = ch.GetAnger().ToString();
             Text_AttackSpeed.text = ch.GetAttackSpeed().ToString();
             Text_AttackEffect.text = "攻击特效显示";//medifyneed

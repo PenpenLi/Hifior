@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public enum EModeSpeed
 {
     Normal,
     Fast,
     Slow
 }
-public class ConstTable
+public static class ConstTable
 {
     #region Resource文件夹 Prefab 路径
     public const string PREFAB_CANVAS = "Prefab/Canvas";
@@ -56,6 +57,37 @@ public class ConstTable
     public const float CONST_FAST_UNIT_DISAPPEAR_SPEED = 1.0f;
 
     public const float CONST_SHOW_GET_ITEM_MONEY_TIME = 2.5f;
+
+    public static float SHOW_TEXT_TYPE_TIME(EModeSpeed speed)
+    {
+        switch (speed)
+        {
+            case EModeSpeed.Normal:
+                return 0.08f;
+            case EModeSpeed.Fast:
+                return 0.04f;
+            case EModeSpeed.Slow:
+                return 0.12f;
+        }
+        return 0.08f;
+    }
+    public static float SHOW_TEXT_TYPE_TIME() { return SHOW_TEXT_TYPE_TIME(ModeSpeed); }
+    public static int SHOW_TALK_UI_FADE_TIME(EModeSpeed modeSpeed)
+    {
+        switch (modeSpeed)
+        {
+            case EModeSpeed.Normal:
+                return 10;
+            case EModeSpeed.Fast:
+                return 20;
+            case EModeSpeed.Slow:
+                return 6;
+        }
+        return 10;
+    }
+    public static int SHOW_TALK_UI_FADE_TIME() { return SHOW_TALK_UI_FADE_TIME(ModeSpeed); }
+
+
     public static Color CAMP_COLOR(EnumCharacterCamp camp)
     {
         switch (camp)

@@ -11,7 +11,7 @@ public class CPooledGameObjectScript : MonoBehaviour
 
 	private IPooledMonoBehaviour[] m_cachedIPooledMonos;
 
-	private bool m_inUse;
+	private bool m_inUse;public bool Used { get { return m_inUse; } }
 
 	public void Initialize(string prefabKey)
 	{

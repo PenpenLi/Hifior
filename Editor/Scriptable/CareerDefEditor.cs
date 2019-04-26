@@ -7,6 +7,7 @@ namespace RPGEditor
     {
         private static bool foldout_UseableWeapon = true;
         private static bool foldout_MaxAttribute = true;
+        private static bool foldout_ActionCost = true;
         private static string[] weaponLevelNames;
         private static int weaponLevelCount = 0;
         private static bool[] WeaponEnableTable;
@@ -103,6 +104,26 @@ namespace RPGEditor
                 career.MaxAttribute.BodySize = EditorGUILayout.IntSlider("体格", career.MaxAttribute.BodySize, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 career.MaxAttribute.Movement = EditorGUILayout.IntSlider("移动", career.MaxAttribute.Movement, 0, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
 
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndHorizontal();
+
+            }
+            foldout_ActionCost = EditorGUILayout.Foldout(foldout_ActionCost, "行动消耗");
+            if (foldout_ActionCost)
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginVertical();
+                career.ActionCost.Move = EditorGUILayout.IntSlider("移动", career.ActionCost.Move, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Attack = EditorGUILayout.IntSlider("攻击", career.ActionCost.Attack, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Skill = EditorGUILayout.IntSlider("技能", career.ActionCost.Skill, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Item = EditorGUILayout.IntSlider("物品", career.ActionCost.Item, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.ExchangeItem = EditorGUILayout.IntSlider("交换", career.ActionCost.ExchangeItem, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Heal = EditorGUILayout.IntSlider("治疗", career.ActionCost.Heal, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Steal = EditorGUILayout.IntSlider("偷取", career.ActionCost.Steal, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Visit = EditorGUILayout.IntSlider("访问", career.ActionCost.Visit, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.OpenTreasureBox = EditorGUILayout.IntSlider("宝箱", career.ActionCost.OpenTreasureBox, 0, RPGEditorGlobal.MAX_ACTION_COST);
+                career.ActionCost.Talk = EditorGUILayout.IntSlider("对话", career.ActionCost.Talk, 0, RPGEditorGlobal.MAX_ACTION_COST);
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
             }

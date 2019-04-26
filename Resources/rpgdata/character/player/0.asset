@@ -27,9 +27,10 @@ MonoBehaviour:
     MagicalPower: 6
     Skill: 7
     Speed: 7
-    Luck: 16
+    Intel: 1
     PhysicalDefense: 5
     MagicalDefense: 6
+    BodySize: 1
     Movement: 5
   TalkPortrait:
   - {fileID: 21300000, guid: 5594c626052984d408e737804d4727cf, type: 3}
@@ -37,15 +38,16 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5594c626052984d408e737804d4727cf, type: 3}
   - {fileID: 21300000, guid: 5594c626052984d408e737804d4727cf, type: 3}
   DefaultAttributeGrow:
-    HP: 98
-    PhysicalPower: 43
-    MagicalPower: 33
-    Skill: 41
-    Speed: 22
-    Luck: 45
-    PhysicalDefense: 30
-    MagicalDefense: 40
-    Movement: 4
+    HP: 1122
+    PhysicalPower: 97
+    MagicalPower: 131
+    Skill: 119
+    Speed: 222
+    Intel: 180
+    PhysicalDefense: 171
+    MagicalDefense: 133
+    BodySize: 49
+    Movement: 6
   DefaultWeapons: 0000000001000000
   DeadSpeech: "\u53D1\u653E"
   LeaveSpeech: 745456

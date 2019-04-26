@@ -136,7 +136,21 @@ public enum EnumCombatBuffEffect
     攻击所有单位,
     攻击己方单位
 }
-
+public enum EnumActionType
+{
+    Move,
+    Attack,
+    Skill,
+    Item,
+    ExchangeItem,
+    Heal ,
+    Steal,
+    Visit,
+    OpenTreasureBox,
+    Talk,
+    Wait,
+    None,
+}
 public enum EnumPassiveSkillEffect
 {
     人物属性百分比改变,

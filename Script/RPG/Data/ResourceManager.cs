@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System;
-
+#pragma warning disable 0649
 public static class ResourceManager
 {
     private const string ASSET_PROPS = "rpgdata/item/props";

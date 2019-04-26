@@ -68,6 +68,72 @@ public class UnitShower : MonoBehaviour
         }
         return null;
     }
+    public void SetDirection(SpriteRenderer sr, EDirection direction)
+    {
+        var anim = sr.GetComponent<MultiSpriteAnimator>();
+        anim.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Move);
+        switch (direction)
+        {
+            case EDirection.Left:
+                anim.SetActiveRange(0, 3);
+                break;
+            case EDirection.Right:
+                {
+                    anim.SetActiveRange(0, 3);
+                    sr.flipX = true;
+                }
+                break;
+            case EDirection.Down:
+                anim.SetActiveRange(8, 11);
+                break;
+            case EDirection.Up:
+                anim.SetActiveRange(4, 7);
+                break;
+        }
+    }
+    public void Shake(SpriteRenderer sr, EDirection direction,float duration, float intensity, UnityAction onFinish)
+    {
+        Vector2 distance = Vector2.zero;
+        float dis = intensity;
+        switch (direction)
+        {
+            case EDirection.Left:
+                distance = Vector2.left * dis;
+                break;
+            case EDirection.Right:
+                distance = Vector2.right * dis;
+                break;
+            case EDirection.Down:
+                distance = Vector2.down * dis;
+                break;
+            case EDirection.Up:
+                distance = Vector2.up * dis;
+                break;
+        }
+        StartCoroutine(shakeDirection(sr.transform, distance, duration, onFinish));
+    }
+    IEnumerator shakeDirection(Transform t, Vector2 move, float duration, UnityAction onFinish)
+    {
+        float halfDuration = duration / 2;
+        float targetTime = Time.time + halfDuration;
+        Vector3 src = t.localPosition;
+        Vector3 dest = t.localPosition + new Vector3(move.x, move.y, 0);
+        while (Time.time < targetTime)
+        {
+            t.localPosition = Vector3.Lerp(src, dest, 1.0f - (targetTime - Time.time) / halfDuration);
+            yield return null;
+        }
+        t.localPosition = dest;
+        yield return null;
+        targetTime += halfDuration;
+        while (Time.time < targetTime)
+        {
+            t.localPosition = Vector3.Lerp(src, dest, (targetTime - Time.time) / halfDuration);
+            yield return null;
+        }
+        t.localPosition = src;
+        if (onFinish != null) onFinish();
+    }
     IEnumerator moveCoroutine(MultiSpriteAnimator anim, List<Vector2Int> routine, float waitTime, UnityAction onFinish)
     {
         Transform t = anim.transform;

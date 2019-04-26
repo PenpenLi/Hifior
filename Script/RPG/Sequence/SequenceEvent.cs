@@ -42,6 +42,7 @@ namespace Sequence
         {
             OnEnter();
         }
+        public void DelayContinue(float delay) { Utils.GameUtil.DelayFunc(Continue, delay); }
 
         public virtual void Continue()
         {

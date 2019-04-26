@@ -14,6 +14,10 @@ public class CharacterBattleInfo
         Stole
     }
     /// <summary>
+    /// 人物行动点
+    /// </summary>
+    public int actionPoint;
+    /// <summary>
     /// 是否已经选择了目标Tile
     /// </summary>
     bool hasChooseTargetPos;
@@ -84,14 +88,14 @@ public class CharacterBattleInfo
     public static List<Vector2Int> GetTargetSelectRange(Vector2Int pos, Vector2Int dir, int rangeMax)
     {
         List<Vector2Int> attackArea = new List<Vector2Int>();
-        if (dir.x<0 && dir.y==0)
+        if (dir.x < 0 && dir.y == 0)
         {
             for (int i = 0; i < rangeMax; i++)
             {
                 for (int j = -i; j <= i; j++)
                 {
                     var v = pos - new Vector2Int(i, j);
-                    if(v.x>=0 && v.y>=0) attackArea.Add(v);
+                    if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
                 }
             }
         }
@@ -101,7 +105,7 @@ public class CharacterBattleInfo
             {
                 for (int j = -i; j <= i; j++)
                 {
-                    var v=pos + new Vector2Int(i, j);
+                    var v = pos + new Vector2Int(i, j);
                     if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
                 }
             }
@@ -112,7 +116,7 @@ public class CharacterBattleInfo
             {
                 for (int j = -i; j <= i; j++)
                 {
-                    var v=pos + new Vector2Int(j, i);
+                    var v = pos + new Vector2Int(j, i);
                     if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
                 }
             }
@@ -123,7 +127,7 @@ public class CharacterBattleInfo
             {
                 for (int j = -i; j <= i; j++)
                 {
-                    var v=pos - new Vector2Int(j, i);
+                    var v = pos - new Vector2Int(j, i);
                     if (v.x >= 0 && v.y >= 0) attackArea.Add(v);
                 }
             }
@@ -414,8 +418,53 @@ public class CharacterLogic
     public void StartAction()
     {
         hasFinishAction = false;
+        BattleInfo.actionPoint = 100;
     }
-
+    public int GetActionPoint()
+    {
+        return BattleInfo.actionPoint;
+    }
+    public bool IsActionEnable(EnumActionType t)
+    {
+        if (t == EnumActionType.Wait)
+            return true;
+        return GetActionPointCost(t) <= GetActionPoint();
+    }
+    public int GetActionPointCost(EnumActionType t)
+    {
+        switch (t)
+        {
+            case EnumActionType.Move:
+                return careerDef.ActionCost.Move;
+            case EnumActionType.Attack:
+                return careerDef.ActionCost.Attack;
+            case EnumActionType.Skill:
+                return careerDef.ActionCost.Skill;
+            case EnumActionType.Item:
+                return careerDef.ActionCost.Item;
+            case EnumActionType.ExchangeItem:
+                return careerDef.ActionCost.ExchangeItem;
+            case EnumActionType.Heal:
+                return careerDef.ActionCost.Heal;
+            case EnumActionType.Steal:
+                return careerDef.ActionCost.Steal;
+            case EnumActionType.Visit:
+                return careerDef.ActionCost.Visit;
+            case EnumActionType.OpenTreasureBox:
+                return careerDef.ActionCost.OpenTreasureBox;
+            case EnumActionType.Talk:
+                return careerDef.ActionCost.Talk;
+            case EnumActionType.Wait:
+                break;
+        }
+        return 0;
+    }
+    public int ConsumeActionPoint(EnumActionType action)
+    {
+        BattleInfo.actionPoint -= GetActionPointCost(action);
+        if (BattleInfo.actionPoint < 0) Debug.LogError("行动点已经小于0了");
+        return BattleInfo.actionPoint;
+    }
     #endregion
 
 
@@ -461,11 +510,11 @@ public class CharacterLogic
         var att = GetAttribute();
         return att.Intel;
     }
-    public int GetRangeMax()
+    public int GetAttackRangeMax()
     {
         return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.SelectRange.y;
     }
-    public int GetRangeMin()
+    public int GetAttackRangeMin()
     {
         return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.SelectRange.x;
     }

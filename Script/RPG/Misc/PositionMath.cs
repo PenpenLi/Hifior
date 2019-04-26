@@ -56,8 +56,8 @@ public static class PositionMath
     public static List<Vector2Int> GetSidewayTilePos(Vector2Int center)
     {
         List<Vector2Int> sidewayPos = new List<Vector2Int>();
-        var increment=new Vector2Int[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        foreach(var i in increment)
+        var increment = new Vector2Int[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        foreach (var i in increment)
         {
             var p = center + i;
             if (p.x >= 0 && p.y >= 0) sidewayPos.Add(p);
@@ -332,7 +332,7 @@ public static class PositionMath
             }
         }
     }
-    public static void InitActionScope(EnumCharacterCamp camp, EnumMoveClassType moveClass, int Movement, Vector2Int pos,Vector2Int atkRange)
+    public static void InitActionScope(EnumCharacterCamp camp, EnumMoveClassType moveClass, int Movement, Vector2Int pos, EnumSelectEffectRangeType weaponRangeType, Vector2Int atkRange)
     {
         _bPlayer = (camp == EnumCharacterCamp.Player);//0,2为我方的单位
 
@@ -363,6 +363,7 @@ public static class PositionMath
             _AttackRangeData.Clear();
             _ItemRangeMin = atkRange.x;
             _ItemRangeMax = atkRange.y;
+            _WeaponRangeType = weaponRangeType;
             if (_ItemRangeMax != 0 && _ItemRangeMax - _ItemRangeMin > -1)//武器有距离
             {
                 for (int i = 0; i < _PList.Count; i++)//遍历可移动的区域

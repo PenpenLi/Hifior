@@ -12,6 +12,7 @@ namespace RPGEditor
         public const int MAX_ATTRIBUTE_HP = 10000;
         public const int MAX_ATTRIBUTE_MISC = 1000;
         public const int MAX_ATTRIBUTE_MOVEMENT = 12;
+        public const int MAX_ACTION_COST = 100;
         public static void MarkSceneDirty()
         {
             EditorSceneManager.MarkAllScenesDirty();

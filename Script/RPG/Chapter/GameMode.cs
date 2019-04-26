@@ -67,7 +67,7 @@ public class GameMode : MonoSingleton<GameMode>
         battleManager.Init();
         gridTileManager.InitMouseInputEvent();
 
-        chapterManager.OnShowTurnIndicate +=uiManager.TurnIndicate.Show;
+        chapterManager.OnShowTurnIndicate += uiManager.TurnIndicate.Show;
 
         LogInitInfo();
         TestFunctionAddHere();
@@ -132,7 +132,7 @@ public class GameMode : MonoSingleton<GameMode>
 
     public void ShowMoveRange(CharacterLogic logic)
     {
-        PositionMath.InitActionScope(logic.Info.Camp, logic.GetMoveClass(), logic.GetMovement(), logic.GetTileCoord(), Vector2Int.one);
+        PositionMath.InitActionScope(logic.Info.Camp, logic.GetMoveClass(), logic.GetMovement(), logic.GetTileCoord(), EnumSelectEffectRangeType.菱形, Vector2Int.one);
         pathShower.ShowTiles(PathShower.EPathShowerType.Move, PositionMath.MoveableAreaPoints);
         pathShower.ShowTiles(PathShower.EPathShowerType.Damage, PositionMath.AttackAreaPoints, true, false);
     }
@@ -192,11 +192,11 @@ public class GameMode : MonoSingleton<GameMode>
         chapterManager.RemoveCharacter(ch);
         unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
     }
-    public void AttackUnit(CharacterLogic attacker,CharacterLogic defender)
+    public void AttackUnit(CharacterLogic attacker, CharacterLogic defender)
     {
         var atkPos = attacker.GetTileCoord();
         var defPos = defender.GetTileCoord();
-       //计算处方向 然后在Unitshower里面转向并攻击，抖动
+        //计算处方向 然后在Unitshower里面转向并攻击，抖动
     }
     #endregion
     #region Battle Manager

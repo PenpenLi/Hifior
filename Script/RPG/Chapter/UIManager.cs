@@ -82,7 +82,7 @@ public class UIManager : ManagerBase
     {
         BattleActionMenu.Hide();
         battleManager.ChangeState(BattleManager.EBattleState.SelectMove);
-        battleManager. ShowMoveRangeAction(battleManager.CurrentCharacterLogic);
+        battleManager.ShowMoveRangeAction(battleManager.CurrentCharacterLogic);
     }
     public void BattleAction_Attack()
     {
@@ -107,6 +107,23 @@ public class UIManager : ManagerBase
         battleManager.ChangeState(BattleManager.EBattleState.Idel);
     }
     #region  事件添加的菜单选项
+    public void CheckMoveAction(CharacterLogic chLogic)
+    {
+        var move = new IActionMenu.UIActionButtonInfo("移动", BattleAction_Move, chLogic.IsActionEnable(EnumActionType.Move));
+        BattleActionMenu.AddAction(move);
+    }
+    public void CheckAttackAction(CharacterLogic chLogic)
+    {
+        var attack = new IActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack, chLogic.IsActionEnable(EnumActionType.Attack));
+        BattleActionMenu.AddAction(attack);
+
+    }
+    public void CheckWaitAction(CharacterLogic chLogic)
+    {
+        var end = new IActionMenu.UIActionButtonInfo("待机", BattleAction_End, chLogic.IsActionEnable(EnumActionType.Wait));
+        BattleActionMenu.AddAction(end);
+
+    }
     /// <summary>
     /// 检查是否拥有位置事件
     /// </summary>
@@ -122,6 +139,13 @@ public class UIManager : ManagerBase
             return false;
         }
         Debug.Log("找到相匹配的Location Event" + locationEvent);
+
+        EnumActionType actionType = EnumActionType.None;
+        if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.宝箱 || locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开关 || locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开门)
+            actionType = EnumActionType.OpenTreasureBox;
+        if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.访问)
+            actionType = EnumActionType.Visit;
+
         info.name = locationEvent.GetButtonText();
         info.action = () =>
         {
@@ -135,6 +159,9 @@ public class UIManager : ManagerBase
                     ShowBattleActionMenu(ActionMenuState, chLogic);
                 });
             }
+
+            chLogic.ConsumeActionPoint(actionType);
+
             if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.占领)
             {
                 gameMode.ChapterManager.Event.CheckWin_Seize();
@@ -144,6 +171,7 @@ public class UIManager : ManagerBase
                 gameMode.GridTileManager.OpenDoor(new Vector2Int(0, 0));
             }
         };
+        info.enable = chLogic.IsActionEnable(actionType);
         return true;
     }
     public bool CheckLocationEvent(CharacterLogic chLogic)
@@ -185,6 +213,7 @@ public class UIManager : ManagerBase
             //点击选择后执行绑定后的动作
             battleManager.SelectTalkCharacter(talkEvents);
         };
+        info.enable = chLogic.IsActionEnable(EnumActionType.Talk);
         return true;
     }
     public bool CheckBattleTalkEvent(CharacterLogic chLogic)
@@ -202,25 +231,15 @@ public class UIManager : ManagerBase
     public void BuildBattleActionMenu_Main(CharacterLogic chLogic)
     {
         BattleActionMenu.Clear();
+        var point = chLogic.GetActionPoint();
+        BattleActionMenu.SetActionPoint(point);
         CheckLocationEvent(chLogic);
         CheckBattleTalkEvent(chLogic);
-        var move = new IActionMenu.UIActionButtonInfo("移动", BattleAction_Move);
-        BattleActionMenu.AddAction(move);
-        var attack = new IActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
-        BattleActionMenu.AddAction(attack);
-        var end = new IActionMenu.UIActionButtonInfo("待机", BattleAction_End);
-        BattleActionMenu.AddAction(end);
+        CheckMoveAction(chLogic);
+        CheckAttackAction(chLogic);
+        CheckWaitAction(chLogic);
     }
-    public void BuildBattleActionMenu_AfterMove(CharacterLogic chLogic)
-    {
-        BattleActionMenu.Clear();
-        CheckBattleTalkEvent(chLogic);
-        CheckLocationEvent(chLogic);
-        var attack = new IActionMenu.UIActionButtonInfo("攻击", BattleAction_Attack);
-        BattleActionMenu.AddAction(attack);
-        var end = new IActionMenu.UIActionButtonInfo("待机", BattleAction_End);
-        BattleActionMenu.AddAction(end);
-    }
+
     public void ShowBattleActionMenu(EActionMenuState state, CharacterLogic chLogic)
     {
         HideBattleMainMenu();

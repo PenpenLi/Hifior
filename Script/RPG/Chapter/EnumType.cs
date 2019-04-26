@@ -1,4 +1,11 @@
 ﻿
+public enum EDirection
+{
+    Left,
+    Right,
+    Down,
+    Up
+}
 public enum ETileType
 {
     Unreachable,

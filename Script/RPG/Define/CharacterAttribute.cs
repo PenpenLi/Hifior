@@ -1,6 +1,19 @@
 ﻿[System.Serializable]
 public class CharacterAttribute : System.ICloneable
 {
+    private static CharacterAttribute max;
+    public static CharacterAttribute Max
+    {
+        get
+        {
+            if (max == null)
+            {
+                max = new CharacterAttribute();
+                max.SetMaxium();
+            }
+            return max;
+        }
+    }
     public int HP;
     public int PhysicalPower;
     public int MagicalPower;
@@ -14,14 +27,14 @@ public class CharacterAttribute : System.ICloneable
     public void SetMaxium()
     {
         HP = 9999;
-        PhysicalPower = 1000;
-        MagicalPower = 1000;
-        Skill = 1000;
-        Speed = 1000;
-        Intel = 1000;
-        PhysicalDefense = 1000;
-        MagicalDefense = 1000;
-        BodySize = 1000;
+        PhysicalPower = 999;
+        MagicalPower = 999;
+        Skill = 999;
+        Speed = 999;
+        Intel = 999;
+        PhysicalDefense = 999;
+        MagicalDefense = 999;
+        BodySize = 999;
         Movement = 12;
     }
     public override string ToString()
