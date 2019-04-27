@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RPG.UI;
 using UnityEngine.Events;
+using System;
 
 public enum EActionMenuState
 {
@@ -23,6 +24,8 @@ public class UIManager : ManagerBase
     public UI_TurnIndicate TurnIndicate { private set; get; }
     public UI_GetItemOrMoney GetItemOrMoney { private set; get; }
     public UI_ScreenMask ScreenMask { private set; get; }
+    public UI_BattleAttackInfo Left_BattleAttackInfo { private set; get; }
+    public UI_BattleAttackInfo Right_BattleAttackInfo { private set; get; }
     private T FindPanelInChildren<T>(Transform t) where T : IPanel
     {
         T r = null;
@@ -44,6 +47,19 @@ public class UIManager : ManagerBase
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
         GetItemOrMoney = FindPanelInChildren<UI_GetItemOrMoney>(panelParent0_9);
+        {
+            Left_BattleAttackInfo = FindPanelInChildren<UI_BattleAttackInfo>(panelParent0_9);
+            Left_BattleAttackInfo.gameObject.name = "Left_BattleAttackInfo";
+            Right_BattleAttackInfo = GameObject.Instantiate(Left_BattleAttackInfo);
+            Right_BattleAttackInfo.gameObject.name = "Right_BattleAttackInfo";
+
+            var rrt = Right_BattleAttackInfo.GetComponent<RectTransform>();
+            rrt.SetParent(panelParent0_9, false);
+            rrt.anchorMin = Vector2.right;
+            rrt.anchorMax = Vector2.right;
+            rrt.pivot = Vector2.right;
+            rrt.anchoredPosition = Vector2.zero;
+        }
         MenuUndoAction = new Stack<UnityAction>();
     }
     public void InitMainUI(Transform panelParent)
@@ -174,6 +190,7 @@ public class UIManager : ManagerBase
         info.enable = chLogic.IsActionEnable(actionType);
         return true;
     }
+
     public bool CheckLocationEvent(CharacterLogic chLogic)
     {
         IActionMenu.UIActionButtonInfo location = new IActionMenu.UIActionButtonInfo();
@@ -315,6 +332,27 @@ public class UIManager : ManagerBase
     }
     #region Battle Choose Weapon Action Menu
 
+    #endregion
+
+    #region AttackInfo
+
+    public void ShowAttackInfo(CharacterLogic currentCharacterLogic, CharacterLogic logic)
+    {
+        WeaponItem equipWeapon = currentCharacterLogic.Info.Items.GetEquipWeapon();
+        var def = ResourceManager.GetWeaponDef(equipWeapon.ID);
+        Left_BattleAttackInfo.Show(currentCharacterLogic.GetPortrait(), def.Icon, def.CommonProperty.Name, currentCharacterLogic.GetMaxHP(), currentCharacterLogic.GetCurrentHP(),
+            currentCharacterLogic.GetHit(), BattleLogic.GetAttackDamage(currentCharacterLogic, logic), currentCharacterLogic.GetCritical(), BattleLogic.GetAttackCount(currentCharacterLogic, logic));
+
+        equipWeapon = logic.Info.Items.GetEquipWeapon();
+        def = ResourceManager.GetWeaponDef(equipWeapon.ID);
+        Right_BattleAttackInfo.Show(logic.GetPortrait(), def.Icon, def.CommonProperty.Name, logic.GetMaxHP(), logic.GetCurrentHP(),
+            logic.GetHit(), BattleLogic.GetAttackDamage(logic, currentCharacterLogic), logic.GetCritical(), BattleLogic.GetAttackCount(logic, currentCharacterLogic));
+    }
+    public void HideAttackInfo()
+    {
+        Left_BattleAttackInfo.Hide(false);
+        Right_BattleAttackInfo.Hide(false);
+    }
     #endregion
     #region Screen Fade
     public void ScreenDarkToNormal(float duration, UnityEngine.Events.UnityAction action = null)

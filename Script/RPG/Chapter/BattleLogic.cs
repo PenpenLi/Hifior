@@ -116,6 +116,15 @@ public static class BattleLogic
         }
         return r;
     }
+    public static int GetAttackCount(CharacterLogic attacker, CharacterLogic defender)
+    {
+        return 1;
+    }
+    public static int GetAttackDamage(CharacterLogic attacker, CharacterLogic defender)
+    {
+        int dmg= attacker.GetAttack() - defender.GetPhysicalDefense();
+        return Mathf.Max(0, dmg);
+    }
     public static List<BattleAttackInfo> GetAttackInfo(CharacterLogic attacker, CharacterLogic defender)
     {
         List<BattleAttackInfo> r = new List<BattleAttackInfo>();
@@ -136,7 +145,7 @@ public static class BattleLogic
             i.damageToAttack = 0;
             i.damageToDefender = GetDamage(i.attacker, i.defender);
             i.suckFromDefender = GetSuckedHP(i.attacker, i.damageToAttack);
-            i.hit = RandomYes(GetHit(i.attacker, i.defender)); 
+            i.hit = RandomYes(GetHit(i.attacker, i.defender));
         }
         r.Add(i);
         if (IsCounterAttack(attacker, defender))

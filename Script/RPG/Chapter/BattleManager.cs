@@ -204,9 +204,23 @@ public class BattleManager : ManagerBase
             if (targetSelectRange.Contains(vMouseInputState.tilePos))
             {
                 ShowEffectTargetRangeAction(CurrentCharacterLogic, vMouseInputState.tilePos);
+
+                var enemy = chapterManager.GetCharacterFromCoord(vMouseInputState.tilePos, EnumCharacterCamp.Enemy);
+                if (enemy != null)
+                {
+                    List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(CurrentCharacterLogic, enemy.Logic);
+                    uiManager.ShowAttackInfo(CurrentCharacterLogic, enemy.Logic);
+                }
+                else
+                {
+                    uiManager.HideAttackInfo();
+                }
             }
             else
+            {
                 ClearHighlightRangeAction();
+                uiManager.HideAttackInfo();
+            }
         }
         if (vMouseInputState.IsClickedTile())
         {
@@ -397,6 +411,7 @@ public class BattleManager : ManagerBase
                 gameMode.BeforePlaySequence();
                 OpenMenu(EActionMenuState.Main);
                 gameMode.AfterPlaySequence();
+                uiManager.HideAttackInfo();
             }
         }
     }

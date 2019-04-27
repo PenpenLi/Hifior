@@ -18,6 +18,8 @@ public class RPGCharacterBase
     public GameObject GetGameObject() { return transform.gameObject; }
     public SpriteRenderer GetSpriteRender() { return transform.GetComponent<SpriteRenderer>(); }
     public MultiSpriteAnimator GetMultiSpriteAnimator() { return transform.GetComponent<MultiSpriteAnimator>(); }
+    public SpriteRenderer GetHPSpriteRender() { return transform.GetChild(0).GetComponent<SpriteRenderer>(); }
+    public void SetHPBarVisible(bool enable) { transform.GetChild(0).gameObject.SetActive(enable); }
 
     public virtual void SetAI(ActionAI ai)
     {

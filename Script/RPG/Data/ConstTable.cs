@@ -88,16 +88,16 @@ public static class ConstTable
     public static int SHOW_TALK_UI_FADE_TIME() { return SHOW_TALK_UI_FADE_TIME(ModeSpeed); }
 
 
-    public static Color CAMP_COLOR(EnumCharacterCamp camp)
+    public static Color CAMP_COLOR(EnumCharacterCamp camp,float alpha=1.0f)
     {
         switch (camp)
         {
             case EnumCharacterCamp.Player:
-                return Color.blue;
+                return new Color(0,167f/255f,1,alpha);
             case EnumCharacterCamp.Enemy:
-                return Color.red;
+                return new Color(1.0f,98f/255f,20f/255f,alpha);
             case EnumCharacterCamp.Ally:
-                return Color.cyan;
+                return new Color(10f/255f,1,0,alpha);
             case EnumCharacterCamp.NPC:
                 return Color.green;
         }

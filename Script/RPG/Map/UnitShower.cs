@@ -8,9 +8,12 @@ public class UnitShower : MonoBehaviour
     public Transform[] UnitTransform;
     public Material[] UnitMaterials;
     public Material UnitGreyMaterial;
+    public Sprite BarSprite;
 
     public Transform GetUnitTransformRoot(EnumCharacterCamp t) { return UnitTransform[(int)t]; }
     private Dictionary<Vector2Int, MultiSpriteAnimator> keyValue = new Dictionary<Vector2Int, MultiSpriteAnimator>();
+    private const float HP_HEIGHT = 0.16f;
+    private const float HP_WIDTH = 1.0f;
     private void Awake()
     {
         UnitGreyMaterial = ResourceManager.UnitGreyMaterial;
@@ -19,17 +22,28 @@ public class UnitShower : MonoBehaviour
     public Transform AddUnit(EnumCharacterCamp t, string name, Sprite[] stay, Sprite[] move, Vector2Int tilePos)
     {
         Transform root = GetUnitTransformRoot(t);
-        GameObject v = new GameObject(name);
-        v.transform.SetParent(root, false);
-        var sr = v.AddComponent<SpriteRenderer>();
+        GameObject unit = new GameObject(name);
+        GameObject hp = new GameObject("hp");
+        unit.transform.SetParent(root, false);
+        var hp_sp = hp.AddComponent<SpriteRenderer>();
+        Utils.GameUtil.DelayFuncEndOfFrame(() => hp_sp.size = new Vector2(HP_WIDTH, HP_HEIGHT));
+        hp_sp.drawMode = SpriteDrawMode.Sliced;
+        hp_sp.sortingOrder = 1;
+        hp_sp.sprite = BarSprite;
+        hp_sp.color = ConstTable.CAMP_COLOR(t, 1.0f);
+        hp.transform.SetParent(unit.transform, false);
+        hp.transform.localPosition = new Vector3(-0.50f, 0.08f, 0);
+        hp.transform.localScale = Vector3.one;
+        hp.SetActive(false);
+        var sr = unit.AddComponent<SpriteRenderer>();
         sr.sharedMaterial = UnitMaterials[(int)t];
-        MultiSpriteAnimator anim = v.AddComponent<MultiSpriteAnimator>();
+        MultiSpriteAnimator anim = unit.AddComponent<MultiSpriteAnimator>();
         anim.SetAnimatorContent(MultiSpriteAnimator.EAnimateType.Stay, stay);
         anim.SetAnimatorContent(MultiSpriteAnimator.EAnimateType.Move, move);
         anim.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
-        PositionMath.SetUnitLocalPosition(v.transform, tilePos);
+        PositionMath.SetUnitLocalPosition(unit.transform, tilePos);
         keyValue.Add(tilePos, anim);
-        return v.transform;
+        return unit.transform;
     }
     public void ChangeUnitColor(Vector2Int pos, EnumCharacterCamp camp)
     {
@@ -91,7 +105,7 @@ public class UnitShower : MonoBehaviour
                 break;
         }
     }
-    public void Shake(SpriteRenderer sr, EDirection direction,float duration, float intensity, UnityAction onFinish)
+    public void Shake(SpriteRenderer sr, EDirection direction, float duration, float intensity, UnityAction onFinish)
     {
         Vector2 distance = Vector2.zero;
         float dis = intensity;
@@ -174,5 +188,23 @@ public class UnitShower : MonoBehaviour
         anim.GetComponent<SpriteRenderer>().flipX = false;
         anim.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
         if (onFinish != null) onFinish();
+    }
+
+    public void SetHP(SpriteRenderer sr, int max, int src, int dest, int speed, UnityAction onComplete = null)
+    {
+        StartCoroutine(ISetHPBar(sr, max, src, dest, speed, onComplete));
+    }
+    IEnumerator ISetHPBar(SpriteRenderer sr, int max, int src, int dest, int speed, UnityAction onComplete)
+    {
+        float srcR = (float)src / max;
+        float destR = (float)dest / max;
+        //sr.size = new Vector2(HP_WIDTH*srcR, HP_HEIGHT);
+        for (int i = 0; i < Application.targetFrameRate; i += speed)
+        {
+            float x = Mathf.Lerp(srcR, destR, (float)i / Application.targetFrameRate);
+            sr.size = new Vector2(HP_WIDTH * x, HP_HEIGHT);
+            yield return null;
+        }
+        if (onComplete != null) onComplete();
     }
 }

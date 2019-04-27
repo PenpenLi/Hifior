@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace RPG.UI
 {
-    public class TalkWithoutbg : IPanel
+    public class UI_TalkWithoutbg : IPanel
     {
         public Image Top;
         public Image Char_Top;
@@ -19,7 +19,6 @@ namespace RPG.UI
         public Text NameBox_Bottom;
 
         private bool bTop = false;
-        private bool bBottom = false;
 
         private int scriptLineIndex = 0;
         private int lastLineIndex = 0;
@@ -118,7 +117,6 @@ namespace RPG.UI
             if (HasTop(Pos) && Top.gameObject.activeSelf)
             {
                 bTop = true;
-                bBottom = false;
 
                 Top.color = COLOR_LIGHT;
                 setColor(POS_TOP, Color.white);
@@ -133,7 +131,6 @@ namespace RPG.UI
             }
             if (HasBottom(Pos) && Bottom.gameObject.activeSelf)
             {
-                bBottom = true;
                 bTop = false;
 
                 Top.color = COLOR_DARK;
@@ -163,7 +160,6 @@ namespace RPG.UI
             if (HasTop(Pos))
             {
                 bTop = true;
-                bBottom = false;
                 Char_Top.sprite = icon;
                 NameBox_Top.text = name;
                 NameBox_Top.transform.parent.gameObject.SetActive(true);
@@ -177,7 +173,6 @@ namespace RPG.UI
             }
             if (HasBottom(Pos))
             {
-                bBottom = true;
                 bTop = false;
                 Char_Bottom.sprite = icon;
                 NameBox_Bottom.text = name;
