@@ -281,7 +281,7 @@ public class CharacterLogic
     }
     public int GetMovement()
     {
-        return 6;
+        return Info.Attribute.Movement;
     }
     public Vector2Int GetTileCoord()
     {
@@ -350,6 +350,18 @@ public class CharacterLogic
     }
     public int GetCurrentHP()
     {
+        return Info.CurrentHP;
+    }
+    public int Damage(int i)
+    {
+        Info.CurrentHP -= i;
+        Info.CurrentHP = Mathf.Max(Info.CurrentHP, 0);
+        return Info.CurrentHP;
+    }
+    public int Heal(int i)
+    {
+        Info.CurrentHP += i;
+        Info.CurrentHP = Mathf.Max(Info.MaxHP, 0);
         return Info.CurrentHP;
     }
     public int GetExp()
@@ -479,11 +491,11 @@ public class CharacterLogic
         var att = GetAttribute();
         int itemType = (int)itemDef.WeaponType;
         int power = itemDef.Power;
-        if (itemType > 0 && itemType <= 4)
+        if (itemType >= 0 && itemType < 4)
             return att.PhysicalPower + power;
-        if (itemType > 4 && itemType <= 8)
+        if (itemType >= 4 && itemType < 8)
             return att.MagicalPower + power;
-        if (itemType > 8)
+        if (itemType >= 8)
             return att.PhysicalPower + att.MagicalPower + power;
         return 0;
     }
@@ -492,7 +504,7 @@ public class CharacterLogic
     {
         WeaponItem equipItem = Info.Items.GetEquipWeapon();
         var att = GetAttribute();
-        return ResourceManager.GetWeaponDef(equipItem.ID).Hit + att.Skill;//武器命中+技术
+        return ResourceManager.GetWeaponDef(equipItem.ID).Hit + att.Skill + att.Intel/ 2;//武器命中+技术
     }
     public int GetCritical()
     {
@@ -503,7 +515,7 @@ public class CharacterLogic
     public int GetAvoid()
     { //自身速度+自身幸运+支援效果+地形效果
         var att = GetAttribute();
-        return att.Speed + att.Intel;//getMapAvoid()
+        return (att.Speed + att.Intel)/2;//getMapAvoid()
     }
     public int GetCriticalAvoid()
     {

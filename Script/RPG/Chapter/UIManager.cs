@@ -21,6 +21,7 @@ public class UIManager : ManagerBase
     public UI_BattleMainMenu BattleMainMenu { private set; get; }
     public UI_BattleSelectWeaponMenu BattleSelectWeaponMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
+    public UI_TalkWithoutbg TalkDialog { private set; get; }
     public UI_TurnIndicate TurnIndicate { private set; get; }
     public UI_GetItemOrMoney GetItemOrMoney { private set; get; }
     public UI_ScreenMask ScreenMask { private set; get; }
@@ -44,6 +45,7 @@ public class UIManager : ManagerBase
         BattleMainMenu = FindPanelInChildren<UI_BattleMainMenu>(panelParent9_16);
         BattleSelectWeaponMenu = FindPanelInChildren<UI_BattleSelectWeaponMenu>(panelParent9_16);
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
+        TalkDialog = FindPanelInChildren<UI_TalkWithoutbg>(panelParent0_9);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
         GetItemOrMoney = FindPanelInChildren<UI_GetItemOrMoney>(panelParent0_9);
@@ -52,7 +54,7 @@ public class UIManager : ManagerBase
             Left_BattleAttackInfo.gameObject.name = "Left_BattleAttackInfo";
             Right_BattleAttackInfo = GameObject.Instantiate(Left_BattleAttackInfo);
             Right_BattleAttackInfo.gameObject.name = "Right_BattleAttackInfo";
-
+            Right_BattleAttackInfo.gameObject.SetActive(true);
             var rrt = Right_BattleAttackInfo.GetComponent<RectTransform>();
             rrt.SetParent(panelParent0_9, false);
             rrt.anchorMin = Vector2.right;
@@ -340,18 +342,40 @@ public class UIManager : ManagerBase
     {
         WeaponItem equipWeapon = currentCharacterLogic.Info.Items.GetEquipWeapon();
         var def = ResourceManager.GetWeaponDef(equipWeapon.ID);
-        Left_BattleAttackInfo.Show(currentCharacterLogic.GetPortrait(), def.Icon, def.CommonProperty.Name, currentCharacterLogic.GetMaxHP(), currentCharacterLogic.GetCurrentHP(),
+        int afterHP = currentCharacterLogic.GetCurrentHP() - BattleLogic.GetAttackDamage(logic, currentCharacterLogic);
+        Left_BattleAttackInfo.Show(currentCharacterLogic.GetPortrait(), def.Icon, def.CommonProperty.Name, currentCharacterLogic.GetMaxHP(), currentCharacterLogic.GetCurrentHP(), afterHP,
             currentCharacterLogic.GetHit(), BattleLogic.GetAttackDamage(currentCharacterLogic, logic), currentCharacterLogic.GetCritical(), BattleLogic.GetAttackCount(currentCharacterLogic, logic));
 
         equipWeapon = logic.Info.Items.GetEquipWeapon();
         def = ResourceManager.GetWeaponDef(equipWeapon.ID);
-        Right_BattleAttackInfo.Show(logic.GetPortrait(), def.Icon, def.CommonProperty.Name, logic.GetMaxHP(), logic.GetCurrentHP(),
+        afterHP = logic.GetCurrentHP() - BattleLogic.GetAttackDamage(currentCharacterLogic, logic);
+        Right_BattleAttackInfo.Show(logic.GetPortrait(), def.Icon, def.CommonProperty.Name, logic.GetMaxHP(), logic.GetCurrentHP(), afterHP,
             logic.GetHit(), BattleLogic.GetAttackDamage(logic, currentCharacterLogic), logic.GetCritical(), BattleLogic.GetAttackCount(logic, currentCharacterLogic));
     }
     public void HideAttackInfo()
     {
         Left_BattleAttackInfo.Hide(false);
         Right_BattleAttackInfo.Hide(false);
+    }
+    public void ShowBattleHPBar(bool show)
+    {
+        foreach (var v in chapterManager.GetAllCharacters())
+        {
+            var sr = v.GetHPSpriteRender();
+            if (sr != null) sr.gameObject.SetActive(show);
+        }
+    }
+    public void ShowAttackChangeHP(bool left, SpriteRenderer sr, int max, int src, int dest, int speed, UnityAction onComplete = null)
+    {
+        UI_BattleAttackInfo ui = left ? Left_BattleAttackInfo : Right_BattleAttackInfo;
+        gameMode.unitShower.SetHP(sr, max, src, dest, ConstTable.UI_VALUE_BAR_SPEED());
+        ui.SetHP(max, src, dest, ConstTable.UI_VALUE_BAR_SPEED(), ConstTable.UI_WAIT_TIME(), onComplete);
+    }
+    public void ShowAttackChangeHP(bool left, SpriteRenderer sr, int max, int src, int dest, int speed,float waitTime, UnityAction onComplete = null)
+    {
+        UI_BattleAttackInfo ui = left ? Left_BattleAttackInfo : Right_BattleAttackInfo;
+        gameMode.unitShower.SetHP(sr, max, src, dest, ConstTable.UI_VALUE_BAR_SPEED());
+        ui.SetHP(max, src, dest, ConstTable.UI_VALUE_BAR_SPEED(), waitTime, onComplete);
     }
     #endregion
     #region Screen Fade
@@ -377,4 +401,5 @@ public class UIManager : ManagerBase
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
     }
     #endregion
+
 }

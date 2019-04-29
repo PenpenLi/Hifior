@@ -94,7 +94,7 @@ namespace RPG.UI
         }
         public void HideTip()
         {
-            UIController.ItemTipPanel.Hide();
+
         }
         public override void Tick(float DeltaTime)
         {

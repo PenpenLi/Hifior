@@ -6,6 +6,7 @@ namespace RPGEditor
     public class RPGEditorGlobal
     {
         public const int MAX_ADDATTIBUTE = 100;
+        public const int MAX_GROW = 100;
         public const int MAX_ADDGROW = 100;
         public const int MAX_ATTACK_SELECT_RANGE = 10;
         public const int MAX_ATTACK_EFFECT_RANGE = 10;

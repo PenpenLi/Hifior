@@ -23,10 +23,6 @@ namespace RPG.UI
         }
         public override void OnCancelKeyDown()
         {
-            if (UIController.ItemTipPanel.gameObject.activeSelf)
-                UIController.ItemTipPanel.Hide();
-            else
-                base.Hide();
         }
     }
 }

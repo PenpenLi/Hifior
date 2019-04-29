@@ -208,7 +208,6 @@ public class BattleManager : ManagerBase
                 var enemy = chapterManager.GetCharacterFromCoord(vMouseInputState.tilePos, EnumCharacterCamp.Enemy);
                 if (enemy != null)
                 {
-                    List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(CurrentCharacterLogic, enemy.Logic);
                     uiManager.ShowAttackInfo(CurrentCharacterLogic, enemy.Logic);
                 }
                 else
@@ -400,18 +399,9 @@ public class BattleManager : ManagerBase
             if (enemy != null)
             {
                 Debug.Log(v + "处发现敌方单位 ID=" + enemy.Logic.GetID());
-                CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Attack);
 
-                //
-                List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(CurrentCharacterLogic, enemy.Logic);
-                Debug.Log(Utils.TextUtil.GetListString(attackInfo));
                 ClearRangeAction();
-                //应用伤害到人物身上，转向然后进行抖动攻击，并播放动画，在动画播放完毕后切换状态
-                //以Sequence的形式呈现战斗过程，
-                gameMode.BeforePlaySequence();
-                OpenMenu(EActionMenuState.Main);
-                gameMode.AfterPlaySequence();
-                uiManager.HideAttackInfo();
+                gameMode.AttackUnit(CurrentCharacterLogic, enemy.Logic);
             }
         }
     }

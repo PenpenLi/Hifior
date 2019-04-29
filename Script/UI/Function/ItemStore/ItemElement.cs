@@ -60,17 +60,17 @@ namespace RPG.UI
         }
         public void ShowTip()
         {
-            UIController.ItemTipPanel.Show(transform.position, TipContent);
+            //UIController.ItemTipPanel.Show(transform.position, TipContent);
         }
         public void HideTip()
         {
-            UIController.ItemTipPanel.Hide();
+            //UIController.ItemTipPanel.Hide();
         }
 
         public void OnSelect(UnityEngine.EventSystems.BaseEventData eventData)
         {
             SelectIndex = ItemIndex;
-            if (UIController.ItemTipPanel.gameObject.activeSelf)
+            if (gameObject.activeSelf)
             {
                 ShowTip();
             }

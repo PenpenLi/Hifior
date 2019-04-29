@@ -113,6 +113,21 @@ public static class ConstTable
         }
         return CONST_NORMAL_UNIT_MOVE_SPEED;
     }
+    public static int UI_VALUE_BAR_SPEED()
+    {
+        return (int)UNIT_MOVE_SPEED(ModeSpeed);
+    }
+    public static float UI_WAIT_TIME()
+    {
+        switch (ModeSpeed)
+        {
+            case EModeSpeed.Fast:
+                return 1.5f;
+            case EModeSpeed.Slow:
+                return 0.5f;
+        }
+                return 1.0f;
+    }
     public static float UNIT_DISAPPEAR_SPEED() { return UNIT_DISAPPEAR_SPEED(ModeSpeed); }
     public static float UNIT_DISAPPEAR_SPEED(EModeSpeed speed)
     {

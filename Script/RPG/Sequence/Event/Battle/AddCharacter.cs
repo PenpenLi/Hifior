@@ -15,15 +15,14 @@ namespace Sequence
         public List<int> Items;
         public override void OnEnter()
         {
-           if(Camp== EnumCharacterCamp.Player)
+            if (UseDefaultAttribute) Attribute = null;
+            if (Camp == EnumCharacterCamp.Player)
             {
-                if (UseDefaultAttribute) Attribute = null;
-                RPGCharacter ch = RPGPlayer.Create(ID,Attribute);
-                gameMode.AddUnitToMap(ch,Coord);
+                RPGCharacter ch = RPGPlayer.Create(ID, Attribute);
+                gameMode.AddUnitToMap(ch, Coord);
             }
             if (Camp == EnumCharacterCamp.Enemy)
             {
-                if (UseDefaultAttribute) Attribute = null;
                 RPGCharacter ch = RPGEnemy.Create(ID, Attribute);
                 gameMode.AddUnitToMap(ch, Coord);
             }

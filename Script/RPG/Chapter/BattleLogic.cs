@@ -9,10 +9,11 @@ public struct BattleAttackEstimateInfo
 /// <summary>
 /// 战斗出击的信息
 /// </summary>
-public struct BattleAttackInfo
+public class BattleAttackInfo
 {
     public CharacterLogic attacker;
     public CharacterLogic defender;
+    public BattleAttackInfo(CharacterLogic att, CharacterLogic def) { attacker = att; defender = def; }
     public bool hit;
     /// <summary>
     /// 攻击方吸收的血量
@@ -23,6 +24,22 @@ public struct BattleAttackInfo
     /// 有些技能或者武器可能会反噬自己血量
     /// </summary>
     public int damageToAttack;
+    public void Process()
+    {
+        if (BattleLogic.IsHurtSelf(attacker, defender))
+        {
+            damageToAttack = BattleLogic.GetDamage(attacker, attacker);
+            damageToDefender = 0;
+            suckFromDefender = 0;
+            hit = true;
+        }
+        {
+            damageToAttack = 0;
+            damageToDefender = BattleLogic.GetDamage(attacker, defender);
+            suckFromDefender = BattleLogic.GetSuckedHP(attacker, damageToDefender);
+            hit = BattleLogic.RandomYes(BattleLogic.GetHit(attacker, defender));
+        }
+    }
     public override string ToString()
     {
         return "攻击方:" + attacker.GetName() + "    防御方:" + defender.GetName() + "\n" + "是否命中:" + hit + "  伤害:" + damageToDefender + "  反噬伤害:" + damageToAttack + "  吸收血量:" + suckFromDefender;
@@ -78,7 +95,9 @@ public static class BattleLogic
     /// <returns></returns>
     public static int GetHit(CharacterLogic attacker, CharacterLogic defender)
     {
-        return attacker.GetHit() - defender.GetAvoid();
+        var hit= attacker.GetHit() - defender.GetAvoid();
+        hit = Mathf.Clamp(hit,0, 100);
+        return hit;
     }
     /// <summary>
     /// 武器或者技能触发多次连续攻击
@@ -122,51 +141,27 @@ public static class BattleLogic
     }
     public static int GetAttackDamage(CharacterLogic attacker, CharacterLogic defender)
     {
-        int dmg= attacker.GetAttack() - defender.GetPhysicalDefense();
+        int dmg = attacker.GetAttack() - defender.GetPhysicalDefense();
         return Mathf.Max(0, dmg);
     }
-    public static List<BattleAttackInfo> GetAttackInfo(CharacterLogic attacker, CharacterLogic defender)
+
+
+    public static bool IsDead(BattleAttackInfo info, CharacterLogic logic)
+    {
+        return (info.hit && logic.GetCurrentHP() < info.damageToDefender);
+    }
+    public static List<BattleAttackInfo> GetAttackInfo(CharacterLogic player, CharacterLogic enemy)
     {
         List<BattleAttackInfo> r = new List<BattleAttackInfo>();
-        var atkA = attacker.Info.Attribute;
-        var defA = defender.Info.Attribute;
-        BattleAttackInfo i = new BattleAttackInfo();
-        i.attacker = attacker;
-        i.defender = defender;
-        if (IsHurtSelf(i.attacker, i.defender))
-        {
-            i.damageToAttack = GetDamage(i.attacker, i.attacker);
-            i.damageToDefender = 0;
-            i.suckFromDefender = 0;
-            i.hit = true;
-        }
-        else
-        {
-            i.damageToAttack = 0;
-            i.damageToDefender = GetDamage(i.attacker, i.defender);
-            i.suckFromDefender = GetSuckedHP(i.attacker, i.damageToAttack);
-            i.hit = RandomYes(GetHit(i.attacker, i.defender));
-        }
+        var atkA = player.Info.Attribute;
+        var defA = enemy.Info.Attribute;
+        BattleAttackInfo i = new BattleAttackInfo(player, enemy);
+        i.Process();
         r.Add(i);
-        if (IsCounterAttack(attacker, defender))
+        if (IsDead(i, enemy) == false && IsCounterAttack(player, enemy))
         {
-            BattleAttackInfo j = new BattleAttackInfo();
-            j.attacker = defender;
-            j.defender = attacker;
-            if (IsHurtSelf(j.attacker, j.defender))
-            {
-                j.damageToAttack = 0;
-                j.suckFromDefender = 0;
-                j.damageToDefender = GetDamage(j.attacker, j.attacker);
-                j.hit = true;
-            }
-            else
-            {
-                j.damageToAttack = GetDamage(j.attacker, j.defender);
-                j.damageToDefender = 0;
-                j.suckFromDefender = GetSuckedHP(j.attacker, j.damageToAttack);
-                j.hit = RandomYes(GetHit(j.attacker, j.defender));
-            }
+            BattleAttackInfo j = new BattleAttackInfo(enemy, player);
+            j.Process();
             r.Add(j);
         }
         return r;

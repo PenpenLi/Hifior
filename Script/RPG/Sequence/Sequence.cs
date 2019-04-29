@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Sequence
 {
-    [HierarchyIcon("Sequence.png",1)]
+    [HierarchyIcon("Sequence.png", 1)]
     public class Sequence : MonoBehaviour
     {
         [ExecuteInEditMode]
@@ -91,11 +91,21 @@ namespace Sequence
                 command.commandIndex = index++;
             }
         }
-
+        public void Reset()
+        {
+            Awake();
+        }
+        public void Clear()
+        {
+            foreach (var v in commandList)
+            {
+                DestroyImmediate(v.gameObject, false);
+            }
+        }
         void Update()
         {
             if (Skipable && GameMode.Instance.InputManager.GetStartInput())
-                UIController.ScreenNormalToDark(1.0f, true, delegate { Stop(); OnFinish.Invoke(); });
+                GameMode.Instance.UIManager.ScreenNormalToDark(1.0f, true, delegate { Stop(); OnFinish.Invoke(); });
         }
 
         public virtual bool IsExecuting()
@@ -182,7 +192,7 @@ namespace Sequence
             }
             if (DestroyWhenFinish)
             {
-                Destroy(gameObject,TimeSpan);
+                Destroy(gameObject, TimeSpan);
             }
         }
 

@@ -7,7 +7,6 @@ namespace RPG.UI
         public override void Show()
         {
             base.Show();
-            UIController.ScreenNormalToDark(2.0f, false, Hide);
         }
     }
 }

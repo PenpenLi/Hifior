@@ -64,6 +64,35 @@ public static class PositionMath
         }
         return sidewayPos;
     }
+    public static EDirection GetDirection(Vector2Int center, Vector2Int relative)
+    {
+        var v = relative - center;
+        if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
+        {
+            v.y = 0;
+            if (v.x < 0)
+            {
+                return EDirection.Left;
+            }
+            else
+            {
+                return EDirection.Right;
+            }
+        }
+        else
+        {
+            v.x = 0;
+            if (v.y > 0)
+            {
+                return EDirection.Up;
+            }
+            else
+            {
+                return EDirection.Down;
+            }
+        }
+
+    }
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y
     /// <summary>
@@ -335,7 +364,6 @@ public static class PositionMath
     public static void InitActionScope(EnumCharacterCamp camp, EnumMoveClassType moveClass, int Movement, Vector2Int pos, EnumSelectEffectRangeType weaponRangeType, Vector2Int atkRange)
     {
         _bPlayer = (camp == EnumCharacterCamp.Player);//0,2为我方的单位
-
         _Mov = Movement;
         /* if (Gamechar.SkillGroup.isHaveStaticSkill(18))//探险家，无视地形，将其职业设为天马
              _Job = 15;//medifyneed

@@ -152,7 +152,7 @@ namespace RPG.UI
             else//此处结束显示
             {
                 musicController.RestoreBGMVolume();
-                UIController.ScreenNormalToDark(1.0f, false, Hide);
+                //UIController.ScreenNormalToDark(1.0f, false, Hide);
             }
         }
         bool AnalyseOneLine(string str)

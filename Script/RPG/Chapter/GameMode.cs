@@ -44,6 +44,7 @@ public class GameMode : MonoSingleton<GameMode>
     // Start is called before the first frame update
     protected override void Init()
     {
+        Application.targetFrameRate = 60;
         inputManager = new InputManager();
         battleManager = new BattleManager();
         uiManager = new UIManager();
@@ -80,16 +81,21 @@ public class GameMode : MonoSingleton<GameMode>
     void TestFunctionAddHere()
     {
         chapterManager.NewGameData(1);
-        // StartCoroutine(TestLoadBattleFromSave());
+        //StartCoroutine(TestLoadBattleFromSave());
     }
     IEnumerator TestLoadBattleFromSave()
     {
-        LoadBattle();
+        //LoadBattle();
         yield return new WaitForEndOfFrame();
-    }
-    void Start()
-    {
-        Application.targetFrameRate = 60;
+        ResetSequence("fade");
+        var fade = AddSequenceEvent<Sequence.LoadTileMap>();
+        fade.MapId = 5;
+
+        var fade1 = AddSequenceEvent<Sequence.FadeScreen>();
+        fade1.duration = 1.0f;
+        fade1.waitUntilFinished = true;
+        fade1.FadeType = Sequence.FadeScreen.渐变类型.黑变正常;
+        PlaySequence(() => Debug.LogError("Finish"));
     }
 
     // Update is called once per frame
@@ -192,10 +198,38 @@ public class GameMode : MonoSingleton<GameMode>
         chapterManager.RemoveCharacter(ch);
         unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
     }
+    public void KillUnit(RPGCharacter ch, float v, UnityAction onComplete)
+    {
+        chapterManager.RemoveCharacter(ch);
+        unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
+    }
     public void AttackUnit(CharacterLogic attacker, CharacterLogic defender)
     {
-        var atkPos = attacker.GetTileCoord();
-        var defPos = defender.GetTileCoord();
+        attacker.ConsumeActionPoint(EnumActionType.Attack);
+        List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(attacker, defender);
+        Debug.Log(Utils.TextUtil.GetListString(attackInfo));
+        //以Sequence的形式呈现战斗过程，
+        BeforePlaySequence();
+        ResetSequence("Attack");
+
+        var atk = AddSequenceEvent<Sequence.AttackAnimation>();
+        atk.AttackInfo = attackInfo[0];
+        atk.IsLeft = false;
+        atk.WaitTime = 0.3f;
+        if (attackInfo.Count > 1)
+        {
+            var counterAtk = AddSequenceEvent<Sequence.AttackAnimation>();
+            counterAtk.AttackInfo = attackInfo[1];
+            counterAtk.IsLeft = true;
+            counterAtk.WaitTime = 1.0f;
+        }
+
+        PlaySequence(() =>
+        {
+            AfterPlaySequence();
+            battleManager.OpenMenu(EActionMenuState.Main);
+            uiManager.HideAttackInfo();
+        });
         //计算处方向 然后在Unitshower里面转向并攻击，抖动
     }
     #endregion
@@ -232,6 +266,7 @@ public class GameMode : MonoSingleton<GameMode>
     /// <param name="FirstActionCamp">第一个回合行动的阵营</param>
     public void StartBattle(EnumCharacterCamp FirstActionCamp)
     {
+        uiManager.ShowBattleHPBar(true);
         modeInfo.modeState = GameModeInfo.ModeState.Battle;
         chapterManager.NextTurn();
     }
@@ -253,10 +288,35 @@ public class GameMode : MonoSingleton<GameMode>
     }
     #endregion
     #region Sequence
+    public Sequence.Sequence PublicSequencer;
     public void BeforePlaySequence()
     {
         pathShower.SetRootVisible(false);
         LockInput(true);
+    }
+    public void ResetSequence(string sequenceName, bool skipable = false)
+    {
+        PublicSequencer.Clear();
+        PublicSequencer.SequenceName = sequenceName;
+        PublicSequencer.Skipable = skipable;
+    }
+
+    public T AddSequenceEvent<T>() where T : Sequence.SequenceEvent
+    {
+        GameObject g = new GameObject(typeof(T).Name);
+        g.transform.SetParent(PublicSequencer.transform, false);
+        return g.AddComponent<T>();
+    }
+    public T AddSequenceEvent<T>(string _name) where T : Sequence.SequenceEvent
+    {
+        GameObject g = new GameObject(_name);
+        g.transform.SetParent(PublicSequencer.transform, false);
+        return g.AddComponent<T>();
+    }
+    public void PlaySequence(UnityAction onComplete)
+    {
+        PublicSequencer.Reset();
+        PublicSequencer.Execute(onComplete);
     }
     public void AfterPlaySequence()
     {

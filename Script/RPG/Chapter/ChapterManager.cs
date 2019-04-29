@@ -90,6 +90,7 @@ public class ChapterManager : ManagerBase
     {
         gameMode.LockInput(true);
     }
+
     public void CheckTurnEvent(int round, EnumCharacterCamp camp)
     {
         var turnEvent = Event.EventInfo.GetTurnEvent(round, camp);
@@ -141,6 +142,15 @@ public class ChapterManager : ManagerBase
         UnityEngine.Assertions.Assert.AreEqual(ch.GetCamp(), EnumCharacterCamp.Enemy);
         RPGEnemy player = ch as RPGEnemy;
         enemies.Enemies.Add(player);
+    }
+    public List<RPGCharacter> GetAllCharacters()
+    {
+        List<RPGCharacter> r = new List<RPGCharacter>();
+        foreach (var v in players.Players)
+            r.Add(v);
+        foreach (var v in enemies.Enemies)
+            r.Add(v);
+        return r;
     }
     public RPGCharacter GetCharacterFromCoord(Vector2Int tilePos)
     {

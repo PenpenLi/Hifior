@@ -6,7 +6,7 @@ using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 namespace RPG.UI
-{ 
+{
     public class TextTagParser
     {
         public enum TokenType
@@ -329,7 +329,7 @@ namespace RPG.UI
     }
     public interface IDialogInputListener
     {
-       void OnNextLineEvent();
+        void OnNextLineEvent();
     }
     public class Writer : MonoBehaviour, IDialogInputListener
     {
@@ -417,7 +417,7 @@ namespace RPG.UI
                 {
                     textMesh.text = value;
                 }
-                else 
+                else
                 {
                     Debug.LogError("没有Text，InputField或者TextMesh");
                 }
@@ -1039,7 +1039,7 @@ namespace RPG.UI
 
         protected virtual void Flash(float duration)
         {
-            UIController.ScreenNormalToDark(duration, false, () => { UIController.ScreenDarkToNormal(duration, null); });
+            //GameMode.Instance.UIManager.ScreenNormalToDark(duration, false, () => { GameMode.Instance.UIManager.ScreenDarkToNormal(duration, null); });
         }
 
         protected virtual AudioSource FindAudio(string audioObjectName)

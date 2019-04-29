@@ -36,7 +36,7 @@ namespace Utils
             if (!component)
             {
                 component = gameObject.AddComponent<T>();
-                if(component is MonoBehaviour)
+                if (component is MonoBehaviour)
                 {
                     MonoBehaviour mono = component as MonoBehaviour;
                     mono.enabled = true;
@@ -50,7 +50,7 @@ namespace Utils
         /// <typeparam name="T"></typeparam>
         /// <param name="transform"></param>
         /// <returns></returns>
-        public static List<T> GetChildComponents<T>(Transform transform)where T :Component
+        public static List<T> GetChildComponents<T>(Transform transform) where T : Component
         {
             if (transform == null)
                 return null;
@@ -80,13 +80,23 @@ namespace Utils
             return null;
         }
 
-        public static void SetChildActive(Transform transform,bool active)
+        public static void SetChildActive(Transform transform, bool active)
         {
             int count = transform.childCount;
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 transform.GetChild(i).gameObject.SetActive(active);
             }
+        }
+
+        public static void DestroyAllChild(Transform transform)
+        {
+            int childCount = transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject.Destroy(transform.GetChild(0).gameObject);
+            }
+
         }
     }
 }
