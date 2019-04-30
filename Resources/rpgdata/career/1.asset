@@ -44,15 +44,15 @@ MonoBehaviour:
   Skill: 0
   ModelSize: 1
   MaxAttribute:
-    HP: 150
-    PhysicalPower: 60
-    MagicalPower: 60
-    Skill: 60
-    Speed: 60
-    Intel: 0
-    PhysicalDefense: 60
-    MagicalDefense: 60
-    BodySize: 0
+    HP: 5467
+    PhysicalPower: 338
+    MagicalPower: 504
+    Skill: 275
+    Speed: 284
+    Intel: 1000
+    PhysicalDefense: 328
+    MagicalDefense: 502
+    BodySize: 390
     Movement: 12
   ActionCost:
     Move: 30

@@ -22,16 +22,16 @@ MonoBehaviour:
   Career: 1
   DefaultLevel: 1
   DefaultAttribute:
-    HP: 71
-    PhysicalPower: 10
-    MagicalPower: 19
-    Skill: 19
-    Speed: 14
-    Intel: 1
-    PhysicalDefense: 16
-    MagicalDefense: 24
-    BodySize: 1
-    Movement: 6
+    HP: 994
+    PhysicalPower: 245
+    MagicalPower: 268
+    Skill: 137
+    Speed: 137
+    Intel: 152
+    PhysicalDefense: 133
+    MagicalDefense: 142
+    BodySize: 20
+    Movement: 10
   TalkPortrait:
   - {fileID: 21300000, guid: b636a19bc87977d46904dde94372bdc7, type: 3}
   - {fileID: 21300000, guid: b636a19bc87977d46904dde94372bdc7, type: 3}
