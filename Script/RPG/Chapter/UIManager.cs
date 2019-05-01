@@ -174,7 +174,8 @@ public class UIManager : ManagerBase
                 locationEvent.Execute(chapterManager.Event.EventInfo, () =>
                 {
                     gameMode.AfterPlaySequence();
-                    ShowBattleActionMenu(ActionMenuState, chLogic);
+                    if(locationEvent.Caption!= EventInfoCollection.EnumLocationEventCaption.占领)//如果是占领，则不再弹出选项菜单了
+                        ShowBattleActionMenu(ActionMenuState, chLogic);
                 });
             }
 
@@ -182,11 +183,11 @@ public class UIManager : ManagerBase
 
             if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.占领)
             {
-                gameMode.ChapterManager.Event.CheckWin_Seize();
+                //gameMode.ChapterManager.CheckWin_Seize();
             }
             if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开门)
             {
-                gameMode.GridTileManager.OpenDoor(new Vector2Int(0, 0));
+                //gameMode.GridTileManager.OpenDoor(new Vector2Int(0, 0));
             }
         };
         info.enable = chLogic.IsActionEnable(actionType);

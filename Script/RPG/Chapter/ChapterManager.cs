@@ -20,8 +20,8 @@ public class ChapterManager : ManagerBase
     {
         public List<RPGEnemy> Enemies;
     }
-    private PlayerEntity players;
-    private EnemyEntity enemies;
+    private PlayerEntity players;public int PlayerCount { get { return players.Players.Count; } }
+    private EnemyEntity enemies; public int EnemyCount { get { return enemies.Enemies.Count; } }
     private Warehouse warehouse;
     public int MapId { get; private set; }
     public int TurnIndex { get; private set; }
@@ -118,6 +118,138 @@ public class ChapterManager : ManagerBase
             });
         }
     }
+
+    /// <summary>
+    /// 检测某个角色死亡时触发的事件
+    /// </summary>
+    public void CheckEnemyDeadEvent(int deadId,UnityAction onComplete)
+    {
+        var enemyEvent = Event.EventInfo.GetEnemyDieEvent(deadId);
+            if (AppConst.DebugMode)
+            {
+                if (enemyEvent == null) Debug.Log("没有Enemy Dead事件 ID = "+deadId);
+                else Debug.Log("找到相匹配的EnemyDead Event" + deadId);
+            }
+        if (enemyEvent == null || enemyEvent.Sequence == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+        {
+            gameMode.BeforePlaySequence();
+            enemyEvent.Execute(chapterManager.Event.EventInfo, () =>
+            {
+                gameMode.AfterPlaySequence();
+                onComplete?.Invoke();
+            });
+        }
+    }
+    //先检测胜利，然后检测是否是少于
+    public void CheckEnemyLessEvent(int enemyCount, UnityAction onComplete)
+    {
+        var enemyEvent = Event.EventInfo.GetEnemiesLessEvent(enemyCount);
+        if (AppConst.DebugMode)
+        {
+            if (enemyEvent == null) Debug.Log("没有EnemyLess事件");
+            else Debug.Log("找到相匹配的EnemyLess Event" + enemyCount);
+        }
+        if (enemyEvent == null || enemyEvent.Sequence == null)
+        {
+            Debug.LogError("事件为空");
+            onComplete?.Invoke();
+            return;
+        }
+        {
+            gameMode.BeforePlaySequence();
+            enemyEvent.Execute(chapterManager.Event.EventInfo, () =>
+            {
+                gameMode.AfterPlaySequence();
+                onComplete?.Invoke();
+            });
+        }
+    }
+
+    #region 章节设置 检查胜利
+
+    public bool CheckWin_KillAllEnemy()
+    {
+        if (HasWinCondition(EnumWinCondition.全灭敌人))// && GetGameStatus<GS_Battle>().GetNumLocalEnemies() == 0
+            return true;
+        else
+            return false;
+    }
+    /// <summary>
+    /// 每一个加入的Boss都有一个唯一的ID，从0开始增长
+    /// </summary>
+    /// <param name="BossID"></param>
+    /// <returns></returns>
+    public bool CheckWin_DefeatBoss(int BossID)
+    {
+        if (HasWinCondition(EnumWinCondition.击败指定Boss))
+            return true;
+        return false;
+    }
+    /// <summary>
+    /// 在Sequence里添加Start() 在Start里将GameMode 里的当前CityID加入
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckWin_Seize(int CityID = 0)
+    {
+        if (HasWinCondition(EnumWinCondition.压制指定城池) && ChapterDef.WinCondition.CityID == CityID)
+            return true;
+        return false;
+    }
+    public bool CheckWin_Leave()
+    {
+        if (HasWinCondition(EnumWinCondition.领主地点撤离))
+            return true;
+        return false;
+    }
+    public bool CheckWin_Round(int Round)
+    {
+        if (HasWinCondition(EnumWinCondition.回合坚持) && Round == ChapterDef.WinCondition.Round)
+            return true;
+        return false;
+    }
+    public List<string> GetWinConditionText()
+    {
+        List<string> texts = new List<string>();
+        List<EnumWinCondition> L = GetAllWinCondition();
+        if (L.Contains(EnumWinCondition.全灭敌人))
+            texts.Add("击败所有敌方单位");
+        if (L.Contains(EnumWinCondition.击败全部Boss))
+            texts.Add("击败所有Boss");
+        if (L.Contains(EnumWinCondition.击败指定Boss))
+            texts.Add("击败" + ResourceManager.GetEnemyDef(ChapterDef.WinCondition.BossID));
+        if (L.Contains(EnumWinCondition.回合坚持))
+            texts.Add("坚持" + ChapterDef.WinCondition.Round + "个回合");
+        if (L.Contains(EnumWinCondition.领主地点撤离))
+            texts.Add("在指定地点撤离");
+        if (L.Contains(EnumWinCondition.压制指定城池))
+            texts.Add("压制指定城池");
+        if (L.Contains(EnumWinCondition.压制所有城池))
+            texts.Add("压制所有城池");
+        return texts;
+    }
+    public List<EnumWinCondition> GetAllWinCondition()
+    {
+        int max = 6;
+        List<EnumWinCondition> L = new List<EnumWinCondition>();
+        for (int i = 0; i < max; i++)
+        {
+            if (EnumTables.MaskFieldIdentify(ChapterDef.WinCondition.Condition, i))
+            {
+                L.Add((EnumWinCondition)i);
+            }
+        }
+        return L;
+    }
+    public bool HasWinCondition(EnumWinCondition Condition)
+    {
+        return EnumTables.MaskFieldIdentify(ChapterDef.WinCondition.Condition, (int)Condition);
+    }
+    #endregion
+
     /// <summary>
     /// 仅添加数据
     /// </summary>

@@ -14,7 +14,6 @@ namespace Sequence
         public float WaitTime;
         public override void OnEnter()
         {
-
             atk = gameMode.ChapterManager.GetCharacterFromCoord(AttackInfo.attacker.GetTileCoord());
             def = gameMode.ChapterManager.GetCharacterFromCoord(AttackInfo.defender.GetTileCoord());
             atkSr = atk.GetSpriteRender();
@@ -36,14 +35,25 @@ namespace Sequence
         }
         private void HP()
         {
+            if (AttackInfo.damageToAttack > 0)
+            {
+                int maxHP1 = atk.Logic.GetMaxHP();
+                int srcHp1 = atk.Logic.GetCurrentHP();
+                int destHP1 = atk.Logic.Damage(AttackInfo.damageToAttack);
+                if (destHP1 == 0)
+                    gameMode.UIManager.ShowAttackChangeHP(!IsLeft, defSr, maxHP1, srcHp1, destHP1, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime,null);
+                else
+                    gameMode.UIManager.ShowAttackChangeHP(!IsLeft, defSr, maxHP1, srcHp1, destHP1, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime, null);
+            }
             if (AttackInfo.hit)
             {
                 int maxHP = def.Logic.GetMaxHP();
                 int srcHP = def.Logic.GetCurrentHP();
                 int destHP = def.Logic.Damage(AttackInfo.damageToDefender);
-                UnityAction a = Continue;
-                if (destHP == 0) a = () => Dead(def);
-                gameMode.UIManager.ShowAttackChangeHP(IsLeft, atkSr, maxHP, srcHP, destHP, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime, a);
+                if (destHP == 0)
+                    gameMode.UIManager.ShowAttackChangeHP(IsLeft, atkSr, maxHP, srcHP, destHP, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime, () => Dead(def));
+                else
+                    gameMode.UIManager.ShowAttackChangeHP(IsLeft, atkSr, maxHP, srcHP, destHP, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime,Continue);
                 AttackInfo.damageToAttack = 10;
             }
             else
@@ -51,25 +61,19 @@ namespace Sequence
                 //miss
                 Avoid();
             }
-            if (AttackInfo.damageToAttack > 0)
-            {
-                int maxHP1 = atk.Logic.GetMaxHP();
-                int srcHp1 = atk.Logic.GetCurrentHP();
-                int destHP1 = atk.Logic.Damage(AttackInfo.damageToAttack);
-                UnityAction a1 = Continue;
-                if (destHP1 == 0) a1 = () => Dead(atk);
-                gameMode.UIManager.ShowAttackChangeHP(!IsLeft, atkSr, maxHP1, srcHp1, destHP1, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime, a1);
-            }
         }
 
         private void Dead(RPGCharacter ch)
         {
-            gameMode.KillUnit(ch, ConstTable.UNIT_DISAPPEAR_SPEED(), Continue);
+            gameMode.KillUnit(ch,ConstTable.UNIT_DISAPPEAR_SPEED(), Continue, true);
+
         }
         public override void Continue()
         {
+            Debug.Log("Im continue");
             atkSr.GetComponent<MultiSpriteAnimator>().SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
             defSr.GetComponent<MultiSpriteAnimator>().SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
+            
             base.Continue();
         }
     }

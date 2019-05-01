@@ -156,4 +156,6 @@ public static class ConstTable
         }
         return 0.20f;
     }
+    public static readonly  Color CLEAR_STAGE_COLOR= Color.magenta;
+    public const string CLEAR_STATE_TEXT = "Clear Stage";
 }

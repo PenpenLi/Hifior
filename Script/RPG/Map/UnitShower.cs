@@ -67,6 +67,7 @@ public class UnitShower : MonoBehaviour
     public void DisappearUnit(Vector2Int pos, float t, UnityAction onComplete)
     {
         MultiSpriteAnimator animator = GetUnitAt(pos);
+        animator.HPBar.SetActive(false);
         if (animator == null) { Debug.LogError("没有在" + pos + "处发现MultiSpriteAnimator组件"); return; }
         Color oriCol = animator.render.color;
         Tweener tw = DOTween.ToAlpha(() => oriCol, x => oriCol = x, 0, t);

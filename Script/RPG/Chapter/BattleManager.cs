@@ -379,6 +379,7 @@ public class BattleManager : ManagerBase
             });
         }
     }
+
     public void CancelMove()
     {
         ShowMoveRangeAction(CurrentCharacterLogic);
@@ -401,6 +402,7 @@ public class BattleManager : ManagerBase
                 Debug.Log(v + "处发现敌方单位 ID=" + enemy.Logic.GetID());
 
                 ClearRangeAction();
+                ClearHighlightRangeAction();
                 gameMode.AttackUnit(CurrentCharacterLogic, enemy.Logic);
             }
         }

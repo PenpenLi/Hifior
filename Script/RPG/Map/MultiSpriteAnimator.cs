@@ -6,6 +6,7 @@ public class MultiSpriteAnimator : MonoBehaviour
 {
     public Sprite[] sprites;
     private float switchTime { get { return ConstSwitchTime[(int)activeAnimateType]; } }
+    public GameObject HPBar;
     int sizeOfSprites;
     public enum EAnimateType
     {
@@ -53,6 +54,7 @@ public class MultiSpriteAnimator : MonoBehaviour
     void Awake()
     {
         render = GetComponent<SpriteRenderer>();
+        HPBar = transform.GetChild(0).gameObject;
         ConstSwitchTime = new float[countOfType] { ConstTable.UNIT_STAY_SWITCH_TIME(), ConstTable.UNIT_MOVE_SWITCH_TIME() };
     }
     // Update is called once per frame

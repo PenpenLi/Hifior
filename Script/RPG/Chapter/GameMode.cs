@@ -81,21 +81,23 @@ public class GameMode : MonoSingleton<GameMode>
     void TestFunctionAddHere()
     {
         chapterManager.NewGameData(1);
-        //StartCoroutine(TestLoadBattleFromSave());
+        StartCoroutine(TestLoadBattleFromSave());
     }
     IEnumerator TestLoadBattleFromSave()
     {
+        yield return null;
+        chapterManager.Event.StartSequence.Execute();
         //LoadBattle();
         yield return new WaitForEndOfFrame();
-        ResetSequence("fade");
-        var fade = AddSequenceEvent<Sequence.LoadTileMap>();
-        fade.MapId = 5;
+        //ResetSequence("fade");
+        //var fade = AddSequenceEvent<Sequence.LoadTileMap>();
+        //fade.MapId = 5;
 
-        var fade1 = AddSequenceEvent<Sequence.FadeScreen>();
-        fade1.duration = 1.0f;
-        fade1.waitUntilFinished = true;
-        fade1.FadeType = Sequence.FadeScreen.渐变类型.黑变正常;
-        PlaySequence(() => Debug.LogError("Finish"));
+        //var fade1 = AddSequenceEvent<Sequence.FadeScreen>();
+        //fade1.duration = 1.0f;
+        //fade1.waitUntilFinished = true;
+        //fade1.FadeType = Sequence.FadeScreen.渐变类型.黑变正常;
+        //PlaySequence(() => Debug.LogError("Finish"));
     }
 
     // Update is called once per frame
@@ -188,20 +190,28 @@ public class GameMode : MonoSingleton<GameMode>
         unitShower.MoveUnit(routine, onComplete, speed);
     }
 
-    public void KillUnitAt(Vector2Int tilePos, float v, UnityAction onComplete)
+    public void KillUnitAt(Vector2Int tilePos, float v, UnityAction onComplete, bool triggerDeadEvent = false)
     {
-        unitShower.DisappearUnit(tilePos, v, onComplete);
+        RPGCharacter ch = chapterManager.GetCharacterFromCoord(tilePos);
+        KillUnit(ch, v, onComplete, triggerDeadEvent);
     }
-    public void KillUnit(int Id, float v, UnityAction onComplete)
+    public void KillUnit(int Id, float v, UnityAction onComplete, bool triggerDeadEvent = false)
     {
         var ch = chapterManager.GetCharacterFromID(Id);
-        chapterManager.RemoveCharacter(ch);
-        unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
+        KillUnit(ch, v, onComplete, triggerDeadEvent);
     }
-    public void KillUnit(RPGCharacter ch, float v, UnityAction onComplete)
+
+    public void KillUnit(RPGCharacter ch, float v, UnityAction onComplete, bool triggerDeadEvent = false)
     {
         chapterManager.RemoveCharacter(ch);
-        unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
+        if (triggerDeadEvent)
+        {
+            chapterManager.CheckEnemyDeadEvent(ch.Logic.GetID(), () => { unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete); });
+        }
+        else
+        {
+            unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
+        }
     }
     public void AttackUnit(CharacterLogic attacker, CharacterLogic defender)
     {
@@ -224,13 +234,26 @@ public class GameMode : MonoSingleton<GameMode>
             counterAtk.WaitTime = 1.0f;
         }
 
-        PlaySequence(() =>
-        {
-            AfterPlaySequence();
-            battleManager.OpenMenu(EActionMenuState.Main);
-            uiManager.HideAttackInfo();
-        });
+        PlaySequence(CheckDefeatBossWin);
         //计算处方向 然后在Unitshower里面转向并攻击，抖动
+    }
+    private void CheckDefeatBossWin()
+    {
+        uiManager.HideAttackInfo();
+        if (chapterManager.CheckWin_DefeatBoss(0))
+        {
+            ClearStage();
+            return;
+        }
+        chapterManager.CheckEnemyLessEvent(chapterManager.EnemyCount, () =>
+         {
+             AfterPlaySequence();
+             battleManager.OpenMenu(EActionMenuState.Main);
+         });
+    }
+    public void ClearStage()
+    {
+        uiManager.TurnIndicate.ShowWinText(()=>chapterManager.Event.EndSequence.Execute());
     }
     #endregion
     #region Battle Manager

@@ -72,7 +72,7 @@ namespace RPG.UI
             curRt.sizeDelta = new Vector2(hpBarSize.x * destR, hpBarSize.y);
             aftRt.sizeDelta = curRt.sizeDelta;
             yield return new WaitForSeconds(waitTime);
-            if (onComplete != null) onComplete();
+            onComplete?.Invoke();
         }
     }
 }

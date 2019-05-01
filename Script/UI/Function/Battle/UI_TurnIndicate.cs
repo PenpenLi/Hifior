@@ -44,6 +44,14 @@ namespace RPG.UI
             text.color = ConstTable.CAMP_COLOR(camp);
             AnimatePos(true, MoveOut);
         }
+        public void ShowWinText(UnityAction onHide)
+        {
+            base.Show();
+            RegisterHideEvent(onHide);
+            text.text = ConstTable.CLEAR_STATE_TEXT;
+            text.color = ConstTable.CLEAR_STAGE_COLOR;
+            AnimatePos(true, MoveOut);
+        }
         private void MoveOut()
         {
             Utils.GameUtil.DelayFunc(() => AnimatePos(false, Hide), waitTime);
