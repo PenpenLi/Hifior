@@ -56,10 +56,10 @@ namespace RPGEditor
             }
         }
         public static string curSong;
-        public const string BGM_FILEPATH = "Assets/Data/Audio/BGM/";
-        public const string BGS_FILEPATH = "Assets/Data/Audio/BGS/";
-        public const string ME_FILEPATH = "Assets/Data/Audio/ME/";
-        public const string SE_FILEPATH = "Assets/Data/Audio/SE/";
+        public const string BGM_FILEPATH = "Assets/Resources/Audio/BGM/";
+        public const string BGS_FILEPATH = "Assets/Resources/Audio/BGS/";
+        public const string ME_FILEPATH = "Assets/Resources/Audio/ME/";
+        public const string SE_FILEPATH = "Assets/Resources/Audio/SE/";
         private static readonly string[] MenuItems = { "BGM", "BGS", "ME", "SE" };
         private int selected = 0;
         public static void InitAudioClipList(List<string> clips, string folderPath)

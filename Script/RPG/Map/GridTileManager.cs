@@ -24,6 +24,11 @@ public class GridTileManager : ManagerBase
         InitScript(mapPrefab.transform);
         InitTileTypeData();
     }
+    public void UnloadMap()
+    {
+        if (mapRoot != null)
+            GameObject.Destroy(mapRoot.gameObject);
+    }
     public void InitScript(Transform t)
     {
         mapRoot = t;
@@ -53,6 +58,10 @@ public class GridTileManager : ManagerBase
             v.oldTilePos = oldPos;
             RaycastTilePosition(ref v.localPos, ref v.tilePos);
             oldPos = v.tilePos;
+
+#if UNITY_EDITOR
+            if (Input.GetKey(KeyCode.P)) Debug.Log("Tile Position:" + v.tilePos);
+#endif
             if (Input.GetMouseButtonUp(0))
             {
                 v.active = true;
@@ -92,6 +101,7 @@ public class GridTileManager : ManagerBase
     }
     void RaycastTilePosition(ref Vector3Int worldPos, ref Vector2Int tilePos)
     {
+        if (mapRoot == null) return;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         // get the collision point of the ray with the z = 0 plane
         Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
@@ -100,6 +110,7 @@ public class GridTileManager : ManagerBase
     }
     public ETileType GetTileType(Vector3Int position)
     {
+        if (mapRoot == null) return ETileType.Unreachable;
         var t = tileLayer.GetTile(position) as SuperTiled2Unity.SuperTile;
         if (t == null) return ETileType.Unreachable;
         var tileType = FeTileInfo.FromString(t.m_Type);
@@ -122,6 +133,6 @@ public class GridTileManager : ManagerBase
 
     public void OpenDoor(Vector2Int tilePos)
     {
-        Debug.Log(tilePos + " 处开门"+ " 修改某处Tile");
+        Debug.Log(tilePos + " 处开门" + " 修改某处Tile");
     }
 }

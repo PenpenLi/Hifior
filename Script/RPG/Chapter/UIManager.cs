@@ -16,6 +16,7 @@ public enum EActionMenuState
 public class UIManager : ManagerBase
 {
     #region Init 
+    public UI_StartMenu GameStartMenu { private set; get; }
     public UI_BattleTileInfo BattleTileInfo { private set; get; }
     public UI_BattleActionMenu BattleActionMenu { private set; get; }
     public UI_BattleMainMenu BattleMainMenu { private set; get; }
@@ -27,6 +28,10 @@ public class UIManager : ManagerBase
     public UI_ScreenMask ScreenMask { private set; get; }
     public UI_BattleAttackInfo Left_BattleAttackInfo { private set; get; }
     public UI_BattleAttackInfo Right_BattleAttackInfo { private set; get; }
+    public UI_WidgetYesNo WidgetYesNo { private set; get; }
+    public UI_RecordChapterPanel RecordChapter { private set; get; }
+
+    public UI_ChapterStartPreface ChapterStartPreface { private set; get; }
     private T FindPanelInChildren<T>(Transform t) where T : IPanel
     {
         T r = null;
@@ -40,14 +45,18 @@ public class UIManager : ManagerBase
     }
     public void InitBattleUI(Transform panelParent0_9, Transform panelParent9_16, Transform panelParent0_16)
     {
+        GameStartMenu = FindPanelInChildren<UI_StartMenu>(panelParent0_16);
         BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent9_16);
         BattleActionMenu = FindPanelInChildren<UI_BattleActionMenu>(panelParent9_16);
         BattleMainMenu = FindPanelInChildren<UI_BattleMainMenu>(panelParent9_16);
         BattleSelectWeaponMenu = FindPanelInChildren<UI_BattleSelectWeaponMenu>(panelParent9_16);
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
         TalkDialog = FindPanelInChildren<UI_TalkWithoutbg>(panelParent0_9);
-        ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_9);
+        ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_16);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
+        RecordChapter = FindPanelInChildren<UI_RecordChapterPanel>(panelParent0_16);
+        ChapterStartPreface = FindPanelInChildren<UI_ChapterStartPreface>(panelParent0_16);
+        WidgetYesNo = FindPanelInChildren<UI_WidgetYesNo>(panelParent0_16);
         GetItemOrMoney = FindPanelInChildren<UI_GetItemOrMoney>(panelParent0_9);
         {
             Left_BattleAttackInfo = FindPanelInChildren<UI_BattleAttackInfo>(panelParent0_9);
@@ -61,20 +70,9 @@ public class UIManager : ManagerBase
             rrt.anchorMax = Vector2.right;
             rrt.pivot = Vector2.right;
             rrt.anchoredPosition = Vector2.zero;
+            Right_BattleAttackInfo.gameObject.SetActive(false);
         }
         MenuUndoAction = new Stack<UnityAction>();
-    }
-    public void InitMainUI(Transform panelParent)
-    {
-        BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent);
-    }
-    public void InitPropertyUI(Transform panelParent)
-    {
-        BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent);
-    }
-    public void InitSettingUI(Transform panelParent)
-    {
-        BattleTileInfo = FindPanelInChildren<UI_BattleTileInfo>(panelParent);
     }
     #endregion
     #region Bind 
@@ -158,9 +156,9 @@ public class UIManager : ManagerBase
         }
         Debug.Log("找到相匹配的Location Event" + locationEvent);
 
-        EnumActionType actionType = EnumActionType.None;
-        if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.宝箱 || locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开关 || locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.开门)
-            actionType = EnumActionType.OpenTreasureBox;
+        EnumActionType actionType = EnumActionType.OpenTreasureBox;
+        if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.占领)
+            actionType = EnumActionType.All;
         if (locationEvent.Caption == EventInfoCollection.EnumLocationEventCaption.访问)
             actionType = EnumActionType.Visit;
 
@@ -174,7 +172,7 @@ public class UIManager : ManagerBase
                 locationEvent.Execute(chapterManager.Event.EventInfo, () =>
                 {
                     gameMode.AfterPlaySequence();
-                    if(locationEvent.Caption!= EventInfoCollection.EnumLocationEventCaption.占领)//如果是占领，则不再弹出选项菜单了
+                    if (locationEvent.Caption != EventInfoCollection.EnumLocationEventCaption.占领)//如果是占领，则不再弹出选项菜单了
                         ShowBattleActionMenu(ActionMenuState, chLogic);
                 });
             }
@@ -353,6 +351,12 @@ public class UIManager : ManagerBase
         Right_BattleAttackInfo.Show(logic.GetPortrait(), def.Icon, def.CommonProperty.Name, logic.GetMaxHP(), logic.GetCurrentHP(), afterHP,
             logic.GetHit(), BattleLogic.GetAttackDamage(logic, currentCharacterLogic), logic.GetCritical(), BattleLogic.GetAttackCount(logic, currentCharacterLogic));
     }
+    public void HideAfterRecord()
+    {
+        RecordChapter.Hide();
+        WidgetYesNo.Hide();
+        GameStartMenu.Hide();
+    }
     public void HideAttackInfo()
     {
         Left_BattleAttackInfo.Hide(false);
@@ -372,7 +376,7 @@ public class UIManager : ManagerBase
         gameMode.unitShower.SetHP(sr, max, src, dest, ConstTable.UI_VALUE_BAR_SPEED());
         ui.SetHP(max, src, dest, ConstTable.UI_VALUE_BAR_SPEED(), ConstTable.UI_WAIT_TIME(), onComplete);
     }
-    public void ShowAttackChangeHP(bool left, SpriteRenderer sr, int max, int src, int dest, int speed,float waitTime, UnityAction onComplete = null)
+    public void ShowAttackChangeHP(bool left, SpriteRenderer sr, int max, int src, int dest, int speed, float waitTime, UnityAction onComplete = null)
     {
         UI_BattleAttackInfo ui = left ? Left_BattleAttackInfo : Right_BattleAttackInfo;
         gameMode.unitShower.SetHP(sr, max, src, dest, ConstTable.UI_VALUE_BAR_SPEED());
@@ -382,22 +386,26 @@ public class UIManager : ManagerBase
     #region Screen Fade
     public void ScreenDarkToNormal(float duration, UnityEngine.Events.UnityAction action = null)
     {
+        if (duration <= 0) { ScreenMask.Hide();return; }
         ScreenMask.Show(false, true, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenMask.Hide(); }, duration);
     }
 
     public void ScreenNormalToDark(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
     {
+        if (duration <= 0) { ScreenMask.ShowBlack(); return; }
         ScreenMask.Show(true, true, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
     }
     public void ScreenWhiteToNormal(float duration, UnityEngine.Events.UnityAction action = null)
     {
+        if (duration <= 0) { ScreenMask.Hide(); return; }
         ScreenMask.Show(false, false, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); ScreenMask.Hide(); }, duration);
     }
     public void ScreenNormalToWhite(float duration, bool autoDisable, UnityEngine.Events.UnityAction action = null)
     {
+        if (duration <= 0) { ScreenMask.ShowWhite(); return; }
         ScreenMask.Show(true, false, duration);
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
     }

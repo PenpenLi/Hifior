@@ -27,7 +27,7 @@ public abstract class SerializableBase
         Key = GetKey();
         RefreshTime();
         Assert.IsTrue(GetFullRecordPathName().Length > 0 || GetKey().Length > 0, "请重写 GetFullRecordPathName()和 GetKey()方法");
-        Now = System.DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+        Now = Utils.TextUtil.GetStandardDataTime();
 
         BinaryFormatter binary = new BinaryFormatter();
         FileStream fStream = File.Create(GetFullRecordPathName());

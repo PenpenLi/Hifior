@@ -7,7 +7,8 @@ namespace Sequence
     {
         public override void OnEnter()
         {
-          gameMode.ClearStage();
+            gameMode.ClearStage();
+            gameMode.StopPlaySequence();
         }
     }
 }

@@ -40,10 +40,10 @@ namespace Sequence
             if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform());
 
             if (WaitUntilFinished)
-                gameMode.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
+                gameMode.BattlePlayer.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
             else
             {
-                gameMode.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), null);
+                gameMode.BattlePlayer.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), null);
                 Continue();
             }
         }

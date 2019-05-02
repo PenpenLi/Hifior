@@ -7,11 +7,10 @@ using System;
 
 namespace RPG.UI
 {
-    public class AbstractUI : MonoBehaviour, IComparable<AbstractUI>
+    public class AbstractUI : MonoBehaviour
     {
         [Header("AbstructUI 基类参数")]
         private static AbstractUI m_UI;
-        public int SortOrder = 0;
         protected UnityAction OnHideDelegate;
 
         protected GameMode gameMode { get { return GameMode.Instance; } }
@@ -34,10 +33,10 @@ namespace RPG.UI
         public virtual void Tick(float DeltaTime) { }
         protected virtual void OnEnable()
         {
-            SortUIPosition();
         }
         public virtual void Show()
         {
+            transform.SetAsLastSibling();
             gameObject.SetActive(true);
         }
         /// <summary>
@@ -51,11 +50,18 @@ namespace RPG.UI
         /// 关闭窗口，如果不执行Delegates事件，传入false
         /// </summary>
         /// <param name="InvokeDelegate"></param>
-        public virtual void Hide(bool InvokeDelegate)
+        public virtual void Hide(bool InvokeDelegate, bool onlyOnce = false)
         {
             gameObject.SetActive(false);
             if (OnHideDelegate != null && InvokeDelegate)
+            {
                 OnHideDelegate.Invoke();
+                if(onlyOnce)OnHideDelegate = null;
+            }
+        }
+        public void DelayHide(float t)
+        {
+            Utils.GameUtil.DelayFunc(Hide,t);
         }
         public void RegisterHideEvent(UnityAction OnHide)
         {
@@ -73,7 +79,6 @@ namespace RPG.UI
         /// </summary>
         public void SetTop()
         {
-            SortOrder = int.MaxValue;
             transform.SetAsFirstSibling();
         }
         /// <summary>
@@ -81,29 +86,20 @@ namespace RPG.UI
         /// </summary>
         public void SetBottom()
         {
-            SortOrder = int.MinValue;
             transform.SetAsLastSibling();
         }
-        /// <summary>
-        /// 设置显示的前后顺序
-        /// </summary>
-        /// <param name="index"></param>
-        public void SetSortOrder(int index)
-        {
-            SortOrder = index;
-            SortUIPosition();
-        }
-        public void SortUIPosition()
-        {
-            List<AbstractUI> UIs = Utils.MiscUtil.GetChildComponents<AbstractUI>(transform.parent);
-            if (UIs == null)
-                return;
-            UIs.Sort();
-            for (int i = 0; i < UIs.Count; i++)
-            {
-                UIs[i].transform.SetAsFirstSibling();
-            }
-        }
+
+        //public void SortUIPosition()
+        //{
+        //    List<AbstractUI> UIs = Utils.MiscUtil.GetChildComponents<AbstractUI>(transform.parent);
+        //    if (UIs == null)
+        //        return;
+        //    UIs.Sort();
+        //    for (int i = 0; i < UIs.Count; i++)
+        //    {
+        //        UIs[i].transform.SetAsFirstSibling();
+        //    }
+        //}
         public static T GetInstance<T>() where T : AbstractUI
         {
             if (!m_UI)
@@ -114,11 +110,6 @@ namespace RPG.UI
             }
 
             return m_UI as T;
-        }
-
-        public int CompareTo(AbstractUI other)
-        {
-            return -SortOrder.CompareTo(other.SortOrder);
         }
 
         #region Tween

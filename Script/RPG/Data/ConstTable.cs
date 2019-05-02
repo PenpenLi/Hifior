@@ -40,9 +40,10 @@ public static class ConstTable
     public const int CONST_EXP_ENEMY_NONE_MULTIPLE = 0;
     public const int CONST_HEAL_MOD = 0;
     public const int CONST_HEAL_XP = 0;
+    public const int CONST_MAX_ITEM_COUNT = 6;
     public const int CONST_REVIVE_PRICE_BASE = 0;
     public const int CONST_REVIVE_PRICE_LV_ADDITION = 0;
-    public const int CONST_M_COUNT = 6;
+    public const int CONST_MAX_BATTLE_PLAYER_COUNT = 20;
     public const int CONST_PASSIVEITEM_COUNT = 2;
 
     //显示

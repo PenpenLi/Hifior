@@ -689,6 +689,7 @@ public class GameRecord
     public ChapterRecordCollection LoadChapterFromDisk(int slot)
     {
         ChapterRecordCollection v = new ChapterRecordCollection();
+        v.SetIndex(slot);
         if (HasChapterSave(slot))
         {
             v = v.Load<ChapterRecordCollection>();
@@ -703,6 +704,7 @@ public class GameRecord
     public BattleInfoCollection LoadBattleFromDisk(int slot)
     {
         BattleInfoCollection v = new BattleInfoCollection();
+        v.SetIndex(slot);
         if (v.Exists())
         {
             v = v.Load<BattleInfoCollection>();
@@ -723,45 +725,4 @@ public class GameRecord
         return currentTeamRecord;
     }
     #endregion
-    public static void SaveTo(int index)
-    {
-        // UGameInstance.Instance.SaveChapterToDisk(index);
-    }
-    /// <summary>
-    /// 从磁盘载入章节，返回当前存档的数据，如果不存在则返回null
-    /// </summary>
-    /// <param name="Index">第几个存档</param>
-    /// <returns>当前存档的数据</returns>
-    public static ChapterRecordCollection LoadChapterRecordFrom(int index)
-    {
-        return new ChapterRecordCollection();
-        //return UGameInstance.Instance.LoadChapterFromDisk(index);
-    }
-    /// <summary>
-    /// 载入章节，并设置当前章节使用的存档数据
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="Record"></param>
-    /// <returns></returns>
-    public static void LoadChapterSceneWithRecordData(ChapterRecordCollection Record)
-    {
-        //UGameInstance.Instance.LoadChapterScene(Record);
-    }
-    /// <summary>
-    /// 载入序章0，不使用存档
-    /// </summary>
-    public static void LoadNewGame()
-    {
-        // UGameInstance.Instance.LoadChapterScene(null);
-    }
-    /// <summary>
-    /// 该处是否存在存档
-    /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
-    public static bool HasSave(int index)
-    {
-        // return UGameInstance.Instance.HasChapterSave(index);
-        return false;
-    }
 }

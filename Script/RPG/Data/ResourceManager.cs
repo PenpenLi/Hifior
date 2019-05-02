@@ -92,6 +92,10 @@ public static class ResourceManager
         Sequence_TreasureBox = GameObject.Instantiate(temp);
     }
     #endregion
+    public static void UnloadUnusedResource()
+    {
+        Resources.UnloadUnusedAssets();
+    }
     public static void UnloadAllRPGData()
     {
         weaponDefTable.Clear();
@@ -140,6 +144,6 @@ public static class ResourceManager
     [RuntimeInitializeOnLoadMethod]
     public static void Initialize()
     {
-
+        
     }
 }

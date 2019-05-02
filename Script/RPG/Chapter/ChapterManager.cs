@@ -20,9 +20,10 @@ public class ChapterManager : ManagerBase
     {
         public List<RPGEnemy> Enemies;
     }
-    private PlayerEntity players;public int PlayerCount { get { return players.Players.Count; } }
+    private PlayerEntity players; public int PlayerCount { get { return players.Players.Count; } }
     private EnemyEntity enemies; public int EnemyCount { get { return enemies.Enemies.Count; } }
     private Warehouse warehouse;
+    public int ChapterId { get; private set; }
     public int MapId { get; private set; }
     public int TurnIndex { get; private set; }
     public EnumCharacterCamp TurnCamp { get; private set; }
@@ -122,14 +123,14 @@ public class ChapterManager : ManagerBase
     /// <summary>
     /// 检测某个角色死亡时触发的事件
     /// </summary>
-    public void CheckEnemyDeadEvent(int deadId,UnityAction onComplete)
+    public void CheckEnemyDeadEvent(int deadId, UnityAction onComplete)
     {
         var enemyEvent = Event.EventInfo.GetEnemyDieEvent(deadId);
-            if (AppConst.DebugMode)
-            {
-                if (enemyEvent == null) Debug.Log("没有Enemy Dead事件 ID = "+deadId);
-                else Debug.Log("找到相匹配的EnemyDead Event" + deadId);
-            }
+        if (AppConst.DebugMode)
+        {
+            if (enemyEvent == null) Debug.Log("没有Enemy Dead事件 ID = " + deadId);
+            else Debug.Log("找到相匹配的EnemyDead Event" + deadId);
+        }
         if (enemyEvent == null || enemyEvent.Sequence == null)
         {
             onComplete?.Invoke();
@@ -422,6 +423,7 @@ public class ChapterManager : ManagerBase
     #region GameRecord
 
     private static GameRecord record = new GameRecord();
+    public GameRecord Record { get { return record; } }
     private void CheckRecordError()
     {
         if (record == null) Debug.LogError("GameRecord is null");
@@ -455,12 +457,18 @@ public class ChapterManager : ManagerBase
         ClearBattle();
         players.PlayersLogic.Clear();
         ChapterRecordCollection collect = record.LoadChapterFromDisk(slot);
-        ChapterDef = ResourceManager.GetChapterDef(collect.CurrentTeam.Chapter);
-        ChapterDef.Event = GameObject.Instantiate(ChapterDef.Event);
+        LoadChapterDef(collect.CurrentTeam.Chapter);
         foreach (var v in collect.CurrentTeamPlayerInfo)
         {
             players.PlayersLogic.Add(new CharacterLogic(v));
         }
+    }
+    public void LoadChapterDef(int id)
+    {
+        if (ChapterDef!=null && Event.gameObject != null)GameObject.Destroy(Event.gameObject);
+        ChapterDef = ResourceManager.GetChapterDef(id);
+        ChapterDef.Event = GameObject.Instantiate(ChapterDef.Event);
+        ChapterId = id;
     }
     /// <summary>
     /// 记录战场情况
@@ -492,7 +500,7 @@ public class ChapterManager : ManagerBase
         {
             RPGPlayer p = RPGPlayer.Create(v);
             players.PlayersLogic.Add(p.Logic);
-            gameMode.AddUnitToMap(p, v.tileCoords);
+            gameMode.BattlePlayer.AddUnitToMap(p, v.tileCoords);
         }
     }
     #endregion

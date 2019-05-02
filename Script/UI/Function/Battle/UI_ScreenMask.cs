@@ -21,12 +21,11 @@ namespace RPG.UI
             bDark = Dark;
             Duration = duration;
             Show();
-            OnEnable();
+            Animator();
         }
         public override void Show()
         {
             base.Show();
-            transform.SetAsLastSibling();
         }
         protected override void Awake()
         {
@@ -35,8 +34,19 @@ namespace RPG.UI
             animator = GetComponent<Animator>();
             Hide();
         }
-        protected override void OnEnable()
+        public void ShowBlack()
         {
+            Background.color = Color.black;
+            base.Show();
+        }
+        public void ShowWhite()
+        {
+            Background.color = Color.white;
+            base.Show();
+        }
+        protected void Animator()
+        {
+            if (Duration <= 0.01f) return;
             animator.speed = 1.0f / Duration;
             if (bReverse)
             {

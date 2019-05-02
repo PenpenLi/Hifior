@@ -149,7 +149,8 @@ public enum EnumActionType
     OpenTreasureBox,
     Talk,
     Wait,
-    None,
+    None,//不消耗
+    All,//消耗掉所有
 }
 public enum EnumPassiveSkillEffect
 {

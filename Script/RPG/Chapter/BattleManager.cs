@@ -319,7 +319,8 @@ public class BattleManager : ManagerBase
     }
     private void CancelTalk()
     {
-        throw new NotImplementedException();
+        ClearRangeAction();
+        OpenMenu(EActionMenuState.Main);
     }
 
     public void HandleLock()
@@ -352,7 +353,7 @@ public class BattleManager : ManagerBase
         CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Move);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
-        gameMode.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), CheckRangeEvent);
+        gameMode.BattlePlayer.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), CheckRangeEvent);
     }
 
     public void CheckRangeEvent()
@@ -403,7 +404,8 @@ public class BattleManager : ManagerBase
 
                 ClearRangeAction();
                 ClearHighlightRangeAction();
-                gameMode.AttackUnit(CurrentCharacterLogic, enemy.Logic);
+                CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Attack);
+                gameMode.BattlePlayer.AttackUnit(CurrentCharacterLogic, enemy.Logic);
             }
         }
     }

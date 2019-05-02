@@ -19,12 +19,12 @@ namespace Sequence
             if (Camp == EnumCharacterCamp.Player)
             {
                 RPGCharacter ch = RPGPlayer.Create(ID, Attribute);
-                gameMode.AddUnitToMap(ch, Coord);
+                gameMode.BattlePlayer.AddUnitToMap(ch, Coord);
             }
             if (Camp == EnumCharacterCamp.Enemy)
             {
                 RPGCharacter ch = RPGEnemy.Create(ID, Attribute);
-                gameMode.AddUnitToMap(ch, Coord);
+                gameMode.BattlePlayer.AddUnitToMap(ch, Coord);
             }
             Continue();
         }

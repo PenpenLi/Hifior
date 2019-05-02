@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,13 @@ public class PathShower : MonoBehaviour
     [Tooltip("将所有的SpriteRenderer的SortOrder设置为255")]
     public Transform[] ShowerTransform;
     Transform GetTransformRoot(EPathShowerType t) { return ShowerTransform[(int)t]; }
+
+    public void Clear()
+    {
+        SetRootVisible(true);
+        HideAll();
+    }
+
     GameObject GetFirstPathShower(EPathShowerType t) { return GetTransformRoot(t).GetChild(0).gameObject; }
     public void SetVisible(EPathShowerType t, bool show)
     {
@@ -44,16 +52,19 @@ public class PathShower : MonoBehaviour
     }
     public void ShowHighLightTiles(List<Vector2Int> pos)
     {
+        gameObject.SetActive(true);
         HidePath(EPathShowerType.HighLight);
         ShowTiles(EPathShowerType.HighLight, pos, true, false);
     }
     public void ShowTalkCharacterTiles(List<Vector2Int> pos)
     {
+        gameObject.SetActive(true);
         HidePath(EPathShowerType.Heal);
         ShowTiles(EPathShowerType.Heal, pos, true, false);
     }
     public void ShowTiles(EPathShowerType t, List<Vector2Int> pos, bool showNow = true, bool hideOther = true)
     {
+        gameObject.SetActive(true);
         var transRoot = GetTransformRoot(t);
         int tileCount = transRoot.childCount;
         int posCount = pos.Count;

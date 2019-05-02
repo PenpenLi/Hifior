@@ -473,8 +473,13 @@ public class CharacterLogic
     }
     public int ConsumeActionPoint(EnumActionType action)
     {
-        BattleInfo.actionPoint -= GetActionPointCost(action);
-        if (BattleInfo.actionPoint < 0) Debug.LogError("行动点已经小于0了");
+        if (action == EnumActionType.All)
+            BattleInfo.actionPoint = 0;
+        else
+        {
+            BattleInfo.actionPoint -= GetActionPointCost(action);
+            if (BattleInfo.actionPoint < 0) Debug.LogError("行动点已经小于0了");
+        }
         return BattleInfo.actionPoint;
     }
     #endregion
@@ -504,7 +509,7 @@ public class CharacterLogic
     {
         WeaponItem equipItem = Info.Items.GetEquipWeapon();
         var att = GetAttribute();
-        return ResourceManager.GetWeaponDef(equipItem.ID).Hit + att.Skill + att.Intel/ 2;//武器命中+技术
+        return ResourceManager.GetWeaponDef(equipItem.ID).Hit + att.Skill + att.Intel / 2;//武器命中+技术
     }
     public int GetCritical()
     {
@@ -515,7 +520,7 @@ public class CharacterLogic
     public int GetAvoid()
     { //自身速度+自身幸运+支援效果+地形效果
         var att = GetAttribute();
-        return (att.Speed + att.Intel)/2;//getMapAvoid()
+        return (att.Speed + att.Intel) / 2;//getMapAvoid()
     }
     public int GetCriticalAvoid()
     {

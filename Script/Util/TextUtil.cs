@@ -84,5 +84,13 @@ namespace Utils
         {
             return "<size=" + Size + ">" + Content + "</size>";
         }
+        public static string GetStandardDataTime(System.DateTime dataTime)
+        {
+            return dataTime.ToString("yyyy-MM-dd hh:mm:ss");
+        }
+        public static string GetStandardDataTime()
+        {
+            return System.DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+        }
     }
 }

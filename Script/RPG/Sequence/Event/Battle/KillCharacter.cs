@@ -24,13 +24,13 @@ namespace Sequence
             {
                 ch = gameMode.ChapterManager.GetCharacterFromID(CharacterID);
                 Assert.IsNotNull(ch, CharacterID + " id 角色不存在");
-                gameMode.KillUnit(CharacterID, ConstTable.UNIT_DISAPPEAR_SPEED(Speed), Continue);
+                gameMode.BattlePlayer.KillUnit(CharacterID, ConstTable.UNIT_DISAPPEAR_SPEED(Speed), Continue);
             }
             else
             {
                 ch = gameMode.ChapterManager.GetCharacterFromCoord(TilePos);
                 Assert.IsNotNull(ch, TilePos + "处不存在角色");
-                gameMode.KillUnitAt(TilePos, ConstTable.UNIT_DISAPPEAR_SPEED(Speed), Continue);
+                gameMode.BattlePlayer.KillUnitAt(TilePos, ConstTable.UNIT_DISAPPEAR_SPEED(Speed), Continue);
             }
         }
     }

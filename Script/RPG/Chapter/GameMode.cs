@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
+using System;
 
 public class GameMode : MonoSingleton<GameMode>
 {
@@ -15,11 +16,13 @@ public class GameMode : MonoSingleton<GameMode>
     private InputManager inputManager;
     private UIManager uiManager;
     private GridTileManager gridTileManager;
+    private BattlePlayer battlePlayer;
     public BattleManager BattleManager { get { return battleManager; } }
     public InputManager InputManager { get { return inputManager; } }
     public UIManager UIManager { get { return uiManager; } }
     public GridTileManager GridTileManager { get { return gridTileManager; } }
     public ChapterManager ChapterManager { get { return chapterManager; } }
+    public BattlePlayer BattlePlayer { get { return battlePlayer; } }
     #region GameMode Info
     public struct GameModeInfo
     {
@@ -66,6 +69,9 @@ public class GameMode : MonoSingleton<GameMode>
         battleManager.UpdateSelectTileInfo = uiManager.UpdateTileInfo;
         battleManager.UpdateSelectCharacterInfo = uiManager.UpdateCharacterInfo;
         battleManager.Init();
+
+        battlePlayer = new BattlePlayer();
+
         gridTileManager.InitMouseInputEvent();
 
         chapterManager.OnShowTurnIndicate += uiManager.TurnIndicate.Show;
@@ -73,16 +79,28 @@ public class GameMode : MonoSingleton<GameMode>
         LogInitInfo();
         TestFunctionAddHere();
     }
-
+    public IEnumerator Start()
+    {
+        yield return null;
+        //淡出从白到正常显示主菜单页面
+        {
+            uiManager.ScreenWhiteToNormal(2.0f);
+            uiManager.GameStartMenu.ShowAtStart = true;
+            uiManager.GameStartMenu.Init();
+            uiManager.GameStartMenu.Show();
+        }
+    }
+    #region Test and Log
     void LogInitInfo()
     {
         Debug.Log("存档位置：" + GameRecord.RootDataPath);
     }
     void TestFunctionAddHere()
     {
-        chapterManager.NewGameData(1);
-        StartCoroutine(TestLoadBattleFromSave());
+        //chapterManager.NewGameData(1);
+        //StartCoroutine(TestLoadBattleFromSave());
     }
+
     IEnumerator TestLoadBattleFromSave()
     {
         yield return null;
@@ -99,13 +117,53 @@ public class GameMode : MonoSingleton<GameMode>
         //fade1.FadeType = Sequence.FadeScreen.渐变类型.黑变正常;
         //PlaySequence(() => Debug.LogError("Finish"));
     }
+    #endregion
+    private void LoadGameSequence(UnityAction action)
+    {
+        ResetSequence("Load Game");
+        var fade1 = AddSequenceEvent<Sequence.FadeScreen>();
+        fade1.duration = 1.0f;
+        fade1.waitUntilFinished = true;
+        fade1.FadeType = Sequence.FadeScreen.渐变类型.正常变黑;
+        var fade2 = AddSequenceEvent<Sequence.FadeScreen>();
+        fade2.duration = 1.0f;
+        fade2.waitUntilFinished = false;
+        fade2.FadeType = Sequence.FadeScreen.渐变类型.黑变正常;
+        PlaySequence(action);
+    }
+    public void NewGame(int slot)
+    {
+        chapterManager.NewGameData(slot);
+    }
 
+    public void SaveGame(int slot)
+    {
+        chapterManager.SaveChapterData(slot);
+        //继续下一章
+    }
+    public void LoadGame(int slot)
+    {
+        chapterManager.LoadChapterData(slot);
+    }
+    public void LoadNextChapter()
+    {
+        chapterManager.LoadChapterDef(chapterManager.ChapterId + 1);
+    }
+    public void PlayStartSequence()
+    {
+        uiManager.ChapterStartPreface.RegisterHideEvent(() =>
+        {
+            uiManager.HideAfterRecord();
+            chapterManager.Event.StartSequence.Execute();
+        });
+        uiManager.ChapterStartPreface.Show(chapterManager.ChapterDef.CommonProperty.Name);
+    }
     // Update is called once per frame
     void Update()
     {
         if (modeInfo.lockInput) return;
-        InputManager.Update();
-        UIManager.Update();
+        inputManager.Update();
+        uiManager.Update();
         if (modeInfo.HasStartBattle())
         {
             BattleManager.Update();
@@ -162,85 +220,21 @@ public class GameMode : MonoSingleton<GameMode>
     }
 
     #endregion
-    #region UnitShower
 
     public ETileType GetTileType(Vector2Int tilePos)
     {
         return gridTileManager.GetTileType(tilePos);
     }
-    public void AddUnitToMap(RPGCharacter p, Vector2Int tilePos)
-    {
-        var logic = p.Logic;
-        Transform unit = unitShower.AddUnit(p.GetCamp(), logic.GetName(), logic.GetStaySprites(), logic.GetMoveSprites(), tilePos);
-        p.SetTransform(unit);
-        logic.SetTileCoord(tilePos);
-        var camp = p.GetCamp();
-        if (camp == EnumCharacterCamp.Player)
-            chapterManager.AddPlayerToBattle(p);
-        if (camp == EnumCharacterCamp.Enemy)
-            chapterManager.AddEnemyToBattle(p);
-    }
-    public void MoveUnitAfterAction(Vector2Int unitPos, Vector2Int destPos, float speed, UnityAction onComplete)
-    {
-        List<Vector2Int> routine = PositionMath.GetMoveRoutine(destPos);
-        unitShower.MoveUnit(routine, onComplete, speed);
-    }
-    public void MoveUnitByRoutine(List<Vector2Int> routine, float speed, UnityAction onComplete)
-    {
-        unitShower.MoveUnit(routine, onComplete, speed);
-    }
 
-    public void KillUnitAt(Vector2Int tilePos, float v, UnityAction onComplete, bool triggerDeadEvent = false)
-    {
-        RPGCharacter ch = chapterManager.GetCharacterFromCoord(tilePos);
-        KillUnit(ch, v, onComplete, triggerDeadEvent);
-    }
-    public void KillUnit(int Id, float v, UnityAction onComplete, bool triggerDeadEvent = false)
-    {
-        var ch = chapterManager.GetCharacterFromID(Id);
-        KillUnit(ch, v, onComplete, triggerDeadEvent);
-    }
-
-    public void KillUnit(RPGCharacter ch, float v, UnityAction onComplete, bool triggerDeadEvent = false)
-    {
-        chapterManager.RemoveCharacter(ch);
-        if (triggerDeadEvent)
-        {
-            chapterManager.CheckEnemyDeadEvent(ch.Logic.GetID(), () => { unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete); });
-        }
-        else
-        {
-            unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
-        }
-    }
-    public void AttackUnit(CharacterLogic attacker, CharacterLogic defender)
-    {
-        attacker.ConsumeActionPoint(EnumActionType.Attack);
-        List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(attacker, defender);
-        Debug.Log(Utils.TextUtil.GetListString(attackInfo));
-        //以Sequence的形式呈现战斗过程，
-        BeforePlaySequence();
-        ResetSequence("Attack");
-
-        var atk = AddSequenceEvent<Sequence.AttackAnimation>();
-        atk.AttackInfo = attackInfo[0];
-        atk.IsLeft = false;
-        atk.WaitTime = 0.3f;
-        if (attackInfo.Count > 1)
-        {
-            var counterAtk = AddSequenceEvent<Sequence.AttackAnimation>();
-            counterAtk.AttackInfo = attackInfo[1];
-            counterAtk.IsLeft = true;
-            counterAtk.WaitTime = 1.0f;
-        }
-
-        PlaySequence(CheckDefeatBossWin);
-        //计算处方向 然后在Unitshower里面转向并攻击，抖动
-    }
-    private void CheckDefeatBossWin()
+    public void CheckDefeatBossWin()
     {
         uiManager.HideAttackInfo();
         if (chapterManager.CheckWin_DefeatBoss(0))
+        {
+            ClearStage();
+            return;
+        }
+        if (chapterManager.CheckWin_KillAllEnemy() && chapterManager.EnemyCount == 0)
         {
             ClearStage();
             return;
@@ -251,20 +245,15 @@ public class GameMode : MonoSingleton<GameMode>
              battleManager.OpenMenu(EActionMenuState.Main);
          });
     }
+    /// <summary>
+    /// 显示通关，并开始播放通关剧情
+    /// </summary>
     public void ClearStage()
     {
-        uiManager.TurnIndicate.ShowWinText(()=>chapterManager.Event.EndSequence.Execute());
+        uiManager.TurnIndicate.ShowWinText(() => chapterManager.Event.EndSequence.Execute());
     }
-    #endregion
     #region Battle Manager
-    /// <summary>
-    /// 加载章节数据，先加载存档中的数据，SLGChapter预制体，地图在StartEvent中载入并显示
-    /// </summary>
-    /// <param name="chapterID">章节ID</param>
-    public void LoadChapter(int chapterID)
-    {
-        chapterManager.LoadChapterData(chapterID);
-    }
+
     public void LoadBattle()
     {
         ChapterManager.LoadBattleData(-1);
@@ -317,6 +306,16 @@ public class GameMode : MonoSingleton<GameMode>
         pathShower.SetRootVisible(false);
         LockInput(true);
     }
+    public void AfterPlaySequence()
+    {
+        pathShower.SetRootVisible(true);
+        LockInput(false);
+    }
+    public void StopPlaySequence()
+    {
+        PublicSequencer.Stop();
+        AfterPlaySequence();
+    }
     public void ResetSequence(string sequenceName, bool skipable = false)
     {
         PublicSequencer.Clear();
@@ -340,11 +339,6 @@ public class GameMode : MonoSingleton<GameMode>
     {
         PublicSequencer.Reset();
         PublicSequencer.Execute(onComplete);
-    }
-    public void AfterPlaySequence()
-    {
-        pathShower.SetRootVisible(true);
-        LockInput(false);
     }
     #endregion
 }

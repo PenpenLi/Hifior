@@ -58,8 +58,8 @@ namespace RPGEditor
             chapter.CommonProperty.Description = EditorGUILayout.TextField(guiContent_Desc, chapter.CommonProperty.Description);
 
             chapter.Icon = (Sprite)EditorGUILayout.ObjectField("图标", chapter.Icon, typeof(Sprite), false);
-            chapter.TeamIndex = EditorGUILayout.IntSlider("所属队伍", chapter.MaxPlayerCount, 0, 3);
-            chapter.MaxPlayerCount = EditorGUILayout.IntSlider("最大出场人数", chapter.MaxPlayerCount, 1, 20);
+            chapter.TeamIndex = EditorGUILayout.IntSlider("所属队伍", chapter.TeamIndex, 0, ConstTable.TEAM_COUNT - 1);
+            chapter.MaxPlayerCount = EditorGUILayout.IntSlider("最大出场人数", chapter.MaxPlayerCount, 1, ConstTable.CONST_MAX_BATTLE_PLAYER_COUNT);
             string[] displayPlayerNames = RPGData.PlayerNameList.ToArray();
             int[] valuePlayerNames = EnumTables.GetSequentialArray(RPGData.PlayerNameList.Count);
             RPGEditorGUI.DynamicArrayView(ref forceInvolveCount, ref chapter.ForceInvolve, "强制出场人数", "强制出场人物", displayPlayerNames, valuePlayerNames, chapter.MaxPlayerCount);

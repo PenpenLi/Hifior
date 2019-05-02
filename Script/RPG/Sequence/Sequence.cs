@@ -117,7 +117,7 @@ namespace Sequence
         {
             return executionCount;
         }
-
+        private Coroutine coroutine;
         public virtual bool Execute(UnityAction onComplete = null)
         {
             if (executionState != ExecutionState.Idle)
@@ -125,7 +125,7 @@ namespace Sequence
                 return false;
             }
             executionCount++;
-            StartCoroutine(ExecuteBlock(onComplete));
+            coroutine = StartCoroutine(ExecuteBlock(onComplete));
 
             return true;
         }
@@ -207,6 +207,7 @@ namespace Sequence
 
             // This will cause the execution loop to break on the next iteration
             jumpToSequenceEventIndex = int.MaxValue;
+            if (coroutine != null) StopCoroutine(coroutine);
         }
 
         public virtual System.Type GetPreviousActiveSequenceEventType()

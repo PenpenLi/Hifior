@@ -341,7 +341,7 @@ public class ItemGroup
 
     public bool AddProp(PropsItem Item, int InsertIndex)//添加装备到指定顺序
     {
-        if (Weapons.Count == ConstTable.CONST_M_COUNT)//若装备已满，返回FALSE
+        if (Weapons.Count == ConstTable.CONST_MAX_ITEM_COUNT)//若装备已满，返回FALSE
         {
             Debug.Log("物品已达上限");
             return false;

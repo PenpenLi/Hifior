@@ -19,6 +19,14 @@ public class UnitShower : MonoBehaviour
         UnitGreyMaterial = ResourceManager.UnitGreyMaterial;
         UnitMaterials = new Material[4] { ResourceManager.UnitPlayerMaterial, ResourceManager.UnitEnemyMaterial, ResourceManager.UnitAllyMaterial, ResourceManager.UnitNPCMaterial };
     }
+    public void Clear()
+    {
+        foreach (var v in keyValue)
+        {
+            Destroy(v.Value.gameObject);
+        }
+        keyValue.Clear();
+    }
     public Transform AddUnit(EnumCharacterCamp t, string name, Sprite[] stay, Sprite[] move, Vector2Int tilePos)
     {
         Transform root = GetUnitTransformRoot(t);
@@ -72,7 +80,7 @@ public class UnitShower : MonoBehaviour
         Color oriCol = animator.render.color;
         Tweener tw = DOTween.ToAlpha(() => oriCol, x => oriCol = x, 0, t);
         tw.onUpdate = () => { animator.render.color = oriCol; };
-        tw.onComplete = () => { onComplete(); Destroy(animator.gameObject); };
+        tw.onComplete = () => { onComplete(); keyValue.Remove(pos); Destroy(animator.gameObject); };
     }
     private MultiSpriteAnimator GetUnitAt(Vector2Int tilePos)
     {

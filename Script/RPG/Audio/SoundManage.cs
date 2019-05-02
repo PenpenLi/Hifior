@@ -23,11 +23,19 @@ public class SoundManage : MonoSingleton<SoundManage>
     public AudioSource _2DBGMAudio;
     public AudioSource _2DEffectAudio;
     public AudioClip[] effects;//effect赋值到某个物体上播放
-
+    private string GetBgmResourcePath(int BGM_id)
+    {
+        return TextUtil.GetResourcesFullPath("bgm_" + BGM_id.ToString(), "Audio", "BGM");
+    }
     #region  BGM操作
+    public void PlayClip(AudioClip clip)
+    {
+        _2DBGMAudio.clip = clip;
+        _2DBGMAudio.Play();
+    }
     public void PlayBGMImmediate(int BGMid, bool NormalVolume = false)
     {
-        _2DBGMAudio.clip = Resources.Load(TextUtil.GetResourcesFullPath("bgm_" + BGMid.ToString(), "Sound", "BGM")) as AudioClip;
+        _2DBGMAudio.clip = Resources.Load(GetBgmResourcePath(BGMid)) as AudioClip;
         _2DBGMAudio.Play();
         if (NormalVolume)
             NormalBGM();
@@ -37,7 +45,7 @@ public class SoundManage : MonoSingleton<SoundManage>
         StopBGM(timeToReach);
         GameUtil.DelayFunc(this, delegate
          {
-             _2DBGMAudio.clip = Resources.Load(TextUtil.GetResourcesFullPath("bgm_" + BGMid.ToString(), "Sound", "BGM")) as AudioClip;
+             _2DBGMAudio.clip = Resources.Load(GetBgmResourcePath(BGMid)) as AudioClip;
              _2DBGMAudio.Play();
              NormalBGM(timeToReach);
          }, timeToReach);

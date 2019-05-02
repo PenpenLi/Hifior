@@ -65,7 +65,7 @@ namespace Sequence
 
         private void Dead(RPGCharacter ch)
         {
-            gameMode.KillUnit(ch,ConstTable.UNIT_DISAPPEAR_SPEED(), Continue, true);
+            gameMode.BattlePlayer.KillUnit(ch,ConstTable.UNIT_DISAPPEAR_SPEED(), Continue, true);
 
         }
         public override void Continue()
