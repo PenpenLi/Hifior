@@ -537,11 +537,27 @@ public class CharacterLogic
     }
     public EnumSelectEffectRangeType GetSelectRangeType()
     {
-        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.SelectType;
+        var weapon = Info.Items.GetEquipWeapon();
+        if (weapon == null) return EnumSelectEffectRangeType.菱形;
+        return ResourceManager.GetWeaponDef(weapon.ID).RangeType.SelectType;
+    }
+    public Vector2Int GetSelectRange()
+    {
+        var weapon = Info.Items.GetEquipWeapon();
+        if (weapon == null) return Vector2Int.zero;
+        return ResourceManager.GetWeaponDef(weapon.ID).RangeType.SelectRange;
     }
     public EnumSelectEffectRangeType GetEffectRangeType()
     {
-        return ResourceManager.GetWeaponDef(Info.Items.GetEquipWeapon().ID).RangeType.EffectType;
+        var weapon = Info.Items.GetEquipWeapon();
+        if (weapon == null) return EnumSelectEffectRangeType.菱形;
+        return ResourceManager.GetWeaponDef(weapon.ID).RangeType.EffectType;
+    }
+    public Vector2Int GetEffectRange()
+    {
+        var weapon = Info.Items.GetEquipWeapon();
+        if (weapon == null) return Vector2Int.zero;
+        return ResourceManager.GetWeaponDef(weapon.ID).RangeType.EffectRange;
     }
     public int GetAnger()
     {

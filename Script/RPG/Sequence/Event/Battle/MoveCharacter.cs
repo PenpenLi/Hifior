@@ -37,7 +37,7 @@ namespace Sequence
             }
             ch.Logic.SetTileCoord(endPos);
 
-            if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform());
+            if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform(),true);
 
             if (WaitUntilFinished)
                 gameMode.BattlePlayer.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);

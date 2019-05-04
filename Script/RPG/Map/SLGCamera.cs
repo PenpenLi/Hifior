@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 public enum CameraControlMode
 {
     DisableControl,
@@ -51,7 +52,7 @@ public class SLGCamera : MonoBehaviour
             Vector3 mousePos = Input.mousePosition;
             var localPos = PositionMath.TilePositionToTileLocalPosition(maxMoveable - Vector2Int.one);
             if (mousePos.x > Screen.height - widthBorder && transform.localPosition.x < localPos.x)
-            { transform.Translate(Vector3.right * PositionMath.TileLength, Space.Self);mouseStayTime = 0; }
+            { transform.Translate(Vector3.right * PositionMath.TileLength, Space.Self); mouseStayTime = 0; }
             else if (mousePos.y > Screen.height - heightBorder && transform.localPosition.y < 0)
             { transform.Translate(Vector3.up * PositionMath.TileLength, Space.Self); mouseStayTime = 0; }
             else if (mousePos.x < widthBorder && transform.localPosition.x > 0)
@@ -91,10 +92,34 @@ public class SLGCamera : MonoBehaviour
         oldControlMode = ControlMode;
         ControlMode = mode;
     }
-    public void StartFollowTransform(Transform t)
+    public void StartFollowTransform(Transform t, bool moveLerp, float moveSpeed = 0.5f)
     {
+        if (moveLerp)
+        {
+            SetControlMode(CameraControlMode.DisableControl);
+        }
+        //然后移动到目标点，然后进行最终设定
         targetTransform = t;
-        SetControlMode(CameraControlMode.FollowTransform);
+        Vector3 p = PositionMath.CameraLocalPositionFollowUnitLocalPosition(targetTransform.localPosition);
+        if (p == targetTransform.localPosition)
+        {
+            SetControlMode(CameraControlMode.FollowTransform);
+            return;
+        }
+        float distance = moveSpeed / Vector3.Distance(p, transform.localPosition);
+        StartCoroutine(IMoveCameraToTarget(p, distance, () => SetControlMode(CameraControlMode.FollowTransform)));
+    }
+    IEnumerator IMoveCameraToTarget(Vector3 pos, float distance, UnityAction onComplete)
+    {
+        float ratio = 0.0f;
+        while (ratio < 1.0f)
+        {
+            ratio += Time.deltaTime * distance;
+            Vector3.Lerp(transform.localPosition, pos, ratio);
+            yield return null;
+        }
+        Vector3.Lerp(transform.localPosition, pos, 1);
+        onComplete();
     }
     public void CameraFollowTargetPosition()
     {

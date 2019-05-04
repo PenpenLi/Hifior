@@ -348,12 +348,12 @@ public class BattleManager : ManagerBase
     }
     public void ExecuteMove(Vector2Int destPos)
     {
-        Vector2Int srcPos = CurrentCharacterLogic.GetTileCoord();
+        Vector2Int srcPos = currentCharacter.GetTileCoord();
         CurrentCharacterLogic.SetTileCoord(destPos);
         CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Move);
         ChangeState(EBattleState.Lock);
         ClearRangeAction();
-        gameMode.BattlePlayer.MoveUnitAfterAction(srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), CheckRangeEvent);
+        gameMode.BattlePlayer.MoveUnitAfterAction(currentCharacter.GetCamp(),srcPos, destPos, ConstTable.UNIT_MOVE_SPEED(), CheckRangeEvent);
     }
 
     public void CheckRangeEvent()
@@ -405,7 +405,7 @@ public class BattleManager : ManagerBase
                 ClearRangeAction();
                 ClearHighlightRangeAction();
                 CurrentCharacterLogic.ConsumeActionPoint(EnumActionType.Attack);
-                gameMode.BattlePlayer.AttackUnit(CurrentCharacterLogic, enemy.Logic);
+                gameMode.BattlePlayer.AttackUnit(CurrentCharacterLogic, enemy.Logic, gameMode.CheckDefeatBossWin);
             }
         }
     }

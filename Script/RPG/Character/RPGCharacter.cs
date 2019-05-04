@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.Events;
 using System;
-
+using RPG.AI;
 public class RPGCharacter : RPGCharacterBase
 {
     protected Material NormalMaterial { get { return ResourceManager.GetUnitMaterial(GetCamp()); } }
@@ -15,10 +15,12 @@ public class RPGCharacter : RPGCharacterBase
     /// 是否可以被玩家选择并进行行动
     /// </summary>
     public bool Controllable { get { return bEnableAction; } }
-    protected UnityAction Event_OnAttackFinish;
+    public BaseAttackAI AI_Attack;
+    public BaseSkillAI AI_Skill;
 
     public RPGCharacter()
     {
+        AI_Attack = new AI_AttackIfInRange(this);
     }
     public void SetDataFromDef(PlayerDef DefaultData)
     {
@@ -34,7 +36,18 @@ public class RPGCharacter : RPGCharacterBase
     {
         bEnableAction = false;
         logic.EndAction();
-        if (changeMaterial) GetSpriteRender().material = ResourceManager.UnitGreyMaterial;
+        if (changeMaterial) GreySprite();
+    }
+    /// <summary>
+    /// 正常时候的显示，判定状态进行材质选择
+    /// </summary>
+    public void NormalSprite()
+    {
+        GetSpriteRender().material = NormalMaterial;
+    }
+    public void GreySprite()
+    {
+        GetSpriteRender().material = ResourceManager.UnitGreyMaterial;
     }
     /// <summary>
     /// 使角色可以行动
@@ -43,7 +56,7 @@ public class RPGCharacter : RPGCharacterBase
     {
         bEnableAction = true;
         logic.StartAction();
-        if (changeMaterial) GetSpriteRender().material = NormalMaterial;
+        if (changeMaterial) NormalSprite();
     }
     public Vector2Int GetTileCoord()
     {

@@ -19,6 +19,13 @@ public enum EnumItemType
     武器,
     道具
 }
+public enum EnumEnemyCureSelfCondition
+{
+    不进行治疗,
+    HP低于一半,
+    HP低于四分之一,
+    HP低于一半随机
+}
 public enum EnumEnemyActionAI
 {
     /// <summary>
@@ -54,13 +61,6 @@ public enum EnumEventTriggerCondition
     敌人死亡事件,
     战场对话事件,
 
-}
-public enum EnumEnemyCureSelfCondition
-{
-    不进行治疗,
-    HP低于一半,
-    HP低于四分之一,
-    HP低于一半随机
 }
 /// <summary>
 /// 胜利条件

@@ -198,7 +198,7 @@ public class GameMode : MonoSingleton<GameMode>
 
     public void ShowMoveRange(CharacterLogic logic)
     {
-        PositionMath.InitActionScope(logic.Info.Camp, logic.GetMoveClass(), logic.GetMovement(), logic.GetTileCoord(), EnumSelectEffectRangeType.菱形, Vector2Int.one);
+        PositionMath.InitActionScope(logic.Info.Camp, logic.GetMoveClass(), logic.GetMovement(), logic.GetTileCoord(), logic.GetSelectRangeType(), logic.GetSelectRange());
         pathShower.ShowTiles(PathShower.EPathShowerType.Move, PositionMath.MoveableAreaPoints);
         pathShower.ShowTiles(PathShower.EPathShowerType.Damage, PositionMath.AttackAreaPoints, true, false);
     }

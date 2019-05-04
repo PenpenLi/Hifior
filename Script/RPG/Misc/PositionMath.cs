@@ -121,6 +121,7 @@ public static class PositionMath
     /// 包含己方单位的可用坐标
     /// </summary>
     private static bool[,] _bMoveAcessList;
+    private static bool[,] _bAttackAcessList;
     /// <summary>
     /// 排除了己方单位的可用坐标,也就是未被占用的坐标
     /// </summary>
@@ -139,6 +140,7 @@ public static class PositionMath
                 {
                     _bMoveAcessList[i, j] = false;
                     _bMoveAcessListExcluded[i, j] = false;
+                    _bAttackAcessList[i, j] = false;
                 }
             }
     }
@@ -149,6 +151,7 @@ public static class PositionMath
         _Tile_occupy = null;
         _bMoveAcessList = null;
         _bMoveAcessListExcluded = null;
+        _bAttackAcessList = null;
     }
     public static void SetTileTypeData(ETileType[,] data)
     {
@@ -160,71 +163,77 @@ public static class PositionMath
             _Tile_occupy = new EnumOccupyStatus[TileWidth, TileHeight];
             _bMoveAcessList = new bool[TileWidth, TileHeight];
             _bMoveAcessListExcluded = new bool[TileWidth, TileHeight];
+            _bAttackAcessList = new bool[TileWidth, TileHeight];
         }
     }
-    public static void SetTileEnemyOccupied(int x, int y)
+    public static void SetTileEnemyOccupied(Vector2Int tilePos)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            _Tile_occupy[x, y] = EnumOccupyStatus.Enemy;
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            _Tile_occupy[tilePos.x, tilePos.y] = EnumOccupyStatus.Enemy;
     }
-    public static void SetTilePlayerOccupied(int x, int y)
+    public static void SetTilePlayerOccupied(Vector2Int tilePos)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            _Tile_occupy[x, y] = EnumOccupyStatus.Player;
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            _Tile_occupy[tilePos.x, tilePos.y] = EnumOccupyStatus.Player;
     }
-    public static void ResetTileOccupyStatus(int x, int y)
+    public static void ResetTileOccupyStatus(Vector2Int tilePos)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            _Tile_occupy[x, y] = EnumOccupyStatus.None;
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            _Tile_occupy[tilePos.x, tilePos.y] = EnumOccupyStatus.None;
     }
-    public static bool IsOccupyByEnemy(int x, int y)
+    public static bool IsOccupyByEnemy(Vector2Int tilePos)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            return _Tile_occupy[x, y] == EnumOccupyStatus.Enemy;
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            return _Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.Enemy;
         return false;
     }
-    public static bool IsOccupyByPlayer(int x, int y)
+    public static bool IsOccupyByPlayer(Vector2Int tilePos)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            return _Tile_occupy[x, y] == EnumOccupyStatus.Player;
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            return _Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.Player;
         return false;
     }
-    public static bool IsOccupyByNone(int x, int y)
+    public static bool IsOccupyByNone(Vector2Int tilePos)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            return _Tile_occupy[x, y] == EnumOccupyStatus.None;
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            return _Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.None;
         return false;
     }
-    public static EnumOccupyStatus GetTileOccupyStatus(int x, int y)
+    public static void SetOccupyStatus(Vector2Int tilePos, EnumOccupyStatus status)
     {
-        if (IsEffectivelyCoordinateWithWarning(x, y))
-            return _Tile_occupy[x, y];
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            _Tile_occupy[tilePos.x, tilePos.y] = status;
+    }
+    public static EnumOccupyStatus GetTileOccupyStatus(Vector2Int tilePos)
+    {
+        if (IsEffectivelyCoordinateWithWarning(tilePos.x, tilePos.y))
+            return _Tile_occupy[tilePos.x, tilePos.y];
         return EnumOccupyStatus.None;
     }
-    private static bool IsOccupiedBySameParty(int x, int y)
+    private static bool IsOccupiedBySameParty(Vector2Int tilePos)
     {
-        if (_Tile_occupy[x, y] == EnumOccupyStatus.None)
+        if (_Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.None)
             return false;
         if (_bPlayer)
         {
-            return (_Tile_occupy[x, y] == EnumOccupyStatus.Player);
+            return (_Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.Player);
         }
         else
         {
-            return (_Tile_occupy[x, y] == EnumOccupyStatus.Enemy);
+            return (_Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.Enemy);
         }
     }
-    private static bool IsOccupiedByDiffentParty(int x, int y)
+    private static bool IsOccupiedByDiffentParty(Vector2Int tilePos)
     {
-        if (_Tile_occupy[x, y] == EnumOccupyStatus.None)
+        if (_Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.None)
             return false;
         if (_bPlayer)
         {
-            return (_Tile_occupy[x, y] == EnumOccupyStatus.Enemy);
+            return (_Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.Enemy);
         }
         else
         {
-            return (_Tile_occupy[x, y] == EnumOccupyStatus.Player);
+            return (_Tile_occupy[tilePos.x, tilePos.y] == EnumOccupyStatus.Player);
         }
     }
     private static bool IsEffectivelyCoordinate(Vector2Int p)
@@ -248,14 +257,14 @@ public static class PositionMath
     {
         return x >= 0 && y >= 0 && x < TileWidth && y < TileHeight;
     }
-    public static int GetMapPassValue(EnumMoveClassType moveClass, int x, int y)//得到此处的人物通过消耗
+    public static int GetMapPassValue(EnumMoveClassType moveClass,Vector2Int tilePos)//得到此处的人物通过消耗
     {
-        if (IsOccupiedByDiffentParty(x, y))//图块被敌方占用，则我方不可通过,敌方按正常计算
+        if (IsOccupiedByDiffentParty(tilePos))//图块被敌方占用，则我方不可通过,敌方按正常计算
         {
             return 100;
         }
         else
-            return FeTileData.TileInfos[_MapTileType[x, y]].GetMoveCost(moveClass);
+            return FeTileData.TileInfos[_MapTileType[tilePos.x, tilePos.y]].GetMoveCost(moveClass);
     }
     private static void _FindDistance(int movement)
     {
@@ -273,13 +282,13 @@ public static class PositionMath
     {
         if (IsEffectivelyCoordinate(cord))
         {
-            int value = surplusConsum - GetMapPassValue(_MoveClass, cord.x, cord.y);//该坐标处剩余可行步数
+            int value = surplusConsum - GetMapPassValue(_MoveClass, cord);//该坐标处剩余可行步数
             if (value >= 0)
             {
                 if (!_bMoveAcessList[cord.x, cord.y])
                 {
                     _bMoveAcessList[cord.x, cord.y] = true;
-                    if (!IsOccupiedBySameParty(cord.x, cord.y))//被相同方占用此处可以继续查找，但是不可以到达此处
+                    if (!IsOccupiedBySameParty(cord))//被相同方占用此处可以继续查找，但是不可以到达此处
                     {
                         _PList.Add(new Vector2Int(cord.x, cord.y));
                         _bMoveAcessListExcluded[cord.x, cord.y] = true;
@@ -298,7 +307,17 @@ public static class PositionMath
             }
         }
     }
-
+    private static void MoveAcessListToAttackRange()
+    {
+        for (int i = 0; i < TileWidth; i++)
+        {
+            for (int j = 0; j < TileHeight; j++)
+            {
+                if (_bAttackAcessList[i, j])
+                    _AttackRangeData.Add(new Vector2Int(i, j));
+            }
+        }
+    }
     private static void AttackScan(Vector2Int MoveablePoint)//输入的是需要遍历的边缘路径,攻击最小和最大范围
     {
         //查找四个方向的可用攻击范围坐标
@@ -321,9 +340,7 @@ public static class PositionMath
                         continue;
                     else
                     {
-                        _bMoveAcessList[i, j] = true;
-                        Vector2Int p = new Vector2Int(i, j);
-                        _AttackRangeData.Add(p);
+                        _bAttackAcessList[i, j] = true;
                     }
                 }
             }
@@ -339,9 +356,7 @@ public static class PositionMath
                     continue;
                 else
                 {
-                    _bMoveAcessList[i, y] = true;
-                    Vector2Int p = new Vector2Int(i, y);
-                    _AttackRangeData.Add(p);
+                    _bAttackAcessList[i, y] = true;
                 }
 
             }
@@ -354,16 +369,14 @@ public static class PositionMath
                     continue;
                 else
                 {
-                    _bMoveAcessList[x, i] = true;
-                    Vector2Int p = new Vector2Int(x, i);
-                    _AttackRangeData.Add(p);
+                    _bAttackAcessList[x, i] = true;
                 }
             }
         }
     }
     public static void InitActionScope(EnumCharacterCamp camp, EnumMoveClassType moveClass, int Movement, Vector2Int pos, EnumSelectEffectRangeType weaponRangeType, Vector2Int atkRange)
     {
-        _bPlayer = (camp == EnumCharacterCamp.Player);//0,2为我方的单位
+        _bPlayer = (camp != EnumCharacterCamp.Enemy);//0,2为我方的单位
         _Mov = Movement;
         /* if (Gamechar.SkillGroup.isHaveStaticSkill(18))//探险家，无视地形，将其职业设为天马
              _Job = 15;//medifyneed
@@ -399,6 +412,7 @@ public static class PositionMath
                     AttackScan(_PList[i]);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
                 }
             }
+            MoveAcessListToAttackRange();
         }
     }
 
@@ -420,6 +434,14 @@ public static class PositionMath
     {
         buildMoveRoutine(destPos);
         return _MoveRoute;
+    }
+    public static bool IsInAttackableRange(Vector2Int pos)
+    {
+        return _bAttackAcessList[pos.x, pos.y];
+    }
+    public static bool IsInMoveableZone(Vector2Int pos)
+    {
+        return _bMoveAcessListExcluded[pos.x, pos.y];
     }
     #endregion
 }

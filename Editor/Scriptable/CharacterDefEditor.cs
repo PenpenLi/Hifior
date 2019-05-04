@@ -58,7 +58,7 @@ namespace RPGEditor
                 character.DefaultAttribute.PhysicalDefense = EditorGUILayout.IntSlider("物理防御", character.DefaultAttribute.PhysicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.MagicalDefense = EditorGUILayout.IntSlider("魔法防御", character.DefaultAttribute.MagicalDefense, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
                 character.DefaultAttribute.BodySize = EditorGUILayout.IntSlider("体格", character.DefaultAttribute.BodySize, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MISC);
-                character.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", character.DefaultAttribute.Movement, 4, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
+                character.DefaultAttribute.Movement = EditorGUILayout.IntSlider("移动", character.DefaultAttribute.Movement, 1, RPGEditorGlobal.MAX_ATTRIBUTE_MOVEMENT);
 
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();

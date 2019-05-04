@@ -90,6 +90,12 @@ public class ChapterManager : ManagerBase
     public void StartEnemyAction()
     {
         gameMode.LockInput(true);
+        //以Sequence的形式播放敌方行动，一个一个来，中间可以被打断直接输出结果
+        foreach(var v in chapterManager.GetAllCharacters(EnumCharacterCamp.Enemy))
+        {
+            //v.AI_Attack.Action();
+        }
+        //结束后解锁各种操作镜头等
     }
 
     public void CheckTurnEvent(int round, EnumCharacterCamp camp)
@@ -285,6 +291,33 @@ public class ChapterManager : ManagerBase
             r.Add(v);
         return r;
     }
+    public List<RPGCharacter> GetAllCharacters(EnumCharacterCamp camp)
+    {
+        List<RPGCharacter> r = new List<RPGCharacter>();
+        switch (camp)
+        {
+            case EnumCharacterCamp.Player:
+                {
+                    foreach (var v in players.Players)
+                        r.Add(v);
+                    return r;
+                }
+            case EnumCharacterCamp.Enemy:
+                {
+                    foreach (var v in enemies.Enemies)
+                        r.Add(v);
+                    return r;
+                }
+            case EnumCharacterCamp.Ally:
+                break;
+            case EnumCharacterCamp.NPC:
+                break;
+            default:
+                break;
+        }
+        return r;
+    }
+
     public RPGCharacter GetCharacterFromCoord(Vector2Int tilePos)
     {
         foreach (var v in players.Players)
@@ -407,7 +440,8 @@ public class ChapterManager : ManagerBase
     {
         foreach (var v in players.Players)
         {
-            v.DisableAction(true);
+            v.DisableAction(false);
+            v.NormalSprite();//虽然是不让行动，但是显示要恢复正常的显示
         }
     }
     #region Money
@@ -465,7 +499,7 @@ public class ChapterManager : ManagerBase
     }
     public void LoadChapterDef(int id)
     {
-        if (ChapterDef!=null && Event.gameObject != null)GameObject.Destroy(Event.gameObject);
+        if (ChapterDef != null && Event.gameObject != null) GameObject.Destroy(Event.gameObject);
         ChapterDef = ResourceManager.GetChapterDef(id);
         ChapterDef.Event = GameObject.Instantiate(ChapterDef.Event);
         ChapterId = id;
