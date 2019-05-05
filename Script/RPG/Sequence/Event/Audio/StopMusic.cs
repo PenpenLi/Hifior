@@ -8,7 +8,7 @@ namespace Sequence
 
         public override void OnEnter()
         {
-            SoundController musicController = SoundController.Instance;
+            SoundManage musicController = SoundManage.Instance;
             if (musicController != null)
             {
                 musicController.StopMusic();

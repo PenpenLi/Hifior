@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class PositionMath
@@ -93,6 +94,12 @@ public static class PositionMath
         }
 
     }
+
+    public static void ResetTileOccupyStatus()
+    {
+        _Tile_occupy = new EnumOccupyStatus[TileWidth, TileHeight];
+    }
+
     public static int TileWidth = 30;//地图x
     public static int TileHeight = 20;//地图y
     /// <summary>
@@ -155,6 +162,7 @@ public static class PositionMath
     }
     public static void SetTileTypeData(ETileType[,] data)
     {
+        ClearPathHistory();
         _MapTileType = data;
         TileWidth = data.GetLength(0);
         TileHeight = data.GetLength(1);

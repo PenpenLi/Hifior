@@ -18,7 +18,11 @@ namespace Sequence
         {
             Continue();
         }
-
+        public override bool OnStopExecuting()
+        {
+            Continue();
+            return true;
+        }
         public override string GetSummary()
         {
             return duration.ToString() + " seconds";

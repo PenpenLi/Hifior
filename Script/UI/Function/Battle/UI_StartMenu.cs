@@ -20,7 +20,7 @@ namespace RPG.UI
         public override void BeginPlay()
         {
             base.Awake();
-            SoundManage.Instance.PlayClip(Theme);
+            SoundManage.Instance.PlayMusic(Theme);
             Menus = GetComponentsInChildren<Button>();
 
             var startNewGame = GetButton(EMainMenuType.ButtonStartGame);

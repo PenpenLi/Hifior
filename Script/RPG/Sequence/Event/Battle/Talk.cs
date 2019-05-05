@@ -16,6 +16,12 @@ namespace Sequence
             TalkDialog.RegisterHideEvent(Continue);
             TalkDialog.Show(Code);
         }
+        public override bool OnStopExecuting()
+        {
+            gameMode.UIManager.TalkDialog.Hide(false);
+            Continue();
+            return true;
+        }
     }
 
 }

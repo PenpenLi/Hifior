@@ -37,7 +37,7 @@ namespace Sequence
             }
             ch.Logic.SetTileCoord(endPos);
 
-            if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform(),true);
+            if (CameraFollow) gameMode.slgCamera.StartFollowTransform(ch.GetTransform(), true);
 
             if (WaitUntilFinished)
                 gameMode.BattlePlayer.MoveUnitByRoutine(Routine, ConstTable.UNIT_MOVE_SPEED(Speed), Continue);
@@ -47,10 +47,34 @@ namespace Sequence
                 Continue();
             }
         }
+        public override bool OnStopExecuting()
+        {
+            Vector2Int startPos = Routine.First();
+            Vector2Int endPos = Routine.Last();
+            Assert.IsFalse(startPos == endPos, "移动点和终结点相同");
+            RPGCharacter ch = null;
+            if (CharacterID >= 0)
+            {
+                ch = gameMode.ChapterManager.GetCharacterFromID(CharacterID);
+                Assert.IsNotNull(ch, startPos + "处不存在角色");
+                var chPos = ch.GetTileCoord();
+                Assert.IsTrue(startPos == chPos, "移动起始点" + startPos + "与角色所在位置" + chPos + "不相符");
+            }
+            else
+            {
+                ch = gameMode.ChapterManager.GetCharacterFromCoord(startPos);
+                Assert.IsNotNull(ch, startPos + "处不存在角色");
+            }
+            ch.Logic.SetTileCoord(endPos);
+
+            gameMode.BattlePlayer.MoveUnitByRoutine(Routine, 0, null);
+            Continue();
+            return true;
+        }
         public override void Continue()
         {
             base.Continue();
-            if(CameraFollow) gameMode.slgCamera.SetOldControlMode();
+            if (CameraFollow) gameMode.slgCamera.SetOldControlMode();
         }
     }
 }

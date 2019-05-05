@@ -49,6 +49,11 @@ namespace Sequence
                 Continue();
             }
         }
+        public override bool OnStopExecuting()
+        {
+            Continue();
+            return true;
+        }
         public override void Continue()
         {
             base.Continue();

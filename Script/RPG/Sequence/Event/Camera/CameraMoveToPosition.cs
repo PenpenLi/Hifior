@@ -20,18 +20,7 @@ namespace Sequence
                 Continue();
             }
         }
-        protected virtual void OniTweenComplete(object param)
-        {
-            SequenceEvent command = param as SequenceEvent;
-            if (command != null && command.Equals(this))
-            {
-                if (waitUntilFinished)
-                {
-                    Continue();
-                }
-            }
-        }
-
+     
         public override string GetSummary()
         {
             return "Move to " + TargetPoint + " in " + Time + " seconds";

@@ -23,18 +23,12 @@ namespace Sequence
             {
                 Continue();
             }
-        }
 
-        protected virtual void OniTweenComplete(object param)
+        }
+        public override bool OnStopExecuting()
         {
-            SequenceEvent command = param as SequenceEvent;
-            if (command != null && command.Equals(this))
-            {
-                if (waitUntilFinished)
-                {
-                    Continue();
-                }
-            }
+            Continue();
+            return true;
         }
 
         public override string GetSummary()

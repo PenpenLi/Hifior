@@ -10,7 +10,7 @@ namespace Sequence
         public AudioClip GetAudio;
         public override void OnEnter()
         {
-            SoundController.Instance.PlaySound(GetAudio);
+            SoundManage.Instance.PlaySound(GetAudio);
             gameMode.UIManager.GetItemOrMoney.ShowGetMoney(MoneyAmount);
             DelayContinue(ConstTable.CONST_SHOW_GET_ITEM_MONEY_TIME);
         }

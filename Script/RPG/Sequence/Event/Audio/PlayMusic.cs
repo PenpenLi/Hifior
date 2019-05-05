@@ -15,7 +15,7 @@ namespace Sequence
 
         public override void OnEnter()
         {
-            SoundController musicController = SoundController.Instance;
+            SoundManage musicController = SoundManage.Instance;
             if (musicController != null)
             {
                 float startTime = Mathf.Max(0, AtTime);
@@ -24,7 +24,6 @@ namespace Sequence
 
             Continue();
         }
-
         public override string GetSummary()
         {
             if (MusicClip == null)

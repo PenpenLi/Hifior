@@ -5,24 +5,24 @@ namespace Sequence
     [AddComponentMenu("Sequence/Set Music Volume")]
     public class SetMusicVolume : SequenceEvent
     {
-        [Range(0f, 1.0f)]
-        public float Volume;
+        [Range(0, 10)]
+        public int Volume;
         [Tooltip("降低")]
         public bool Lower;
         [Tooltip("恢复")]
         public bool Restore;
         public override void OnEnter()
         {
-            SoundController musicController = SoundController.Instance;
+            SoundManage musicController = SoundManage.Instance;
             if (musicController != null)
             {
                 if (Lower)
                 {
-                    musicController.LowerBGMVolume();
+                    musicController.LowerBGM();
                 }
                 else if (Restore)
                 {
-                    musicController.RestoreBGMVolume();
+                    musicController.NormalBGM();
                 }
                 else
                 {

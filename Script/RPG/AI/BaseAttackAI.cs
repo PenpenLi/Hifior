@@ -58,5 +58,12 @@ namespace RPG.AI
             GetInActionRange();
             return SelectByPriority();
         }
+        protected bool HasWeapon() { return unit.Logic.Info.Items.GetAllWeapons().Count > 0; }
+        protected virtual WeaponItem Weapon()
+        {
+            var weapons = unit.Logic.Info.Items.GetAllWeapons();
+            if (weapons.Count == 1) { return weapons[0]; }
+            return null;
+        }
     }
 }

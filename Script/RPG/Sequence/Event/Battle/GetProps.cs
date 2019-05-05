@@ -13,7 +13,7 @@ namespace Sequence
         public AudioClip GetAudio;
         public override void OnEnter()
         {
-            SoundController.Instance.PlaySound(GetAudio);
+            SoundManage.Instance.PlaySound(GetAudio);
             gameMode.UIManager.GetItemOrMoney.ShowGetProps(PropID);
             Utils.GameUtil.DelayFunc(this, LogicGetProps, ConstTable.CONST_SHOW_GET_ITEM_MONEY_TIME);
         }

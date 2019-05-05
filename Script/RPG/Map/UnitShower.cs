@@ -70,6 +70,14 @@ public class UnitShower : MonoBehaviour
         if (animator == null) { Debug.LogError("没有在" + routine[0] + "处发现MultiSpriteAnimator组件"); return; }
         keyValue.Remove(routine[0]);
         keyValue.Add(routine[routine.Count - 1], animator);
+        if (speed == 0.0f)
+        {
+            PositionMath.SetUnitLocalPosition(animator.transform, routine[routine.Count - 1]);
+            animator.GetComponent<SpriteRenderer>().flipX = false;
+            animator.SetActiveAnimator(MultiSpriteAnimator.EAnimateType.Stay);
+            if (onFinish != null) onFinish();
+            return;
+        }
         StartCoroutine(moveCoroutine(animator, routine, 1.0f / speed, onFinish));
     }
     public void DisappearUnit(Vector2Int pos, float t, UnityAction onComplete)
@@ -77,10 +85,16 @@ public class UnitShower : MonoBehaviour
         MultiSpriteAnimator animator = GetUnitAt(pos);
         animator.HPBar.SetActive(false);
         if (animator == null) { Debug.LogError("没有在" + pos + "处发现MultiSpriteAnimator组件"); return; }
+        TweenCallback a = () => { onComplete(); keyValue.Remove(pos); Destroy(animator.gameObject); };
+        if (t == 0.0f)
+        {
+            a();
+            return;
+        }
         Color oriCol = animator.render.color;
         Tweener tw = DOTween.ToAlpha(() => oriCol, x => oriCol = x, 0, t);
         tw.onUpdate = () => { animator.render.color = oriCol; };
-        tw.onComplete = () => { onComplete(); keyValue.Remove(pos); Destroy(animator.gameObject); };
+        tw.onComplete = a;
     }
     private MultiSpriteAnimator GetUnitAt(Vector2Int tilePos)
     {

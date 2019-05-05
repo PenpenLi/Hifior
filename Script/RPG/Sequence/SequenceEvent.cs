@@ -82,8 +82,11 @@ namespace Sequence
          * Use this callback to terminate any asynchronous operations and 
          * cleanup state so that the command is ready to execute again later on.
          */
-        public virtual void OnStopExecuting()
-        { }
+        public virtual bool OnStopExecuting()
+        {
+            OnEnter();
+            return true;
+        }
 
         public virtual void OnEnter()
         { }

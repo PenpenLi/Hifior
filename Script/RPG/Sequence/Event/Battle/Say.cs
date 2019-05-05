@@ -81,15 +81,14 @@ namespace Sequence
             executionCount = 0;
         }
 
-        public override void OnStopExecuting()
+        public override bool OnStopExecuting()
         {
             SayDialog sayDialog = SayDialog.GetSayDialog();
-            if (sayDialog == null)
+            if (sayDialog != null)
             {
-                return;
+                sayDialog.Stop();
             }
-
-            sayDialog.Stop();
+            return true;
         }
 
         public string GetStandardText()

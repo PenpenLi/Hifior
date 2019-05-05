@@ -27,12 +27,32 @@ public class SoundManage : MonoSingleton<SoundManage>
     {
         return TextUtil.GetResourcesFullPath("bgm_" + BGM_id.ToString(), "Audio", "BGM");
     }
-    #region  BGM操作
-    public void PlayClip(AudioClip clip)
+    public void PlayMusic(AudioClip musicClip, float atTime = 0)
     {
-        _2DBGMAudio.clip = clip;
+        if (musicClip == null) { Debug.LogError("clip is null "); return; }
+        _2DBGMAudio.clip = musicClip;
+        _2DBGMAudio.time = atTime;     
         _2DBGMAudio.Play();
     }
+
+    public void StopMusic()
+    {
+        _2DBGMAudio.Stop();
+    }
+    public void PlaySound(AudioClip soundClip, float volume = 1.0f)
+    {
+        if (soundClip == null) { Debug.LogError("clip is null "); return; }
+        _2DEffectAudio.PlayOneShot(soundClip, volume);
+    }
+
+    public virtual void PlaySoundAtTime(AudioClip soundClip, float volume, float atTime)
+    {
+        if (soundClip == null) { Debug.LogError("clip is null "); return; }
+        _2DEffectAudio.time = atTime;                      // This may not work BK
+        _2DEffectAudio.PlayOneShot(soundClip, volume);
+    }
+    #region  BGM操作
+
     public void PlayBGMImmediate(int BGMid, bool NormalVolume = false)
     {
         _2DBGMAudio.clip = Resources.Load(GetBgmResourcePath(BGMid)) as AudioClip;

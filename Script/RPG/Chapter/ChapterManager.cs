@@ -46,8 +46,9 @@ public class ChapterManager : ManagerBase
     /// <summary>
     /// 清除战场数据
     /// </summary>
-    public void ClearBattle()
+    public void Clear()
     {
+        battleManager.ClearBattle();
         players.Players.Clear();
         enemies.Enemies.Clear();
     }
@@ -465,7 +466,7 @@ public class ChapterManager : ManagerBase
     }
     public void NewGameData(int slot)
     {
-        ClearBattle();
+        Clear();
         ChapterRecordCollection collect = new ChapterRecordCollection();
         collect.Slot = slot;
         ChapterDef = ResourceManager.GetChapterDef(0);
@@ -488,7 +489,7 @@ public class ChapterManager : ManagerBase
     }
     public void LoadChapterData(int slot)
     {
-        ClearBattle();
+        Clear();
         players.PlayersLogic.Clear();
         ChapterRecordCollection collect = record.LoadChapterFromDisk(slot);
         LoadChapterDef(collect.CurrentTeam.Chapter);
@@ -524,7 +525,7 @@ public class ChapterManager : ManagerBase
     /// <param name="slot"></param>
     public void LoadBattleData(int slot)
     {
-        ClearBattle();
+        Clear();
         BattleInfoCollection data = record.LoadBattleFromDisk(slot);
         //Debug.Log(collect.Event.TurnEvent[0].SequenceName);
         ChapterDef = ResourceManager.GetChapterDef(data.CurrentTeam.Chapter);

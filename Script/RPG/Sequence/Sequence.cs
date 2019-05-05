@@ -14,6 +14,8 @@ namespace Sequence
         {
             Idle,
             Executing,
+            Skiping,
+            Frezee,
         }
         [Tooltip("片段执行完毕执行的事件")]
         public UnityEngine.Events.UnityEvent OnFinish;
@@ -105,7 +107,10 @@ namespace Sequence
         void Update()
         {
             if (Skipable && GameMode.Instance.InputManager.GetStartInput())
-                GameMode.Instance.UIManager.ScreenNormalToDark(1.0f, true, delegate { Stop(); OnFinish.Invoke(); });
+            {
+                executionState = ExecutionState.Frezee;
+                GameMode.Instance.UIManager.ScreenNormalToDark(1.0f, true, Stop);
+            }
         }
 
         public virtual bool IsExecuting()
@@ -137,6 +142,9 @@ namespace Sequence
             int i = 0;
             while (true)
             {
+                if (executionState == ExecutionState.Frezee)
+                    yield return null;
+
                 // Executing commands specify the next command to skip to by setting jumpToSequenceEventIndex using SequenceEvent.Continue()
                 if (jumpToSequenceEventIndex > -1)
                 {
@@ -172,7 +180,14 @@ namespace Sequence
                 // This icon timer is managed by the FlowchartWindow class, but we also need to
                 // set it here in case a command starts and finishes execution before the next window update.
                 command.executingIconTimer = Time.realtimeSinceStartup + executingIconFadeTime;
-                command.Execute();
+                if (executionState == ExecutionState.Skiping && command.OnStopExecuting())
+                {
+                    Debug.Log("Skiping" + command.GetSummary());
+                }
+                else
+                {
+                    command.Execute();
+                }
 
                 // Wait until the executing command sets another command to jump to via SequenceEvent.Continue()
                 while (jumpToSequenceEventIndex == -1)
@@ -198,16 +213,17 @@ namespace Sequence
 
         public virtual void Stop()
         {
+            executionState = ExecutionState.Skiping;
             // Tell the executing command to stop immediately
-            if (ActiveEvent != null)
-            {
-                ActiveEvent.isExecuting = false;
-                ActiveEvent.OnStopExecuting();
-            }
-
+            //if (ActiveEvent != null)
+            //{
+            //    ActiveEvent.isExecuting = false;
+            //    ActiveEvent.OnStopExecuting();
+            //}
             // This will cause the execution loop to break on the next iteration
             jumpToSequenceEventIndex = int.MaxValue;
             if (coroutine != null) StopCoroutine(coroutine);
+            OnFinish?.Invoke();
         }
 
         public virtual System.Type GetPreviousActiveSequenceEventType()

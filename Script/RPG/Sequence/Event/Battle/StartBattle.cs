@@ -13,5 +13,9 @@ namespace Sequence
             gameMode.StartBattle(FirstActionCamp);
             Continue();
         }
+        public override string GetSummary()
+        {
+            return "Start Battle";
+        }
     }
 }

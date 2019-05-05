@@ -9,7 +9,7 @@ namespace Sequence
         {
             gameMode.unitShower.Clear();
             gameMode.GridTileManager.UnloadMap();
-            gameMode.ChapterManager.ClearBattle();
+            gameMode.ChapterManager.Clear();
             gameMode.pathShower.Clear();
             gameMode.BattleManager.ChangeState(BattleManager.EBattleState.Idel);
             Destroy(gameMode.ChapterManager.Event.gameObject);

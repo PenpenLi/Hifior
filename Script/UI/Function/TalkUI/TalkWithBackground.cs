@@ -22,7 +22,7 @@ namespace RPG.UI
         public Image CharTalk_1;
         public Image CharTalk_2;
         public Image CharTalk_3;
-        private SoundController musicController;
+        private SoundManage musicController;
         Image[] CharTalk;
         private Color COLOR_DARK = new Color(0.7f, 0.7f, 0.7f, 1f);
         private Color COLOR_LIGHT = new Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -100,7 +100,7 @@ namespace RPG.UI
         {
             base.Awake();
 
-            musicController = SoundController.Instance;
+            musicController = SoundManage.Instance;
 
             arrow.gameObject.SetActive(false);
             CharTalk = new Image[] { CharTalk_0, CharTalk_1, CharTalk_2, CharTalk_3 };
@@ -151,7 +151,7 @@ namespace RPG.UI
             }
             else//此处结束显示
             {
-                musicController.RestoreBGMVolume();
+                musicController.NormalBGM();
                 //UIController.ScreenNormalToDark(1.0f, false, Hide);
             }
         }
@@ -200,10 +200,10 @@ namespace RPG.UI
                             musicController.PlayBGMImmediate(int.Parse(paramsStr[0]));
                         break;
                     case "lv"://降低音量 Lower,Volume
-                        musicController.LowerBGMVolume();
+                        musicController.LowerBGM();
                         break;
                     case "rv"://重置音量 Reset,Volume
-                        musicController.RestoreBGMVolume();
+                        musicController.NormalBGM();
                         break;
                     case "cb"://以某种过渡方式更换背景 Change,Background
                         if (paramsStr.Length == 2)
@@ -278,7 +278,7 @@ namespace RPG.UI
             updateStartTime = 2.0f;
             SetTextFrameActive(false);
             m_TalkData = talkData;
-            musicController.LowerBGMVolume();
+            musicController.LowerBGM();
             base.Show();
         }
         /// <summary>

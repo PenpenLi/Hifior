@@ -61,6 +61,10 @@ public class BattleManager : ManagerBase
         HandleInput();
         UpdateScene();
     }
+    public void ClearBattle()
+    {
+        battleManager.currentCharacter = null;
+    }
     public RPGCharacter GetCharacter(Vector2Int tilePos)
     {
         var ch = chapterManager.GetCharacterFromCoord(tilePos);

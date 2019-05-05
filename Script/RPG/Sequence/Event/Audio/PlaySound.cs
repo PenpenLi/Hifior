@@ -25,7 +25,7 @@ namespace Sequence
                 return;
             }
 
-            SoundController musicController = SoundController.Instance;
+            SoundManage musicController = SoundManage.Instance;
             if (musicController != null)
             {
                 musicController.PlaySound(soundClip, volume);
@@ -40,12 +40,11 @@ namespace Sequence
                 Continue();
             }
         }
-
-        protected virtual void DoWait()
+        public override bool OnStopExecuting()
         {
             Continue();
+            return true;
         }
-
         public override string GetSummary()
         {
             if (soundClip == null)
