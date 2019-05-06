@@ -68,7 +68,6 @@ namespace Sequence
             ch.Logic.SetTileCoord(endPos);
 
             gameMode.BattlePlayer.MoveUnitByRoutine(Routine, 0, null);
-            Continue();
             return true;
         }
         public override void Continue()

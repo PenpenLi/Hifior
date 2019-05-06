@@ -75,6 +75,7 @@ namespace Sequence
         [NonSerialized]
         public int jumpToSequenceEventIndex = -1;
 
+        protected GameMode gameMode { get { return GameMode.Instance; } }
         protected virtual void Awake()
         {
             // Give each child command a reference back to its parent block
@@ -106,10 +107,12 @@ namespace Sequence
         }
         void Update()
         {
-            if (Skipable && GameMode.Instance.InputManager.GetStartInput())
+            if (IsExecuting()==false)
+                return;
+            if (Skipable && gameMode.InputManager.GetStartInput())
             {
                 executionState = ExecutionState.Frezee;
-                GameMode.Instance.UIManager.ScreenNormalToDark(1.0f, true, Stop);
+                gameMode.UIManager.ScreenNormalToDark(0.5f, true, () => { gameMode.UIManager.ScreenNormalToDark(0.5f, true, null);Stop(); });
             }
         }
 
@@ -125,10 +128,12 @@ namespace Sequence
         private Coroutine coroutine;
         public virtual bool Execute(UnityAction onComplete = null)
         {
-            if (executionState != ExecutionState.Idle)
+            gameObject.SetActive(true);
+            if (executionState == ExecutionState.Executing)
             {
-                return false;
+                Debug.LogError("the execution state is executing, " + executionState);
             }
+            executionState = ExecutionState.Idle;
             executionCount++;
             coroutine = StartCoroutine(ExecuteBlock(onComplete));
 
@@ -143,7 +148,10 @@ namespace Sequence
             while (true)
             {
                 if (executionState == ExecutionState.Frezee)
+                {
+                    Debug.Log("Frezee");
                     yield return null;
+                }
 
                 // Executing commands specify the next command to skip to by setting jumpToSequenceEventIndex using SequenceEvent.Continue()
                 if (jumpToSequenceEventIndex > -1)
@@ -182,6 +190,7 @@ namespace Sequence
                 command.executingIconTimer = Time.realtimeSinceStartup + executingIconFadeTime;
                 if (executionState == ExecutionState.Skiping && command.OnStopExecuting())
                 {
+                    command.Continue();
                     Debug.Log("Skiping" + command.GetSummary());
                 }
                 else
@@ -197,14 +206,14 @@ namespace Sequence
 
                 command.isExecuting = false;
             }
-
-            executionState = ExecutionState.Idle;
             ActiveEvent = null;
 
             if (onComplete != null)
             {
                 onComplete();
             }
+            gameObject.SetActive(false);
+            executionState = ExecutionState.Idle;
             if (DestroyWhenFinish)
             {
                 Destroy(gameObject, TimeSpan);
@@ -214,16 +223,8 @@ namespace Sequence
         public virtual void Stop()
         {
             executionState = ExecutionState.Skiping;
-            // Tell the executing command to stop immediately
-            //if (ActiveEvent != null)
-            //{
-            //    ActiveEvent.isExecuting = false;
-            //    ActiveEvent.OnStopExecuting();
-            //}
-            // This will cause the execution loop to break on the next iteration
-            jumpToSequenceEventIndex = int.MaxValue;
-            if (coroutine != null) StopCoroutine(coroutine);
-            OnFinish?.Invoke();
+
+            gameMode.UIManager.BreakSequence();
         }
 
         public virtual System.Type GetPreviousActiveSequenceEventType()

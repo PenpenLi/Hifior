@@ -24,7 +24,6 @@ namespace Sequence
         public override bool OnStopExecuting()
         {
             gameMode.CameraMoveTo(TilePos, null);
-            Continue();
             return true;
         }
         public override string GetSummary()

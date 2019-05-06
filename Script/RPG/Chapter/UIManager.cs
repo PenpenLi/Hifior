@@ -410,5 +410,11 @@ public class UIManager : ManagerBase
         Utils.GameUtil.DelayFunc(delegate { if (action != null) action(); if (autoDisable) ScreenMask.Hide(); }, duration);
     }
     #endregion
-
+    #region Sequence Break
+    public void BreakSequence()
+    {
+        if (GameMode.Instance.UIManager.TalkDialog.isActiveAndEnabled)
+            GameMode.Instance.UIManager.TalkDialog.Hide(true);
+    }
+    #endregion
 }

@@ -26,41 +26,6 @@ namespace Sequence
         }
         public override bool OnStopExecuting()
         {
-            atk = gameMode.ChapterManager.GetCharacterFromCoord(AttackInfo.attacker.GetTileCoord());
-            def = gameMode.ChapterManager.GetCharacterFromCoord(AttackInfo.defender.GetTileCoord());
-            atkSr = atk.GetSpriteRender();
-            defSr = def.GetSpriteRender();
-            atk_direction = PositionMath.GetDirection(atk.GetTileCoord(), def.GetTileCoord());
-            gameMode.unitShower.SetDirection(atk.GetSpriteRender(), atk_direction);
-            def_direction = PositionMath.GetDirection(def.GetTileCoord(), atk.GetTileCoord());
-            gameMode.unitShower.SetDirection(def.GetSpriteRender(), def_direction);
-
-            if (AttackInfo.damageToAttack > 0)
-            {
-                int maxHP1 = atk.Logic.GetMaxHP();
-                int srcHp1 = atk.Logic.GetCurrentHP();
-                int destHP1 = atk.Logic.Damage(AttackInfo.damageToAttack);
-                if (destHP1 == 0)
-                    gameMode.UIManager.ShowAttackChangeHP(!IsLeft, defSr, maxHP1, srcHp1, destHP1, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime, null);
-                else
-                    gameMode.UIManager.ShowAttackChangeHP(!IsLeft, defSr, maxHP1, srcHp1, destHP1, ConstTable.UI_VALUE_BAR_SPEED(), WaitTime, null);
-            }
-            if (AttackInfo.hit)
-            {
-                int maxHP = def.Logic.GetMaxHP();
-                int srcHP = def.Logic.GetCurrentHP();
-                int destHP = def.Logic.Damage(AttackInfo.damageToDefender);
-                if (destHP == 0)
-                    gameMode.BattlePlayer.KillUnit(def, 0, Continue, true);
-                else
-                    Continue();
-                AttackInfo.damageToAttack = 10;
-            }
-            else
-            {
-                //miss
-                Avoid();
-            }
             return false;
         }
         private void Shake()

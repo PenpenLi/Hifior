@@ -42,7 +42,7 @@ namespace Sequence
             }
             if (waitUntilFinished)
             {
-               DelayContinue(duration);
+                DelayContinue(duration);
             }
             else
             {
@@ -51,7 +51,8 @@ namespace Sequence
         }
         public override bool OnStopExecuting()
         {
-            Continue();
+            if (isExecuting)
+                return false;
             return true;
         }
         public override void Continue()

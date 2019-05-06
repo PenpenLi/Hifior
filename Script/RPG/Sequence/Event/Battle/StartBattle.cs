@@ -17,5 +17,9 @@ namespace Sequence
         {
             return "Start Battle";
         }
+        public override bool OnStopExecuting()
+        {
+            return false;
+        }
     }
 }

@@ -76,16 +76,14 @@ namespace Sequence
             }
         }
 
-        /**
-         * Called when the parent block has been requested to stop executing, and
-         * this command is the currently executing command.
-         * Use this callback to terminate any asynchronous operations and 
-         * cleanup state so that the command is ready to execute again later on.
-         */
+
+        /// <summary>
+        /// 返回false代表不能被暂停,true代表可以被跳过,类似的GetMoney,GetProps这种就不能跳过，FadeScreen这种如果已经开始执行了则可以跳过
+        /// </summary>
+        /// <returns></returns>
         public virtual bool OnStopExecuting()
         {
-            OnEnter();
-            return true;
+            return false;
         }
 
         public virtual void OnEnter()

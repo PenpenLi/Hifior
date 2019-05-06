@@ -27,7 +27,6 @@ namespace Sequence
         }
         public override bool OnStopExecuting()
         {
-            Continue();
             return true;
         }
 

@@ -42,7 +42,6 @@ namespace Sequence
         }
         public override bool OnStopExecuting()
         {
-            Continue();
             return true;
         }
         public override string GetSummary()

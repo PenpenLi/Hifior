@@ -23,7 +23,10 @@ namespace Sequence
             }
             RPGCharacter ch = gameMode.ChapterManager.GetCharacterFromID(id);
             gameMode.unitShower.Shake(ch.GetSpriteRender(), direction, duration, intensity, ()=>DelayContinue(delayContinue));
-            
+        }
+        public override bool OnStopExecuting()
+        {
+            return true;
         }
     }
 }
