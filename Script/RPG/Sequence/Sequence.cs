@@ -102,17 +102,18 @@ namespace Sequence
         {
             foreach (var v in commandList)
             {
-                DestroyImmediate(v.gameObject, false);
+                if (v != null)
+                    DestroyImmediate(v.gameObject, false);
             }
         }
         void Update()
         {
-            if (IsExecuting()==false)
+            if (IsExecuting() == false)
                 return;
             if (Skipable && gameMode.InputManager.GetStartInput())
             {
                 executionState = ExecutionState.Frezee;
-                gameMode.UIManager.ScreenNormalToDark(0.5f, true, () => { gameMode.UIManager.ScreenNormalToDark(0.5f, true, null);Stop(); });
+                gameMode.UIManager.ScreenNormalToDark(0.5f, true, () => { gameMode.UIManager.ScreenNormalToDark(0.5f, true, null); Stop(); });
             }
         }
 

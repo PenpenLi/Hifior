@@ -27,21 +27,29 @@ namespace RPG.AI
             }
             return null;
         }
+        /// <summary>
+        /// 获取站在原地是否攻击到的范围
+        /// </summary>
+        public void GetInAttackRange()
+        {
+            List<RPGCharacter> all = GetTargetCharacter();
+
+            PositionMath.InitAttackScope(logic.GetTileCoord(), logic.Info.Items.Weapons);
+            inRangeCharacters.Clear();
+            foreach (var v in all)
+            {
+                if (PositionMath.IsInAttackableRange(v.GetTileCoord()))
+                {
+                    inRangeCharacters.Add(v);
+                }
+            }
+        }
+        /// <summary>
+        /// 获取可移动到的区域的单位
+        /// </summary>
         public override void GetInActionRange()
         {
-            List<RPGCharacter> all = null;
-            switch (targetCamp)
-            {
-                case ETargetCamp.All:
-                    all = gameMode.ChapterManager.GetAllCharacters();
-                    break;
-                case ETargetCamp.Player:
-                    all = gameMode.ChapterManager.GetAllCharacters(EnumCharacterCamp.Player);
-                    break;
-                case ETargetCamp.Enemy:
-                    all = gameMode.ChapterManager.GetAllCharacters(EnumCharacterCamp.Enemy);
-                    break;
-            }
+            List<RPGCharacter> all = GetTargetCharacter();
 
             PositionMath.InitActionScope(logic.Info.Camp, logic.GetMoveClass(), logic.GetMovement(), logic.GetTileCoord(), logic.GetSelectRangeType(), logic.GetSelectRange());
             inRangeCharacters.Clear();

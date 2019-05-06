@@ -67,25 +67,31 @@ public class BattlePlayer : ManagerBase
             gameMode.unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
         }
     }
-    public void AttackUnit(CharacterLogic attacker, CharacterLogic defender, UnityAction onComplete)
+    public static void AssembleAttackSequenceEvent(System.Func<Sequence.AttackAnimation> atkFunc, CharacterLogic attacker, CharacterLogic defender)
     {
         List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(attacker, defender);
         Debug.Log(Utils.TextUtil.GetListString(attackInfo));
-        //以Sequence的形式呈现战斗过程，
-        gameMode.BeforePlaySequence();
-        gameMode.ResetSequence("Attack");
 
-        var atk = gameMode.AddSequenceEvent<Sequence.AttackAnimation>();
+        var atk = atkFunc();
         atk.AttackInfo = attackInfo[0];
         atk.IsLeft = false;
         atk.WaitTime = 0.3f;
         if (attackInfo.Count > 1)
         {
-            var counterAtk = gameMode.AddSequenceEvent<Sequence.AttackAnimation>();
+            var counterAtk = atkFunc();
             counterAtk.AttackInfo = attackInfo[1];
             counterAtk.IsLeft = true;
             counterAtk.WaitTime = 1.0f;
         }
+        //计算处方向 然后在Unitshower里面转向并攻击，抖动
+    }
+
+    public void AttackUnit(CharacterLogic attacker, CharacterLogic defender, UnityAction onComplete)
+    {
+        //以Sequence的形式呈现战斗过程，
+        gameMode.BeforePlaySequence();
+        gameMode.ResetSequence("Attack");
+        AssembleAttackSequenceEvent(gameMode.AddSequenceEvent<Sequence.AttackAnimation>, attacker, defender);
 
         gameMode.PlaySequence(onComplete);
         //计算处方向 然后在Unitshower里面转向并攻击，抖动

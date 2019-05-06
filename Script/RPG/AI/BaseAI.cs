@@ -25,6 +25,7 @@ namespace RPG.AI
         {
             unit = ch;
             inRangeCharacters = new List<RPGCharacter>();
+            sequenceEvents = new List<Sequence.SequenceEvent>();
         }
         public abstract string Name();
         /// <summary>
@@ -37,6 +38,15 @@ namespace RPG.AI
         protected CharacterLogic logic { get { return unit.Logic; } }
         protected EnumCharacterCamp SelfCamp { get { return unit.GetCamp(); } }
         protected List<RPGCharacter> inRangeCharacters;
+        public List<Sequence.SequenceEvent> sequenceEvents { get; protected set; }
+        protected T AddSequenceEvent<T>() where T : Sequence.SequenceEvent
+        {
+            GameObject g = new GameObject(typeof(T).Name);
+            T seq= g.AddComponent<T>();
+            sequenceEvents.Add(seq);
+            return seq;
+        }
+
         public static List<RPGCharacter> GetIf(List<RPGCharacter> ch, System.Predicate<RPGCharacter> predicate)
         {
             List<RPGCharacter> r = new List<RPGCharacter>();
@@ -99,7 +109,7 @@ namespace RPG.AI
         #region Action
         protected void CameraFollow()
         {
-            gameMode.slgCamera.StartFollowTransform(unit.GetTransform(),true);
+            gameMode.slgCamera.StartFollowTransform(unit.GetTransform(), true);
         }
         #endregion
     }

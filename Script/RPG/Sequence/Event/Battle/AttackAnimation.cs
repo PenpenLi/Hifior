@@ -22,6 +22,7 @@ namespace Sequence
             gameMode.unitShower.SetDirection(atk.GetSpriteRender(), atk_direction);
             def_direction = PositionMath.GetDirection(def.GetTileCoord(), atk.GetTileCoord());
             gameMode.unitShower.SetDirection(def.GetSpriteRender(), def_direction);
+            gameMode.UIManager.ShowAttackInfo(atk.Logic, def.Logic);
             Utils.GameUtil.DelayFunc(this, Shake, 0.25f);
         }
         public override bool OnStopExecuting()

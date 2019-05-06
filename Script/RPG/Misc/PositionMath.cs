@@ -65,6 +65,21 @@ public static class PositionMath
         }
         return sidewayPos;
     }
+    public static Vector2Int GetBestTilePos(List<Vector2Int> pos)
+    {
+        int maxval = int.MinValue, maxIndex = 0;
+        for (int i = 0; i < pos.Count; i++)
+        {
+            var v = pos[i];
+            int val = FeTileData.TileInfos[_MapTileType[v.x, v.y]].Value();
+            if (maxval < val)
+            {
+                maxval = val;
+                maxIndex = i;
+            }
+        }
+        return pos[maxIndex];
+    }
     public static EDirection GetDirection(Vector2Int center, Vector2Int relative)
     {
         var v = relative - center;
@@ -151,7 +166,15 @@ public static class PositionMath
                 }
             }
     }
-
+    private static void ResetAttackAccessList()
+    {
+        _AttackRangeData.Clear();//int表示剩余的攻击范围消耗点
+        for (int i = 0; i < TileWidth; i++)
+            for (int j = 0; j < TileHeight; j++)
+            {
+                _bAttackAcessList[i, j] = false;
+            }
+    }
     #region 图块占用处理函数
     public static void ClearPathHistory()
     {
@@ -265,7 +288,7 @@ public static class PositionMath
     {
         return x >= 0 && y >= 0 && x < TileWidth && y < TileHeight;
     }
-    public static int GetMapPassValue(EnumMoveClassType moveClass,Vector2Int tilePos)//得到此处的人物通过消耗
+    public static int GetMapPassValue(EnumMoveClassType moveClass, Vector2Int tilePos)//得到此处的人物通过消耗
     {
         if (IsOccupiedByDiffentParty(tilePos))//图块被敌方占用，则我方不可通过,敌方按正常计算
         {
@@ -400,13 +423,11 @@ public static class PositionMath
         _TempFootData.Add(_CharacterCenter, _Mov);
 
         int countPoint = 0;
-
         while (countPoint < _Mov)
         {
             _FindDistance(_Mov);//递归查询距离   _FindDistance(Table._JobTable.getBranch(gamechar.attribute.Job), _Mov, 0, 0);
             countPoint++;
         }
-
         if (atkRange.x > 0 && atkRange.y > 0)//装备武器不为空
         {
             _AttackRangeData.Clear();
@@ -423,7 +444,29 @@ public static class PositionMath
             MoveAcessListToAttackRange();
         }
     }
+    public static void InitAttackScope(Vector2Int pos, List<WeaponItem> weapons)
+    {
+        ResetAttackAccessList();
+        foreach (var v in weapons)
+        {
+            var def = v.GetDefinition();
+            _CharacterCenter = pos;
+            var atkRange = def.RangeType.SelectRange;
 
+            if (atkRange.x > 0 && atkRange.y > 0)//装备武器不为空
+            {
+                _AttackRangeData.Clear();
+                _ItemRangeMin = atkRange.x;
+                _ItemRangeMax = atkRange.y;
+                _WeaponRangeType = def.RangeType.SelectType;
+                if (_ItemRangeMax != 0 && _ItemRangeMax - _ItemRangeMin > -1)//武器有距离
+                {
+                    AttackScan(_CharacterCenter);
+                }
+                MoveAcessListToAttackRange();
+            }
+        }
+    }
     /// <summary>
     /// 将存储在_FootData中的节点转换为实际移动路径
     /// </summary>

@@ -105,6 +105,7 @@ public static class ConstTable
         return Color.white;
     }
     public static float UNIT_MOVE_SPEED() { return UNIT_MOVE_SPEED(ModeSpeed); }
+    public static float CAMERA_MOVE_TIME() { return 0.35f; }
     public static float UNIT_MOVE_SPEED(EModeSpeed speed)
     {
         switch (speed)

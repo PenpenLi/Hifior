@@ -66,11 +66,11 @@ namespace RPG.UI
             ContentBox_Top.text = null;
             ContentBox_Bottom.text = null;
         }
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            Show(mTalkData);
-        }
+        //protected override void OnEnable()
+        //{
+        //    base.OnEnable();
+        //    Show(mTalkData);
+        //}
         void Update()
         {
             if (scriptLineIndex < mTalkData.Length)
@@ -351,6 +351,12 @@ namespace RPG.UI
         public void Show(string[] talkData)
         {
             mTalkData = talkData;
+            scriptLineIndex = 0;
+            bTop = false;
+            scriptLineIndex = 0;
+            lastLineIndex = 0;
+            bTyping = false;
+            bStopType = false;
             TypeTime = ConstTable.SHOW_TEXT_TYPE_TIME();
             SoundManage.Instance.LowerBGM();
             gameObject.SetActive(true);

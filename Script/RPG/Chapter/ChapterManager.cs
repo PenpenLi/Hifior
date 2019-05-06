@@ -90,13 +90,30 @@ public class ChapterManager : ManagerBase
     /// </summary>
     public void StartEnemyAction()
     {
-        gameMode.LockInput(true);
         //以Sequence的形式播放敌方行动，一个一个来，中间可以被打断直接输出结果
-        foreach(var v in chapterManager.GetAllCharacters(EnumCharacterCamp.Enemy))
-        {
-            //v.AI_Attack.Action();
-        }
+        gameMode.BeforePlaySequence();
+        var all = chapterManager.GetAllCharacters(EnumCharacterCamp.Enemy);
+        var it = all.GetEnumerator();
+        StartAIAction(it);
         //结束后解锁各种操作镜头等
+    }
+    private void StartAIAction(IEnumerator<RPGCharacter> characters)
+    {
+        gameMode.ResetSequence("AI action " + TurnCamp);
+        characters.MoveNext();
+        var v = characters.Current;
+        if (v == null)
+        {
+            gameMode.AfterPlaySequence();
+            NextTurn();
+            return;
+        }
+        v.AI_Attack.Action();
+        gameMode.AddSequenceEvents(v.AI_Attack.sequenceEvents);
+        gameMode.PlaySequence(() =>
+        {
+          Utils.GameUtil.DelayFunc( ()=> StartAIAction(characters),5);
+        });
     }
 
     public void CheckTurnEvent(int round, EnumCharacterCamp camp)

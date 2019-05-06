@@ -329,6 +329,15 @@ public class GameMode : MonoSingleton<GameMode>
         g.transform.SetParent(PublicSequencer.transform, false);
         return g.AddComponent<T>();
     }
+    public void AddSequenceEvents(List<Sequence.SequenceEvent> l)
+    {
+        foreach (var v in l)
+        {
+            GameObject g =v.gameObject;
+            g.name = v.GetType().Name;
+            g.transform.SetParent(PublicSequencer.transform, false);
+        }
+    }
     public T AddSequenceEvent<T>(string _name) where T : Sequence.SequenceEvent
     {
         GameObject g = new GameObject(_name);

@@ -17,7 +17,8 @@ namespace Sequence
         public List<Vector2Int> Routine;
         public bool CameraFollow;
         public bool WaitUntilFinished;
-        public override void OnEnter()
+
+          public override void OnEnter()
         {
             Vector2Int startPos = Routine.First();
             Vector2Int endPos = Routine.Last();

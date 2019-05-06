@@ -13,6 +13,10 @@ public class FeTileInfo
     public int iceDef;
     public int thunderDef;
     public int[] moveCost;
+    public int Value()
+    {
+        return recover + avoid;        
+    }
     public FeTileInfo(ETileType _type)
     {
         type = _type;

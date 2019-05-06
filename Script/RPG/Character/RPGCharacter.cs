@@ -20,7 +20,7 @@ public class RPGCharacter : RPGCharacterBase
 
     public RPGCharacter()
     {
-        AI_Attack = new AI_AttackIfInRange(this);
+        AI_Attack = new AI_AttackIfInAttackRange(this);
     }
     public void SetDataFromDef(PlayerDef DefaultData)
     {
