@@ -46,8 +46,9 @@ MonoBehaviour:
     Intel: 180
     PhysicalDefense: 171
     MagicalDefense: 133
-    BodySize: 49
-    Movement: 6
+    BodySize: 84
+    Movement: 1
   DefaultWeapons: 0000000001000000
+  DefaultSkills: 02000000
   DeadSpeech: "\u53D1\u653E"
   LeaveSpeech: 745456

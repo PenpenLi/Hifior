@@ -23,7 +23,7 @@ namespace RPG.AI
             {
                 return;
             }
-            
+            EquipWeapon(target.Logic);
             BattlePlayer.AssembleAttackSequenceEvent(AddSequenceEvent<AttackAnimation>, logic, target.Logic);
 
         }

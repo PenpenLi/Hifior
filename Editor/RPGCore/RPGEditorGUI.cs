@@ -939,6 +939,32 @@ namespace RPGEditor
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
         }
+        public static void DynamicArrayView<T>(ref int size, ref List<T> IDlist, string caption, string label,int maxSize=20)where T:System.Enum
+        {
+            size = EditorGUILayout.IntSlider(caption, size, 0, maxSize);
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical();
+            if (size == 0)
+            {
+                IDlist.Clear();
+            }
+            int dif = IDlist.Count - size;
+            if (dif > 0)
+            {
+                IDlist.RemoveRange(size, dif);
+            }
+            if (dif < 0)
+            {
+                IDlist.AddRange(new T[-dif]);
+            }
+            for (int i = 0; i < size; i++)
+            {
+                IDlist[i] =(T) EditorGUILayout.EnumPopup(label, IDlist[i]);
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+        }
         public static int IntFieldClamp(string label, ref int i, int left, int right)
         {
             int ret = EditorGUILayout.IntField(label, i);

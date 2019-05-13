@@ -357,6 +357,11 @@ namespace RPG.UI
             lastLineIndex = 0;
             bTyping = false;
             bStopType = false;
+            Char_Top.sprite = null;
+            ContentBox_Top.text = NameBox_Top.text = null;
+            Char_Bottom.sprite = null;
+            ContentBox_Bottom.text = NameBox_Bottom.text = null;
+
             TypeTime = ConstTable.SHOW_TEXT_TYPE_TIME();
             SoundManage.Instance.LowerBGM();
             gameObject.SetActive(true);

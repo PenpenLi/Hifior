@@ -1,37 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 namespace Utils
 {
     public class GameUtil
     {
         public static GameMode gameMode { get { return GameMode.Instance; } }
-        private static IEnumerator IEnumDelayTimeFunc(UnityEngine.Events.UnityAction Action, float Time)
+        private static IEnumerator IEnumDelayTimeFunc(UnityAction Action, float Time)
         {
             yield return new WaitForSeconds(Time);
             Action();
         }
-        private static IEnumerator IEnumDelayFrameFunc(UnityEngine.Events.UnityAction Action, int frame)
+        private static IEnumerator IEnumDelayFrameFunc(UnityAction Action, int frame)
         {
             for (int i = 0; i < frame; i++)
                 yield return null;
             Action();
         }
-        public static void DelayFunc(UnityEngine.Events.UnityAction Action, float Time)
+        public static void DelayFunc(UnityAction Action, float Time)
         {
             UnityEngine.Assertions.Assert.IsNotNull(gameMode, "GameMode 是Null，请确保存在于场景中且Active");
             gameMode.StartCoroutine(IEnumDelayTimeFunc(Action, Time));
         }
-        public static void DelayFunc(UnityEngine.Events.UnityAction Action, int frame)
+        public static void DelayFunc(UnityAction Action, int frame)
         {
             UnityEngine.Assertions.Assert.IsNotNull(gameMode, "GameMode 是Null，请确保存在于场景中且Active");
             gameMode.StartCoroutine(IEnumDelayFrameFunc(Action, frame));
         }
-        public static void DelayFuncEndOfFrame(UnityEngine.Events.UnityAction Action)
+        public static void DelayFuncEndOfFrame(UnityAction Action)
         {
             UnityEngine.Assertions.Assert.IsNotNull(gameMode, "GameMode 是Null，请确保存在于场景中且Active");
             gameMode.StartCoroutine(IEnumDelayFrameFunc(Action, 1));
         }
-        public static void DelayFunc(MonoBehaviour Mono, UnityEngine.Events.UnityAction Action, float Time)
+        public static void DelayFunc(MonoBehaviour Mono,UnityAction Action, float Time)
         {
             Mono.StartCoroutine(IEnumDelayTimeFunc(Action, Time));
         }

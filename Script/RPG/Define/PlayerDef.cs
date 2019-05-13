@@ -5,6 +5,7 @@ public class PlayerDef : CharacterDef
 {
     public CharacterAttributeGrow DefaultAttributeGrow;
     public List<int> DefaultWeapons;
+    public List<EnumPassiveSkillType> DefaultSkills;
     /// <summary>
     /// 死亡时说的一行话
     /// </summary>
@@ -16,5 +17,6 @@ public class PlayerDef : CharacterDef
     public PlayerDef()
     {
         DefaultWeapons = new List<int>();
+        DefaultSkills = new List<EnumPassiveSkillType>();
     }
 }

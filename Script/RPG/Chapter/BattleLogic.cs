@@ -6,6 +6,25 @@ public struct BattleAttackEstimateInfo
     public int Damage;
     public int Times;
 }
+[System.Serializable]
+public struct LevelUPInfo
+{
+    [System.Serializable]
+    public struct AbilityData
+    {
+        public int[] original, add;
+        public AbilityData(int[] ori, int[] _add)
+        {
+            original = ori;
+            add = _add;
+        }
+    }
+    public int startExp;
+    public int endExp;
+    public int startLevel;
+    public int endLevel;
+    public List<AbilityData> abilityData;
+}
 /// <summary>
 /// 战斗出击的信息
 /// </summary>
@@ -95,8 +114,8 @@ public static class BattleLogic
     /// <returns></returns>
     public static int GetHit(CharacterLogic attacker, CharacterLogic defender)
     {
-        var hit= attacker.GetHit() - defender.GetAvoid();
-        hit = Mathf.Clamp(hit,0, 100);
+        var hit = attacker.GetHit() - defender.GetAvoid();
+        hit = Mathf.Clamp(hit, 0, 100);
         return hit;
     }
     /// <summary>
@@ -144,7 +163,61 @@ public static class BattleLogic
         int dmg = attacker.GetAttack() - defender.GetPhysicalDefense();
         return Mathf.Max(0, dmg);
     }
+    public static int GetGrowValue(int grow)
+    {
+        return RandomYes(grow) ? 1 : 0;
+    }
+    public static CharacterAttribute GetGrow(CharacterAttributeGrow grow)
+    {
+        CharacterAttribute r = new CharacterAttribute();
+        r.HP = GetGrowValue(grow.HP);
+        r.PhysicalPower = GetGrowValue(grow.PhysicalPower);
+        r.MagicalPower = GetGrowValue(grow.MagicalPower);
+        r.Skill = GetGrowValue(grow.Skill);
+        r.Speed = GetGrowValue(grow.Speed);
+        r.Intel = GetGrowValue(grow.Intel);
+        r.PhysicalDefense = GetGrowValue(grow.PhysicalDefense);
+        r.MagicalDefense = GetGrowValue(grow.MagicalDefense);
+        r.BodySize = GetGrowValue(grow.BodySize);
+        r.Movement = GetGrowValue(grow.Movement);
+        return r;
+    }
+    public static LevelUPInfo GetAttackExp(CharacterLogic logic, int defenderCareerRank, int defenderLevel, bool isEnemyDead, int damage, bool isCritical)
+    {
+        int attackerLevel = logic.GetLevel();
+        int attackerExp = logic.GetExp();
+        int careerRankDiff = 0;
+        LevelUPInfo r = new LevelUPInfo();
+        int levelDiff = attackerLevel - defenderLevel;
+        int exp = careerRankDiff * 20 + levelDiff + 10;
+        exp = Mathf.Max(exp, 2);
+        if (isEnemyDead)
+        {
+            exp *= 3;
+        }
+        else
+        {
+            if (isCritical)
+            {
+                exp *= 2;
+            }
+        }
+        exp = Mathf.Min(100, exp);
+        r.startExp = attackerExp;
+        int finalExp = r.startExp + exp;
+        r.endExp = finalExp % 100;
+        r.startLevel = attackerLevel;
+        r.endLevel = attackerLevel + finalExp / 100;
+        if (r.endLevel > r.startExp)
+        {
+            CharacterAttribute add = GetGrow(logic.GetAttributeGrow());
 
+            r.abilityData = new List<LevelUPInfo.AbilityData>();
+            LevelUPInfo.AbilityData d = new LevelUPInfo.AbilityData(logic.GetAttribute().Array, add.Array);
+            r.abilityData.Add(d);
+        }
+        return r;
+    }
 
     public static bool IsDead(BattleAttackInfo info, CharacterLogic logic)
     {

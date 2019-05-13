@@ -19,8 +19,12 @@ public class ItemGroup
     {
         return _currentEquipItemIndex;
     }
-    public ItemGroup()
+    public ItemGroup(List<int> defaultWeapons = null)
     {
+        if (defaultWeapons != null)
+        {
+            AddWeapons(defaultWeapons);
+        }
         //weapons.Add(new WeaponItem(0));
         //props.Add(new PropsItem(0));
     }

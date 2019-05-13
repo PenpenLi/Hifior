@@ -35,6 +35,8 @@ namespace RPG.AI
         {
             Debug.Log("开始AI行动");
             sequenceEvents = new List<Sequence.SequenceEvent>();
+            var waitTime = AddSequenceEvent<Sequence.WaitTime>();
+            waitTime.duration = 0.5f;
             var moveCamera= AddSequenceEvent<Sequence.CameraMoveToTile>();
             moveCamera.TilePos = unit.GetTileCoord();
             moveCamera.MoveTime = ConstTable.CAMERA_MOVE_TIME();

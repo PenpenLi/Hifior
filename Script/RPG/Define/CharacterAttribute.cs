@@ -24,6 +24,7 @@ public class CharacterAttribute : System.ICloneable
     public int MagicalDefense;
     public int BodySize;
     public int Movement;
+    public int[] Array { get { return new int[] { HP, PhysicalPower, MagicalPower, Skill, Speed, Intel, PhysicalDefense, MagicalDefense, BodySize, Movement }; } }
     public void SetMaxium()
     {
         HP = 9999;

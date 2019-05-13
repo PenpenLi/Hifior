@@ -152,20 +152,7 @@ public enum EnumActionType
     None,//不消耗
     All,//消耗掉所有
 }
-public enum EnumPassiveSkillEffect
-{
-    人物属性百分比改变,
-    人物属性固定改变,
-    攻击属性百分比改变,
-    攻击属性固定改变,
-    获得双倍经验值,
-    回复百分比HP,
-    攻击不会被反击,
-    攻击吸取HP,
-    总是先制攻击,
-    不论攻击多少次耐久总是减一,
-    必杀无效
-}
+
 public enum EnumCombatBuffDisapper
 {
     回合计时,

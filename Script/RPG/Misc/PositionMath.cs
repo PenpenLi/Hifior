@@ -166,15 +166,7 @@ public static class PositionMath
                 }
             }
     }
-    private static void ResetAttackAccessList()
-    {
-        _AttackRangeData.Clear();//int表示剩余的攻击范围消耗点
-        for (int i = 0; i < TileWidth; i++)
-            for (int j = 0; j < TileHeight; j++)
-            {
-                _bAttackAcessList[i, j] = false;
-            }
-    }
+
     #region 图块占用处理函数
     public static void ClearPathHistory()
     {
@@ -409,10 +401,6 @@ public static class PositionMath
     {
         _bPlayer = (camp != EnumCharacterCamp.Enemy);//0,2为我方的单位
         _Mov = Movement;
-        /* if (Gamechar.SkillGroup.isHaveStaticSkill(18))//探险家，无视地形，将其职业设为天马
-             _Job = 15;//medifyneed
-         if (Gamechar.SkillGroup.isHaveStaticSkill(19))
-             _Mov += 2;*/
         _MoveClass = moveClass;
         _CharacterCenter = pos;
 
@@ -446,7 +434,8 @@ public static class PositionMath
     }
     public static void InitAttackScope(Vector2Int pos, List<WeaponItem> weapons)
     {
-        ResetAttackAccessList();
+        ResetMoveAcessList();
+        _AttackRangeData.Clear();
         foreach (var v in weapons)
         {
             var def = v.GetDefinition();
@@ -455,7 +444,6 @@ public static class PositionMath
 
             if (atkRange.x > 0 && atkRange.y > 0)//装备武器不为空
             {
-                _AttackRangeData.Clear();
                 _ItemRangeMin = atkRange.x;
                 _ItemRangeMax = atkRange.y;
                 _WeaponRangeType = def.RangeType.SelectType;
@@ -463,9 +451,9 @@ public static class PositionMath
                 {
                     AttackScan(_CharacterCenter);
                 }
-                MoveAcessListToAttackRange();
             }
         }
+        MoveAcessListToAttackRange();
     }
     /// <summary>
     /// 将存储在_FootData中的节点转换为实际移动路径

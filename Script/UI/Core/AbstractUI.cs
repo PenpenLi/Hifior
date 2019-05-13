@@ -12,10 +12,12 @@ namespace RPG.UI
         [Header("AbstructUI 基类参数")]
         private static AbstractUI m_UI;
         protected UnityAction OnHideDelegate;
+        protected RectTransform rectTransform;
 
         protected GameMode gameMode { get { return GameMode.Instance; } }
         protected virtual void Awake()
         {
+            rectTransform = GetComponent<RectTransform>();
             Init();
         }
         void Start()
@@ -58,6 +60,16 @@ namespace RPG.UI
                 OnHideDelegate.Invoke();
                 if(onlyOnce)OnHideDelegate = null;
             }
+        }
+        Vector2 originalPos;
+        protected void FakeHide()
+        {
+            originalPos = rectTransform.anchoredPosition;
+            rectTransform.anchoredPosition = Vector2.one * 100000;
+        }
+        protected void FakeShow()
+        {
+            rectTransform.anchoredPosition = originalPos;
         }
         public void DelayHide(float t)
         {
