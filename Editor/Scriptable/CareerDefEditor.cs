@@ -66,14 +66,18 @@ namespace RPGEditor
 
                 for (int i = 0; i < weaponLevelCount; i++)
                 {
+                    if (career.UseWeaponTypeLevel.Length < weaponLevelCount)
+                    {
+                        var oldArr = career.UseWeaponTypeLevel;
+                        career.UseWeaponTypeLevel = new int[weaponLevelCount];
+                        System.Array.Copy(oldArr, career.UseWeaponTypeLevel, oldArr.Length);
+                    }
                     EditorGUILayout.BeginHorizontal();
                     WeaponEnableTable[i] = EditorGUILayout.Toggle(weaponLevelNames[i], WeaponEnableTable[i]);
                     if (WeaponEnableTable[i])
                     {
                         if (career.UseWeaponTypeLevel[i] < 0)
                             career.UseWeaponTypeLevel[i] = 0;
-                        //editorWeaponLevel[i] = (EnumWeaponLevel)EditorGUILayout.EnumPopup(editorWeaponLevel[i]);
-                        //career.UseWeaponTypeLevel[i] = (int)editorWeaponLevel[i];
                         career.UseWeaponTypeLevel[i] = (int)(EnumWeaponLevel)EditorGUILayout.EnumPopup((EnumWeaponLevel)career.UseWeaponTypeLevel[i]);
                     }
                     else

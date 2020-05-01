@@ -21,6 +21,7 @@ namespace RPG.AI
             RPGCharacter target = Target();
             if (target == null)
             {
+                Debug.Log("攻击范围内没有找到目标");
                 return;
             }
             

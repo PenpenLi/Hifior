@@ -59,6 +59,8 @@ public static class ConstTable
 
     public const float CONST_SHOW_GET_ITEM_MONEY_TIME = 2.5f;
 
+    public const float CONST_INDIATOR_FLASH_INTERVAL = 0.2f;
+
     public static float SHOW_TEXT_TYPE_TIME(EModeSpeed speed)
     {
         switch (speed)

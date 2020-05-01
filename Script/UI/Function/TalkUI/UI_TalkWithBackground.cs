@@ -9,7 +9,7 @@ namespace RPG.UI
     /// <summary>
     /// RegisterHide事件
     /// </summary>
-    public class TalkWithBackground : IPanel
+    public class UI_TalkWithBackground : IPanel
     {
         private float TypeTime = 0.1f;
 
@@ -152,7 +152,7 @@ namespace RPG.UI
             else//此处结束显示
             {
                 musicController.NormalBGM();
-                //UIController.ScreenNormalToDark(1.0f, false, Hide);
+                gameMode.UIManager.ScreenNormalToDark(1.0f, false, Hide);
             }
         }
         bool AnalyseOneLine(string str)

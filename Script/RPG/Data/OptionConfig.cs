@@ -23,7 +23,7 @@ public class OptionConfig : Singleton<OptionConfig>
     {
         get
         {
-            return Application.persistentDataPath + "//config";
+            return GameRecord.PersistentRootPath() + "//config";
         }
     }
     public static void SaveConfig()

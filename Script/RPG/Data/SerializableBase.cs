@@ -16,7 +16,7 @@ public abstract class SerializableBase
     /// 获取存储的路径，重写该函数后可以使用序列化
     /// </summary>
     /// <returns></returns>
-    public virtual string GetFullRecordPathName() { return Application.persistentDataPath + "/save.json"; }
+    public virtual string GetFullRecordPathName() { return GameRecord.PersistentRootPath() + "/save.json"; }
     /// <summary>
     /// 获取Key，重写以实现序列化操作
     /// </summary>

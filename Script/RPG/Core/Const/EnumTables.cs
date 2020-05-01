@@ -100,7 +100,7 @@ public enum EnumWeather
 /// <summary>
 /// 动画触发点
 /// </summary>
-public enum EnumBuffSkillTrigger
+public enum EnumBufferTrigger
 {
     自己移动时,
     自己被攻击时,
@@ -133,8 +133,8 @@ public enum EnumCombatBuffEffect
     每回合掉百分比HP,
     无法行动,
     无法攻击,
-    攻击所有单位,
-    攻击己方单位
+    无法使用魔法,
+    攻击所有单位
 }
 public enum EnumActionType
 {
@@ -163,13 +163,14 @@ public enum EnumPassiveSkillEffect
     攻击不会被反击,
     攻击吸取HP,
     总是先制攻击,
-    不论攻击多少次耐久总是减一,
     必杀无效
 }
-public enum EnumCombatBuffDisapper
+public enum EnumBufferType
 {
-    回合计时,
-    持续待打破
+    中毒,
+    石化,
+    沉默,
+    狂暴
 }
 public enum EnumCharacterImportance
 {
@@ -269,6 +270,17 @@ public enum EnumPropsEffectType
     解毒,
     防御增加
 }
+public enum EnumSkillType
+{
+    经验大师,
+    魅力,
+    武器大师,
+    /// <summary>
+    /// 每回合开始恢复异常状态
+    /// </summary>
+    自动净化,
+    
+}
 public enum EnumCareerAblity
 {
     救援,
@@ -296,6 +308,7 @@ public enum EnumCareerAblity
     封魔者,
     召唤
 }
+
 public static class EnumTables
 {
     /// <summary>

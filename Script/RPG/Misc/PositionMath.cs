@@ -5,6 +5,7 @@ using UnityEngine;
 public static class PositionMath
 {
     public const float TileLength = 1.6f;
+    public const float CameraTileLength = TileLength;
     public const float CameraPosZ = -100f;
     public static readonly Vector2Int MapViewSize = new Vector2Int(15, 15);
     public static readonly Vector2Int CameraHalfViewSize = new Vector2Int(7, 7);

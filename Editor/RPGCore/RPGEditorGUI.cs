@@ -919,6 +919,10 @@ namespace RPGEditor
             EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(Screen.width - 16));
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
+            if (IDlist == null)
+            {
+                IDlist = new List<int>();
+            }
             if (size == 0)
             {
                 IDlist.Clear();

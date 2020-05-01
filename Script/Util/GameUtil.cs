@@ -51,25 +51,29 @@ namespace Utils
             obj2.transform.localScale = vector2;
             return obj2;
         }
-
-        #region 游戏控制
-        public static void Pause()
+        public static void UpdateSwitch(float interval, params System.Action[] func1)
         {
-            Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            int choose = Mathf.RoundToInt(Time.time / ConstTable.CONST_INDIATOR_FLASH_INTERVAL) % func1.Length;
+            func1[choose].Invoke();
         }
+            #region 游戏控制
+            public static void Pause()
+            {
+                Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            }
 
-        public static void Quit()
-        {
+            public static void Quit()
+            {
 #if (UNITY_EDITOR)
-            UnityEditor.EditorApplication.isPlaying = false;
+                UnityEditor.EditorApplication.isPlaying = false;
 #endif
-            Application.Quit();
-        }
-        #endregion
+                Application.Quit();
+            }
+            #endregion
 
-        public static void ScreenShot(string name)
-        {
-            ScreenCapture.CaptureScreenshot(name + ".png");
+            public static void ScreenShot(string name)
+            {
+                ScreenCapture.CaptureScreenshot(name + ".png");
+            }
         }
     }
-}

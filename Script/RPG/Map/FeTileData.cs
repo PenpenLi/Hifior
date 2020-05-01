@@ -96,7 +96,8 @@ public static class FeTileData
         TileInfos.Add(ETileType.Ruined, CreateTileInfo(ETileType.Ruined));
         TileInfos.Add(ETileType.Tunnel, CreateTileInfo(ETileType.Tunnel));
         TileInfos.Add(ETileType.Grass, CreateTileInfo(ETileType.Grass, 20, 1, -5, 2, 2).ChangeInfantryMove(2).ChangeAquaticMove(2).ChangeCavalryMove(3));
-        TileInfos.Add(ETileType.WoodenBridge, CreateTileInfo(ETileType.Grass, -20, -1, -5, 0, 0));
+        TileInfos.Add(ETileType.Forest, CreateTileInfo(ETileType.Forest, 20, 1, -5, 2, 2).ChangeInfantryMove(2).ChangeAquaticMove(2).ChangeCavalryMove(DenyMoveCost));
+        TileInfos.Add(ETileType.WoodenBridge, CreateTileInfo(ETileType.WoodenBridge, -20, -1, -5, 0, 0));
         TileInfos.Add(ETileType.Fort, CreateTileInfo(ETileType.Fort, 30, 3, 3, 3, 3));
         TileInfos.Add(ETileType.Hill, CreateTileInfo(ETileType.Hill, 30, 2, -2, 2, -2).ChangeInfantryMove(3).ChangeCavalryMove(4).ChangeAquaticMove(DenyMoveCost));
         TileInfos.Add(ETileType.HighHill, CreateTileInfo(ETileType.HighHill, 40, 4, -4, 4, -4).ChangeInfantryMove(DenyMoveCost).ChangeAquaticMove(DenyMoveCost).ChangeCavalryMove(DenyMoveCost));

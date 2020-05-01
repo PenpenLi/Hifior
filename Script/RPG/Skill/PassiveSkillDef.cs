@@ -5,7 +5,7 @@ public class PassiveSkillDef : ExtendScriptableObject
 {
     public PropertyIDNameDesc CommonProperty;
     public Sprite Icon;
-    public EnumBuffSkillTrigger EventTrigger;
+    public EnumBufferTrigger EventTrigger;
     public EnumPassiveSkillEffect Effect;
     public CharacterAttribute AttributeChange;
 }

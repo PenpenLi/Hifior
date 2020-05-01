@@ -11,6 +11,7 @@ public class GameMode : MonoSingleton<GameMode>
     public Transform MainCameraTransform { get { return slgCamera.transform; } }
     public PathShower pathShower;
     public UnitShower unitShower;
+    public MapIndicator mapIndicator;
     private ChapterManager chapterManager;
     private BattleManager battleManager;
     private InputManager inputManager;
@@ -144,6 +145,10 @@ public class GameMode : MonoSingleton<GameMode>
     public void LoadGame(int slot)
     {
         chapterManager.LoadChapterData(slot);
+    }
+    public void DeleteGameRecord(int slot)
+    {
+        chapterManager.DeleteChapterData(slot);
     }
     public void LoadNextChapter()
     {

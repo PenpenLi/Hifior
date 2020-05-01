@@ -33,7 +33,7 @@ namespace RPGEditor
             passiveSkill.CommonProperty.Description = EditorGUILayout.TextField(guiContent_Desc, passiveSkill.CommonProperty.Description);
 
             passiveSkill.Icon = (Sprite)EditorGUILayout.ObjectField("图标", passiveSkill.Icon, typeof(Sprite), false);
-            passiveSkill.EventTrigger = (EnumBuffSkillTrigger)EditorGUILayout.EnumPopup("事件触发点", passiveSkill.EventTrigger);
+            passiveSkill.EventTrigger = (EnumBufferTrigger)EditorGUILayout.EnumPopup("事件触发点", passiveSkill.EventTrigger);
             passiveSkill.Effect = (EnumPassiveSkillEffect)EditorGUILayout.EnumPopup("被动技能效果", passiveSkill.Effect);
             if (passiveSkill.Effect == EnumPassiveSkillEffect.人物属性固定改变 || passiveSkill.Effect == EnumPassiveSkillEffect.人物属性百分比改变)
             {

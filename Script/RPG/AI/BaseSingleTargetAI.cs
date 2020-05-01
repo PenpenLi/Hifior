@@ -35,9 +35,15 @@ namespace RPG.AI
         {
             Debug.Log("开始AI行动");
             sequenceEvents = new List<Sequence.SequenceEvent>();
-            var moveCamera= AddSequenceEvent<Sequence.CameraMoveToTile>();
+            //判定人物是否在一半视野内，如果不在则进行移动
+            bool isInHalfView = gameMode.slgCamera.IsTargetInHalfView(unit.GetTileCoord());
+            if (isInHalfView) return;
+            var moveCamera = AddSequenceEvent<Sequence.CameraMoveToTile>();
             moveCamera.TilePos = unit.GetTileCoord();
             moveCamera.MoveTime = ConstTable.CAMERA_MOVE_TIME();
+            var waitTime = AddSequenceEvent<Sequence.WaitTime>();
+            waitTime.duration = 1.0f;
+
         }
     }
 }

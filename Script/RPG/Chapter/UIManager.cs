@@ -23,6 +23,7 @@ public class UIManager : ManagerBase
     public UI_BattleSelectWeaponMenu BattleSelectWeaponMenu { private set; get; }
     public UI_CharacterInfoPanel CharacterInfo { private set; get; }
     public UI_TalkWithoutbg TalkDialog { private set; get; }
+    public UI_TalkWithBackground TalkDialogWithBG { private set; get; }
     public UI_TurnIndicate TurnIndicate { private set; get; }
     public UI_GetItemOrMoney GetItemOrMoney { private set; get; }
     public UI_ScreenMask ScreenMask { private set; get; }
@@ -52,6 +53,7 @@ public class UIManager : ManagerBase
         BattleSelectWeaponMenu = FindPanelInChildren<UI_BattleSelectWeaponMenu>(panelParent9_16);
         CharacterInfo = FindPanelInChildren<UI_CharacterInfoPanel>(panelParent9_16);
         TalkDialog = FindPanelInChildren<UI_TalkWithoutbg>(panelParent0_9);
+        TalkDialogWithBG = FindPanelInChildren<UI_TalkWithBackground>(panelParent0_16);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_16);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
         RecordChapter = FindPanelInChildren<UI_RecordChapterPanel>(panelParent0_16);
@@ -103,6 +105,7 @@ public class UIManager : ManagerBase
     public void BattleAction_Attack()
     {
         BattleActionMenu.Hide();
+        //battleManager.ClearRangeAction();
         CharacterLogic logic = battleManager.CurrentCharacterLogic;
         BuildBattleSelectWeaponMenu(logic);
         BattleSelectWeaponMenu.Show();

@@ -157,7 +157,7 @@ public class BattleManager : ManagerBase
                 }
                 else
                 {
-                    SelectMoveTarget();
+                    //SelectMoveTarget(); 允许这个时候去选择范围的话攻击的时候就会产生bug，选择其他人物身上去计算的范围
                 }
             }
         }
@@ -427,7 +427,7 @@ public class BattleManager : ManagerBase
     }
     public void CloseMenu()
     {
-        uiManager.HideBattlaActionMenu(true);
+        uiManager.HideBattlaActionMenu(true); 
         gameMode.slgCamera.SetControlMode(CameraControlMode.FreeMove);
     }
 

@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 287f3108004f9c9439fb070a94edcf4e
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: b9e2263c9433cb4449d9eae07a8fbb3b, type: 3}
+  missingFiles: []
+  errors: []
+  warnings:
+  - Tileset '01000203' is an embedded tileset. Exported tilesets are preferred.
+  missingSortingLayers: []
+  missingLayers: []
+  missingTags: []
+  pixelsPerUnit: 100
+  edgesPerEllipse: 32
+  numberOfObjectsImported: 2052
+  tilesAsObjects: 0
+  importSorting: 0
+  isIsometric: 0
+  customImporterClassName: 
+  internalTilesets:
+  - {instanceID: 0}

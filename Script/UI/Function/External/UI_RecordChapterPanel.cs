@@ -61,6 +61,11 @@ namespace RPG.UI
                 }
             }
         }
+        public void OnButtonClick_Delete(int slot)
+        {
+            ConfirmPanel.InitCallBack(() => SaveTo(slot), ConfirmPanel.Hide);
+            ConfirmPanel.Show("是否需要删除该存档?");
+        }
         public void SetSaveMode()
         {
             bSaveMode = true;
@@ -88,26 +93,37 @@ namespace RPG.UI
             ConfirmShowLoadFinish();
         }
 
+        public void DeleteRecord(int slot)
+        {
+            ConfirmShowDeleteFinish(slot);
+        }
         private void ConfirmShowLoadFinish()
         {
-            ConfirmPanel.InitCallBack(OnFinishYesClick, true);
-            ConfirmPanel.Show("载入完毕");
+            ConfirmPanel.InitCallBack(() => { OnFinishYesClick(); }, false);
+            ConfirmPanel.Message("载入完毕");
         }
 
         private void ConfirmShowSaveFinish(int slot)
         {
-            ConfirmPanel.InitCallBack(OnFinishYesClick, true);
-            ConfirmPanel.Show("存储完毕");
+            ConfirmPanel.InitCallBack(() =>
+            {
+                OnFinishYesClick();
+            }, false);
 
             var nextChapterID = gameMode.ChapterManager.ChapterId;
             Buttons[slot].GetComponentInChildren<Text>().text = ResourceManager.GetChapterName(nextChapterID) + "\n" + Utils.TextUtil.GetStandardDataTime();
             AlreadyHadSave[slot] = true;
+            ConfirmPanel.Message("存储完毕");
+        }
+        private void ConfirmShowDeleteFinish(int slot)
+        {
+            ConfirmPanel.InitCallBack(() => { gameMode.DeleteGameRecord(slot); InitData(); }, false);
         }
         private void OnFinishYesClick()
         {
             ConfirmPanel.Hide();
             Hide(true, true);
-                gameMode.PlayStartSequence();
+            gameMode.PlayStartSequence();
         }
         public void Show_NewGame()
         {

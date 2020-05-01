@@ -161,7 +161,7 @@ namespace SuperTiled2Unity.Editor
             return AssetDatabaseEx.LoadFirstAssetByFilter<SuperIcons>(search);
         }
 
-        [MenuItem("Edit/Project Settings/SuperTiled2Unity Settings", false)]
+        [MenuItem("RPGEditor/Project Settings/SuperTiled2Unity Settings", false)]
         private static void SelectProjectSettings()
         {
             var asset = LoadSettings();

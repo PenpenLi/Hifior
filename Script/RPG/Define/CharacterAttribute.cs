@@ -39,15 +39,15 @@ public class CharacterAttribute : System.ICloneable
     }
     public override string ToString()
     {
-        return " HP= " + HP +
-   " PhysicalPower= " + PhysicalPower +
-   " MagicalPower= " + MagicalPower +
-   " Skill= " + Skill +
-   " Speed= " + Speed +
-   " Intel= " + Intel +
-   " PhysicalDefense= " + PhysicalDefense +
-   " MagicalDefense= " + MagicalDefense +
-   " Movement= " + Movement;
+        return " HP = " + HP +
+   " PhysicalPower = " + PhysicalPower +
+   " MagicalPower = " + MagicalPower +
+   " Skill = " + Skill +
+   " Speed = " + Speed +
+   " Intel = " + Intel +
+   " PhysicalDefense = " + PhysicalDefense +
+   " MagicalDefense = " + MagicalDefense +
+   " Movement = " + Movement;
     }
 
     public object Clone()

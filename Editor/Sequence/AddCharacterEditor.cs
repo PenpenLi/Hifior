@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 using Sequence;
 namespace RPGEditor
 {
@@ -12,6 +13,7 @@ namespace RPGEditor
         void OnEnable()
         {
             _target = target as AddCharacter;
+            if (_target.Items == null) _target.Items = new List<int>();
             weaponCount = _target.Items.Count;
         }
         public override void OnInspectorGUI()

@@ -12,6 +12,7 @@ public enum CameraControlMode
 public class SLGCamera : MonoBehaviour
 {
     private const float DEFAULT_CAMERA_HEIGHT = 180f;
+    private const int STAY_DISTANCE = 4;
     public float smoothTime = 1.5f;                // how smooth the camera movement is
 
     public float moveSpeed = 7.0f;
@@ -125,6 +126,29 @@ public class SLGCamera : MonoBehaviour
     {
         Vector3 p = PositionMath.CameraLocalPositionFollowUnitLocalPosition(targetTransform.localPosition);
         transform.localPosition = p;
+    }
+    public Vector2Int ViewCenterPoint
+    {
+        get
+        {
+            return new Vector2Int((int)(transform.localPosition.x / PositionMath.TileLength) + PositionMath.CameraHalfViewSize.x,
+                (int)(transform.localPosition.y / PositionMath.TileLength) + PositionMath.CameraHalfViewSize.y);
+        }
+    }
+    /// <summary>
+    /// 是否需要移动摄像机以适应当前点的焦点显示
+    /// </summary>
+    /// <param name="targetPos"></param>
+    /// <returns></returns>
+    public bool IsTargetInHalfView(Vector2Int targetPos)
+    {
+        var focusPos =  PositionMath.CameraTilePositionFocusOnLocalPosition(targetPos);
+        var diffViewPos = focusPos - transform.localPosition;
+        float l = PositionMath.CameraTileLength * STAY_DISTANCE;
+        if (Mathf.Abs(diffViewPos.x)>= l|| Mathf.Abs(diffViewPos.y)>= l)
+            return false;
+        return true;
+
     }
 }
 

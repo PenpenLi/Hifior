@@ -2,17 +2,17 @@
 using UnityEditor;
 namespace RPGEditor
 {
-    [CustomEditor(typeof(CombatBuffDef))]
+    [CustomEditor(typeof(CombatBufferDef))]
     public class CombatBuffDefEditor : Editor
     {
 
         public const string DIRECTORY_PATH = DataBaseConst.DataBase_CombatBuff_Folder;
         [MenuItem("RPGEditor/Create Combat Buff", false, 0)]
-        public static CombatBuffDef CreateCombatBuff()
+        public static CombatBufferDef CreateCombatBuff()
         {
             int count = ScriptableObjectUtility.GetFoldFileCount(DIRECTORY_PATH);
 
-            CombatBuffDef buff = ScriptableObjectUtility.CreateAsset<CombatBuffDef>(
+            CombatBufferDef buff = ScriptableObjectUtility.CreateAsset<CombatBufferDef>(
                 count.ToString(),
                 DIRECTORY_PATH,
                 true
@@ -25,7 +25,7 @@ namespace RPGEditor
         private readonly GUIContent guiContent_Name = new GUIContent("Buff名称", "人物的名称");
         private readonly GUIContent guiContent_Desc = new GUIContent("Buff描述", "Buff的详细描述介绍");
 
-        CombatBuffDef buff;
+        CombatBufferDef buff;
         public override void OnInspectorGUI()
         {
             Rect blockLabelRect = new Rect(60, 5, 120, 55);
@@ -39,13 +39,11 @@ namespace RPGEditor
             buff.CommonProperty.Description = EditorGUILayout.TextField(guiContent_Desc, buff.CommonProperty.Description);
 
             buff.Icon = (Sprite)EditorGUILayout.ObjectField("图标", buff.Icon, typeof(Sprite), false);
-            buff.DisapperCondition = (EnumCombatBuffDisapper)EditorGUILayout.EnumPopup("buff消失条件", buff.DisapperCondition);
-            if (buff.DisapperCondition == EnumCombatBuffDisapper.回合计时)
-            {
-                buff.DisapperRound = EditorGUILayout.IntSlider("消失回合数", buff.DisapperRound, 1, 10);
-            }
+            
+                buff.DisappearRound = EditorGUILayout.IntSlider("消失回合数", buff.DisappearRound, 1, 10);
+
             buff.DisapperOnExitBattle = EditorGUILayout.Toggle("回合结束后buff消失", buff.DisapperOnExitBattle);
-            buff.EventTrigger = (EnumBuffSkillTrigger)EditorGUILayout.EnumPopup("事件触发点", buff.EventTrigger);
+
             buff.Effect = (EnumCombatBuffEffect)EditorGUILayout.EnumPopup("buff效果", buff.Effect);
             if (buff.Effect == EnumCombatBuffEffect.人物属性固定改变 || buff.Effect == EnumCombatBuffEffect.人物属性百分比改变)
             {
@@ -82,7 +80,7 @@ namespace RPGEditor
         }
         public void OnEnable()
         {
-            buff = target as CombatBuffDef;
+            buff = target as CombatBufferDef;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Sequence
                 ch = gameMode.ChapterManager.GetCharacterFromID(CharacterID);
                 Assert.IsNotNull(ch, startPos + "处不存在角色");
                 var chPos = ch.GetTileCoord();
-                Assert.IsTrue(startPos == chPos, "移动起始点" + startPos + "与角色所在位置" + chPos + "不相符");
+                Assert.IsTrue(startPos == chPos,"ID:"+CharacterID+ "  移动起始点" + startPos + "与角色所在位置" + chPos + "不相符");
             }
             else
             {

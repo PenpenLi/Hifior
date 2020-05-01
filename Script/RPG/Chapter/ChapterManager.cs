@@ -112,7 +112,7 @@ public class ChapterManager : ManagerBase
         gameMode.AddSequenceEvents(v.AI_Attack.sequenceEvents);
         gameMode.PlaySequence(() =>
         {
-          Utils.GameUtil.DelayFunc( ()=> StartAIAction(characters),5);
+            Utils.GameUtil.DelayFunc(() => StartAIAction(characters), 5);
         });
     }
 
@@ -210,7 +210,7 @@ public class ChapterManager : ManagerBase
     /// <returns></returns>
     public bool CheckWin_DefeatBoss(int BossID)
     {
-        if (HasWinCondition(EnumWinCondition.击败指定Boss))
+        if (HasWinCondition(EnumWinCondition.击败指定Boss) && ChapterDef.WinCondition.BossID == BossID)
             return true;
         return false;
     }
@@ -517,7 +517,7 @@ public class ChapterManager : ManagerBase
     }
     public void LoadChapterDef(int id)
     {
-        if (ChapterDef != null && Event.gameObject != null) GameObject.Destroy(Event.gameObject);
+        if (ChapterDef != null && Event.gameObject != null) GameObject.DestroyImmediate(Event.gameObject);
         ChapterDef = ResourceManager.GetChapterDef(id);
         ChapterDef.Event = GameObject.Instantiate(ChapterDef.Event);
         ChapterId = id;
@@ -554,6 +554,10 @@ public class ChapterManager : ManagerBase
             players.PlayersLogic.Add(p.Logic);
             gameMode.BattlePlayer.AddUnitToMap(p, v.tileCoords);
         }
+    }
+    public void DeleteChapterData(int slot)
+    {
+        record.DeleteChapterSave(slot);
     }
     #endregion
 

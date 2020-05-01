@@ -33,6 +33,7 @@ public enum ETileType
     /// 草丛
     /// </summary>
     Grass,
+    Forest,
     /// <summary>
     /// 木桥
     /// </summary>

@@ -54,6 +54,11 @@ namespace RPG.UI
             text_tip.text = tip;
             gameObject.SetActive(true);
         }
+        public void Message(string tip)
+        {
+            setLayout(true);
+            Show(tip);
+        }
         public void Show(string tip, Sprite sprite)
         {
             transform.SetAsLastSibling();

@@ -93,7 +93,7 @@ public class PlayerInfoCollection : SerializableList<CharacterInfo>
 {
     public override string GetFullRecordPathName()
     {
-        return Application.persistentDataPath + "/PlayerInfoCollection.sav";
+        return GameRecord.PersistentRootPath() + "/PlayerInfoCollection.sav";
     }
     /// <summary>
     /// 存档是否已经包含某个角色的信息
@@ -246,7 +246,7 @@ public class ChapterRecordCollection : SerializableBase
     }
     public override string GetFullRecordPathName()
     {
-        return Application.persistentDataPath + "/" + Slot + "/ChapterRecord.sav";
+        return GameRecord.PersistentSlotPath(Slot) + "/ChapterRecord.sav";
     }
 }
 
@@ -262,7 +262,7 @@ public class BattleInfoCollection : ChapterRecordCollection
     }
     public override string GetFullRecordPathName()
     {
-        return Application.persistentDataPath + "/BattleInfo.sav";
+        return GameRecord.PersistentRootPath() + "/BattleInfo.sav";
     }
 }
 [System.Serializable]
@@ -677,9 +677,22 @@ public class GameRecord
     }
     public bool HasChapterSave(int slot)
     {
-        var v = new ChapterRecordCollection();
-        v.SetIndex(slot);
-        return v.Exists();
+        if (currentTeamRecord == null)
+        {
+            currentTeamRecord = new ChapterRecordCollection();
+        }
+        currentTeamRecord.SetIndex(slot);
+        return currentTeamRecord.Exists();
+    }
+    public bool DeleteChapterSave(int slot)
+    {
+        var bHas = HasChapterSave(slot);
+        if (bHas)
+        {
+            Debug.Log("有这个存档:" + slot.ToString());
+            System.IO.Directory.Delete(PersistentSlotPath(slot),true);
+        }
+        return bHas;
     }
     /// <summary>
     /// 从磁盘载入章节，返回章节数，并实例化ChapterRecord文件，如果没有则返回-1,并让ChapterRecord为null
@@ -724,5 +737,7 @@ public class GameRecord
     {
         return currentTeamRecord;
     }
+    public static string PersistentSlotPath(int slot) { return Application.persistentDataPath + "/" + slot; }
+    public static string PersistentRootPath() { return Application.persistentDataPath; }
     #endregion
 }

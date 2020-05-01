@@ -20,7 +20,8 @@ namespace Sequence
             重置音量,
             更换背景,
             自动播放文本,
-            停止自动文本
+            停止自动文本,
+            添加文本
         }
         public enum 显示位置
         {
@@ -29,9 +30,14 @@ namespace Sequence
             右边,
             最右边
         }
+        float fade = 1.0f;
         public override void OnInspectorGUI()
         {
             _target.Background = EditorGUILayout.IntField("默认背景", _target.Background);
+            if (_target.Code == null)
+            {
+                _target.Code = new System.Collections.Generic.List<string>();
+            }
             for (int i = 0; i < _target.Code.Count; i++)
             {
                 string prefix = "%";
@@ -86,14 +92,14 @@ namespace Sequence
                     DrawCommand("切换文本", i, DrawText);
                 }
             }
-            EditorGUILayout.Space();
             GUILayout.BeginHorizontal(GUI.skin.button);
             if (GUILayout.Button("添加", GUILayout.MaxWidth(60)))
             {
                 PopupMenu();
             }
             GUILayout.EndHorizontal();
-            EditorGUILayout.SelectableLabel(Utils.TextUtil.GetListString(_target.Code), GUILayout.ExpandHeight(true));
+            EditorGUILayout.Space();
+            EditorGUILayout.HelpBox(Utils.TextUtil.GetListString(_target.Code), MessageType.Info);
         }
         private void ChangeCommand(object CommandType)
         {
@@ -164,6 +170,9 @@ namespace Sequence
                     break;
                 case 事件类型.停止自动文本:
                     _target.Code.Add(EndAutoText());
+                    break;
+                case 事件类型.添加文本:
+                    _target.Code.Add(PlayText("无用文本"));
                     break;
             }
         }
@@ -253,7 +262,7 @@ namespace Sequence
             CharacterID = EditorGUILayout.IntField("人物ID", CharacterID);
             Pos = (int)(显示位置)EditorGUILayout.EnumPopup(new GUIContent("位置", "人物头像出现的位置"), (显示位置)Pos);
             FaceID = EditorGUILayout.IntSlider("人物脸部ID", FaceID, 0, 3);
-            _target.Code[Index] = ShowPosition(CharacterID, Pos, FaceID);
+            _target.Code[Index] = ShowPosition(Pos, CharacterID, FaceID);
         }
         private string ShowPosition(int Position, int CharacterID, int FaceID)
         {
@@ -356,6 +365,10 @@ namespace Sequence
         private string EndAutoText()
         {
             return GetCode(事件类型.停止自动文本);
+        }
+        private string PlayText(string text)
+        {
+            return GetCode(事件类型.添加文本)+text;
         }
 
         private string GetCode(事件类型 EventType)
