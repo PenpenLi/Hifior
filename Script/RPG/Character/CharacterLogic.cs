@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -277,6 +276,10 @@ public class CharacterLogic
     #region get
     public EnumMoveClassType GetMoveClass()
     {
+        if (Info.Skills.GetPassiveSkill(EnumPassiveSkillEffect.神行者).Valid())
+        {
+            return EnumMoveClassType.Specter;
+        }
         return careerDef.MoveClass;
     }
     public int GetMovement()
@@ -307,6 +310,14 @@ public class CharacterLogic
     public CharacterAttribute GetAttribute()
     {
         return Info.Attribute;
+    }
+    public CharacterAttributeGrow GetDefaultAttributeGrow()
+    {
+        return characterDef.DefaultAttributeGrow;
+    }
+    public CharacterAttributeGrow GetAttributeGrow()
+    {
+        return characterDef.DefaultAttributeGrow;
     }
     public int GetID()
     {
@@ -422,6 +433,10 @@ public class CharacterLogic
     public void SetLevel(int level)
     {
         Info.Level = level;
+    }
+    public void SetExp(int exp)
+    {
+        Info.Exp = exp;
     }
     public void EndAction()
     {

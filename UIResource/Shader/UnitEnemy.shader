@@ -62,9 +62,9 @@
 				col.rgb *= col.a;
 				if (col.b > col.r + col.g - 0.1f) {
 					col = fixed4(col.b,col.r, col.g,  col.a);
-			}
+				}
 				return col;
-		}
+			}
 		ENDCG
 	}
 	}

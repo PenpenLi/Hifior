@@ -102,8 +102,8 @@ public static class FeTileData
         TileInfos.Add(ETileType.Hill, CreateTileInfo(ETileType.Hill, 30, 2, -2, 2, -2).ChangeInfantryMove(3).ChangeCavalryMove(4).ChangeAquaticMove(DenyMoveCost));
         TileInfos.Add(ETileType.HighHill, CreateTileInfo(ETileType.HighHill, 40, 4, -4, 4, -4).ChangeInfantryMove(DenyMoveCost).ChangeAquaticMove(DenyMoveCost).ChangeCavalryMove(DenyMoveCost));
         TileInfos.Add(ETileType.Ocean, CreateTileInfo(ETileType.Ocean, -20, 0, 5, -5, -3).ChangeInfantryMove(DenyMoveCost).ChangeCavalryMove(DenyMoveCost).ChangeSavegeMove(2));
-        TileInfos.Add(ETileType.Wall, CreateTileInfo(ETileType.Wall).DenyMove());
-        TileInfos.Add(ETileType.Door, CreateTileInfo(ETileType.Door).DenyMove());
+        TileInfos.Add(ETileType.Wall, CreateTileInfo(ETileType.Wall).DenyMove().ChangeSpecterMove(1));
+        TileInfos.Add(ETileType.Door, CreateTileInfo(ETileType.Door).DenyMove().ChangeSpecterMove(1));
         TileInfos.Add(ETileType.Gate, CreateTileInfo(ETileType.Gate, 30, 3, 3, 3, 3));
         TileInfos.Add(ETileType.Throne, CreateTileInfo(ETileType.Throne, 30, 3, 3, 3, 3));
         TileInfos.Add(ETileType.Village, CreateTileInfo(ETileType.Village, 20, 1, 1, 1, 1));

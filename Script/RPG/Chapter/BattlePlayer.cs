@@ -67,10 +67,10 @@ public class BattlePlayer : ManagerBase
             gameMode.unitShower.DisappearUnit(ch.GetTileCoord(), v, onComplete);
         }
     }
-    public static void AssembleAttackSequenceEvent(System.Func<Sequence.AttackAnimation> atkFunc, CharacterLogic attacker, CharacterLogic defender)
+    public static List<BattleAttackInfo> AssembleAttackSequenceEvent(System.Func<Sequence.AttackAnimation> atkFunc, CharacterLogic attacker, CharacterLogic defender)
     {
         List<BattleAttackInfo> attackInfo = BattleLogic.GetAttackInfo(attacker, defender);
-        Debug.Log(Utils.TextUtil.GetListString(attackInfo));
+        Debug.Log(message: Utils.TextUtil.GetListString(attackInfo));
 
         var atk = atkFunc();
         atk.AttackInfo = attackInfo[0];
@@ -83,6 +83,7 @@ public class BattlePlayer : ManagerBase
             counterAtk.IsLeft = true;
             counterAtk.WaitTime = 1.0f;
         }
+        return attackInfo;
         //计算处方向 然后在Unitshower里面转向并攻击，抖动
     }
 
@@ -91,8 +92,16 @@ public class BattlePlayer : ManagerBase
         //以Sequence的形式呈现战斗过程，
         gameMode.BeforePlaySequence();
         gameMode.ResetSequence("Attack");
-        AssembleAttackSequenceEvent(gameMode.AddSequenceEvent<Sequence.AttackAnimation>, attacker, defender);
-
+        List<BattleAttackInfo> atkInfo = AssembleAttackSequenceEvent(gameMode.AddSequenceEvent<Sequence.AttackAnimation>, attacker, defender);
+        var getExp = gameMode.AddSequenceEvent<Sequence.GetExp>();
+        int damageCount = 0;
+        foreach (var v in atkInfo)
+        {
+            damageCount += v.damageToDefender;
+        }
+        bool enemyDead = damageCount >= defender.GetCurrentHP();
+        bool critical = false;
+        getExp.Info = BattleLogic.GetAttackExp(attacker, defender.GetCareer(), defender.GetLevel(), enemyDead, damageCount, critical);
         gameMode.PlaySequence(onComplete);
         //计算处方向 然后在Unitshower里面转向并攻击，抖动
     }

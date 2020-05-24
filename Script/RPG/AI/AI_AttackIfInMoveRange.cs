@@ -17,9 +17,10 @@ namespace RPG.AI
             RPGCharacter target = Target();
             if (target == null)
             {
-                //var stay=AddSequenceEvent<>
                 return;
             }
+            EquipWeapon(target.Logic);
+
             var side = PositionMath.GetSidewayTilePos(target.GetTileCoord());
             var avSidePos = PositionMath.MoveableAreaPoints.Intersect(side).ToList();
             if (avSidePos.Count == 0) return;

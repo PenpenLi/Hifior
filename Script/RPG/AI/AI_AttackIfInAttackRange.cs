@@ -24,7 +24,7 @@ namespace RPG.AI
                 Debug.Log("攻击范围内没有找到目标");
                 return;
             }
-            
+            EquipWeapon(target.Logic);
             BattlePlayer.AssembleAttackSequenceEvent(AddSequenceEvent<AttackAnimation>, logic, target.Logic);
 
         }

@@ -67,11 +67,36 @@ namespace RPG.AI
             return SelectByPriority();
         }
         protected bool HasWeapon() { return unit.Logic.Info.Items.GetAllWeapons().Count > 0; }
-        protected virtual WeaponItem Weapon()
+        protected virtual void EquipWeapon(CharacterLogic target)
         {
-            var weapons = unit.Logic.Info.Items.GetAllWeapons();
-            if (weapons.Count == 1) { return weapons[0]; }
-            return null;
+            var weapons = logic.Info.Items.GetAllWeapons();
+            if (weapons.Count <= 1) return;
+            List<WeaponItem> avWeapons = new List<WeaponItem>();
+            foreach (var v in weapons)
+            {
+                //找到每个武器可以攻击到的范围内的敌方单位
+
+                var rangeType = v.GetDefinition().RangeType;
+                EnumSelectEffectRangeType selRangeType = rangeType.SelectType;
+                Vector2Int selRange = rangeType.SelectRange;
+                EnumSelectEffectRangeType effRangeType = rangeType.EffectType;
+                Vector2Int effRange = rangeType.EffectRange;
+                logic.BattleInfo.SetSelectTargetParam(CharacterBattleInfo.EBattleActionType.Attack, logic.GetTileCoord(), selRangeType, selRange, effRangeType, effRange);
+                if (logic.BattleInfo.TargetChooseRanges.Contains(target.GetTileCoord()))
+                {
+                    avWeapons.Add(v);
+                }
+            }
+            List<int> damage = new List<int>();
+            //根据对方的属性选择伤害最高的武器
+            foreach (var v in weapons)
+            {
+                logic.Info.Items.EquipWeapon(v);
+                int dmg = BattleLogic.GetAttackCount(logic, target) * BattleLogic.GetAttackDamage(logic, target);
+                damage.Add(dmg);
+            }
+            int maxDamageIndex = LinqS.IndexOfMax(damage.GetEnumerator());
+            logic.Info.Items.EquipWeapon(avWeapons[maxDamageIndex]);
         }
     }
 }

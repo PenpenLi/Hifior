@@ -6,6 +6,7 @@ namespace RPGEditor
     public class PlayerDefEditor : CharacterDefEditor
     {
         private static int weaponCount;
+        private static int skillCount;
         private static bool foldout_AttributeGrow = true;
         private static bool foldout_Attribute = true;
 
@@ -89,7 +90,8 @@ namespace RPGEditor
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
             }
-            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref player.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count),5);
+            RPGEditorGUI.DynamicArrayView(ref weaponCount, ref player.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count), 5);
+            RPGEditorGUI.DynamicArrayView(ref skillCount, ref player.DefaultSkills, "初始技能", "技能", 10);
 
             player.DeadSpeech = EditorGUILayout.TextField("战败话语", player.DeadSpeech);
             player.LeaveSpeech = EditorGUILayout.TextField("战败话语", player.LeaveSpeech);
@@ -104,12 +106,14 @@ namespace RPGEditor
             player = target as PlayerDef;
             base.InitTarget(player);
             weaponCount = player.DefaultWeapons.Count;
+            skillCount = player.DefaultSkills.Count;
         }
     }
 
-    public class PlayerEditorProp:CharacterEditorProp<PlayerDef>
+    public class PlayerEditorProp : CharacterEditorProp<PlayerDef>
     {
         private static int weaponCount;
+        private static int skillCount;
         private static bool foldout_AttributeGrow = true;
         private static bool foldout_Attribute = true;
 
@@ -147,6 +151,7 @@ namespace RPGEditor
                 EditorGUILayout.EndHorizontal();
             }
             RPGEditorGUI.DynamicArrayView(ref weaponCount, ref Data.DefaultWeapons, "初始武器", "武器", RPGData.WeaponNameList.ToArray(), EnumTables.GetSequentialArray(RPGData.WeaponNameList.Count), 5);
+            RPGEditorGUI.DynamicArrayView(ref skillCount, ref Data.DefaultSkills, "初始技能", "技能", 10);
 
             Data.DeadSpeech = EditorGUILayout.TextField("战败话语", Data.DeadSpeech);
             Data.LeaveSpeech = EditorGUILayout.TextField("战败话语", Data.LeaveSpeech);

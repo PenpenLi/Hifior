@@ -25,6 +25,10 @@ namespace Sequence
             gameMode.UIManager.ShowAttackInfo(atk.Logic, def.Logic);
             Utils.GameUtil.DelayFunc(this, Shake, 0.25f);
         }
+        public override void OnExit()
+        {
+            gameMode.UIManager.HideAttackInfo();
+        }
         public override bool OnStopExecuting()
         {
             return false;

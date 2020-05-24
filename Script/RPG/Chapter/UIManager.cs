@@ -29,6 +29,8 @@ public class UIManager : ManagerBase
     public UI_ScreenMask ScreenMask { private set; get; }
     public UI_BattleAttackInfo Left_BattleAttackInfo { private set; get; }
     public UI_BattleAttackInfo Right_BattleAttackInfo { private set; get; }
+    public UI_ExpBarPanel BattleExpGain { private set; get; }
+    public UI_LevelUpPanel LevelUp { private set; get; }
     public UI_WidgetYesNo WidgetYesNo { private set; get; }
     public UI_RecordChapterPanel RecordChapter { private set; get; }
 
@@ -56,6 +58,8 @@ public class UIManager : ManagerBase
         TalkDialogWithBG = FindPanelInChildren<UI_TalkWithBackground>(panelParent0_16);
         ScreenMask = FindPanelInChildren<UI_ScreenMask>(panelParent0_16);
         TurnIndicate = FindPanelInChildren<UI_TurnIndicate>(panelParent0_9);
+        BattleExpGain = FindPanelInChildren<UI_ExpBarPanel>(panelParent0_9);
+        LevelUp = FindPanelInChildren<UI_LevelUpPanel>(panelParent0_9);
         RecordChapter = FindPanelInChildren<UI_RecordChapterPanel>(panelParent0_16);
         ChapterStartPreface = FindPanelInChildren<UI_ChapterStartPreface>(panelParent0_16);
         WidgetYesNo = FindPanelInChildren<UI_WidgetYesNo>(panelParent0_16);

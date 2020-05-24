@@ -29,6 +29,7 @@ public class CharacterInfo : SerializableBase
     public Vector2Int tileCoords;
     public CharacterAttribute Attribute;
     public ItemGroup Items;
+    public SkillGroup Skills;
     public ActionAI AI;
     [NonSerialized]
     public Vector2Int oldTileCoords;
@@ -48,12 +49,13 @@ public class CharacterInfo : SerializableBase
     {
         ID = Logic.GetID();
         Level = Logic.GetLevel();
-        Exp = Logic.GetLevel();
+        Exp = Logic.GetExp();
         Career = Logic.GetCareer();
         Attribute = Logic.GetAttribute();
         CurrentHP = Logic.GetCurrentHP();
         MaxHP = Logic.GetMaxHP();
         Items = new ItemGroup();
+        Skills = new SkillGroup();
 
     }
     public CharacterInfo(PlayerDef def)
@@ -65,13 +67,13 @@ public class CharacterInfo : SerializableBase
         Attribute = def.DefaultAttribute;
         CurrentHP = Attribute.HP;
         MaxHP = Attribute.HP;
-        Items = new ItemGroup();
-        Items.AddWeapons(def.DefaultWeapons);
+        Items = new ItemGroup(def.DefaultWeapons);
+        Skills = new SkillGroup(def.DefaultSkills);
     }
     public override string ToString()
     {
         return
-   "ID=" + ID + ";  \n" +
+  "ID=" + ID + ";  \n" +
   "Level= " + Level + ";  \n" +
   "Exp= " + Exp + ";  \n" +
   "CharacterAttribute=" + Attribute + ";  \n" +
